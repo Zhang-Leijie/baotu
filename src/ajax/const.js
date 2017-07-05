@@ -82,10 +82,11 @@ export default function request(url, options) {
     })
 }
 
-export function post(url, data) {
+export function post(url, data, token) {
   return request(url, {
     method: 'post',
     headers: {
+      'token': token,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     credentials: 'include',

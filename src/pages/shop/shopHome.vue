@@ -7,7 +7,7 @@
         </router-link> -->
       </div>
       <el-col :span="8" style="width:100%">
-        <el-menu  style="background-color:#32323a">
+        <el-menu  style="background-color:#32323a" unique-opened>
           <!-- <router-link :to="{name:'admin-user-list'}">
             <el-menu-item index="1">账号管理</el-menu-item>
           </router-link> -->
@@ -48,6 +48,24 @@
                 <el-menu-item index="3-3" class="sub-title">咨询专区管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="6">
+            <template slot="title">产品管理</template>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-autoinsurance-manage'}">
+                <el-menu-item index="6-1" class="sub-title">车险管理</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-autoinsurance-ratio'}">
+                <el-menu-item index="6-2" class="sub-title">车险自定义系数管理</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+            <!-- <el-menu-item-group>
+              <router-link :to="{name:'shop-run-newslist'}">
+                <el-menu-item index="3-3" class="sub-title">咨询专区管理</el-menu-item>
+              </router-link>
+            </el-menu-item-group> -->
           </el-submenu>
           <el-submenu index="4">
             <template slot="title">消息体系</template>
@@ -140,7 +158,6 @@ export default {
     padding-left: 260px;
     padding-top: 80px;
     .left-box{
-      overflow: scroll;
       position: absolute;
       top: 0px;
       left: 0px;

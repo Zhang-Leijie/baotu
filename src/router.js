@@ -96,6 +96,18 @@ const routes = [
                 require(['./pages/shop/message/noticeCheck.vue'],resolve)
             }
         },{
+            path: "/shop/autoinsurance-manage",
+            name: 'shop-autoinsurance-manage',
+            component(resolve) {
+                require(['./pages/shop/product/autoInsuranceManage.vue'],resolve)
+            }
+        },{
+            path: "/shop/autoinsurance-ratio",
+            name: 'shop-autoinsurance-ratio',
+            component(resolve) {
+                require(['./pages/shop/product/autoInsuranceRatio.vue'],resolve)
+            }
+        },{
             path: "/shop/rollImg",
             name: 'shop-run-rollimg',
             component(resolve) {

@@ -4,6 +4,14 @@ export function logApi(params) {
   return post('/login/api', params)
 }
 
+export function autoApi(params, token) {
+  return post('/manager/api', params, token)
+}
+
+export function commonApi(params, token) {
+  return post('/common/api', params, token)
+}
+
 export const uploadFactory = function(imgId) {
     var state = {
         uploading: false
