@@ -130,7 +130,7 @@ export default {
 	       		}).then((res)=> {
 	       			if (res.code == 0) {
                 localStorage.setItem('token',res.attach.token);
-                localStorage.setItem('userId',res.attach.user.uid);
+                // localStorage.setItem('userId',res.attach.user.uid);
 	       				router.push({name:'home'})
 	       			}
 	       		})

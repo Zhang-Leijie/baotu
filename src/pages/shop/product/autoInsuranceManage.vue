@@ -4,11 +4,15 @@
 		  	<el-breadcrumb-item>车险管理</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<el-select v-model="value" placeholder="请选择">
+		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">
+		    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
+		</el-select>
+
+		<el-select v-model="insurerId" placeholder="请选择" v-if="insurers[0]" @change="insurerChange">
 		    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
 		</el-select>
 		
-		<div class="dataBox">
+		<div class="dataBox" v-if="formData1[0]">
 			<div class="dataBox1">
 				<ul>
 					<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
@@ -31,7 +35,7 @@
 			</div>
 		</div>
 
-		<el-row class="commonSet">
+		<el-row class="commonSet" v-if="insurerId && tenantId.employeeId && choosed">
 			<el-col :span="11">
 				<label class="titleLabel">基础佣金设置</label>
 				<el-row>
@@ -66,23 +70,153 @@
 					</el-col>
 				</el-row>
 			</el-col>
-			<el-col :span="2" style="padding-top:40px">
-				<el-button @click="changeCommission" size="small">确认设置</el-button>
-			</el-col>	
+			<!-- <el-col :span="2" style="padding-top:40px">
+				<el-button @click="confirmSet" size="small">确认设置</el-button>
+			</el-col>	 -->
 		</el-row>
 
-		<el-row class="tableBox">
+		<el-row class="tableBox" v-if="insurerId && tenantId.employeeId && choosed">
 		    <el-col :span="24">
 		        <el-table :data="tableData" border style="width: 100%">
-		          	<el-table-column label="系数类型">
+		          	<el-table-column label="系数名称">
+		             	<template scope="scope">
+		                	<span>{{scope.row.typeName}}</span>
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="系数类型">
+		             	<template scope="scope">
+		                	<el-select v-model="scope.row.choosed" placeholder="请选择" @change="showCoefficient(scope.row)">
+							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id"></el-option>
+							</el-select>
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="区间数值">
+		             	<template scope="scope">
+		                	<el-row v-if="scope.row.comparisonType === 1">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span>>{{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 2">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span>>={{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 3">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span><{{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 4">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span>=<{{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 5">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span>={{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 6">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span>!={{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 7">
+		                		<el-col :span="10">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="2" :offset="1">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="10">
+		                			<el-input></el-input>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 8">
+		                		<el-col :span="10">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="2" :offset="1">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="10">
+		                			<el-input></el-input>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 9">
+		                		<el-col :span="10">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="2" :offset="1">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="10">
+		                			<el-input></el-input>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 10">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span>in{{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+
+		                	<el-row v-if="scope.row.comparisonType === 11">
+		                		<el-col :span="16">
+		                			<el-input></el-input>
+		                		</el-col>
+		                		<el-col :span="6" :offset="2">
+		                			<span>not in{{scope.row.comparisonValue}}</span>
+		                		</el-col>
+		                	</el-row>
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="佣金增减">
+		             	<template scope="scope">
+		                
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="佣金比例">
 		             	<template scope="scope">
 		                
 		             	</template>
 		            </el-table-column>
 		        	<el-table-column label="操作">
 		            	<template scope="scope">
-		              		<el-button size="small">编辑</el-button>
-		              		<el-button size="small">确定</el-button>
+		              		<el-button size="small" type="text">编辑</el-button>
+		              		<el-button size="small" type="text">保存</el-button>
+		              		<el-button size="small" type="text">新增</el-button>
+		              		<el-button size="small" type="text">删除</el-button>
 		            	</template>
 		          	</el-table-column>
 		        </el-table>
@@ -125,33 +259,126 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	jiaoqiang: null
 	      },
 	      tableData: [],
+	      tenantId: null,		//当前选择代理商ID	
+	      tenants: [],			//代理商列表数据
 	      insurerId: null,		//当前选择险企ID
-	      insurers: [] 			//险企列表数据
+	      insurers: [], 			//险企列表数据
 	    }
 	  },
 	  methods: {
-	 	//获取路由列表数据
-	    getRouteList() {
-	    	autoApi({
-	   			action: 'vehicle_bonus_skeleton',
+	  	showCoefficient(row) {
+	  		for (var i = 0; i < row.coefficients.length; i++) {
+	  			if(row.coefficients[i].id === row.choosed) {
+	  				row.comparisonType = row.coefficients[i].comparison;
+	  				row.comparisonValue = row.coefficients[i].comparableValue;
+	  				if (row.coefficients[i].rate) {
+	  					row.rate = row.coefficients[i].rate;
+	  				}
+	  			}
+	  		}
+	  	},
+	    //获取代理商列表
+	    getTenanList() {
+	    	commonApi({
+	   			action: 'tenant_list',
 	   			version: '1.0',
-	   			employeeId: '5',
+	   			client: 2		
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
-	   				this.originData = res.attach;
-	   				for(let one in res.attach.children) {
-	   					let databuf = {
-	   						value: null,
-	   						label: null,
-	   						data: null
+	   				if (res.attach.audit[0]) {
+	   					for (var i = 0; i < res.attach.audit.length; i++) {
+		   					let buf = {
+		   						value: {
+		   							tid: null
+		   						},
+		   						label: null
+		   					}
+		   					buf.value.tid = res.attach.audit[i].tid;
+		   					buf.label = res.attach.audit[i].tname + " (审核中)";
+		   					this.tenants.push(buf);
+		   				}
+	   				}
+
+	   				if (res.attach.own[0]) {
+	   					for (var i = 0; i < res.attach.own.length; i++) {
+		   					let buf = {
+		   						value: {
+		   							tid: null,
+		   							employeeId: null
+		   						},
+		   						label: null
+		   					}
+		   					buf.value.tid = res.attach.own[i].tid;
+		   					buf.value.employeeId = res.attach.own[i].employeeId;
+		   					buf.label = res.attach.own[i].tname;
+		   					this.tenants.push(buf);
+		   				}
+	   				}
+		   				
+       			}
+	   		}) 
+	    },
+
+	    tenantChange(value) {				//选择商户  get:tid/employeeId
+	  		this.getInsurerList(); 			//获取险企列表  need:tid  get:insurerId
+	  		this.getRouteList();			//获取路由节点列表  need:employeeId  get:route
+	    },
+
+	    //获取险企列表
+	    getInsurerList() {
+	    	let tid = this.tenantId.tid;
+			commonApi({
+	   			action: 'insurer_list',
+	   			version: '1.0',
+	   			tid: tid, 						
+	   			client: 2			
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if(res.attach[0]) {
+	   					for (var i = 0; i < res.attach.length; i++) {
+	   						let buf = {
+	   							value: null,
+	   							label: null
+	   						}
+	   						buf.value = res.attach[i].id;
+	   						buf.label = res.attach[i].name;
+	   						this.insurers.push(buf);
 	   					}
-	   					databuf.value = res.attach.children[one].id;
-	   					databuf.label = res.attach.children[one].title;
-	   					databuf.data = res.attach.children[one];
-	   					this.formData1.push(databuf);
 	   				}
        			}
 	   		})
+	    },
+
+	    insurerChange(value) {
+	  		this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+	    	//险企ID
+	    },
+
+	    //获取路由列表数据
+	    getRouteList() {
+	    	if(this.tenantId.employeeId) {
+	    		let employeeId = this.tenantId.employeeId
+	    		autoApi({
+		   			action: 'vehicle_bonus_skeleton',
+		   			version: '1.0',
+		   			employeeId: employeeId,
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.originData = res.attach;
+		   				for(let one in res.attach.children) {
+		   					let databuf = {
+		   						value: null,
+		   						label: null,
+		   						data: null
+		   					}
+		   					databuf.value = res.attach.children[one].id;
+		   					databuf.label = res.attach.children[one].title;
+		   					databuf.data = res.attach.children[one];
+		   					this.formData1.push(databuf);
+		   				}
+	       			}
+		   		})
+	    	}
 	    },
 	    //一级路由点击事件处理
 	    enterToSecond(val) {
@@ -173,6 +400,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				databuf.data = val.data.children[two];
 				this.formData2.push(databuf);
 			}
+			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //二级路由点击事件处理
 	    enterToThird(val) {
@@ -192,6 +420,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				databuf.data = val.data.children[three];
 				this.formData3.push(databuf);
 			}
+			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //三级路由点击事件处理
 	    enterTofourth(val) {
@@ -209,87 +438,119 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				databuf.data = val.data.children[four];
 				this.formData4.push(databuf);
 			}
+			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //四级路由点击事件处理
 	    enterTofifth(val) {
 	    	this.choosed = val.value;
 	    	this.chooseds[3] = val.value;
-	    	console.log(this.chooseds);
+	    	this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
-	    //获取险企列表
-	    getinsurerList() {
-	    	let tid = window.localStorage.getItem('userId'); 		//商户id
-			commonApi({
-	   			action: 'insurer_list',
-	   			version: '1.0',
-	   			tid: tid, 						
-	   			client: 2			
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
+
+	    //获取节点配置
+	    getSetting() {
+	    	if (this.choosed && this.insurerId) {
+	    		let employeeId = this.tenantId.employeeId;
+		    	let bonusSearcher = {
+		    		 path: '',                        	// 路由节点id链接字符串
+	   				 insurerId: null,          
+		    	};
+		    	
+		    	bonusSearcher.insurerId = this.insurerId;			//险企ID
+				//页面节点路径    	
+				for (var i = 0; i < this.chooseds.length; i++) {
+					if(this.chooseds[i] === this.choosed) {
+						bonusSearcher.path = bonusSearcher.path + this.chooseds[i];
+						break;
+					}
+					else
+					{
+						bonusSearcher.path = bonusSearcher.path + this.chooseds[i] + "_";
+					}
+				}
+
+				bonusSearcher = JSON.stringify(bonusSearcher);
+		    	autoApi({
+		   			action: 'vehicle_coefficients',
+		   			version: '1.0',
+		   			employeeId: employeeId,
+		   			bonusSearcher: bonusSearcher
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				if (res.attach) {
+		   					for (var i = 0; i < res.attach.length; i++) {
+			   					res.attach[i]['choosed'] = null;
+			   					res.attach[i]['comparisonValue'] = null;
+			   					res.attach[i]['comparisonType'] = null;
+			   					res.attach[i]['addORdec'] = null;
+			   					res.attach[i]['rate'] = null;
+			   				}
+		   				}
+		   				this.tableData = res.attach;
+	       			}
+		   		})
+	    	}
+	    },
+
+	  //   confirmSet() {
+	  //   	// this.baseCommission
+	  //   	// this.selfCommission
+	  //   	let bonusSearcher = 
+			// 	{
+			// 	    path: '',       					//页面节点路径                 
+			// 	    insurerId: null,                       //险企ID         
+			// 	    routeBody: {
+			//             commercialRate: null,           	//基础 - 商业  
+			//             compulsoryRate: null,            //基础 - 交强
+			//             commercialRetainRate: null,       //自留 - 商业
+			//             compulsoryRetainRate: null,       //自留 - 交强
+			//             commercialCommisionSpinner: {     
+			//                 "1": 5,
+			//                 "2": -5
+			//             },
+			//             delete: "false"
+			//         }    
+			// 	}
+			// //页面节点路径    	
+			// for (var i = 0; i < this.chooseds.length; i++) {
+			// 	if(this.chooseds[i] === this.choosed) {
+			// 		bonusSearcher.path = bonusSearcher.path + this.chooseds[i];
+			// 		break;
+			// 	}
+			// 	else
+			// 	{
+			// 		bonusSearcher.path = bonusSearcher.path + this.chooseds[i] + "_";
+			// 	}
+			// }
+			// bonusSearcher = JSON.stringify(bonusSearcher);
+			
+			// //基础 - 商业
+			// bonusSearcher.routeBody.commercialRate = this.baseCommission.shangye * 10;
+			// //基础 - 交强
+			// bonusSearcher.routeBody.compulsoryRate = this.baseCommission.jiaoqiang * 10;
+			// //自留 - 商业
+			// bonusSearcher.routeBody.commercialRetainRate = this.selfCommission.shangye * 10;
+			// //自留 - 交强
+			// bonusSearcher.routeBody.compulsoryRetainRate = this.selfCommission.shangye * 10;
+			// //险企ID
+			// bonusSearcher.insurerId = this.insurerId;
+			// //代理商ID
+			// let employeeId = this.tenantId.employeeId;
+
+			// autoApi({
+	  //  			action: '',
+	  //  			version: '1.0',
+	  //  			employeeId: employeeId,
+	  //  			bonusSearcher: bonusSearcher
+	  //  		},window.localStorage.getItem('token')).then((res)=> {
+	  //  			if (res.code == 0) {
 	   				
-       			}
-	   		})
-	    },
-
-	    changeCommission() {
-	    	// this.baseCommission
-	    	// this.selfCommission
-	    	let bonusSearcher = 
-				{
-				    path: '',       					//页面节点路径                 
-				    insurerId: 1,                       //险企ID         
-				    routeBody: {
-			            commercialRate: 200,           	//基础 - 商业  
-			            compulsoryRate: 200,            //基础 - 交强
-			            commercialRetainRate: 50,       //自留 - 商业
-			            compulsoryRetainRate: 50,       //自留 - 交强
-			            commercialCommisionSpinner: {     
-			                "1": 5,
-			                "2": -5
-			            },
-			            delete: "false"
-			        }    
-				}
-			//页面节点路径    	
-			for (var i = 0; i < this.chooseds.length; i++) {
-				if(i < this.chooseds.length - 1) {
-					bonusSearcher.path = bonusSearcher.path + this.chooseds[i] + "_";
-				}
-				else
-				{
-					bonusSearcher.path = bonusSearcher.path + this.chooseds[i];
-				}
-			}
-			//基础 - 商业
-			bonusSearcher.routeBody.commercialRate = this.baseCommission.shangye;
-			//基础 - 交强
-			bonusSearcher.routeBody.compulsoryRate = this.baseCommission.jiaoqiang;
-			//自留 - 商业
-			bonusSearcher.routeBody.commercialRetainRate = this.selfCommission.shangye;
-			//自留 - 交强
-			bonusSearcher.routeBody.compulsoryRetainRate = this.selfCommission.shangye;
-			//险企ID
-			bonusSearcher.insurerId = this.insurerId;
-
-			autoApi({
-	   			action: '',
-	   			version: '1.0',
-	   			employeeId: '5',
-	   			bonusSearcher: bonusSearcher
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				
-       			}
-	   		})
-	    },
-
-	    getInfo() {
-	    	
-	    }
+   //     			}
+	  //  		})
+	  //   }
 	  },
 	  mounted() {
-	  	this.getRouteList();
-	  	this.getinsurerList();
+	  	this.getTenanList(); //获取代理商列表
 	  }
 	}
 </script>
@@ -312,9 +573,11 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 					line-height: 30px;
 					padding-left: 20px;
 					list-style-type:none;
+					cursor: pointer;
 				}
 			}
 		  	.choosedList {
+		  		color: #ffffff !important;
 		  		background-color: #00E5EE;
 		  	}
 		}
@@ -334,7 +597,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	}
 
 	.tableBox {
-		margin-top: 20px;
+		margin: 20px 0;
 	}
 }
 </style>
