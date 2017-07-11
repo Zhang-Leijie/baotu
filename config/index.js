@@ -40,7 +40,7 @@ module.exports = {
         '/manager/api': {
             // target: 'http://192.168.0.109:8080', 
             target: 'http://192.168.0.125:8081',
-            // target: 'http://101.37.34.55:8080',
+            // target: 'http://101.37.34.55:8081',
         }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
