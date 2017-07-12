@@ -8,22 +8,26 @@
 		  <el-form-item class="appblock" label="商家名称:">
 		    <el-input type="text" style="width:300px;" v-model="form.name" auto-complete="off" placeholder="请输入商家名称"></el-input>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="营业执照号:">
+		 <!--  <el-form-item class="appblock" label="联系人:">
+		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入联系人"></el-input>
+		  </el-form-item> -->
+		  <el-form-item class="appblock" label="手机号:">
+		    <el-input type="number" style="width:190px;" v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+		    <el-button type="primary">获取验证码</el-button>
+		  </el-form-item>
+		  <el-form-item class="appblock" label="行政区划代码:">
 		    <el-input type="number" style="width:300px;" v-model="form.password" auto-complete="off" placeholder="请输入营业执照号"></el-input>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="联系人:">
-		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入联系人"></el-input>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="账号:">
-		    <el-input type="number" style="width:300px;" v-model="form.account" auto-complete="off" placeholder="请输入账号"></el-input>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="手机号:">
+		  <el-form-item class="appblock" label="填写验证码:">
 		    <el-input type="number" style="width:300px;" v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="注册时间:">
-		    2017-09-26 08:50:08
+		  <el-form-item class="appblock" label="客服电话:">
+		    <el-input type="number" style="width:300px;" v-model="form.account" auto-complete="off" placeholder="请输入账号"></el-input>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="开通商家量:">
+		  <!-- <el-form-item class="appblock" label="注册时间:">
+		    2017-09-26 08:50:08
+		  </el-form-item> -->
+		  <!-- <el-form-item class="appblock" label="开通商家量:">
 		    <el-select v-model="form.shopNum" placeholder="请选择" style="width:300px;">
 			    <el-option
 			      v-for="item in options"
@@ -31,13 +35,13 @@
 			      :value="item.value">
 			    </el-option>
 			</el-select>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="账号状态:">
+		  </el-form-item> -->
+		  <!-- <el-form-item class="appblock" label="账号状态:">
 		    正常
-		  </el-form-item>
+		  </el-form-item> -->
 		</el-form>
 		<div style="clear:both"></div>
-		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">
+		<!-- <el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="支付开通:">
 		    <el-checkbox-group v-model="form.pay">
 			    <el-checkbox value='1' label="银行卡"></el-checkbox>
@@ -66,16 +70,16 @@
 			    <el-checkbox value='2' label="共享商城"></el-checkbox>
 			</el-checkbox-group>
 		  </el-form-item>
-		</el-form>
-		<div style="clear:both"></div>
+		</el-form> -->
+		<!-- <div style="clear:both"></div> -->
 		<el-form :label-position="labelPosition" label-width="130px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="营业执照正面:">
 		    <el-upload
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
 			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
-			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
+			  :on-success="handleAvatarScucessA">
+			  <img v-if="imageUrla" :src="imageUrla" class="avatar">
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
 		  </el-form-item>
@@ -84,12 +88,12 @@
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
 			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
-			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
+			  :on-success="handleAvatarScucessB">
+			  <img v-if="imageUrlb" :src="imageUrlb" class="avatar">
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="联系人身份证正面:">
+		  <!-- <el-form-item class="appblock" label="联系人身份证正面:">
 		    <el-upload
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
@@ -108,7 +112,7 @@
 			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
-		  </el-form-item>
+		  </el-form-item> -->
 		</el-form>
 		<div style="clear:both"></div>
 		<div style="text-align:center;margin-top:20px;">
@@ -120,7 +124,8 @@
 	export default {
 	    data() {
 	      return {
-	      	imageUrl: '',
+	      	imageUrla: '',
+	      	imageUrlb: '',
 	        labelPosition: 'right',
 	        info:'',
 	        form:{
@@ -167,8 +172,11 @@
 			  var   min =  "0" +now.getMinutes();
 			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
 			},
-			handleAvatarScucess(res, file) {
-		        this.imageUrl = URL.createObjectURL(file.raw);
+			handleAvatarScucessA(res, file) {
+		        this.imageUrla = URL.createObjectURL(file.raw);
+		    },
+		    handleAvatarScucessB(res, file) {
+		        this.imageUrlb = URL.createObjectURL(file.raw);
 		    },
 	    },
 	    mounted:function(){

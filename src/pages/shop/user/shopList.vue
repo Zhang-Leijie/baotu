@@ -54,9 +54,9 @@
 			      			编辑
 			      		</router-link>
 		      		</el-button>
-			        <el-button type="text" size="small">禁用</el-button>
+			        <!-- <el-button type="text" size="small">禁用</el-button>
 			        <el-button type="text" size="small">启用</el-button>
-			        <el-button type="text" size="small">轮播图</el-button>
+			        <el-button type="text" size="small">轮播图</el-button> -->
 			        <el-button type="text" size="small">删除</el-button>
 			      </template>
 			    </el-table-column>

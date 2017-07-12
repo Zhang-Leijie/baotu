@@ -9,12 +9,12 @@
 			    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 
-			<el-select v-model="insurerId" placeholder="请选择" v-if="insurers[0]" @change="insurerChange">
+			<el-select v-model="insurerId" placeholder="请选择" v-if="insurers[0] && !editing" @change="insurerChange">
 			    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 		</div>
 		
-		<div class="dataBox" v-if="formData1[0]">
+		<div class="dataBox" v-if="formData1[0] && !editing">
 			<div class="dataBox1">
 				<ul>
 					<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
@@ -37,7 +37,7 @@
 			</div>
 		</div>
 
-		<el-row class="commonSet" v-if="insurerId && tenantId.employeeId && choosed">
+		<el-row class="commonSet" v-if="insurerId && tenantId.employeeId && choosed && !editing">
 			<el-col :span="11">
 				<label class="titleLabel">基础佣金设置</label>
 				<el-row>
@@ -77,15 +77,15 @@
 			</el-col>	 -->
 		</el-row>
 
-		<el-row class="tableBox" v-if="insurerId && tenantId.employeeId && choosed">
+		<el-row class="tableBox" v-if="insurerId && tenantId.employeeId && choosed && !editing">
 		    <el-col :span="24">
 		        <el-table :data="tableData" border style="width: 100%">
-		          	<el-table-column label="系数名称">
+		          	<el-table-column label="系数类型名">
 		             	<template scope="scope">
 		                	<span>{{scope.row.typeName}}</span>
 		             	</template>
 		            </el-table-column>
-		            <el-table-column label="系数类型">
+		            <el-table-column label="系数名称">
 		             	<template scope="scope">
 		                	<el-select v-model="scope.row.choosed" placeholder="请选择" @change="showCoefficient(scope.row)">
 							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id"></el-option>
@@ -186,7 +186,55 @@
 		    </el-col>
 		</el-row>
 
-		<div class="confirmBox" v-if="insurerId && tenantId.employeeId && choosed">
+		<el-row class="tableBox" v-if="tenantId.employeeId && editing">
+		    <el-col :span="24">
+		        <el-table :data="editData" border style="width: 100%">
+		          	<el-table-column label="系数类型名">
+		             	<template scope="scope">
+		                	<span>{{scope.row.typeName}}</span>
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="系数名称">
+		             	<template scope="scope">
+		                	<el-select v-model="scope.row.choosed" placeholder="请选择" @change="chooseOneCoefficient(scope.row)" v-if="scope.row.coefficients && !(isAdded == scope.row.typeId) && !(isEdited == scope.row.typeId)">
+							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id"></el-option>
+							</el-select>
+							<el-input v-model="scope.row.name" v-if="(isEdited || isAdded) && (isEdited == scope.row.choosed || isAdded == scope.row.typeId)"></el-input>
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="比较器类型">
+		             	<template scope="scope">
+		             		<span>{{scope.row.comparisonType}}</span>
+		             		<el-input v-model="scope.row.name" v-if="(isEdited || isAdded) && (isEdited == scope.row.choosed || isAdded == scope.row.typeId)"></el-input>
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="比较器数值">
+		             	<template scope="scope">
+		             		<span>{{scope.row.comparisonValue}}</span>
+		             		<el-input v-model="scope.row.name" v-if="(isEdited || isAdded) && (isEdited == scope.row.choosed || isAdded == scope.row.typeId)"></el-input>
+		             	</template>
+		            </el-table-column>
+		            <el-table-column label="操作">
+		             	<template scope="scope">
+		               		<el-button type="text" @click="editThisOne(scope.row)" v-if="!isEdited && scope.row.custom && !isAdded && scope.row.choosed">编辑</el-button>
+		               		<el-button type="text" @click="confirmEdit(scope.row)" v-if="isEdited && (isEdited == scope.row.choosed)">确认编辑</el-button>
+		               		<el-button type="text" @click="cancelEdit()" v-if="isEdited && (isEdited == scope.row.choosed)">取消编辑</el-button>
+		               		<el-button type="text" @click="addOne(scope.row)" v-if="!isAdded && !isFull(scope.row) && !isEdited">新增</el-button>
+		               		<el-button type="text" @click="confirmAdd(scope.row)" v-if="isAdded == scope.row.typeId">确认添加</el-button>
+		               		<el-button type="text" @click="cancelAdd()" v-if="isAdded == scope.row.typeId">取消添加</el-button>
+		               		<el-button type="text" @click="deleteThisOne(scope.row)" v-if="scope.row.custom && !isEdited && !isAdded && scope.row.choosed">删除</el-button>
+		             	</template>
+		            </el-table-column>
+		        </el-table>
+		    </el-col>
+		</el-row>
+
+		<div class="confirmBoxL" v-if="tenantId.employeeId">
+			<el-button type="primary" size="large" @click="editMode" v-if="!editing">编辑系数</el-button>
+			<el-button size="large" @click="endEditMode" v-if="editing">取消编辑</el-button>
+		</div>
+
+		<div class="confirmBoxR" v-if="insurerId && tenantId.employeeId && choosed && !editing">
 			<el-button type="danger" size="large" @click="confirmSetDelete">删除</el-button>
 			<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
 		</div>
@@ -228,7 +276,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	jiaoqiang: null
 	      },
 	      tableData: [],
-	      tenantId: null,		//当前选择代理商ID	
+	      tenantId: {},		//当前选择代理商ID	
 	      tenants: [],			//代理商列表数据
 	      insurerId: null,		//当前选择险企ID
 	      insurers: [], 			//险企列表数据
@@ -243,7 +291,11 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      {
 	      	value: 2,
 	      	label: '减少'
-	      }]
+	      }],
+	      editing: false,	//系数编辑模式
+	      editData: [],
+	      isEdited: null,	//被编辑的系数id
+	      isAdded: null		//被添加的系数
 	    }
 	  },
 	  methods: {
@@ -314,6 +366,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    tenantChange(value) {				//选择商户  get:tid/employeeId
 	  		this.getInsurerList(); 			//获取险企列表  need:tid  get:insurerId
 	  		this.getRouteList();			//获取路由节点列表  need:employeeId  get:route
+	  		this.getEditSetting();			//获取全局系数设置表
 	    },
 
 	    //获取险企列表
@@ -478,11 +531,10 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			   					res.attach[i]['rate'] = null;
 			   				}
 		   				}
-		   				this.tableData = res.attach;
 
 		   				if (res.attach) {
 		   					for (var j = 0; j < res.attach.length; j++) {
-			   					if (res.attach[j]) {
+			   					if (res.attach[j].coefficients) {
 			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
 				   						if (res.attach[j].coefficients[i].rate) {
 				   							res.attach[j].choosed = res.attach[j].coefficients[i].id;
@@ -493,6 +545,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			   					}
 			   				}
 		   				}
+
+		   				this.tableData = res.attach;
 	       			}
 		   		})
 	    	}
@@ -601,6 +655,93 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	   				
        			}
 	   		})
+	    },
+
+	    //获取节点编辑配置
+	    getEditSetting() {
+	    	let employeeId = this.tenantId.employeeId;
+
+	    	autoApi({
+	   			action: 'vehicle_coefficients',
+	   			version: '1.0',
+	   			employeeId: employeeId,
+	   			bonusSearcher: null
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if (res.attach) {
+	   					for (var i = 0; i < res.attach.length; i++) {
+		   					res.attach[i]['choosed'] = null;			//当前选择的系数id
+			   				res.attach[i]['name'] = null;			//需要编辑/添加的系数名称
+		   					res.attach[i]['comparisonValue'] = null;
+		   					res.attach[i]['comparisonType'] = null;
+		   					res.attach[i]['addORdec'] = null;
+		   					res.attach[i]['rate'] = null;
+		   				}
+	   				}
+
+	   				if (res.attach) {
+	   					for (var j = 0; j < res.attach.length; j++) {
+		   					if (res.attach[j].coefficients) {
+		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+			   						if (res.attach[j].coefficients[i].rate) {
+			   							res.attach[j].choosed = res.attach[j].coefficients[i].id;
+			   							res.attach[j].rate = res.attach[j].coefficients[i].rate / 10;
+			   							res.attach[j].addORdec = res.attach[j].coefficients[i].rate?(res.attach[j].coefficients[i].rate > 0?1:2):0;
+			   						}
+			   					}
+		   					}
+		   				}
+	   				}
+
+	   				this.editData = res.attach;
+       			}
+	   		})
+	    },
+	    editMode() {
+	    	this.editing = true;
+	    },
+	    endEditMode() {
+	    	this.editing = false;
+	    	this.getSetting();
+	    },
+	    editThisOne(row) {
+	    	this.isEdited = row.choosed;
+	    },
+	    confirmEdit(row) {
+	    	this.isEdited = null;
+	    	this.getEditSetting();
+	    },
+	    cancelEdit() {
+	    	this.isEdited = null;
+	    },
+	    deleteThisOne(row) {
+	    	this.getEditSetting();
+	    },
+	    addOne(row) {
+	    	this.isAdded = row.typeId;
+	    },
+	    confirmAdd(row) {
+	    	this.isAdded = null;
+	    	this.getEditSetting();
+	    },
+	    cancelAdd() {
+	    	this.isAdded = null;
+	    },
+	    isFull(row) {
+	    	if (row.coefficients) {
+	    		if (row.maxCustomNum <= row.coefficients.length) {
+	    			return true;
+	    		}
+	    	}
+	    	else
+	    	{
+	    		return false;
+	    	}
+	    },
+	    chooseOneCoefficient(row) {
+	    	row.choosed = row.coefficients.id;
+	    	row.comparisonType = row.coefficients.comparison;
+	    	row.comparisonValue = row.coefficients.comparableValue;
 	    }
 	  },
 	  mounted() {
@@ -653,10 +794,17 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	}
 
 	.tableBox {
-		margin: 20px 0;
+		margin-top: 20px;
 	}
 
-	.confirmBox {
+	.confirmBoxL {
+		margin-top: 20px;
+		position: relative;
+		float: left;
+	}
+
+	.confirmBoxR {
+		margin-top: 20px;
 		position: relative;
 		float: right;
 	}
