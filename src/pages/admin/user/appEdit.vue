@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'admin-user-list'}">APP列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'admin-app-list'}">APP列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>编辑</el-breadcrumb-item>
 		</el-breadcrumb>
 		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">

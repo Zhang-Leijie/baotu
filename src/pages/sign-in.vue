@@ -40,8 +40,8 @@ export default {
       	haveCode:3,
          form:{
          	platCode:'',
-         	account:'',
-         	password:'',
+         	account:'13105716367',
+         	password:'zxl870613',
          },
          formLabelWidth: '80px',
          rules: {
@@ -131,6 +131,7 @@ export default {
 	       			if (res.code == 0) {
                 localStorage.setItem('token',res.attach.token);
                 // localStorage.setItem('userId',res.attach.user.uid);
+                localStorage.setItem('appId',this.form.platCode);
 	       				router.push({name:'home'})
 	       			}
 	       		})

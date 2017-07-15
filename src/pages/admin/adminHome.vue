@@ -7,7 +7,7 @@
         </router-link> -->
       </div>
       <el-col :span="8" style="width:100%">
-        <el-menu  style="background-color:#32323a">
+        <el-menu  style="background-color:#32323a" unique-opened>
           <!-- <router-link :to="{name:'admin-user-list'}">
             <el-menu-item index="1">账号管理</el-menu-item>
           </router-link> -->
@@ -125,7 +125,6 @@ export default {
     padding-left: 260px;
     padding-top: 80px;
     .left-box{
-      overflow: scroll;
       position: absolute;
       top: 0px;
       left: 0px;

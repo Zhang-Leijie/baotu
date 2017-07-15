@@ -196,32 +196,34 @@
 		            </el-table-column>
 		            <el-table-column label="系数名称">
 		             	<template scope="scope">
-		                	<el-select v-model="scope.row.choosed" placeholder="请选择" @change="chooseOneCoefficient(scope.row)" v-if="scope.row.coefficients && !(isAdded == scope.row.typeId) && !(isEdited == scope.row.typeId)">
+		                	<el-select v-model="scope.row.choosed" placeholder="请选择" @change="chooseOneCoefficient(scope.row)" v-if="scope.row.coefficients && !(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">
 							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id"></el-option>
 							</el-select>
-							<el-input v-model="scope.row.name" v-if="(isEdited || isAdded) && (isEdited == scope.row.choosed || isAdded == scope.row.typeId)"></el-input>
+							<el-input v-model="scope.row.name" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="比较器类型">
 		             	<template scope="scope">
-		             		<span>{{scope.row.comparisonType}}</span>
-		             		<el-input v-model="scope.row.name" v-if="(isEdited || isAdded) && (isEdited == scope.row.choosed || isAdded == scope.row.typeId)"></el-input>
+		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{reComparisonName(scope.row.comparisonType)}}</span>
+		             		<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)">
+    							<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+  							</el-select>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="比较器数值">
 		             	<template scope="scope">
-		             		<span>{{scope.row.comparisonValue}}</span>
-		             		<el-input v-model="scope.row.name" v-if="(isEdited || isAdded) && (isEdited == scope.row.choosed || isAdded == scope.row.typeId)"></el-input>
+		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{comparisonValueShow(scope.row)}}</span>
+		             		<el-input v-model="scope.row.comparisonValue" placeholder="区间数值请用下划线 _ 隔开" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="操作">
 		             	<template scope="scope">
-		               		<el-button type="text" @click="editThisOne(scope.row)" v-if="!isEdited && scope.row.custom && !isAdded && scope.row.choosed">编辑</el-button>
-		               		<el-button type="text" @click="confirmEdit(scope.row)" v-if="isEdited && (isEdited == scope.row.choosed)">确认编辑</el-button>
-		               		<el-button type="text" @click="cancelEdit()" v-if="isEdited && (isEdited == scope.row.choosed)">取消编辑</el-button>
 		               		<el-button type="text" @click="addOne(scope.row)" v-if="!isAdded && !isFull(scope.row) && !isEdited">新增</el-button>
 		               		<el-button type="text" @click="confirmAdd(scope.row)" v-if="isAdded == scope.row.typeId">确认添加</el-button>
-		               		<el-button type="text" @click="cancelAdd()" v-if="isAdded == scope.row.typeId">取消添加</el-button>
+		               		<el-button type="text" @click="cancelAdd(scope.row)" v-if="isAdded == scope.row.typeId">取消添加</el-button>
+		               		<el-button type="text" @click="editThisOne(scope.row)" v-if="!isEdited && scope.row.custom && !isAdded && scope.row.choosed">编辑</el-button>
+		               		<el-button type="text" @click="confirmEdit(scope.row)" v-if="isEdited && (isEdited == scope.row.choosed)">确认编辑</el-button>
+		               		<el-button type="text" @click="cancelEdit(scope.row)" v-if="isEdited && (isEdited == scope.row.choosed)">取消编辑</el-button>
 		               		<el-button type="text" @click="deleteThisOne(scope.row)" v-if="scope.row.custom && !isEdited && !isAdded && scope.row.choosed">删除</el-button>
 		             	</template>
 		            </el-table-column>
@@ -231,7 +233,7 @@
 
 		<div class="confirmBoxL" v-if="tenantId.employeeId">
 			<el-button type="primary" size="large" @click="editMode" v-if="!editing">编辑系数</el-button>
-			<el-button size="large" @click="endEditMode" v-if="editing">取消编辑</el-button>
+			<el-button size="large" @click="endEditMode" v-if="editing">完成编辑</el-button>
 		</div>
 
 		<div class="confirmBoxR" v-if="insurerId && tenantId.employeeId && choosed && !editing">
@@ -295,7 +297,53 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      editing: false,	//系数编辑模式
 	      editData: [],
 	      isEdited: null,	//被编辑的系数id
-	      isAdded: null		//被添加的系数
+	      isAdded: null,	//被添加的系数
+	      comparisons: [
+	      	{
+	      		value: 1,
+	      		label: "大于"
+	      	},
+	      	{
+	      		value: 2,
+	      		label: "大于等于"
+	      	},
+	      	{
+	      		value: 3,
+	      		label: "小于"
+	      	},
+	      	{
+	      		value: 4,
+	      		label: "小于等于"
+	      	},
+	      	{
+	      		value: 5,
+	      		label: "等于"
+	      	},
+	      	// {
+	      	// 	value: 6,
+	      	// 	label: "不等于"
+	      	// },
+	      	{
+	      		value: 7,
+	      		label: "开区间 ( )"
+	      	},
+	      	{
+	      		value: 8,
+	      		label: "前闭后开区间 [ )"
+	      	},
+	      	{
+	      		value: 9,
+	      		label: "前开后闭区间 ( ]"
+	      	},
+	      	// {
+	      	// 	value: 10,
+	      	// 	label: "在 ... 之中"
+	      	// },
+	      	// {
+	      	// 	value: 11,
+	      	// 	label: "不在 ... 之中"
+	      	// }
+	      ]
 	    }
 	  },
 	  methods: {
@@ -638,23 +686,39 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 					bonusSearcher.path = bonusSearcher.path + this.chooseds[i] + "_";
 				}
 			}
-			bonusSearcher = JSON.stringify(bonusSearcher);
-			
 			//险企ID
 			bonusSearcher.insurerId = this.insurerId;
+
+			bonusSearcher = JSON.stringify(bonusSearcher);
+			
 			//代理商ID
 			let employeeId = this.tenantId.employeeId;
 
-			autoApi({
-	   			action: 'vehicle_bonus_set',
-	   			version: '1.0',
-	   			employeeId: employeeId,
-	   			bonusSearcher: bonusSearcher
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				
-       			}
-	   		})
+			this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+	          confirmButtonText: '确定',
+	          cancelButtonText: '取消',
+	          type: 'warning'
+	        }).then(() => {
+	    		autoApi({
+		   			action: 'vehicle_bonus_set',
+		   			version: '1.0',
+		   			employeeId: employeeId,
+		   			bonusSearcher: bonusSearcher
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.$message({
+			            type: 'info',
+			            message: '已删除节点'
+			          });   
+	       			}
+		   		})
+	        }).catch(() => {
+	          this.$message({
+	            type: 'info',
+	            message: '已取消删除'
+	          });          
+	        });   	
+
 	    },
 
 	    //获取节点编辑配置
@@ -706,26 +770,189 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 	    editThisOne(row) {
 	    	this.isEdited = row.choosed;
+	    	for (var i = 0; i < row.coefficients.length; i++) {
+	    		if (row.coefficients[i].id === row.choosed) {
+	    			row.name = row.coefficients[i].name;
+	    		}
+	    	}
 	    },
 	    confirmEdit(row) {
-	    	this.isEdited = null;
-	    	this.getEditSetting();
+	    	let checkChange = false;
+	    	for (var i = 0; i < row.coefficients.length; i++) {
+	    		if (row.coefficients[i].id === row.choosed) {
+	    			if(row.coefficients[i].comparableValue == row.comparisonValue && row.coefficients[i].comparison == row.comparisonType && row.coefficients[i].name == row.name)
+	    			{
+	    				checkChange = false;
+	    				this.$message({
+				            message: "数值未修改",
+				            type: 'info'
+				        });
+	    			}
+	    			else
+	    			{
+	    				checkChange = true;
+	    			}
+	    		}
+	    	}
+	    	if (checkChange) {
+	    		let employeeId = this.tenantId.employeeId;
+		    	let coefficientType = row.typeId;
+		    	let comparison = row.comparisonType;
+		    	let name = row.name;
+		    	let array = row.comparisonValue.split("_");
+		    	let id = row.choosed;
+		    	if (array[0] >= array[1]) {
+		    		this.$message({
+			            message: "区间数值应当从小到大排列,请检查输入",
+			            type: 'error'
+			        });
+		    	}
+		    	else
+		    	{
+		    		array = JSON.stringify(array);
+		    		autoApi({
+			   			action: 'vehicle_coefficient_edit',
+			   			version: '1.0',
+			   			employeeId: employeeId,
+			   			crudType: 4,	//4:修改
+			   			coefficientType: coefficientType,
+			   			id: id,
+			   			comparison: comparison,
+			   			array: array,
+			   			name: name,
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+			   				this.isEdited = null;
+			    			this.getEditSetting();
+			   				this.$message({
+					            message: '系数编辑完成',
+					            type: 'success'
+					        });
+		       			}
+		       			else if (res.code == 7) {
+		       				this.$message({
+					            message: '操作失败,请检查输入',
+					            type: 'error'
+					        });
+		       			}
+			   		})
+		    	}
+	    	}
 	    },
-	    cancelEdit() {
+	    cancelEdit(row) {
 	    	this.isEdited = null;
+	    	// 重新填写选择的系数信息,因为只有在choosed的情况下才会编辑,所以不用对choosed做判断,coefficients也是一样,只有coefficients不为空时才可以choose
+	    	for (var i = 0; i < row.coefficients.length; i++) {
+	    		if (row.coefficients[i].id === row.choosed) {
+	    			row.comparisonType = row.coefficients[i].comparison;
+	    			row.comparisonValue = row.coefficients[i].comparableValue;
+	    		}
+	    	}
 	    },
 	    deleteThisOne(row) {
-	    	this.getEditSetting();
+	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+	          confirmButtonText: '确定',
+	          cancelButtonText: '取消',
+	          type: 'warning'
+	        }).then(() => {
+	         	let employeeId = this.tenantId.employeeId;
+		    	let coefficientType = row.typeId;
+		    	let id = row.choosed;
+	    		autoApi({
+		   			action: 'vehicle_coefficient_edit',
+		   			version: '1.0',
+		   			employeeId: employeeId,
+		   			crudType: 8,	//4:修改
+		   			coefficientType: coefficientType,
+		   			id: id,
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		    			this.getEditSetting();
+		   				this.$message({
+				            message: '系数已删除',
+				            type: 'success'
+				        });
+	       			}
+	       			else if (res.code == 7) {
+	       				this.$message({
+				            message: '操作失败,请检查输入',
+				            type: 'error'
+				        });
+	       			}
+		   		})
+	        }).catch(() => {
+	          this.$message({
+	            type: 'info',
+	            message: '已取消删除'
+	          });          
+	        });   	
 	    },
 	    addOne(row) {
 	    	this.isAdded = row.typeId;
+	    	row.name = null;
+	    	row.comparisonType = null;
+	    	row.comparisonValue = null;
 	    },
 	    confirmAdd(row) {
-	    	this.isAdded = null;
-	    	this.getEditSetting();
+	    	let employeeId = this.tenantId.employeeId;
+	    	let coefficientType = this.isAdded;
+	    	let comparison = row.comparisonType;
+	    	let name = row.name;
+	    	let array = row.comparisonValue.split("_");
+	    	if (array[0] >= array[1]) {
+	    		this.$message({
+		            message: "区间数值应当从小到大排列,请检查输入",
+		            type: 'error'
+		        });
+	    	}
+	    	else
+	    	{
+	    		array = JSON.stringify(array);
+	    		autoApi({
+		   			action: 'vehicle_coefficient_edit',
+		   			version: '1.0',
+		   			employeeId: employeeId,
+		   			crudType: 1,	//1:添加
+		   			coefficientType: coefficientType,
+		   			comparison: comparison,
+		   			array: array,
+		   			name: name,
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.isAdded = null;
+		    			this.getEditSetting();
+		   				this.$message({
+				            message: '添加了新的系数',
+				            type: 'success'
+				        });
+	       			}
+	       			else if (res.code == 7) {
+	       				this.$message({
+				            message: '操作失败,请检查输入',
+				            type: 'error'
+				        });
+	       			}
+		   		})
+	    	}
+		    		
 	    },
-	    cancelAdd() {
+	    cancelAdd(row) {
 	    	this.isAdded = null;
+	    	//重新填写选择的数据,根据是否选择有两种处理方法
+	    	if(row.choosed) {
+	    		for (var i = 0; i < row.coefficients.length; i++) {
+		    		if (row.coefficients[i].id === row.choosed) {
+		    			row.comparisonType = row.coefficients[i].comparison;
+		    			row.comparisonValue = row.coefficients[i].comparableValue;
+		    		}
+		    	}
+	    	}
+	    	else
+	    	{
+	    		row.name = null;
+	    		row.comparisonType = null;
+	    		row.comparisonValue = null;
+	    	}
 	    },
 	    isFull(row) {
 	    	if (row.coefficients) {
@@ -739,9 +966,77 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	}
 	    },
 	    chooseOneCoefficient(row) {
-	    	row.choosed = row.coefficients.id;
-	    	row.comparisonType = row.coefficients.comparison;
-	    	row.comparisonValue = row.coefficients.comparableValue;
+	    	for (var i = 0; i < row.coefficients.length; i++) {
+	    		if (row.coefficients[i].id === row.choosed) {
+	    			row.comparisonType = row.coefficients[i].comparison;
+	    			row.comparisonValue = row.coefficients[i].comparableValue;
+	    		}
+	    	}
+	    },
+	    reComparisonName(val) {
+	    	switch(val)
+	    	{
+				case 1:
+					return "大于"
+					break;
+				case 2:
+					return "大于等于"
+					break;
+				case 3:
+					return "小于"
+					break;
+				case 4:
+					return "小于等于"
+					break;
+				case 5:
+					return "等于"
+					break;
+				// case 6:
+				// 	return "不等于"
+				// 	break;
+				case 7:
+					return "开区间"
+					break;
+				case 8:
+					return "前闭后开区间"
+					break;
+				case 9:
+					return "前开后闭区间"
+					break;
+				// case 10:
+				// 	return "在 ... 之中"
+				// 	break;
+				// case 11:
+				// 	return "不在 ... 之中"
+				// 	break;
+	    	}
+	    	
+	    },
+	    comparisonValueShow(row) {
+	    	if(row.comparisonValue)
+	    	{
+	    		let value = row.comparisonValue.split("_");
+		    	if (value[1]) {
+		    		switch(row.comparisonType)
+		    		{
+		    			case 7:
+		    				return "( " + value[0] + " , " + value[1] + " )"
+		    				break;
+		    			case 8:
+		    				return "[ " + value[0] + " , " + value[1] + " )"
+		    				break;
+		    			case 9:
+		    				return "( " + value[0] + " , " + value[1] + " ]"
+		    				break;
+		    			default:
+		    				return row.comparisonValue
+		    		}
+		    	}
+		    	else 
+		    	{
+		    		return row.comparisonValue
+		    	}
+	    	}
 	    }
 	  },
 	  mounted() {

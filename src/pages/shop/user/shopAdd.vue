@@ -12,17 +12,22 @@
 		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入联系人"></el-input>
 		  </el-form-item> -->
 		  <el-form-item class="appblock" label="手机号:">
-		    <el-input type="number" style="width:190px;" v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
-		    <el-button type="primary">获取验证码</el-button>
+		    <el-input style="width:190px;" v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+		    <el-button type="primary" @click="getyzm" :disabled="!(getyzmMsg === '获取验证码')">{{getyzmMsg}}</el-button>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="行政区划代码:">
-		    <el-input type="number" style="width:300px;" v-model="form.password" auto-complete="off" placeholder="请输入营业执照号"></el-input>
+		  <el-form-item class="appblock" label="行政区划选择:">
+		    <el-select style="width:145px;" v-model="regions" placeholder="请选择" @change="form.region = null">
+			    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value"></el-option>
+			</el-select>
+			<el-select style="width:145px;" v-model="form.region" placeholder="请选择">
+			    <el-option v-for="item in regions" :label="item[0]" :value="item[1]"></el-option>
+			</el-select>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="填写验证码:">
-		    <el-input type="number" style="width:300px;" v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+		    <el-input style="width:300px;" v-model="form.yzm" auto-complete="off" placeholder="请输入验证码"></el-input>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="客服电话:">
-		    <el-input type="number" style="width:300px;" v-model="form.account" auto-complete="off" placeholder="请输入账号"></el-input>
+		    <el-input style="width:300px;" v-model="form.servicePhone" auto-complete="off"></el-input>
 		  </el-form-item>
 		  <!-- <el-form-item class="appblock" label="注册时间:">
 		    2017-09-26 08:50:08
@@ -93,7 +98,7 @@
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
 		  </el-form-item>
-		  <!-- <el-form-item class="appblock" label="联系人身份证正面:">
+		 <!--  <el-form-item class="appblock" label="联系人身份证正面:">
 		    <el-upload
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
@@ -116,11 +121,14 @@
 		</el-form>
 		<div style="clear:both"></div>
 		<div style="text-align:center;margin-top:20px;">
-			<el-button type="primary">确定</el-button>
+			<el-button type="primary" @click="confirmAdd">确定</el-button>
 		</div>
 	</div>
 </template>
 <script>
+import { autoApi,logApi } from '@/ajax/post.js'
+import regionData from '@/region.js'
+
 	export default {
 	    data() {
 	      return {
@@ -128,36 +136,41 @@
 	      	imageUrlb: '',
 	        labelPosition: 'right',
 	        info:'',
+	        regionFormData: [],		//格式化行政区划表
+	        regions: [],			//一级行政区划表
 	        form:{
 	        	name:'',
 	        	account:'',
-	        	password:'',
+	        	region:'',
 	        	phone:'',
-	        	shopNum:'',
-	        	pay:[],
-	        	point:'',
-	        	type:[],
-	        	company:[],
-	        	other:[],
-	        	people:'',
+	        	yzm: null,
+	        	servicePhone: null,
+	        	// shopNum:'',
+	        	// pay:[],
+	        	// point:'',
+	        	// type:[],
+	        	// company:[],
+	        	// other:[],
+	        	// people:'',
 	        },
-	        radio: '',
-	        options: [{
-	          value: '1',
-	          label: '5'
-	        }, {
-	          value: '2',
-	          label: '10'
-	        }, {
-	          value: '3',
-	          label: '15'
-	        }, {
-	          value: '4',
-	          label: '20'
-	        }, {
-	          value: '5',
-	          label: '25'
-	        }],
+	        getyzmMsg: '获取验证码',
+	        count: 30				//验证码计时器
+	        // options: [{
+	        //   value: '1',
+	        //   label: '5'
+	        // }, {
+	        //   value: '2',
+	        //   label: '10'
+	        // }, {
+	        //   value: '3',
+	        //   label: '15'
+	        // }, {
+	        //   value: '4',
+	        //   label: '20'
+	        // }, {
+	        //   value: '5',
+	        //   label: '25'
+	        // }],
 	      };
 	    },
 	    methods: {
@@ -178,9 +191,69 @@
 		    handleAvatarScucessB(res, file) {
 		        this.imageUrlb = URL.createObjectURL(file.raw);
 		    },
+		    getyzm() {
+		    	if (this.getyzmMsg == '获取验证码') {
+		    		this.getyzmMsg = this.count + 's';
+		    		logApi({
+		       			action: 'captcha_obtain',
+		       			version: '1.0',
+		       			mobile: '+86' + this.form.phone,
+		       			appId: window.localStorage.getItem("appId"),
+		       		}).then((res)=> {
+		       			if (res.code == 0) {
+		       				this.form.yzm = res.attach;		       			
+		       			}
+		       		})
+		    	}
+		    	this.count--;
+		    	this.getyzmMsg = this.count + 's后重新获取';
+		    	if (this.count <= 0) {
+		    		this.getyzmMsg = '获取验证码';
+		    		return false
+		    	}
+		    	setTimeout(this.getyzm,1000);
+		    },
+
+		    confirmAdd() {
+		    	let tname = this.form.name;
+		    	let region = this.form.region;
+		    	let identityFace = this.imageUrla;
+		    	let identityBack = this.imageUrlb;
+		    	let mobile = this.form.phone;
+		    	let captcha = this.form.yzm;
+		    	let servicePhone = this.form.servicePhone;
+		    	autoApi({
+		   			action: 'tenant_add',
+		   			version: '1.0',
+		   			tname: tname,
+		   			region: region,
+		   			identityFace: identityFace,
+		   			identityBack: identityBack,
+		   			mobile: mobile,
+		   			captcha: captcha,
+		   			servicePhone: servicePhone
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.tableData = res.attach.list;
+		   				this.pageCount = res.attach.total;
+		   				// this.$message({
+				     //        message: '修改的设置已保存',
+				     //        type: 'success'
+				     //    });
+	       			}
+		   		})
+		    }
 	    },
 	    mounted:function(){
-	        
+	        this.form.phone = 13105716367;
+	        console.log(regionData);
+	        for(let index in regionData) {
+	        	let buf = {
+	        		value: regionData[index],
+	        		label: index
+	        	}
+	        	this.regionFormData.push(buf);
+	        }
 	    }
 	}
 </script>
