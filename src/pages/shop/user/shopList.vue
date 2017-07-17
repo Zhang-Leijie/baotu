@@ -67,7 +67,7 @@
 		      :current-page="currentPage"
 		      :page-size="pageSize"
 		      layout="total , prev, pager, next, jumper"
-		      :total='pageCount'
+		      :page-count='pageCount'
 		      style="margin:20px auto;text-align:center">
 		    </el-pagination>
 

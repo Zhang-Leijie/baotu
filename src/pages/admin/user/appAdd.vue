@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'admin-user-list'}">APP列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'admin-app-list'}">APP列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>新增</el-breadcrumb-item>
 		</el-breadcrumb>
 		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">
@@ -68,7 +68,7 @@
 		  </el-form-item>
 		</el-form>
 		<div style="clear:both"></div>
-		<el-form :label-position="labelPosition" label-width="130px" style="margin-top:20px;" class="appbox">
+		<!-- <el-form :label-position="labelPosition" label-width="130px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="营业执照正面:">
 		    <el-upload
 			  class="avatar-uploader"
@@ -109,8 +109,8 @@
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
 		  </el-form-item>
-		</el-form>
-		<div style="clear:both"></div>
+		</el-form> -->
+		<!-- <div style="clear:both"></div> -->
 		<div style="text-align:center;margin-top:20px;">
 			<el-button type="primary">确定</el-button>
 		</div>
@@ -120,9 +120,8 @@
 	export default {
 	    data() {
 	      return {
-	      	imageUrl: '',
+	      	// imageUrl: '',
 	        labelPosition: 'right',
-	        info:'',
 	        form:{
 	        	name:'',
 	        	account:'',
@@ -137,22 +136,22 @@
 	        	people:'',
 	        },
 	        radio: '',
-	        options: [{
-	          value: '1',
-	          label: '5'
-	        }, {
-	          value: '2',
-	          label: '10'
-	        }, {
-	          value: '3',
-	          label: '15'
-	        }, {
-	          value: '4',
-	          label: '20'
-	        }, {
-	          value: '5',
-	          label: '25'
-	        }],
+	        // options: [{
+	        //   value: '1',
+	        //   label: '5'
+	        // }, {
+	        //   value: '2',
+	        //   label: '10'
+	        // }, {
+	        //   value: '3',
+	        //   label: '15'
+	        // }, {
+	        //   value: '4',
+	        //   label: '20'
+	        // }, {
+	        //   value: '5',
+	        //   label: '25'
+	        // }],
 	      };
 	    },
 	    methods: {
@@ -167,9 +166,9 @@
 			  var   min =  "0" +now.getMinutes();
 			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
 			},
-			handleAvatarScucess(res, file) {
-		        this.imageUrl = URL.createObjectURL(file.raw);
-		    },
+			// handleAvatarScucess(res, file) {
+		 //        this.imageUrl = URL.createObjectURL(file.raw);
+		 //    },
 	    },
 	    mounted:function(){
 	        

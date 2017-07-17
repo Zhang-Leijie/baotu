@@ -19,7 +19,7 @@
 		    <el-select style="width:145px;" v-model="regions" placeholder="请选择" @change="form.region = null">
 			    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value"></el-option>
 			</el-select>
-			<el-select style="width:145px;" v-model="form.region" placeholder="请选择">
+			<el-select style="width:145px;" v-model="form.region" placeholder="请选择" v-if="regions">
 			    <el-option v-for="item in regions" :label="item[0]" :value="item[1]"></el-option>
 			</el-select>
 		  </el-form-item>

@@ -71,18 +71,12 @@
 			      </template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="intotal"
-		      @current-change="handleCurrentChange"
-		      :current-page="currentPage"
-		      :page-size="10"
-		      layout="total , prev, pager, next, jumper"
-		      :total='intotal'
-		      style="margin:20px auto;text-align:center">
-		    </el-pagination>
+			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 	</div>
 </template>
 <script>
+import { autoApi,commonApi } from '@/ajax/post.js'
 
 	function formatDate(time){
 	  var   x = time - 0
@@ -99,23 +93,37 @@
 	export default {
 	  data() {
 	    return {
-	      intotal:1,
+	      pageCount: null,
+	      pageSize: 10,
+	      currentPage: 1,
 	      searchName:'',
-	      tableData:[
-	      	{name:'姓名', account:'18503060611', role:'角色1', time:'2015-09-26 08:50:08', payway:'全额支付', invite:'Superadmin', invitecode:'123456', state:'正常'}
-	      ],
-	      currentPage:1,
+	      tableData:[],
 		}
 	  },
 	  methods: {
-	  	handleCurrentChange(val) {
+	  	pageChange(val) {
 	        this.currentPage = val;
 	        console.log(`当前页: ${val}`);
 	        // this.getlist(); 
 	    },
 	  },
 	  mounted:function() {
-	  	
+	  	let employeeSearcher = {
+	  		page: this.currentPage,
+	  		pageSize: this.pageSize,
+	  		asc: false
+	  	}
+	  	employeeSearcher = JSON.stringify(employeeSearcher)
+	  	autoApi({
+   			action: 'employee_list',
+   			version: '1.0',
+   			client: 2,
+   			employeeSearcher: employeeSearcher
+   		},window.localStorage.getItem('token')).then((res)=> {
+   			if (res.code == 0) {
+   				
+   			}
+   		})
 	  }
 	}
 </script>

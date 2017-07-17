@@ -4,97 +4,95 @@
 		  	<el-breadcrumb-item>用户信息</el-breadcrumb-item>
 		</el-breadcrumb>
 		<div style="margin-top:10px;margin-bottom:10px;">
-			<el-button class="marginBtn">重置</el-button>
-			<el-button class="marginBtn">搜索</el-button>
-			<el-input style="float:right;width:300px;" v-model="searchName" placeholder="请输入信息"></el-input>
+			<el-input icon="search" v-model="searchName" placeholder="请输入信息" :on-icon-click="search" style="float:right;width:240px;"></el-input>
 			<div style="clear:both"></div>
 		</div>
 		<div style="margin-top:20px;">
-			<el-table
-			    :data="tableData"
-			    border
-			    style="width: 100%;font-size:12px;">
-			    <el-table-column
-			      prop="index"
-			      label="序号"
-			      min-width="50">
+			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
+			    <el-table-column prop="uid" label="序号"></el-table-column>
+			    <el-table-column prop="name" label="姓名"></el-table-column>
+			    <el-table-column label="头像">
+			    	<template scope="scope">
+			        	<img :src="scope.row.avatar">
+			      	</template>
 			    </el-table-column>
-			    <el-table-column
-			      prop="name"
-			      label="姓名"
-			      min-width="100">
+			    <el-table-column prop="mobile" label="电话"></el-table-column>
+			    <el-table-column label="登录时间">
+			    	<template scope="scope">
+			    		<span>{{scope.row.pcLoginTime?formatDate(scope.row.pcLoginTime):''}}</span>
+			    	</template>
 			    </el-table-column>
-			    <el-table-column
-			      prop="number"
-			      label="申请代理商数量"
-			      min-width="100">
+			     <el-table-column label="注册时间">
+			    	<template scope="scope">
+			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>
+			    	</template>
 			    </el-table-column>
-			    <el-table-column
-			      prop="account"
-			      label="账号"
-			      min-width="120">
-			    </el-table-column>
-			    <el-table-column
-			      prop="time"
-			      label="注册时间"
-			      min-width="120">
-			    </el-table-column>
-			    <el-table-column
-			      prop="timelog"
-			      label="最后登录时间"
-			      min-width="120">
-			    </el-table-column>
-			    <el-table-column
-			      prop="state"
-			      label="状态"
-			      min-width="100">
+			     <el-table-column label="最近修改时间">
+			    	<template scope="scope">
+			    		<span>{{scope.row.updated?formatDate(scope.row.updated):''}}</span>
+			    	</template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="intotal"
-		      @current-change="handleCurrentChange"
-		      :current-page="currentPage"
-		      :page-size="10"
-		      layout="total , prev, pager, next, jumper"
-		      :total='intotal'
-		      style="margin:20px auto;text-align:center">
-		    </el-pagination>
+			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 	</div>
 </template>
 <script>
-
-	function formatDate(time){
-	  var   x = time - 0
-	  console.log(x)
-	  var   now = new Date(x) 
-	  var   year = now.getFullYear();     
-	  var   month = "0" + (now.getMonth()+1);     
-	  var   date = "0" +(now.getDate());   
-	  var   hour = "0" +now.getHours();
-	  var   min =  "0" +now.getMinutes();
-	  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-	}
+import { autoApi,commonApi } from '@/ajax/post.js'
 
 	export default {
 	  data() {
 	    return {
-	      intotal:1,
-	      searchName:'',
-	      tableData:[
-	      	{index:'1', name:'姓名', account:'18503060611', role:'角色1', timelog:'2015-09-26 08:50:08', time:'2015-09-26 08:50:08', number:'5', state:'正常'}
-	      ],
-	      currentPage:1,
+	      currentPage: 1,
+	      pageCount: null,
+	      pageSize: 10,
+	      searchName: '',
+	      tableData: [],
 		}
 	  },
 	  methods: {
-	  	handleCurrentChange(val) {
-	        this.currentPage = val;
-	        console.log(`当前页: ${val}`);
-	        // this.getlist(); 
+	  	formatDate(time) {
+		  var   x = (time - 0) * 1000;
+		  
+		  var   now = new Date(x) 
+		  var   year = now.getFullYear();     
+		  var   month = "0" + (now.getMonth()+1);     
+		  var   date = "0" +(now.getDate());   
+		  var   hour = "0" +now.getHours();
+		  var   min =  "0" +now.getMinutes();
+
+		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+		},
+
+	  	getInfo() {
+	  		let userSearch = {
+	  			page: this.currentPage,
+	  			pageSize: this.pageSize,
+	  			asc: false
+	  		}
+	  		userSearch = JSON.stringify(userSearch);
+	  		autoApi({
+	   			action: 'user_list',
+	   			version: '1.0',
+	   			client: 2,
+	   			userSearch: userSearch
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				this.tableData = res.attach.list;
+	   				this.pageCount = res.attach.total;
+       			}
+	   		})
+	  	},
+	  	search() {
+	  		this.getInfo();
+	  	},
+	  	pageChange(pg) {
+	  		this.currentPage = pg;
+	        this.getInfo(); 
 	    },
 	  },
 	  mounted:function() {
-	  	
+	  	this.getInfo();
 	  }
 	}
 </script>

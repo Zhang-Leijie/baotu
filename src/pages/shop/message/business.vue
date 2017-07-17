@@ -77,7 +77,7 @@
 		      :current-page="currentPage"
 		      :page-size="10"
 		      layout="total , prev, pager, next, jumper"
-		      :total='intotal'
+		      :page-count='intotal'
 		      style="margin:20px auto;text-align:center">
 		    </el-pagination>
 		</div>
