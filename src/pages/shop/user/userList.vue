@@ -4,7 +4,8 @@
 		  	<el-breadcrumb-item>用户信息</el-breadcrumb-item>
 		</el-breadcrumb>
 		<div style="margin-top:10px;margin-bottom:10px;">
-			<el-input icon="search" v-model="searchName" placeholder="请输入信息" :on-icon-click="search" style="float:right;width:240px;"></el-input>
+			<el-input icon="search" v-model="searchName" placeholder="请输入姓名" :on-icon-click="search" style="float:right;width:240px;"></el-input>
+			<el-input icon="search" v-model="searchMobile" placeholder="请输入账号(+86)" :on-icon-click="search" style="float:right;width:240px;"></el-input>
 			<div style="clear:both"></div>
 		</div>
 		<div style="margin-top:20px;">
@@ -16,7 +17,7 @@
 			        	<img :src="scope.row.avatar">
 			      	</template>
 			    </el-table-column>
-			    <el-table-column prop="mobile" label="电话"></el-table-column>
+			    <el-table-column prop="mobile" label="账号"></el-table-column>
 			    <el-table-column label="登录时间">
 			    	<template scope="scope">
 			    		<span>{{scope.row.pcLoginTime?formatDate(scope.row.pcLoginTime):''}}</span>
@@ -47,6 +48,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      pageCount: null,
 	      pageSize: 10,
 	      searchName: '',
+	      searchMobile: '',
 	      tableData: [],
 		}
 	  },
@@ -68,7 +70,9 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	  		let userSearch = {
 	  			page: this.currentPage,
 	  			pageSize: this.pageSize,
-	  			asc: false
+	  			asc: false,
+	  			name: this.searchName?this.searchName:null,
+	  			mobile: this.searchMobile?'+86' + this.searchMobile:null
 	  		}
 	  		userSearch = JSON.stringify(userSearch);
 	  		autoApi({

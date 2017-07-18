@@ -5,11 +5,7 @@
 		</el-breadcrumb>
 
 		<div class="topBar">
-			<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">
-			    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
-			</el-select>
-
-			<el-select v-model="insurerId" placeholder="请选择" v-if="insurers[0] && !editing" @change="insurerChange">
+			<el-select v-model="insurerId" placeholder="请选择" v-if="!editing" @change="insurerChange">
 			    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 		</div>
@@ -92,75 +88,6 @@
 							</el-select>
 		             	</template>
 		            </el-table-column>
-		           <!--  <el-table-column label="区间数值">
-		             	<template scope="scope">
-		                	<el-row v-if="scope.row.comparisonType === 1">
-		                		<el-col :span="24">
-		                			<span>>{{scope.row.comparisonValue}}</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 2">
-		                		<el-col :span="24">
-		                			<span>>={{scope.row.comparisonValue}}</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 3">
-		                		<el-col :span="24">
-		                			<span><{{scope.row.comparisonValue}}</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 4">
-		                		<el-col :span="24">
-		                			<span>=<{{scope.row.comparisonValue}}</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 5">
-		                		<el-col :span="24">
-		                			<span>{{isStr(scope.row.comparisonValue)?'equal ':'= '}}{{scope.row.comparisonValue}}</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 6">
-		                		<el-col :span="24">
-		                			<span>{{isStr(scope.row.comparisonValue)?'!equal ':'!= '}}{{scope.row.comparisonValue}}</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 7">
-		                		<el-col :span="24">
-		                			<span>( {{scope.row.comparisonValue.split(",")[0]}} , {{scope.row.comparisonValue.split(",")[1]}} )</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 8">
-		                		<el-col :span="24">
-		                			<span>[ {{scope.row.comparisonValue.split(",")[0]}} , {{scope.row.comparisonValue.split(",")[1]}} )</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 9">
-		                		<el-col :span="24">
-		                			<span>( {{scope.row.comparisonValue.split(",")[0]}} , {{scope.row.comparisonValue.split(",")[1]}} ]</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 10">
-		                		<el-col :span="24">
-		                			<span>{{scope.row.comparisonValue}} in</span>
-		                		</el-col>
-		                	</el-row>
-
-		                	<el-row v-if="scope.row.comparisonType === 11">
-		                		<el-col :span="24">
-		                			<span>{{scope.row.comparisonValue}} not in</span>
-		                		</el-col>
-		                	</el-row>
-		             	</template>
-		            </el-table-column> -->
 		            <el-table-column label="佣金增减">
 		             	<template scope="scope">
 		             		<el-row v-if="scope.row.choosed">
@@ -279,7 +206,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      },
 	      tableData: [],
 	      tenantId: {},		//当前选择代理商ID	
-	      tenants: [],			//代理商列表数据
+	      // tenants: [],			//代理商列表数据
 	      insurerId: null,		//当前选择险企ID
 	      insurers: [], 			//险企列表数据
 	      addAnddec: [{
@@ -369,49 +296,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	  			}
 	  		}
 	  	},
-	    //获取代理商列表
-	    getTenanList() {
-	    	commonApi({
-	   			action: 'tenant_list',
-	   			version: '1.0',
-	   			client: 2		
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach.audit[0]) {
-	   					for (var i = 0; i < res.attach.audit.length; i++) {
-		   					let buf = {
-		   						value: {
-		   							tid: null
-		   						},
-		   						label: null
-		   					}
-		   					buf.value.tid = res.attach.audit[i].tid;
-		   					buf.label = res.attach.audit[i].tname + " (审核中)";
-		   					this.tenants.push(buf);
-		   				}
-	   				}
-
-	   				if (res.attach.own[0]) {
-	   					for (var i = 0; i < res.attach.own.length; i++) {
-		   					let buf = {
-		   						value: {
-		   							tid: null,
-		   							employeeId: null
-		   						},
-		   						label: null
-		   					}
-		   					buf.value.tid = res.attach.own[i].tid;
-		   					buf.value.employeeId = res.attach.own[i].employeeId;
-		   					buf.label = res.attach.own[i].tname;
-		   					this.tenants.push(buf);
-		   				}
-	   				}
-		   				
-       			}
-	   		}) 
-	    },
-
-	    tenantChange(value) {				//选择商户  get:tid/employeeId
+	    
+	    init() {							//初始化页面
 	  		this.getInsurerList(); 			//获取险企列表  need:tid  get:insurerId
 	  		this.getRouteList();			//获取路由节点列表  need:employeeId  get:route
 	  		this.getEditSetting();			//获取全局系数设置表
@@ -1040,7 +926,9 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    }
 	  },
 	  mounted() {
-	  	this.getTenanList(); //获取代理商列表
+	  	this.tenantId.employeeId = window.localStorage.getItem('employeeId');
+	  	this.tenantId.tid = window.localStorage.getItem('tid');
+	  	this.init(); //获取代理商列表
 	  }
 	}
 </script>

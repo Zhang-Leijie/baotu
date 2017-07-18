@@ -7,8 +7,8 @@
 		<div class="toolBar">
 			<div class="btnBox">
 				<router-link :to="{name:'shop-shop-add'}">
-				<el-button type="primary" class="marginBtn">新增</el-button>
-			</router-link>
+					<el-button type="primary" class="marginBtn">新增</el-button>
+				</router-link>
 			</div>
 			<div class="searchBox">
 				<el-input icon="search" v-model="searchName" placeholder="请输入Name" :on-icon-click="search" style="width:240px"></el-input>

@@ -1,20 +1,20 @@
 <template>
-	<div>
+	<div class="verify">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>审核管理</el-breadcrumb-item>
 		</el-breadcrumb>
-		<div style="margin-top:10px;margin-bottom:10px;">
-			<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">
-			    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
-			</el-select>
-			<router-link :to="{name:'shop-shop-add'}">
-				<el-button type="primary" class="marginBtn">新增</el-button>
-			</router-link>
-			<el-button class="marginBtn">重置</el-button>
-			<el-button class="marginBtn">搜索</el-button>
-			<el-input style="float:right;width:300px;" v-model="searchName" placeholder="请输入信息"></el-input>
-			<div style="clear:both"></div>
+		
+		<div class="toolBar">
+			<div class="btnBox">
+				<router-link :to="{name:'shop-staff-add'}">
+					<el-button type="primary" class="marginBtn">新增</el-button>
+				</router-link>
+			</div>
+			<div class="searchBox">
+				<el-input icon="search" v-model="searchName" placeholder="请输入ID" :on-icon-click="search" style="width:240px"></el-input>
+			</div>
 		</div>
+
 		<div style="margin-top:20px;">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="uid" label="序号" min-width="70"></el-table-column>
@@ -32,7 +32,7 @@
 			    </el-table-column>
 			    <el-table-column label="申请时间" min-width="120">
 			    	<template scope="scope">
-			        	<span>formatDate(scope.row.time)</span>
+			        	<span>scope.row.time?formatDate(scope.row.time):''</span>
 			      	</template>
 			    </el-table-column>
 			    <el-table-column label="操作" min-width="120">
@@ -56,9 +56,7 @@ export default {
 	      tableData: [],
 	      pageCount: null,
 	      currentPage: 1,
-	      pageSize: null,
-	      tenantId: null,
-	      tenants: []
+	      pageSize: null
 		}
 	  },
 	  methods: {
@@ -75,11 +73,10 @@ export default {
 		},
 
 	  	getInfo() {
-	  		let employeeId = this.tenantId.employeeId;
 	  		autoApi({
 	   			action: 'apply_list',
 	   			version: '1.0',
-	   			employeeId: employeeId
+	   			employeeId: window.localStorage.getItem('employeeId')
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;
@@ -92,11 +89,10 @@ export default {
 	        this.getInfo();
 	    },
 	    confirm() {
-	    	let tid = this.tenantId.tid;
 	  		autoApi({
 	   			action: 'apply_process',
 	   			version: '1.0',
-	   			tid: tid,
+	   			tid: null,
 	   			uid: null,
 	   			agree: true
 	   		},window.localStorage.getItem('token')).then((res)=> {
@@ -119,53 +115,28 @@ export default {
        			}
 	   		})
 	    },
-	    //获取代理商列表
-	    getTenanList() {
-	    	commonApi({
-	   			action: 'tenant_list',
-	   			version: '1.0',
-	   			client: 2		
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach.audit[0]) {
-	   					for (var i = 0; i < res.attach.audit.length; i++) {
-		   					let buf = {
-		   						value: {
-		   							tid: null
-		   						},
-		   						label: null
-		   					}
-		   					buf.value.tid = res.attach.audit[i].tid;
-		   					buf.label = res.attach.audit[i].tname + " (审核中)";
-		   					this.tenants.push(buf);
-		   				}
-	   				}
 
-	   				if (res.attach.own[0]) {
-	   					for (var i = 0; i < res.attach.own.length; i++) {
-		   					let buf = {
-		   						value: {
-		   							tid: null,
-		   							employeeId: null
-		   						},
-		   						label: null
-		   					}
-		   					buf.value.tid = res.attach.own[i].tid;
-		   					buf.value.employeeId = res.attach.own[i].employeeId;
-		   					buf.label = res.attach.own[i].tname;
-		   					this.tenants.push(buf);
-		   				}
-	   				}
-		   				
-       			}
-	   		}) 
-	    },
-	    tenantChange(value) {
-			this.getInfo();
-		},
+	    search() {
+	    	this.getInfo();
+	    }
 	  },
-	  mounted:function() {
-	  	this.getTenanList(); //获取代理商列表
+	  mounted() {
+	  	this.getInfo(); //获取代理商列表
 	  }
 	}
 </script>
+
+<style lang="less">
+.verify {
+	.toolBar {
+		width: 100%;
+		overflow: hidden;
+		.searchBox, .btnBox {
+			float: right;
+		}
+	}
+	.tableBox {
+		margin-top: 20px;
+	}
+}
+</style>
