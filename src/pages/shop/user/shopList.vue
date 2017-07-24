@@ -27,11 +27,11 @@
 			    <el-table-column prop="regionName" label="行政区划名称"></el-table-column>
 			    <el-table-column prop="licenseFace" label="营业执照">
 			    	<template scope="scope">
-		            	<el-popover ref="popoverPic" trigger="click" placement="left" width="500px">
+		            	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
 		            	    <img :src="scope.row.licenseFace" class="bre"  slot="reference" style="width: 80px;">
 	                    	<img :src='scope.row.licenseFace' style="width: 475px;">
 	                	</el-popover>
-	                	<el-popover ref="popoverPic" trigger="click" placement="left" width="500px">
+	                	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
 		            	    <img :src="scope.row.licenseBack" class="bre"  slot="reference" style="width: 80px;">
 	                    	<img :src='scope.row.licenseBack' style="width: 475px;">
 	                	</el-popover>

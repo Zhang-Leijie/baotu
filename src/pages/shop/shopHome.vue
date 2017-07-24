@@ -7,7 +7,7 @@
         </router-link> -->
       </div>
       <el-col :span="8" style="width:100%">
-        <el-menu  style="background-color:#32323a" unique-opened>
+        <el-menu  style="background-color:#32323a" unique-opened :default-active="activeRoute" :default-openeds="openedRouteList">
           <!-- <router-link :to="{name:'admin-user-list'}">
             <el-menu-item index="1">账号管理</el-menu-item>
           </router-link> -->
@@ -49,16 +49,16 @@
               </router-link>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="6">
+          <el-submenu index="4">
             <template slot="title">产品管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-autoinsurance-manage'}">
-                <el-menu-item index="6-1" class="sub-title">车险管理</el-menu-item>
+                <el-menu-item index="4-1" class="sub-title">车险管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
               <router-link :to="{name:'shop-autoinsurance-ratio'}">
-                <el-menu-item index="6-2" class="sub-title">车险自定义系数管理</el-menu-item>
+                <el-menu-item index="4-2" class="sub-title">车险自定义系数管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <!-- <el-menu-item-group>
@@ -67,41 +67,41 @@
               </router-link>
             </el-menu-item-group> -->
           </el-submenu>
-          <el-submenu index="4">
+          <el-submenu index="5">
             <template slot="title">消息体系</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-msg-notice'}">
-                <el-menu-item index="4-1" class="sub-title">公告管理</el-menu-item>
+                <el-menu-item index="5-1" class="sub-title">公告管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
               <router-link :to="{name:'shop-msg-business'}">
-                <el-menu-item index="4-2" class="sub-title">线下业务通知</el-menu-item>
+                <el-menu-item index="5-2" class="sub-title">线下业务通知</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
               <router-link :to="{name:'shop-msg-log'}">
-                <el-menu-item index="4-3" class="sub-title">系统日志</el-menu-item>
+                <el-menu-item index="5-3" class="sub-title">系统日志</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="5">
+          <el-submenu index="6">
             <template slot="title">设置</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-set-insuranceN'}">
-                <el-menu-item index="5-1" class="sub-title">非车险险种设置</el-menu-item>
+                <el-menu-item index="6-1" class="sub-title">非车险险种设置</el-menu-item>
               </router-link>
               <router-link :to="{name:'shop-set-moneyClient'}">
-                <el-menu-item index="5-2" class="sub-title">收款账户设置</el-menu-item>
+                <el-menu-item index="6-2" class="sub-title">收款账户设置</el-menu-item>
               </router-link>
               <router-link :to="{name:'shop-set-phoneClient'}">
-                <el-menu-item index="5-3" class="sub-title">客户电话设置</el-menu-item>
+                <el-menu-item index="6-3" class="sub-title">客户电话设置</el-menu-item>
               </router-link>
               <router-link :to="{name:'shop-set-reward'}">
-                <el-menu-item index="5-4" class="sub-title">奖励设置</el-menu-item>
+                <el-menu-item index="6-4" class="sub-title">奖励设置</el-menu-item>
               </router-link>
               <router-link :to="{name:'shop-set-rewardVerify'}">
-                <el-menu-item index="5-5" class="sub-title">规模奖励审核</el-menu-item>
+                <el-menu-item index="6-5" class="sub-title">规模奖励审核</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
@@ -135,6 +135,8 @@ export default {
     return {
       account:'',
       roleName:null,
+      activeRoute: '',
+      openedRouteList: [],
     }
   },
   methods: {
@@ -145,7 +147,78 @@ export default {
     }
   },
   mounted:function() {
-    
+    if (this.$route.name == 'shop-shop-list') {
+      this.activeRoute = '2-1';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'shop-role-list') {
+      this.activeRoute = '2-2';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'shop-staff-list') {
+      this.activeRoute = '2-3';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'shop-verify') {
+      this.activeRoute = '2-4';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'shop-user-list') {
+      this.activeRoute = '2-5';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'shop-run-rollimg') {
+      this.activeRoute = '3-1';
+      this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'shop-run-qalist') {
+      this.activeRoute = '3-2';
+      this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'shop-run-newslist') {
+      this.activeRoute = '3-3';
+      this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'shop-autoinsurance-manage') {
+      this.activeRoute = '4-1';
+      this.openedRouteList = ['4'];
+    }
+    else if (this.$route.name == 'shop-autoinsurance-ratio') {
+      this.activeRoute = '4-2';
+      this.openedRouteList = ['4'];
+    }
+    else if (this.$route.name == 'shop-msg-notice') {
+      this.activeRoute = '5-1';
+      this.openedRouteList = ['5'];
+    }
+    else if (this.$route.name == 'shop-msg-business') {
+      this.activeRoute = '5-2';
+      this.openedRouteList = ['5'];
+    }
+    else if (this.$route.name == 'shop-msg-log') {
+      this.activeRoute = '5-3';
+      this.openedRouteList = ['5'];
+    }
+    else if (this.$route.name == 'shop-set-insuranceN') {
+      this.activeRoute = '6-1';
+      this.openedRouteList = ['6'];
+    }
+    else if (this.$route.name == 'shop-set-moneyClient') {
+      this.activeRoute = '6-2';
+      this.openedRouteList = ['6'];
+    }
+    else if (this.$route.name == 'shop-set-phoneClient') {
+      this.activeRoute = '6-3';
+      this.openedRouteList = ['6'];
+    }
+    else if (this.$route.name == 'shop-set-reward') {
+      this.activeRoute = '6-4';
+      this.openedRouteList = ['6'];
+    }
+    else if (this.$route.name == 'shop-set-rewardVerify') {
+      this.activeRoute = '6-5';
+      this.openedRouteList = ['6'];
+    }
   }
 }
 </script>

@@ -17,28 +17,28 @@
 
 		<div style="margin-top:20px;">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="uid" label="序号" min-width="70"></el-table-column>
-			    <el-table-column prop="name" label="姓名" min-width="100"></el-table-column>
-			    <el-table-column prop="mobile" label="手机号" min-width="200"></el-table-column>
-			    <el-table-column prop="identity" label="身份证" min-width="80"></el-table-column>
-			    <el-table-column prop="parentName" label="邀请人姓名" min-width="140"></el-table-column>
-			    <el-table-column prop="parentId" label="邀请人工号" min-width="180"></el-table-column>
-			    <el-table-column prop="parentUid" label="邀请人ID" min-width="120"></el-table-column>
-			    <el-table-column label="证件照片" min-width="180">
+			    <el-table-column prop="uid" label="ID"></el-table-column>
+			    <el-table-column prop="name" label="姓名"></el-table-column>
+			    <el-table-column prop="mobile" label="手机号"></el-table-column>
+			    <el-table-column prop="identity" label="身份证"></el-table-column>
+			    <el-table-column prop="parentName" label="邀请人姓名"></el-table-column>
+			    <el-table-column prop="parentId" label="邀请人工号"></el-table-column>
+			    <el-table-column prop="parentUid" label="邀请人ID"></el-table-column>
+			    <el-table-column label="证件照片">
 			    	<template scope="scope">
 			        	<img :src="scope.row.identityFace">
 			        	<img :src="scope.row.identityBack">
 			      	</template>
 			    </el-table-column>
-			    <el-table-column label="申请时间" min-width="120">
+			    <el-table-column label="申请时间">
 			    	<template scope="scope">
-			        	<span>scope.row.time?formatDate(scope.row.time):''</span>
+			        	<span>{{scope.row.time?formatDate(scope.row.time):''}}</span>
 			      	</template>
 			    </el-table-column>
-			    <el-table-column label="操作" min-width="120">
+			    <el-table-column label="操作">
 			      	<template scope="scope">
-			        	<el-button type="text" size="small" @click="confirm">同意</el-button>
-			        	<el-button type="text" size="small" @click="refuse">拒绝</el-button>
+			        	<el-button type="text" size="small" @click="confirm(scope.row)">同意</el-button>
+			        	<el-button type="text" size="small" @click="refuse(scope.row)">拒绝</el-button>
 			      	</template>
 			    </el-table-column>
 			</el-table>
@@ -61,8 +61,8 @@ export default {
 	  },
 	  methods: {
 		formatDate (time){
-		  var   x = time - 0
-		  console.log(x)
+		  var   x = (time - 0) * 1000
+
 		  var   now = new Date(x) 
 		  var   year = now.getFullYear();     
 		  var   month = "0" + (now.getMonth()+1);     
@@ -88,12 +88,13 @@ export default {
 	        this.currentPage = val;
 	        this.getInfo();
 	    },
-	    confirm() {
+	    confirm(row) {
+	    	let uid = row.uid;
 	  		autoApi({
 	   			action: 'apply_process',
 	   			version: '1.0',
-	   			tid: null,
-	   			uid: null,
+	   			employeeId: window.localStorage.getItem('employeeId'),
+	   			uid: uid,
 	   			agree: true
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
@@ -101,13 +102,13 @@ export default {
        			}
 	   		})
 	    },
-	    refuse() {
-	    	let tid = this.tenantId.tid;
-	    	autoApi({
+	    refuse(row) {
+	    	let uid = row.uid;
+	  		autoApi({
 	   			action: 'apply_process',
 	   			version: '1.0',
-	   			tid: tid,
-	   			uid: null,
+	   			employeeId: window.localStorage.getItem('employeeId'),
+	   			uid: uid,
 	   			agree: false
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {

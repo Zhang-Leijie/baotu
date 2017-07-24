@@ -6,13 +6,13 @@
 		</el-breadcrumb>
 		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="商家名称:">
-		    <el-input type="text" style="width:300px;" v-model="form.name" auto-complete="off" placeholder="请输入商家名称"></el-input>
+		    <el-input type="text" style="width:300px;" v-model="form.name" placeholder="请输入商家名称"></el-input>
 		  </el-form-item>
 		 <!--  <el-form-item class="appblock" label="联系人:">
 		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入联系人"></el-input>
 		  </el-form-item> -->
 		  <el-form-item class="appblock" label="手机号:">
-		    <el-input style="width:190px;" v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+		    <el-input style="width:190px;" v-model="form.phone" placeholder="请输入手机号"></el-input>
 		    <el-button type="primary" @click="getyzm" :disabled="!(getyzmMsg === '获取验证码')">{{getyzmMsg}}</el-button>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="行政区划选择:">
@@ -24,10 +24,10 @@
 			</el-select>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="填写验证码:">
-		    <el-input style="width:300px;" v-model="form.yzm" auto-complete="off" placeholder="请输入验证码"></el-input>
+		    <el-input style="width:300px;" v-model="form.yzm" placeholder="请输入验证码"></el-input>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="客服电话:">
-		    <el-input style="width:300px;" v-model="form.servicePhone" auto-complete="off"></el-input>
+		    <el-input style="width:300px;" v-model="form.servicePhone"></el-input>
 		  </el-form-item>
 		  <!-- <el-form-item class="appblock" label="注册时间:">
 		    2017-09-26 08:50:08
@@ -234,19 +234,19 @@ import regionData from '@/region.js'
 		   			servicePhone: servicePhone
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				this.tableData = res.attach.list;
-		   				this.pageCount = res.attach.total;
-		   				// this.$message({
-				     //        message: '修改的设置已保存',
-				     //        type: 'success'
-				     //    });
+		   				this.$message({
+				            message: '新增商户成功',
+				            type: 'success'
+				        });
+				        router.push({
+					        path: '/shop/shop-list'
+					    });
 	       			}
 		   		})
 		    }
 	    },
-	    mounted:function(){
+	    mounted() {
 	        this.form.phone = 13105716367;
-	        console.log(regionData);
 	        for(let index in regionData) {
 	        	let buf = {
 	        		value: regionData[index],

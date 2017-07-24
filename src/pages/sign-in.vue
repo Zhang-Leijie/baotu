@@ -17,7 +17,7 @@
 		    <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
 		      <el-input style="width:287px;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
 		    </el-form-item>
-		    <div style="text-align:right">	    	
+		    <div style="position:absolute">	    	
 				    <el-button type="text" v-if="haveCode == 1" @click="goSetCode">设置密码</el-button>
 			      <el-button type="text" v-if="haveCode == 2" @click="goSetCode">忘记密码</el-button>
 		    </div>
@@ -39,7 +39,7 @@ export default {
       	platName:'',
       	haveCode:3,
          form:{
-         	platCode:'',
+         	platCode: null,
          	account:'13105716367',
          	password:'zxl870613',
          },
@@ -71,17 +71,20 @@ export default {
        		}
        },
        getPlat(){
-       		logApi({
-       			action:'app_tips',
-       			appId:this.form.platCode,
-       		}).then((res)=> {
-       			console.log(res.code)
-       			if (res.code == 0) {
-       				this.platName = res.attach.name;
-       			} else {
-       				this.platName = '查询无该平台'
-       			}
-       		})
+          this.platName = null;
+       		if(this.form.platCode) {
+            logApi({
+              action:'app_tips',
+              appId:this.form.platCode,
+            }).then((res)=> {
+              console.log(res.code)
+              if (res.code == 0) {
+                this.platName = res.attach.name;
+              } else {
+                this.platName = '查询无该平台'
+              }
+            })
+          }
        },
        checkPwd(){
        		logApi({

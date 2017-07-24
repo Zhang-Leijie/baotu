@@ -7,7 +7,7 @@
         </router-link> -->
       </div>
       <el-col :span="8" style="width:100%">
-        <el-menu  style="background-color:#32323a" unique-opened>
+        <el-menu  style="background-color:#32323a" unique-opened :default-active="activeRoute" :default-openeds="openedRouteList">
           <!-- <router-link :to="{name:'admin-user-list'}">
             <el-menu-item index="1">账号管理</el-menu-item>
           </router-link> -->
@@ -102,6 +102,8 @@ export default {
     return {
       account:'',
       roleName:null,
+      activeRoute: '',
+      openedRouteList: []
     }
   },
   methods: {
@@ -112,7 +114,54 @@ export default {
     }
   },
   mounted:function() {
-    
+    if (this.$route.name == 'admin-user-list') {
+      this.activeRoute = '2-1';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'admin-app-list') {
+      this.activeRoute = '2-2';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'admin-shop-list') {
+      this.activeRoute = '2-3';
+      this.openedRouteList = ['2'];
+    }
+    else if (this.$route.name == 'admin-uncar-manage') {
+      this.activeRoute = '3-1';
+      this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'admin-setting-shareV') {
+      this.activeRoute = '3-2';
+      this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'admin-setting-system') {
+      this.activeRoute = '4-1';
+      this.openedRouteList = ['4'];
+    }
+    else if (this.$route.name == 'admin-setting-suggest') {
+      this.activeRoute = '4-2';
+      this.openedRouteList = ['4'];
+    }
+    else if (this.$route.name == 'admin-setting-carS') {
+      this.activeRoute = '4-3';
+      this.openedRouteList = ['4'];
+    }
+    else if (this.$route.name == 'admin-setting-productM') {
+      this.activeRoute = '5-1';
+      this.openedRouteList = ['5'];
+    }
+    else if (this.$route.name == 'admin-setting-tagM') {
+      this.activeRoute = '5-2';
+      this.openedRouteList = ['5'];
+    }
+    else if (this.$route.name == 'admin-order-sell') {
+      this.activeRoute = '6-1';
+      this.openedRouteList = ['6'];
+    }
+    else if (this.$route.name == 'admin-order-order') {
+      this.activeRoute = '6-2';
+      this.openedRouteList = ['6'];
+    }
   }
 }
 </script>

@@ -11,24 +11,29 @@
 		</div>
 		
 		<div class="dataBox" v-if="formData1[0] && !editing">
-			<div class="dataBox1">
+			<div class="dataBoxCol">
 				<ul>
 					<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
-			<div class="dataBox2" v-if="(formData2[0])">
+			<div class="dataBoxCol" v-if="(formData2[0])">
 				<ul>
 					<li v-for="i in formData2" @click="enterToThird(i)" :class="chooseds[1] === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
-			<div class="dataBox3" v-if="(formData3[0])">
+			<div class="dataBoxCol" v-if="(formData3[0])">
 				<ul>
 					<li v-for="i in formData3" @click="enterTofourth(i)" :class="chooseds[2] === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
-			<div class="dataBox4" v-if="(formData4[0])">
+			<div class="dataBoxCol" v-if="(formData4[0])">
 				<ul>
-					<li v-for="i in formData4" @click="enterTofifth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
+					<li v-for="i in formData4" @click="enterTofifth(i)" :class="chooseds[3] === i.value?'choosedList':''">{{i.label}}</li>
+				</ul>
+			</div>
+			<div class="dataBoxCol" v-if="(formData5[0])">
+				<ul>
+					<li v-for="i in formData5" @click="enterToSixth(i)" :class="chooseds[4] === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
 		</div>
@@ -196,6 +201,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      formData2: [],
 	      formData3: [],
 	      formData4: [],
+	      formData5: [],
 	      baseCommission: {		//基础佣金
 	      	shangye: null,
 	      	jiaoqiang: null
@@ -364,10 +370,13 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	this.formData2 = [];
 	    	this.formData3 = [];
 	    	this.formData4 = [];
+	    	this.formData5 = [];
 	    	this.choosed = val.value;
 	    	this.chooseds[0] = val.value;
 	    	this.chooseds[1] = null;
 	    	this.chooseds[2] = null;
+	    	this.chooseds[3] = null;
+	    	this.chooseds[4] = null;
 			for(let two in val.data.children) {
 				let databuf = {
 					value: null,
@@ -385,45 +394,148 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    enterToThird(val) {
 			this.formData3 = [];
 	    	this.formData4 = [];
-	    	this.choosed = val.value;
+	    	this.formData5 = [];
+    		this.choosed = val.value;
 	    	this.chooseds[1] = val.value;
 	    	this.chooseds[2] = null;
-	    	for(let three in val.data.children) {
-				let databuf = {
-					value: null,
-					label: null,
-					data: null
+	    	this.chooseds[3] = null;
+	    	this.chooseds[4] = null;
+	    	if (this.chooseds[1] == 'brand') {
+	    		let employeeId = this.tenantId.employeeId;
+	    		autoApi({
+		   			action: 'vehicle_brands',
+		   			version: '1.0',
+		   			employeeId: employeeId
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				if (res.attach && res.attach.length > 0) {
+		   					for (var i = 0; i < res.attach.length; i++) {
+		   						let databuf = {
+									value: null,
+									label: null
+								}
+								databuf.value = res.attach[i].id;
+								databuf.label = res.attach[i].title;
+								this.formData3.push(databuf);
+		   					}
+		   				}
+	       			}
+		   		})
+	    	}
+	    	else
+	    	{
+		    	for(let three in val.data.children) {
+					let databuf = {
+						value: null,
+						label: null,
+						data: null
+					}
+					databuf.value = val.data.children[three].id;
+					databuf.label = val.data.children[three].title;
+					databuf.data = val.data.children[three];
+					this.formData3.push(databuf);
 				}
-				databuf.value = val.data.children[three].id;
-				databuf.label = val.data.children[three].title;
-				databuf.data = val.data.children[three];
-				this.formData3.push(databuf);
-			}
+	    	}
 			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //三级路由点击事件处理
 	    enterTofourth(val) {
 			this.formData4 = [];
+	    	this.formData5 = [];
 	    	this.choosed = val.value;
 	    	this.chooseds[2] = val.value;
-	    	for(let four in val.data.children) {
-				let databuf = {
-					value: null,
-					label: null,
-					data: null
+	    	this.chooseds[3] = null;
+	    	this.chooseds[4] = null;
+	    	if (this.chooseds[1] == 'brand') {
+	    		let employeeId = this.tenantId.employeeId;
+	    		let id = val.value;
+	    		autoApi({
+		   			action: 'vehicle_depts',
+		   			version: '1.0',
+		   			employeeId: employeeId,
+		   			id: id
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				if (res.attach && res.attach.length > 0) {
+		   					for (var i = 0; i < res.attach.length; i++) {
+		   						let databuf = {
+									value: null,
+									label: null
+								}
+								databuf.value = res.attach[i].id;
+								databuf.label = res.attach[i].title;
+								this.formData3.push(databuf);
+		   					}
+		   				}
+	       			}
+		   		})
+	    	}
+	    	else
+	    	{
+		    	for(let four in val.data.children) {
+					let databuf = {
+						value: null,
+						label: null,
+						data: null
+					}
+					databuf.value = val.data.children[four].id;
+					databuf.label = val.data.children[four].title;
+					databuf.data = val.data.children[four];
+					this.formData4.push(databuf);
 				}
-				databuf.value = val.data.children[four].id;
-				databuf.label = val.data.children[four].title;
-				databuf.data = val.data.children[four];
-				this.formData4.push(databuf);
-			}
+	    	}
 			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //四级路由点击事件处理
 	    enterTofifth(val) {
+	    	this.formData5 = [];
 	    	this.choosed = val.value;
 	    	this.chooseds[3] = val.value;
+	    	this.chooseds[4] = null;
+	    	if (this.chooseds[1] == 'brand') {
+	    		let employeeId = this.tenantId.employeeId;
+	    		let id = val.value;
+	    		autoApi({
+		   			action: 'vehicle_models',
+		   			version: '1.0',
+		   			employeeId: employeeId,
+		   			id: id
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				if (res.attach && res.attach.length > 0) {
+		   					for (var i = 0; i < res.attach.length; i++) {
+		   						let databuf = {
+									value: null,
+									label: null
+								}
+								databuf.value = res.attach[i].id;
+								databuf.label = res.attach[i].title;
+								this.formData3.push(databuf);
+		   					}
+		   				}
+	       			}
+		   		})
+	    	}
+	    	else
+	    	{
+		    	for(let five in val.data.children) {
+					let databuf = {
+						value: null,
+						label: null,
+						data: null
+					}
+					databuf.value = val.data.children[five].id;
+					databuf.label = val.data.children[five].title;
+					databuf.data = val.data.children[five];
+					this.formData5.push(databuf);
+				}
+	    	}
 	    	this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+	    },
+	    //五级路由点击事件处理
+	    enterToSixth(val) {
+	    	this.choosed = val.value;
+	    	this.chooseds[4] = val.value;
 	    },
 
 	    //获取节点配置
@@ -840,6 +952,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    		row.comparisonValue = null;
 	    	}
 	    },
+	    //判断系数数量是否达到了最大值
 	    isFull(row) {
 	    	if (row.coefficients) {
 	    		if (row.maxCustomNum <= row.coefficients.length) {
@@ -928,7 +1041,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	  mounted() {
 	  	this.tenantId.employeeId = window.localStorage.getItem('employeeId');
 	  	this.tenantId.tid = window.localStorage.getItem('tid');
-	  	this.init(); //获取代理商列表
+	  	this.init(); //初始化
 	  }
 	}
 </script>
@@ -938,11 +1051,11 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		margin: 10px;
 	}
 	.dataBox {
-		width: 1000px;
+		width: 1200px;
 		overflow-x: hidden;
-		.dataBox1, .dataBox2, .dataBox3, .dataBox4 {
+		.dataBoxCol {
 			float: left;
-			width: 23%;
+			width: 18%;
 			height: 200px;
 			overflow-y: scroll;
 			padding: 20px 0;
@@ -958,7 +1071,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			}
 		  	.choosedList {
 		  		color: #ffffff !important;
-		  		background-color: #00E5EE;
+		  		background-color: #87CECB;
 		  	}
 		}
 	}
