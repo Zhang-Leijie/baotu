@@ -61,11 +61,6 @@
                 <el-menu-item index="4-2" class="sub-title">车险自定义系数管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
-            <!-- <el-menu-item-group>
-              <router-link :to="{name:'shop-run-newslist'}">
-                <el-menu-item index="3-3" class="sub-title">咨询专区管理</el-menu-item>
-              </router-link>
-            </el-menu-item-group> -->
           </el-submenu>
           <el-submenu index="5">
             <template slot="title">消息体系</template>
@@ -91,20 +86,37 @@
               <router-link :to="{name:'shop-set-insuranceN'}">
                 <el-menu-item index="6-1" class="sub-title">非车险险种设置</el-menu-item>
               </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
               <router-link :to="{name:'shop-set-moneyClient'}">
                 <el-menu-item index="6-2" class="sub-title">收款账户设置</el-menu-item>
               </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
               <router-link :to="{name:'shop-set-phoneClient'}">
                 <el-menu-item index="6-3" class="sub-title">客户电话设置</el-menu-item>
               </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
               <router-link :to="{name:'shop-set-reward'}">
                 <el-menu-item index="6-4" class="sub-title">奖励设置</el-menu-item>
               </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
               <router-link :to="{name:'shop-set-rewardVerify'}">
                 <el-menu-item index="6-5" class="sub-title">规模奖励审核</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
+          <el-submenu index="7">
+            <template slot="title">车险订单管理</template>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-order-autoinsurance'}">
+                <el-menu-item index="7-1" class="sub-title">车险订单列表</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+          </el-submenu>
+
           <!-- <router-link :to="{name:'password'}">
             <el-menu-item index="3">修改密码</el-menu-item>
           </router-link> -->
@@ -187,6 +199,10 @@ export default {
       this.activeRoute = '4-2';
       this.openedRouteList = ['4'];
     }
+    else if (this.$route.name == 'shop-autoinsurance-orders') {
+      this.activeRoute = '4-3';
+      this.openedRouteList = ['4'];
+    }
     else if (this.$route.name == 'shop-msg-notice') {
       this.activeRoute = '5-1';
       this.openedRouteList = ['5'];
@@ -218,6 +234,10 @@ export default {
     else if (this.$route.name == 'shop-set-rewardVerify') {
       this.activeRoute = '6-5';
       this.openedRouteList = ['6'];
+    }
+    else if (this.$route.name == 'shop-order-autoinsurance') {
+      this.activeRoute = '7-1';
+      this.openedRouteList = ['7'];
     }
   }
 }

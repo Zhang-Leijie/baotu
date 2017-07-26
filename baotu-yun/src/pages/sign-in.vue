@@ -4,6 +4,13 @@
   	<div class="sign-top">
   		<img class="logimg" src="../assets/login2.png">
   	</div>
+
+    <div style="position:absolute; right:20px; top:20px;">
+      <span>当前的目标地址：</span>
+      <el-input v-model="ipAddr" style="width:200px"></el-input> 
+      <el-button @click="changeIpOpen">外网</el-button>
+    </div>
+
     <div class="logo-box">
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
       <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
@@ -44,7 +51,8 @@ export default {
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' },
           ],
-        }
+        },
+        ipAddr: null
       }
     },
     methods: {
@@ -52,6 +60,7 @@ export default {
        			router.push({name:'setcode',query:{account:this.form.account}});
        },
        login(){
+          localStorage.setItem('ipAddr',this.ipAddr);
      			logApi({
        			action: 'login',
        			id: this.form.account,
@@ -62,12 +71,25 @@ export default {
               // localStorage.setItem('userId',res.attach.user.uid);
               localStorage.setItem('uid',res.attach.uid);
        				router.push({name:'GMList'})
+              this.$message({
+                type: 'success',
+                message: '正在访问:'+ window.localStorage.getItem('ipAddr')
+              });   
        			}
        		})
        },
+       changeIpOpen() {
+        this.ipAddr = '101.37.34.55';
+        localStorage.setItem('ipAddr','101.37.34.55');
+        this.$message({
+          type: 'success',
+          message: '已改变目标地址'
+        }); 
+       }
     },
     mounted:function(){
-        
+        this.ipAddr = '192.168.0.128';
+        localStorage.setItem('ipAddr',this.ipAddr);
     }
 }
 </script>

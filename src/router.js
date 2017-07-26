@@ -216,6 +216,18 @@ const routes = [
                 require(['./pages/shop/user/shopEdit.vue'],resolve)
             }
         },{
+            path: "/shop/order-autoinsurance",
+            name: 'shop-order-autoinsurance',
+            component(resolve) {
+                require(['./pages/shop/order/autoInsuranceOrders.vue'],resolve)
+            }
+        },{
+            path: "/shop/order-autoInsuranceOrderDetail",
+            name: 'shop-order-autoInsuranceOrderDetail',
+            component(resolve) {
+                require(['./pages/shop/order/autoInsuranceOrderDetail.vue'],resolve)
+            }
+        },{
             path: "/shop/home",
             redirect: '/shop/shop-list'
         }]

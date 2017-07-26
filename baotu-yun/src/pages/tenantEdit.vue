@@ -50,8 +50,8 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small" @click="editRoute(scope.row)" v-if="!(isEdit && editedId === scope.row.key)">编辑</el-button>
-			    		<el-button type="text" size="small" @click="deleteRoute(scope.row)" v-if="!(isEdit && editedId === scope.row.key)">删除</el-button>
+			    		<el-button type="text" size="small" @click="editRoute(scope.row)" v-if="!(isEdit || editedId === scope.row.key)">编辑</el-button>
+			    		<el-button type="text" size="small" @click="deleteRoute(scope.row)" v-if="!(isEdit || editedId === scope.row.key)">删除</el-button>
 			    		<el-button type="text" size="small" @click="confirmEdit" v-if="isEdit && editedId === scope.row.key">保存</el-button>
 			    		<el-button type="text" size="small" @click="quitEdit" v-if="isEdit && editedId === scope.row.key">取消</el-button>
 			    	</template>
@@ -151,7 +151,7 @@ import { masterApi } from '@/ajax/post.js'
 	  		masterApi({
 	   			action: 'routes',
 	   			version: '1.0',
-	   			tid: 4
+	   			tid: this.tid
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
@@ -273,10 +273,12 @@ import { masterApi } from '@/ajax/post.js'
 	   				this.getInfo();
        			}
 	   		})
+	    	this.editedId = null;
 	    },
 
 	    quitEdit() {
 	    	this.isEdit = null;
+	    	this.editedId = null;
 	    },
 
 	    deleteRoute(row) {
@@ -300,13 +302,13 @@ import { masterApi } from '@/ajax/post.js'
 	            type: 'info',
 	            message: '已取消删除'
 	          });          
-	        });  	
+	        }); 
 	    }
 	  },
 	mounted() {
-	  	this.getInfo();
 	  	if (this.$route.query.tid) {
 	        this.tid = this.$route.query.tid;
+	  		this.getInfo();
         }
 	}
 }

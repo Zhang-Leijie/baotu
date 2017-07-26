@@ -28,9 +28,9 @@
               <router-link :to="{name:'areaList'}">
                 <el-menu-item index="3-2" class="sub-title">地区列表</el-menu-item>
               </router-link>
-              <!-- <router-link :to="{name:'tenantList'}">
-                <el-menu-item index="3-3" class="sub-title">商家列表</el-menu-item>
-              </router-link> -->
+              <router-link :to="{name:'brandsList'}">
+                <el-menu-item index="3-3" class="sub-title">汽车品牌列表</el-menu-item>
+              </router-link>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -87,6 +87,10 @@ export default {
     }
     else if (this.$route.name == 'areaList') {
       this.activeRoute = '3-2';
+      this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'brandsList') {
+      this.activeRoute = '3-3';
       this.openedRouteList = ['3'];
     }
   }

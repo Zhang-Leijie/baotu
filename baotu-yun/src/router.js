@@ -86,6 +86,27 @@ const routes = [
                 component(resolve) {
                     require(['./pages/tenantEdit.vue'],resolve)
                 }
+            },
+            {
+                path: "/brandsList",
+                name: "brandsList",
+                component(resolve) {
+                    require(['./pages/brandsList.vue'],resolve)
+                }
+            },
+            {
+                path: "/deptsList",
+                name: "deptsList",
+                component(resolve) {
+                    require(['./pages/deptsList.vue'],resolve)
+                }
+            },
+            {
+                path: "/modelsList",
+                name: "modelsList",
+                component(resolve) {
+                    require(['./pages/modelsList.vue'],resolve)
+                }
             }
         ]
     },{

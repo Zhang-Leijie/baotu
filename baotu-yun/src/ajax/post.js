@@ -2,17 +2,19 @@ import { post } from './const'
 
 export function logApi(params) {
   // return post('http://101.37.34.55:8083/master/api', params)
-  return post('http://192.168.0.125:8083/master/api', params)
+  // return post('http://192.168.0.125:8083/master/api', params)
+  return post('http://' + window.localStorage.getItem('ipAddr') + ':8083/master/api', params)
 }
 
 export function masterApi(params, token) {
   // return post('http://101.37.34.55:8083/master/api', params, token)
-  return post('http://192.168.0.125:8083/master/api', params, token)
+  // return post('http://192.168.0.125:8083/master/api', params, token)
+  return post('http://' + window.localStorage.getItem('ipAddr') + ':8083/master/api', params, token)
 }
 
 // export function commonApi(params, token) {
-//   // return post('http://101.37.34.55:8082/common/api', params, token)
-//   return post('http://192.168.0.125:8082/common/api', params, token)
+  // return post('http://101.37.34.55:8082/common/api', params, token)
+  // return post('http://192.168.0.125:8082/common/api', params, token)
 // }
 
 export const uploadFactory = function(imgId) {
