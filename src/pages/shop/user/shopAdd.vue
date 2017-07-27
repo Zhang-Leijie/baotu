@@ -8,26 +8,35 @@
 		  <el-form-item class="appblock" label="商家名称:">
 		    <el-input type="text" style="width:300px;" v-model="form.name" placeholder="请输入商家名称"></el-input>
 		  </el-form-item>
-		 <!--  <el-form-item class="appblock" label="联系人:">
-		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入联系人"></el-input>
-		  </el-form-item> -->
-		  <el-form-item class="appblock" label="手机号:">
-		    <el-input style="width:190px;" v-model="form.phone" placeholder="请输入手机号"></el-input>
-		    <el-button type="primary" @click="getyzm" :disabled="!(getyzmMsg === '获取验证码')">{{getyzmMsg}}</el-button>
+		  <el-form-item class="appblock" label="顶级用户手机号:">
+		    <el-input style="width:300px;" v-model="form.phone" placeholder="请输入手机号"></el-input>
+		    <!-- <el-button type="primary" @click="getyzm" :disabled="!(getyzmMsg === '获取验证码')">{{getyzmMsg}}</el-button> -->
 		  </el-form-item>
-		  <el-form-item class="appblock" label="行政区划选择:">
+		  <!-- <el-form-item class="appblock" label="行政区划选择:">
 		    <el-select style="width:145px;" v-model="regions" placeholder="请选择" @change="form.region = null">
 			    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 			<el-select style="width:145px;" v-model="form.region" placeholder="请选择" v-if="regions">
 			    <el-option v-for="item in regions" :label="item[0]" :value="item[1]"></el-option>
 			</el-select>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="填写验证码:">
+		  </el-form-item> -->
+		  <!-- <el-form-item class="appblock" label="填写验证码:">
 		    <el-input style="width:300px;" v-model="form.yzm" placeholder="请输入验证码"></el-input>
-		  </el-form-item>
+		  </el-form-item> -->
 		  <el-form-item class="appblock" label="客服电话:">
 		    <el-input style="width:300px;" v-model="form.servicePhone"></el-input>
+		  </el-form-item>
+		  <el-form-item class="appblock" label="联系人:">
+		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入联系人"></el-input>
+		  </el-form-item>
+		  <el-form-item class="appblock" label="联系人电话:">
+		    <el-input type="text" style="width:300px;" v-model="form.contactsMobile" auto-complete="off" placeholder="请输入联系人电话"></el-input>
+		  </el-form-item>
+		  <el-form-item class="appblock" label="过期时间:">
+		     <el-date-picker v-model="form.time" type="date" placeholder="选择日期"></el-date-picker>
+		  </el-form-item>
+		  <el-form-item class="appblock" label="营业执照号:">
+		    <el-input style="width:300px;" v-model="form.identity"></el-input>
 		  </el-form-item>
 		  <!-- <el-form-item class="appblock" label="注册时间:">
 		    2017-09-26 08:50:08
@@ -78,7 +87,7 @@
 		</el-form> -->
 		<!-- <div style="clear:both"></div> -->
 		<el-form :label-position="labelPosition" label-width="130px" style="margin-top:20px;" class="appbox">
-		  <el-form-item class="appblock" label="营业执照正面:">
+		  <el-form-item class="appblock" label="营业执照副本:">
 		    <el-upload
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
@@ -88,7 +97,7 @@
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="营业执照反面:">
+		 <!--  <el-form-item class="appblock" label="营业执照反面:">
 		    <el-upload
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
@@ -97,7 +106,7 @@
 			  <img v-if="imageUrlb" :src="imageUrlb" class="avatar">
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
-		  </el-form-item>
+		  </el-form-item> -->
 		 <!--  <el-form-item class="appblock" label="联系人身份证正面:">
 		    <el-upload
 			  class="avatar-uploader"
@@ -133,28 +142,30 @@ import regionData from '@/region.js'
 	    data() {
 	      return {
 	      	imageUrla: '',
-	      	imageUrlb: '',
+	      	// imageUrlb: '',
 	        labelPosition: 'right',
 	        info:'',
-	        regionFormData: [],		//格式化行政区划表
-	        regions: [],			//一级行政区划表
+	        // regionFormData: [],		//格式化行政区划表
+	        // regions: [],			//一级行政区划表
 	        form:{
 	        	name:'',
 	        	account:'',
-	        	region:'',
+	        	// region:'',
 	        	phone:'',
-	        	yzm: null,
+	        	// yzm: null,
 	        	servicePhone: null,
+	        	identity: null,		//营业执照号
 	        	// shopNum:'',
 	        	// pay:[],
 	        	// point:'',
 	        	// type:[],
 	        	// company:[],
 	        	// other:[],
-	        	// people:'',
+	        	people:'',
+	        	time: ''
 	        },
-	        getyzmMsg: '获取验证码',
-	        count: 30				//验证码计时器
+	        // getyzmMsg: '获取验证码',
+	        // count: 30				//验证码计时器
 	        // options: [{
 	        //   value: '1',
 	        //   label: '5'
@@ -174,63 +185,73 @@ import regionData from '@/region.js'
 	      };
 	    },
 	    methods: {
-	       formatDate(time){
-			  var   x = time - 0
-			  console.log(x)
-			  var   now = new Date(x) 
-			  var   year = now.getFullYear();     
-			  var   month = "0" + (now.getMonth()+1);     
-			  var   date = "0" +(now.getDate());   
-			  var   hour = "0" +now.getHours();
-			  var   min =  "0" +now.getMinutes();
-			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-			},
+   		    add0(m){return m<10?'0'+m:m },
+	       	getFormTime(shijianchuo)
+		        {
+		        //shijianchuo是整数，否则要parseInt转换
+			        var time = new Date(shijianchuo);
+			        var y = time.getFullYear();
+			        var m = time.getMonth()+1;
+			        var d = time.getDate();
+			        var h = time.getHours();
+			        var mm = time.getMinutes();
+			        var s = time.getSeconds();
+			        return y+'-'+this.add0(m)+'-'+this.add0(d)+' '+this.add0(h)+':'+this.add0(mm)+':'+this.add0(s);
+		        },
+
 			handleAvatarScucessA(res, file) {
 		        this.imageUrla = URL.createObjectURL(file.raw);
 		    },
-		    handleAvatarScucessB(res, file) {
-		        this.imageUrlb = URL.createObjectURL(file.raw);
-		    },
-		    getyzm() {
-		    	if (this.getyzmMsg == '获取验证码') {
-		    		this.getyzmMsg = this.count + 's';
-		    		logApi({
-		       			action: 'captcha_obtain',
-		       			version: '1.0',
-		       			mobile: '+86' + this.form.phone,
-		       			appId: window.localStorage.getItem("appId"),
-		       		}).then((res)=> {
-		       			if (res.code == 0) {
-		       				this.form.yzm = res.attach;		       			
-		       			}
-		       		})
-		    	}
-		    	this.count--;
-		    	this.getyzmMsg = this.count + 's后重新获取';
-		    	if (this.count <= 0) {
-		    		this.getyzmMsg = '获取验证码';
-		    		return false
-		    	}
-		    	setTimeout(this.getyzm,1000);
-		    },
+		    // handleAvatarScucessB(res, file) {
+		    //     this.imageUrlb = URL.createObjectURL(file.raw);
+		    // },
+		    // getyzm() {
+		    // 	if (this.getyzmMsg == '获取验证码') {
+		    // 		this.getyzmMsg = this.count + 's';
+		    // 		logApi({
+		    //    			action: 'captcha_obtain',
+		    //    			version: '1.0',
+		    //    			mobile: '+86' + this.form.phone,
+		    //    			appId: window.localStorage.getItem("appId"),
+		    //    		}).then((res)=> {
+		    //    			if (res.code == 0) {
+		    //    				this.form.yzm = res.attach;		       			
+		    //    			}
+		    //    		})
+		    // 	}
+		    // 	this.count--;
+		    // 	this.getyzmMsg = this.count + 's后重新获取';
+		    // 	if (this.count <= 0) {
+		    // 		this.getyzmMsg = '获取验证码';
+		    // 		return false
+		    // 	}
+		    // 	setTimeout(this.getyzm,1000);
+		    // },
 
 		    confirmAdd() {
 		    	let tname = this.form.name;
-		    	let region = this.form.region;
+		    	// let region = this.form.region;
+		    	let identity = this.form.identity;
 		    	let identityFace = this.imageUrla;
-		    	let identityBack = this.imageUrlb;
+		    	// let identityBack = this.imageUrlb;
 		    	let mobile = this.form.phone;
-		    	let captcha = this.form.yzm;
+		    	let endTime = this.getFormTime(Date.parse(this.form.time));
+		    	let name = this.form.people;
+		    	let contactsMobile = this.form.contactsMobile;
 		    	let servicePhone = this.form.servicePhone;
 		    	autoApi({
 		   			action: 'tenant_add',
 		   			version: '1.0',
 		   			tname: tname,
-		   			region: region,
+		   			// region: region,
+		   			identity: identity,
 		   			identityFace: identityFace,
-		   			identityBack: identityBack,
+		   			// identityBack: identityBack,
 		   			mobile: mobile,
-		   			captcha: captcha,
+		   			// captcha: captcha,
+		   			endTime: endTime,
+		   			name: name,
+		   			contactsMobile: contactsMobile,
 		   			servicePhone: servicePhone
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
@@ -246,14 +267,14 @@ import regionData from '@/region.js'
 		    }
 	    },
 	    mounted() {
-	        this.form.phone = 13105716367;
-	        for(let index in regionData) {
-	        	let buf = {
-	        		value: regionData[index],
-	        		label: index
-	        	}
-	        	this.regionFormData.push(buf);
-	        }
+	        // this.form.phone = 13105716367;
+	        // for(let index in regionData) {
+	        // 	let buf = {
+	        // 		value: regionData[index],
+	        // 		label: index
+	        // 	}
+	        // 	this.regionFormData.push(buf);
+	        // }
 	    }
 	}
 </script>

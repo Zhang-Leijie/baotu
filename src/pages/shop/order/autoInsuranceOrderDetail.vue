@@ -29,21 +29,21 @@
             <th>注册日期</th>
             <td>{{ tableData.demo }}</td>
             <th>品牌型号</th>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.name }}</td>
             <th>是否过户车</th>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.transfer?"是":"否" }}</td>
           </tr>
           <tr>
             <th>新车购置价</th>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.price }}</td>
             <th>座位数</th>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.seatCount }}</td>
           </tr>
           <tr>
             <th>商业险起保时间</th>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.commercialStart }}</td>
             <th>交强险险起保时间</th>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.compulsiveStart }}</td>
           </tr>
         </table>
 
@@ -70,8 +70,8 @@
           </tr>
           <tr>
             <th>车上人员责任险(乘客)</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.insurances.PASSENGER.quota }}</td>
+            <td>{{ tableData.insurances.PASSENGER.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(车损)</th>
@@ -95,15 +95,15 @@
           </tr>
           <tr>
             <th>商业险保费合计</th>
-            <td colspan="2">{{ tableData.demo }}</td>
+            <td colspan="2">{{ tableData.schema.commericalTotal }}</td>
           </tr>
           <tr>
             <th>交强险保费合计</th>
-            <td colspan="2">{{ tableData.demo }}</td>
+            <td colspan="2">{{ tableData.schema.compulsiveTotal }}</td>
           </tr>
           <tr>
             <th>车船税合计</th>
-            <td colspan="2">{{ tableData.demo }}</td>
+            <td colspan="2">{{ tableData.schema.vehicleVesselTotal }}</td>
           </tr>
           <tr>
             <th>保费总金额</th>

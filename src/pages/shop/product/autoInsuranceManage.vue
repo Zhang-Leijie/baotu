@@ -33,7 +33,7 @@
 			</div>
 			<div class="dataBoxCol" v-if="(formData5[0])">
 				<ul>
-					<li v-for="i in formData5" @click="enterToSixth(i)" :class="chooseds[4] === i.value?'choosedList':''">{{i.label}}</li>
+					<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
 		</div>
@@ -415,7 +415,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 									label: null
 								}
 								databuf.value = res.attach[i].id;
-								databuf.label = res.attach[i].title;
+								databuf.label = res.attach[i].name;
 								this.formData3.push(databuf);
 		   					}
 		   				}
@@ -463,8 +463,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 									label: null
 								}
 								databuf.value = res.attach[i].id;
-								databuf.label = res.attach[i].title;
-								this.formData3.push(databuf);
+								databuf.label = res.attach[i].name;
+								this.formData4.push(databuf);
 		   					}
 		   				}
 	       			}
@@ -509,8 +509,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 									label: null
 								}
 								databuf.value = res.attach[i].id;
-								databuf.label = res.attach[i].title;
-								this.formData3.push(databuf);
+								databuf.label = res.attach[i].name;
+								this.formData5.push(databuf);
 		   					}
 		   				}
 	       			}
@@ -525,7 +525,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 						data: null
 					}
 					databuf.value = val.data.children[five].id;
-					databuf.label = val.data.children[five].title;
+					databuf.label = val.data.children[five].name;
 					databuf.data = val.data.children[five];
 					this.formData5.push(databuf);
 				}

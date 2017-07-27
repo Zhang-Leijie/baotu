@@ -4,6 +4,14 @@
   	<div class="sign-top">
   		<img class="logimg" src="../assets/login2.png">
   	</div>
+
+    <div style="position:absolute; right:20px; top:20px;">
+      <span>当前的目标地址：</span>
+      <el-input v-model="ipAddrPlate" style="width:200px"></el-input> 
+      <el-button @click="confirmChangeIP">确定</el-button>
+      <el-button @click="changeIpOpen">内网段</el-button> 
+    </div>
+
     <div class="logo-box">
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
         <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
@@ -36,6 +44,7 @@ import { logApi } from '@/ajax/post.js'
 export default {
     data() {
       return {
+        ipAddrPlate: null,
       	platName:'',
       	haveCode:3,
          form:{
@@ -58,6 +67,21 @@ export default {
       }
     },
     methods: {
+      changeIpOpen() {
+        this.ipAddrPlate = '192.168.0.125';
+        localStorage.setItem('ipAddrPlate','192.168.0.125');
+        this.$message({
+          type: 'success',
+          message: '已改变目标地址'
+        }); 
+       },
+      confirmChangeIP() {
+        localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
+        this.$message({
+          type: 'success',
+          message: '已改变目标地址'
+        });
+      },
        goSetCode(){
        		if (this.form.platCode == '' || this.platName == '查询无该平台' || this.form.account == '') {
        			swal({
@@ -124,6 +148,7 @@ export default {
                     timer: 2000,
                 })
        		} else {
+            localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
        			logApi({
        				appId:'1',
 	       			action:'login',
@@ -136,13 +161,18 @@ export default {
                 // localStorage.setItem('userId',res.attach.user.uid);
                 localStorage.setItem('appId',this.form.platCode);
 	       				router.push({name:'home'})
+                 this.$message({
+                  type: 'success',
+                  message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
+                });   
 	       			}
 	       		})
        		}
        },
     },
     mounted:function(){
-        
+        this.ipAddrPlate = '101.37.34.55';
+        localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
     }
 }
 </script>

@@ -129,7 +129,9 @@
 	          	<img src="/static/img/logo.png" style="width:100%;height:100%;border-radius:50%">
 	        </div> -->
 	        <div class="head-word">
-	            <span @click="log" style="color:#4db3ff;font-size:14px;cursor:pointer">注销</span>
+              <router-link :to="{name:'sign-in'}">
+                <span @click="log" style="color:#4db3ff;font-size:14px;cursor:pointer">注销</span>
+              </router-link>
 	        </div>
         </div>
     </div>

@@ -24,17 +24,21 @@
 			    <el-table-column prop="tid" label="商户ID"></el-table-column>
 			    <el-table-column prop="name" label="商家名"></el-table-column>
 			    <el-table-column prop="teamDepth" label="最大团队层级"></el-table-column>
-			    <el-table-column prop="regionName" label="行政区划名称"></el-table-column>
-			    <el-table-column prop="licenseFace" label="营业执照">
+			    <!-- <el-table-column prop="regionName" label="行政区划名称"></el-table-column> -->
+			    <el-table-column prop="license" label="营业执照号"></el-table-column>
+			    <el-table-column prop="contacts" label="联系人"></el-table-column>
+			    <el-table-column prop="contractsMobile" label="联系人电话"></el-table-column>
+			    <el-table-column prop="licenseImage" label="营业执照">
 			    	<template scope="scope">
 		            	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
-		            	    <img :src="scope.row.licenseFace" class="bre"  slot="reference" style="width: 80px;">
-	                    	<img :src='scope.row.licenseFace' style="width: 475px;">
+		            	    <img :src="scope.row.licenseImage" class="bre"  slot="reference" style="width: 80px;">
+	                    	<img :src='scope.row.licenseImage' style="width: 475px;">
 	                	</el-popover>
-	                	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
-		            	    <img :src="scope.row.licenseBack" class="bre"  slot="reference" style="width: 80px;">
-	                    	<img :src='scope.row.licenseBack' style="width: 475px;">
-	                	</el-popover>
+			    	</template>
+			    </el-table-column>
+			    <el-table-column label="过期时间">
+			    	<template scope="scope">
+			    		<span>{{formatDate(scope.row.expire)}}</span>
 			    	</template>
 			    </el-table-column>
 			    <el-table-column label="注册时间">
@@ -50,7 +54,7 @@
 			    <el-table-column label="操作">
 			      <template scope="scope">
 		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-shop-edit',query:{id:scope.row.tid}}">
+						<router-link :to="{name:'shop-shop-edit',query:{tid:scope.row.tid,name:scope.row.name,licenseImage:scope.row.licenseImage,license:scope.row.license,contacts:scope.row.contacts,contractsMobile:scope.row.contractsMobile,expire:scope.row.expire}}">
 			      			编辑
 			      		</router-link>
 		      		</el-button>
@@ -62,14 +66,7 @@
 			    </el-table-column>
 			</el-table>
 
-			<el-pagination v-if="pageCount"
-		      @current-change="pageChange"
-		      :current-page="currentPage"
-		      :page-size="pageSize"
-		      layout="total , prev, pager, next, jumper"
-		      :page-count='pageCount'
-		      style="margin:20px auto;text-align:center">
-		    </el-pagination>
+			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 
 		</div>
 	</div>
@@ -135,7 +132,8 @@ export default {
 	   		})
 	  	},
 
-	  	pageChange(val) {
+	  	pageChange(pg) {
+	  		this.currentPage = pg;
 	        this.getInfo(); 
 	    },
 

@@ -19,7 +19,6 @@
   			<el-radio class="radio" v-model="formSetting.teamDepth" label="3">三级</el-radio>
 		  </el-form-item>
 		</el-form>
-		<div style="clear:both"></div>
 
 		<!-- <el-form :label-position="labelPosition" label-width="120px" class="appbox" v-if="viewMode == 1">
 		  <el-form-item class="Btitle" label="规模奖励:" style="margin-bottom:0px;"></el-form-item>
@@ -89,26 +88,26 @@
 	  			</el-col>
 	  			<el-col :span="6">
 	  				<span class="dataFont">比较类型: </span>
-	  				<span class="dataFont" v-if="!isGuimoEdited">{{reComparisonName(item.comparison)}}</span>
-	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择" v-if="isGuimoEdited" style="width:150px;">
+	  				<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{reComparisonName(item.comparison)}}</span>
+	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择" v-if="isGuimoEdited && item.id == guimoEdit.id" style="width:150px;">
 						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 	  			</el-col>
 	  			<el-col :span="6">
 	  				<span class="dataFont">区间数值: </span>
-	  				<span class="dataFont" v-if="!isGuimoEdited">{{item.comparableValue}}</span>
-	  				<el-input v-model="guimoEdit.comparableValue" placeholder="区间数值请用 _ 隔开" class="inputPercent" v-if="isGuimoEdited"></el-input>
+	  				<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{item.comparableValue}}</span>
+	  				<el-input v-model="guimoEdit.comparableValue" placeholder="区间数值请用 _ 隔开" class="inputPercent" v-if="isGuimoEdited && item.id == guimoEdit.id"></el-input>
 	  			</el-col>
 	  			<el-col :span="6">
 	  				<span class="dataFont">奖励比例: </span>
-	  				<span class="dataFont" v-if="!isGuimoEdited">{{item.rate?item.rate:0}}</span>
-	  				<el-input-number v-model="guimoEdit.num" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="inputPercent" v-if="isGuimoEdited"></el-input-number> 
+	  				<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{item.rate?item.rate:0}}</span>
+	  				<el-input-number v-model="guimoEdit.num" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="inputPercent" v-if="isGuimoEdited && item.id == guimoEdit.id"></el-input-number> 
 	  				<span class="dataFont">%</span>
 	  			</el-col>
 	  			<el-col :span="4">
 	  				<el-button @click="guimoEditMode(item)" v-if="!isGuimoEdited">编辑</el-button>
-	  				<el-button @click="guimoConfirmEdit" v-if="isGuimoEdited">确认</el-button>
-	  				<el-button @click="cancelGuimoEdit" v-if="isGuimoEdited">取消</el-button>
+	  				<el-button @click="guimoConfirmEdit" v-if="isGuimoEdited && item.id == guimoEdit.id">确认</el-button>
+	  				<el-button @click="cancelGuimoEdit" v-if="isGuimoEdited && item.id == guimoEdit.id">取消</el-button>
 	  			</el-col>
 	  		</el-row>
 			<el-button @click="showAddGuimo = !showAddGuimo"><i class="el-icon-plus"></i></el-button>
@@ -133,6 +132,7 @@
 			      			</el-col>
 			      			<el-col :span="4">
 			      				<el-button @click="guimoConfirmAdd">确定</el-button>
+			      				<el-button @click="showAddGuimo = false">取消</el-button>
 			      			</el-col>
 			      		</el-row>
 			      	</div>
@@ -722,6 +722,9 @@ import { autoApi } from '@/ajax/post.js'
 			font-size: 16px;
 			line-height: 36px;
 		}
+	}
+	.confirmBox {
+		text-align: center;
 	}
 	.titleLabel {
 		font-size: 14px;

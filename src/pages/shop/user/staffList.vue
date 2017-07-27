@@ -96,7 +96,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	   		})
 		},
 
-	  	pageChange(val) {
+	  	pageChange(pg) {
+	  		this.currentPage = pg;
 	        this.getInfo();
 	    },
 
