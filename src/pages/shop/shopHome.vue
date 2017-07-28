@@ -115,6 +115,19 @@
                 <el-menu-item index="7-1" class="sub-title">车险订单列表</el-menu-item>
               </router-link>
             </el-menu-item-group>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-order-policyList'}">
+                <el-menu-item index="7-2" class="sub-title">已出单列表</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="8">
+            <template slot="title">统计管理</template>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-statistic-statisticManage'}">
+                <el-menu-item index="8-1" class="sub-title">统计管理</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
           </el-submenu>
 
           <!-- <router-link :to="{name:'password'}">
@@ -240,6 +253,14 @@ export default {
     else if (this.$route.name == 'shop-order-autoinsurance') {
       this.activeRoute = '7-1';
       this.openedRouteList = ['7'];
+    }
+    else if (this.$route.name == 'shop-order-policyList') {
+      this.activeRoute = '7-2';
+      this.openedRouteList = ['7'];
+    }
+    else if (this.$route.name == 'shop-statistic-statisticManage') {
+      this.activeRoute = '8-1';
+      this.openedRouteList = ['8'];
     }
   }
 }

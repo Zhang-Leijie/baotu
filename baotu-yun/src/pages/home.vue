@@ -33,6 +33,17 @@
               </router-link>
             </el-menu-item-group>
           </el-submenu>
+          <el-submenu index="4">
+            <template slot="title">产品管理</template>
+            <el-menu-item-group>
+              <router-link :to="{name:'nonAutoCategoryList'}">
+                <el-menu-item index="4-1" class="sub-title">非车险类型设置</el-menu-item>
+              </router-link>
+              <router-link :to="{name:'nonAutoProductEdit'}">
+                <el-menu-item index="4-2" class="sub-title">非车险产品设置</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+          </el-submenu>
         </el-menu>
       </el-col>
     </div>
@@ -92,6 +103,14 @@ export default {
     else if (this.$route.name == 'brandsList') {
       this.activeRoute = '3-3';
       this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'nonAutoCategoryList') {
+      this.activeRoute = '4-1';
+      this.openedRouteList = ['4'];
+    }
+    else if (this.$route.name == 'nonAutoProductEdit') {
+      this.activeRoute = '4-2';
+      this.openedRouteList = ['4'];
     }
   }
 }

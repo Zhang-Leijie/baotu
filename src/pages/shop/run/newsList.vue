@@ -7,105 +7,148 @@
 			<router-link :to="{name:'shop-run-newsadd'}">
 				<el-button type="primary" class="marginBtn">新增</el-button>
 			</router-link>
-			<el-button class="marginBtn">重置</el-button>
-			<el-button class="marginBtn">搜索</el-button>
-			<el-input style="float:right;width:300px;" v-model="searchName" placeholder="请输入信息"></el-input>
 			<div style="clear:both"></div>
 		</div>
 		<div style="margin-top:20px;">
-			<el-table
-			    :data="tableData"
-			    border
-			    style="width: 100%;font-size:12px;">
-			    <el-table-column
-			      prop="index"
-			      label="序号"
-			      min-width="80">
+			<el-table :data="tableData" border style="width: 100%;font-size:12px;" @sort-change="sortChange">
+			    <el-table-column prop="id" label="序号"></el-table-column>
+			    <el-table-column prop="appId" label="所属appId"></el-table-column>
+			    <el-table-column prop="title" label="标题"></el-table-column>
+			    <el-table-column prop="browseNum" label="阅读数" sortable="custom" ></el-table-column>
+			    <el-table-column prop="commentNum" label="评论数" sortable="custom"></el-table-column> 
+			    <el-table-column label="咨询图标">
+			    	<template scope="scope">
+			    		<img :src="scope.row.icon">
+			    	</template>
+			    </el-table-column>  
+			    <el-table-column prop="created" label="发布时间" sortable="custom">
+			    	<template scope="scope">
+			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>
+			    	</template>
 			    </el-table-column>
-			    <el-table-column
-			      prop="title"
-			      label="标题"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="time"
-			      label="发布时间"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="read"
-			      label="阅读数"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="comment"
-			      label="评论数"
-			      min-width="100">
-			    </el-table-column> 
-			    <el-table-column
-			      label="操作"
-			      min-width="150">
+			    <el-table-column label="操作">
 			      <template scope="scope">
 		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-run-newsdetail',query:{id:scope.row.id}}">
+						<a :href="scope.row.link">
 			      			查看评论
-			      		</router-link>
+			      		</a>
 		      		</el-button>
-		      		<router-link :to="{name:'shop-run-newsedit'}">
+		      		<!-- <router-link :to="{name:'shop-run-newsedit'}">
 						<el-button type="text" size="small">编辑</el-button>
-					</router-link>
-			        <el-button type="text" size="small">删除</el-button>
+					</router-link> -->
+			        <el-button type="text" size="small" @click="deleteNews(scope.row)">删除</el-button>
 			      </template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="intotal"
-		      @current-change="handleCurrentChange"
+			<el-pagination v-if="pageCount"
+		      @current-change="pageChange"
 		      :current-page="currentPage"
-		      :page-size="10"
+		      :page-size="pageSize"
 		      layout="total , prev, pager, next, jumper"
-		      :page-count='intotal'
+		      :page-count='pageCount'
 		      style="margin:20px auto;text-align:center">
 		    </el-pagination>
 		</div>
 	</div>
 </template>
 <script>
-
-	function formatDate(time){
-	  var   x = time - 0
-	  console.log(x)
-	  var   now = new Date(x) 
-	  var   year = now.getFullYear();     
-	  var   month = "0" + (now.getMonth()+1);     
-	  var   date = "0" +(now.getDate());   
-	  var   hour = "0" +now.getHours();
-	  var   min =  "0" +now.getMinutes();
-	  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-	}
+import { autoApi } from '@/ajax/post.js'
 
 	export default {
 	  data() {
 	    return {
-	      intotal:1,
-	      searchName:'',
-	      tableData:[
-	      	{index:1,name:'张三',time:'2015-09-26 08:50:08',title:'如何在网上购买车险？',read:'100',comment:'100'}
-	      ],
-	      currentPage:1,
-	      dialogVisible:false,
-	      dialogVisible2:false,
-	      textarea:''
+	      pageCount: 1,
+	      searchName: '',
+	      tableData: [],
+	      currentPage: 1,
+	      pageSize: 10,
+	      sortCol: "TIME",						//默认按照时间排序
+	      sortType: false
 		}
 	  },
 	  methods: {
-	  	handleCurrentChange(val) {
+	  	formatDate(time){
+			  var   x = (time - 0) * 1000
+
+			  var   now = new Date(x) 
+			  var   year = now.getFullYear();     
+			  var   month = "0" + (now.getMonth()+1);     
+			  var   date = "0" +(now.getDate());   
+			  var   hour = "0" +now.getHours();
+			  var   min =  "0" +now.getMinutes();
+			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			},
+
+	  	getInfo() {
+	  		let payload = {
+			    page: this.currentPage,			// 页数
+			    pageSize: this.pageSize,			// 每页显示条数
+			    sortCol: this.sortCol,			// 排序列名
+			    sortType: this.sortType			// 排序类型：false-降序、ture-升序
+			}
+			payload = JSON.stringify(payload);
+	  		autoApi({
+	   			action: 'article_list',
+	   			version: '1.0',
+	   			payload: payload, 						
+	   			client: 2			
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if(res.attach.list[0]) {
+	   					this.tableData = res.attach.list;
+	   					this.pageCount = res.attach.total;
+	   				}
+       			}
+	   		})
+	  	},
+	  	pageChange(val) {
 	        this.currentPage = val;
-	        console.log(`当前页: ${val}`);
-	        // this.getlist(); 
+	        this.getInfo();
 	    },
+	    sortChange(val) {
+	    	val.order == "ascending"?this.sortType = true:this.sortType = false;
+	    	
+	    	if (val.prop == "browseNum") {
+	    		this.sortCol = "BROWSE_NUM";
+	    	}
+	    	else if (val.prop == "commentNum") {
+	    		this.sortCol = "COMMENT_NUM";
+	    	}
+	    	else if (val.prop == "created") {
+	    		this.sortCol = "TIME";
+	    	}
+
+	        this.getInfo();
+	    },
+	    deleteNews(row) {
+	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+	          confirmButtonText: '确定',
+	          cancelButtonText: '取消',
+	          type: 'warning'
+	        }).then(() => {
+	        	let payload = {
+	        		id: row.id
+	        	}
+	        	payload = JSON.stringify(payload);
+	    		autoApi({
+		   			action: 'article_delete',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.getInfo();
+	       			}
+		   		})
+	        }).catch(() => {
+	          this.$message({
+	            type: 'info',
+	            message: '已取消删除'
+	          });          
+	        });   	
+	    }
 	  },
-	  mounted:function() {
-	  	
+	  mounted() {
+	  	this.getInfo();
 	  }
 	}
 </script>

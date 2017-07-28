@@ -228,6 +228,24 @@ const routes = [
                 require(['./pages/shop/order/autoInsuranceOrderDetail.vue'],resolve)
             }
         },{
+            path: "/shop/statistic-statisticManage",
+            name: 'shop-statistic-statisticManage',
+            component(resolve) {
+                require(['./pages/shop/statistic/statisticManage.vue'],resolve)
+            }
+        },{
+            path: "/shop/order-policyList",
+            name: 'shop-order-policyList',
+            component(resolve) {
+                require(['./pages/shop/order/policyList.vue'],resolve)
+            }
+        },{
+            path: "/shop/order-policyDetail",
+            name: 'shop-order-policyDetail',
+            component(resolve) {
+                require(['./pages/shop/order/policyDetail.vue'],resolve)
+            }
+        },{
             path: "/shop/home",
             redirect: '/shop/shop-list'
         }]

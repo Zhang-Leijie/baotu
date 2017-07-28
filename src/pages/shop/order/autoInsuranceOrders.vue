@@ -156,7 +156,27 @@ import { autoApi } from '@/ajax/post.js'
 	  	pageChange(pg) {
 	  		this.currentPage = pg;
 	        this.getInfo(); 
-	    }
+	    },
+
+	    showPage() {
+	  		this.formData = [];
+	  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
+	  		{
+	  			for (let i = 0; i < this.tableData.length; i++) {
+	  				if (i >= (this.currentPage - 1) * this.pageSize) {
+	  					this.formData.push(this.tableData[i])
+	  				}
+	  			}
+	  		}
+	  		else
+	  		{
+	  			for (let i = 0; i < this.tableData.length; i++) {
+	  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
+	  					this.formData.push(this.tableData[i])
+	  				}
+	  			}
+	  		}
+	  	}
 	  },
 	  mounted() {
 	  	this.getInfo();

@@ -7,11 +7,11 @@
 			</el-breadcrumb>
 		</div>
 		<div style="margin-top:30px;">
-			<el-form :model="form">
-			    <el-form-item label="标题" :label-width="formLabelWidth">
-			      	<el-input style="width:90%;" v-model="form.title" auto-complete="off" placeholder="请输入标题"></el-input>
+			<el-form :model="form" class="appbox">
+			    <el-form-item label="标题" :label-width="formLabelWidth" class="appblock">
+			      	<el-input v-model="form.title" auto-complete="off" placeholder="请输入标题"></el-input>
 			    </el-form-item>
-			    <el-form-item label="轮播图" :label-width="formLabelWidth">
+			    <el-form-item label="轮播图" :label-width="formLabelWidth" class="appblock">
 			      <el-upload
 			      	name='pictureUrl'
 					class="avatar-uploader"
@@ -22,10 +22,6 @@
 					<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 				  </el-upload>
 			    </el-form-item>
-			    <el-form-item label="文章详情(必填)" :label-width="formLabelWidth">
-					<textarea style="width:80%;" id="article"></textarea>
-					<input name="file" type="file" id="img_upload" style="display:none;">
-				</el-form-item>
 			</el-form>
 		</div>
 		<div style="text-align:center;margin-top:20px;">
@@ -104,28 +100,11 @@
 </script>
 <style lang="less">
 	.newsadd{
-	  .avatar-uploader .el-upload {
-	    border: 1px dashed #d9d9d9;
-	    border-radius: 6px;
-	    cursor: pointer;
-	    position: relative;
-	    overflow: hidden;
-	  }
-	  .avatar-uploader .el-upload:hover {
-	    border-color: #20a0ff;
-	  }
-	  .avatar-uploader-icon {
-	    font-size: 28px;
-	    color: #8c939d;
-	    width: 300px;
-	    height: 178px;
-	    line-height: 178px;
-	    text-align: center;
-	  }
-	  .avatar {
-	    width: 300px;
-	    height: 178px;
-	    display: block;
-	  }
+		.appbox{
+			.appblock{
+				width: 50%;
+				float: left;
+			}
+		}
 	}
 </style>
