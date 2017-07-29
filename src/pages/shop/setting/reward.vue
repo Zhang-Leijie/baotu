@@ -14,9 +14,9 @@
 
 		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox" v-if="viewMode == 1">
 		  <el-form-item class="appblock" label="团队层级:">
-		  	<el-radio class="radio" v-model="formSetting.teamDepth" label="1">一级</el-radio>
-  			<el-radio class="radio" v-model="formSetting.teamDepth" label="2">二级</el-radio>
-  			<el-radio class="radio" v-model="formSetting.teamDepth" label="3">三级</el-radio>
+		  	<el-radio class="radio" v-model="formSetting.teamDepth" label="1" value="1">一级</el-radio>
+  			<el-radio class="radio" v-model="formSetting.teamDepth" label="2" value="2">二级</el-radio>
+  			<el-radio class="radio" v-model="formSetting.teamDepth" label="3" value="3">三级</el-radio>
 		  </el-form-item>
 		</el-form>
 
@@ -43,11 +43,11 @@
 		    <el-form-item class="Btitle" label="统计口径:" style="margin-bottom:0px;"></el-form-item>
 		  	<el-form-item label="统计车型:">
 		  		<el-radio-group v-model="formSetting.bonusScaleCountMod">
-			    	<el-radio label="1">非营业客车</el-radio>
-					<el-radio label="2">非营业货车</el-radio>
-					<el-radio label="4">营业客车</el-radio>
-					<el-radio label="8">营业货车</el-radio>
-					<el-radio label="16">其他</el-radio>
+			    	<el-radio label="1" value="1">非营业客车</el-radio>
+					<el-radio label="2" value="2">非营业货车</el-radio>
+					<el-radio label="4" value="4">营业客车</el-radio>
+					<el-radio label="8" value="8">营业货车</el-radio>
+					<el-radio label="16" value="16">其他</el-radio>
 			  	</el-radio-group>
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
@@ -225,7 +225,7 @@
 </template>
 <script>
 
-import { autoApi } from '@/ajax/post.js'
+import { commonApi,autoApi } from '@/ajax/post.js'
 
 	export default {
 	    data() {
@@ -497,36 +497,53 @@ import { autoApi } from '@/ajax/post.js'
 	       			}
 		   		})
 	       	},
+	       	getInfo() {
+	       		commonApi({
+		   			action: 'tenant_info',
+		   			version: '1.0',
+		   			employeeId: window.localStorage.getItem('employeeId'),
+		   			client: 2
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+        				//缺少深度
+        				this.formSetting.bonusScaleCountMod = res.attach.bonusScaleCountMod.toString();
+        				this.formSetting.bonusScaleRewardMod = res.attach.bonusScaleRewardMod.toString();
+        				this.formSetting.bonusScaleCountInsuranceMod = res.attach.bonusScaleCountInsuranceMod.toString();
+        				this.formSetting.bonusScaleRewardInsuranceMod = res.attach.bonusScaleRewardInsuranceMod.toString();
+	       			}
+		   		})
+	       	},
 	       	comfirmSetting() {
 	       		let tenantSettingsSubmit = {
 				    // name : xxx,                                                // 商户名字
-				    teamDept: null,                                            // 团队层级数
+				    teamDepth: null,                                            // 团队层级数
 				    // nonAutoBind :[1,2,3]                                 // 开通的非车险类型id列表
 				    bonusScaleCountMod: null,                          // 规模佣金统计口径模值
 				    bonusScaleRewardMod: null,                         // 规模佣金奖励口径模值
 				    bonusScaleCountInsuranceMod: null,            // 规模佣金统计口径险种模值
 				    bonusScaleRewardInsuranceMod: null          // 规模佣金奖励口径险种模值
 				};
-				tenantSettingsSubmit.teamDept = this.formSetting.teamDept;
+				tenantSettingsSubmit.teamDepth = this.formSetting.teamDepth;
 				tenantSettingsSubmit.bonusScaleCountMod = this.formSetting.bonusScaleCountMod;
 				tenantSettingsSubmit.bonusScaleRewardMod = this.formSetting.bonusScaleRewardMod;
 				tenantSettingsSubmit.bonusScaleCountInsuranceMod = this.formSetting.bonusScaleCountInsuranceMod;
 				tenantSettingsSubmit.bonusScaleRewardInsuranceMod = this.formSetting.bonusScaleRewardInsuranceMod;
-				tenantSettingsSubmit = JSON.stringify(tenantSettingsSubmit);
-
-	       		autoApi({
-		   			action: 'tenant_set',
-		   			version: '1.0',
-		   			employeeId: window.localStorage.getItem('employeeId'),
-		   			tenantSettingsSubmit: tenantSettingsSubmit
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.$message({
-		   					message: '设置已保存',
-		   					type: 'success'
-		   				});
-	       			}
-		   		})
+				if (tenantSettingsSubmit.teamDepth && tenantSettingsSubmit.bonusScaleCountMod && tenantSettingsSubmit.bonusScaleRewardMod && tenantSettingsSubmit.bonusScaleCountInsuranceMod && tenantSettingsSubmit.bonusScaleRewardInsuranceMod) {
+					tenantSettingsSubmit = JSON.stringify(tenantSettingsSubmit);
+					autoApi({
+			   			action: 'tenant_set',
+			   			version: '1.0',
+			   			employeeId: window.localStorage.getItem('employeeId'),
+			   			tenantSettingsSubmit: tenantSettingsSubmit
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+			   				this.$message({
+			   					message: '设置已保存',
+			   					type: 'success'
+			   				});
+		       			}
+			   		})
+				}      		
 	       	},
 	       	guanliConfirmEdit(id,val,origin,depth,type) {
 	       		if (val && origin) {//value/origin值不为零,操作为修改
@@ -694,6 +711,7 @@ import { autoApi } from '@/ajax/post.js'
 		    }
 	    },
 	    mounted:function(){
+	    	this.getInfo();
 	        this.getGuanli();
 	        this.getGuimo();
 	    }

@@ -43,7 +43,7 @@
             <th>商业险起保时间</th>
             <td>{{ tableData.schema.commercialStart }}</td>
             <th>交强险险起保时间</th>
-            <td>{{ tableData.schema.compulsiveStart }}</td>
+            <td>{{ tableData.schema.commercialEnd }}</td>
           </tr>
         </table>
 
@@ -55,18 +55,18 @@
           </tr>
           <tr>
             <th>机动车损失保险</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.insurances.DAMAGE.quota }}</td>
+            <td>{{ tableData.schema.insurances.DAMAGE.price }}</td>
           </tr>
           <tr>
             <th>第三者责任险</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.insurances.THIRD.quota }}</td>
+            <td>{{ tableData.schema.insurances.THIRD.price }}</td>
           </tr>
           <tr>
             <th>车上人员责任险(司机)</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.insurances.DRIVER.quota }}</td>
+            <td>{{ tableData.schema.insurances.DRIVER.price }}</td>
           </tr>
           <tr>
             <th>车上人员责任险(乘客)</th>
@@ -75,23 +75,23 @@
           </tr>
           <tr>
             <th>不计免赔险(车损)</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.insurances.DAMAGE_DEDUCTIBLE.quota }}</td>
+            <td>{{ tableData.schema.insurances.DAMAGE_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(三者)</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.insurances.THIRD.quota }}</td>
+            <td>{{ tableData.schema.insurances.THIRD.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(乘客)</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.insurances.THIRD_DEDUCTIBLE.quota }}</td>
+            <td>{{ tableData.schema.insurances.THIRD_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(司机)</th>
-            <td>{{ tableData.demo }}</td>
-            <td>{{ tableData.demo }}</td>
+            <td>{{ tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota }}</td>
+            <td>{{ tableData.schema.insurances.DRIVER_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
             <th>商业险保费合计</th>
@@ -119,7 +119,7 @@ import { autoApi } from '@/ajax/post.js'
 	export default {
 	    data() {
 	      return {
-	      	tableData: []
+	      	tableData: {}
 	      };
 	    },
 	    methods: {

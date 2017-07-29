@@ -10,14 +10,27 @@
 				    <el-option v-for="item in stateList" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 				<el-button type="primary" @click="searchState">搜索</el-button>
-				<el-button @click="addDemo">详情页测试</el-button>
 			</div>
 		</div>
 
 		<div style="margin-top:20px;">
-			<el-table :data="formData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="orders" label=""></el-table-column>
-			    <el-table-column label="">
+			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
+			    <el-table-column prop="orders" label="序号"></el-table-column>
+			    <el-table-column prop="orders" label="订单类型"></el-table-column>
+			    <el-table-column prop="orders" label="订单编号"></el-table-column>
+			    <el-table-column label="订单时间">
+			    	<template scope="scope">
+			    		<span>{{scope.row?scope.row:''}}</span>
+			    	</template>
+			    </el-table-column>
+			    <el-table-column prop="price" label="订单金额"></el-table-column>
+			    <el-table-column prop="employeeId" label="业务员"></el-table-column>
+			    <el-table-column label="订单状态">
+			    	<template scope="scope">
+			    		<span>{{scope.row?scope.row:''}}</span>
+			    	</template>
+			    </el-table-column>
+			    <el-table-column label="单证状态">
 			    	<template scope="scope">
 			    		<span>{{scope.row?scope.row:''}}</span>
 			    	</template>
@@ -47,7 +60,6 @@ import { autoApi } from '@/ajax/post.js'
 	      pageCount: null,
 	      pageSize: 10,
 	      tableData: [],
-	      formData: [],
 	      search: {
 	      	state: null
 	      },
@@ -104,25 +116,20 @@ import { autoApi } from '@/ajax/post.js'
 	  	getInfo() {
 	  		if (this.search.state) {
 	  			var vehicleOrderSearcher = {
-		  			page: null,
-		  			pageSize: null,
+		  			page: this.currentPage,
+		  			pageSize: this.pageSize,
 		  			// uid: null,	保途端
-		  			state: null
+		  			state: this.search.state
 		  		};
-		  		vehicleOrderSearcher.page = this.currentPage;
-		  		vehicleOrderSearcher.pageSize = this.pageSize;
-		  		vehicleOrderSearcher.state = this.search.state;
 	  		}
 	  		else
 	  		{
 	  			var vehicleOrderSearcher = {
-		  			page: null,
-		  			pageSize: null,
+		  			page: this.currentPage,
+		  			pageSize: this.pageSize,
 		  			// uid: null,	保途端
 		  			employeeId: window.localStorage.getItem('employeeId')
 		  		};
-		  		vehicleOrderSearcher.page = this.currentPage;
-		  		vehicleOrderSearcher.pageSize = this.pageSize;
 	  		}
 	  			
 	  		vehicleOrderSearcher = JSON.stringify(vehicleOrderSearcher)
@@ -134,10 +141,7 @@ import { autoApi } from '@/ajax/post.js'
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
-	   					this.tableData = res.attach;
-	   					this.length = res.attach.length;
-	   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-	   					this.showPage();
+	   					this.tableData = res.attach.list;
 	   				}
        			}
 	   		})
@@ -146,37 +150,11 @@ import { autoApi } from '@/ajax/post.js'
 	  	searchState() {
 	  		this.getInfo();
 	  	},
- 
-	  	addDemo() {
-	  		 router.push({
-	  		 	name: "shop-order-autoInsuranceOrderDetail"
-	  		 })
-	  	},
 
 	  	pageChange(pg) {
 	  		this.currentPage = pg;
 	        this.getInfo(); 
-	    },
-
-	    showPage() {
-	  		this.formData = [];
-	  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  		else
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  	}
+	    }
 	  },
 	  mounted() {
 	  	this.getInfo();
