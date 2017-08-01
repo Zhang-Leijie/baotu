@@ -1,12 +1,17 @@
 <template>
-	<div>
-		<div>首页</div>
-		<router-link :to="{name:'adminHome'}">
-			<div>后台管理端</div>
-		</router-link>
-		<router-link :to="{name:'shopHome'}" v-if="tenantId"> 
-			<div>前往商家端</div>
-		</router-link>
+	<div style="padding: 40px;">
+		<el-button disabled="true">
+			<router-link :to="{name:'adminHome'}">
+				后台管理端
+			</router-link>
+		</el-button>
+		
+		<el-button v-if="tenantId">
+			<router-link :to="{name:'shopHome'}"> 
+				前往商家端
+			</router-link>
+		</el-button>
+			
 
 
 		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">

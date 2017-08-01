@@ -4,7 +4,7 @@
 		  	<el-breadcrumb-item :to="{name:'shop-shop-list'}">员工列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>编辑</el-breadcrumb-item>
 		</el-breadcrumb>
-		<el-form :label-position="labelPosition" label-width="140px" style="margin-top:20px;" class="appbox">
+		<!-- <el-form :label-position="labelPosition" label-width="140px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="姓名:">
 		    <el-input type="text" style="width:300px;" v-model="form.name" auto-complete="off" placeholder="请输入姓名"></el-input>
 		  </el-form-item>
@@ -50,28 +50,29 @@
 			</el-upload>
 		  </el-form-item>
 		</el-form>
-		<div style="clear:both"></div>
+		<div style="clear:both"></div> -->
 		<el-form :label-position="labelPosition" label-width="140px" style="margin-top:20px;" class="appbox">
 		  <el-form-item label="支付方式:">
-			<el-radio class="radio" v-model="form.payway" label="1">全额支付</el-radio>
-  		 	<el-radio class="radio" v-model="form.payway" label="2">净保费支付</el-radio>
-  		 	<el-radio class="radio" v-model="form.payway" label="3">垫付</el-radio>
+			<el-radio class="radio" v-model="form.payway" label="128">全额支付</el-radio>
+  		 	<el-radio class="radio" v-model="form.payway" label="256">净保费支付</el-radio>
+  		 	<el-radio class="radio" v-model="form.payway" label="512">垫付</el-radio>
 		  </el-form-item>
 		  <el-form-item label="团队佣金:">
 		    <el-checkbox-group v-model="form.teammoney">
-			    <el-checkbox value='1' label="团队佣金"></el-checkbox>
-			    <el-checkbox value='2' label="管理佣金"></el-checkbox>
+			    <el-checkbox value='1' label="1">规模佣金</el-checkbox>
+			    <el-checkbox value='2' label="2">管理佣金</el-checkbox>
 			</el-checkbox-group>
 		  </el-form-item>
 		  <el-form-item label="普通佣金:">
 		    <el-checkbox-group v-model="form.commonmoney">
-			    <el-checkbox value='1' label="非营业客车"></el-checkbox>
-			    <el-checkbox value='2' label="非营业货车"></el-checkbox>
-			    <el-checkbox value='3' label="营业客车"></el-checkbox>
-			    <el-checkbox value='4' label="营业货车"></el-checkbox>
+			    <el-checkbox value='4' label="4">非营业客车</el-checkbox>
+			    <el-checkbox value='8' label="8">非营业货车</el-checkbox>
+			    <el-checkbox value='16' label="16">营业客车</el-checkbox>
+			    <el-checkbox value='32' label="32">营业货车</el-checkbox>
+			    <el-checkbox value='64' label="64">其他</el-checkbox>
 			</el-checkbox-group>
 		  </el-form-item>
-		  <el-form-item label="商业险佣金比例(%):">
+		  <!-- <el-form-item label="商业险佣金比例(%):">
 		    <el-input-number size="small" v-model="num1" :step="0.01"></el-input-number>
 		    <div>
 		    	<el-radio class="radio" v-model="plus1" label="1">加</el-radio>
@@ -91,18 +92,20 @@
 			    <el-checkbox value='2' label="角色2"></el-checkbox>
 			    <el-checkbox value='3' label="角色3"></el-checkbox>
 			</el-checkbox-group>
-		  </el-form-item>
+		  </el-form-item> -->
 		</el-form>
 		<div style="clear:both"></div>
 		<div style="text-align:center;margin-top:20px;">
-			<el-button type="primary">确定</el-button>
+			<el-button type="primary" @click="confirmEdit">确定</el-button>
 		</div>
 	</div>
 </template>
 <script>
+import { autoApi } from '@/ajax/post.js'
 	export default {
 	    data() {
 	      return {
+	      	id: null,
 	      	num1:1,
 	      	plus1:'',
 	      	num2:1,
@@ -162,9 +165,36 @@
 			handleAvatarScucess(res, file) {
 		        this.imageUrl = URL.createObjectURL(file.raw);
 		    },
+		    confirmEdit() {
+		    	let payload = {
+		    		employeeId: window.localStorage.getItem('employeeId'),
+		    		mod: 0,
+		    		targetId: this.id
+		    	}
+		  		for (var i = 0; i < this.form.commonmoney.length; i++) {
+		  			payload.mod = payload.mod + parseInt(this.form.commonmoney[i]);
+		  		}
+		  		for (var i = 0; i < this.form.teammoney.length; i++) {
+		  			payload.mod = payload.mod + parseInt(this.form.teammoney[i]);
+		  		}
+		    	payload.mod = payload.mod + parseInt(this.form.payway);
+		    	
+		    	payload = JSON.stringify(payload);
+		    	autoApi({
+		   			action: 'employee_edit',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+
+		   			}
+		   		});
+		    }
 	    },
-	    mounted:function(){
-	        
+	    mounted(){
+	        if (this.$route.query.id) {
+	        	this.id = this.$route.query.id;
+	        }
 	    }
 	}
 </script>

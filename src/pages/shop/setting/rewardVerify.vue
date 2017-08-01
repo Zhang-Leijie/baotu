@@ -7,110 +7,110 @@
 			<router-link :to="{name:'shop-role-add'}">
 				<el-button type="primary" class="marginBtn">新增</el-button>
 			</router-link>
-			<el-button class="marginBtn">重置</el-button>
-			<el-button class="marginBtn">搜索</el-button>
-			<el-input style="float:right;width:300px;" v-model="searchName" placeholder="请输入信息"></el-input>
 			<div style="clear:both"></div>
 		</div>
 		<div style="margin-top:20px;">
-			<el-table
-			    :data="tableData"
-			    border
-			    style="width: 100%;font-size:12px;">
-			    <el-table-column
-			      prop="leader"
-			      label="团长"
-			      min-width="80">
-			    </el-table-column>
-			    <el-table-column
-			      prop="money"
-			      label="统计保费额"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="per1"
-			      label="商业险奖励比例"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="per2"
-			      label="交强险奖励比例"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="teammates"
-			      label="团队成员量"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="amount"
-			      label="团队保费总额"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      prop="point"
-			      label="奖励积分"
-			      min-width="100">
-			    </el-table-column>
-			    <el-table-column
-			      label="操作"
-			      min-width="150">
-			      <template scope="scope">
-		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-set-business',query:{id:scope.row.id}}">
-			      			查看流水
-			      		</router-link>
-		      		</el-button>
-			        <el-button type="text" size="small">同意</el-button>
-			        <el-button type="text" size="small">拒绝</el-button>
-			      </template>
-			    </el-table-column>
-			</el-table>
-			<el-pagination v-if="intotal"
-		      @current-change="handleCurrentChange"
-		      :current-page="currentPage"
-		      :page-size="10"
-		      layout="total , prev, pager, next, jumper"
-		      :page-count='intotal'
-		      style="margin:20px auto;text-align:center">
-		    </el-pagination>
+			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
+	    		<el-table-column prop="employeeId" label="雇员号"></el-table-column>
+	    		<el-table-column prop="name" label="名字"></el-table-column>
+	    		<el-table-column label="总保费">
+	    			<template scope="scope">
+	    				<span>{{ scope.row.quota }}元</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="统计总保费">
+	    			<template scope="scope">
+	    				<span>{{ scope.row.SCQuota }}元</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="奖励总保费">
+	    			<template scope="scope">
+	    				<span>{{ scope.row.RCQuota }}元</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="商业险比例">
+	    			<template scope="scope">
+	    				<span>{{ scope.row.CMRate / 10}}%</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="交强险比例">
+	    			<template scope="scope">
+	    				<span>{{ scope.row.CORate / 10}}%</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="审核状态">
+	    			<template scope="scope">
+	    				<span>{{ scope.row.state == 'AUDIT'?'待审核':(scope.row.state == 'AGREE'?'同意':(scope.row.state == 'REJECT'?'拒绝':''))}}</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="操作">
+	    			<template scope="scope">		
+			      		<el-button type="text" size="small">
+							<router-link :to="{name:'demo-route',query:{id:scope.row.id}}">
+				      			查看
+				      		</router-link>
+			      		</el-button>
+				    </template>
+	    		</el-table-column>
+	    	</el-table>
+
+			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageCount" v-if="pageCount"></el-pagination>
 		</div>
 	</div>
 </template>
 <script>
-
-	function formatDate(time){
-	  var   x = time - 0
-	  console.log(x)
-	  var   now = new Date(x) 
-	  var   year = now.getFullYear();     
-	  var   month = "0" + (now.getMonth()+1);     
-	  var   date = "0" +(now.getDate());   
-	  var   hour = "0" +now.getHours();
-	  var   min =  "0" +now.getMinutes();
-	  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-	}
-
-	export default {
+import { autoApi } from '@/ajax/post.js'
+export default {
 	  data() {
 	    return {
-	      intotal:1,
-	      searchName:'',
-	      tableData:[
-	      	{leader:"张三",money:'15000',per1:'10%',per2:'10%',teammates:'李四',amount:'15000',point:'100'}
-	      ],
-	      currentPage:1,
+	      tableData: [],
+	      currentPage: 1,
+ 		  pageSize: 10,
+ 		  pageCount: null,
 		}
 	  },
 	  methods: {
-	  	handleCurrentChange(val) {
-	        this.currentPage = val;
-	        console.log(`当前页: ${val}`);
-	        // this.getlist(); 
+	  	//时间戳格式化
+  		add0(m) { return m<10?'0'+m:m },
+	    getFormTime(shijianchuo) {
+	        //shijianchuo是整数，否则要parseInt转换
+	        var time = new Date(shijianchuo);
+	        var y = time.getFullYear();
+	        var m = time.getMonth()+1;
+	        var d = time.getDate();
+	        var h = time.getHours();
+	        var mm = time.getMinutes();
+	        var s = time.getSeconds();
+	        return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
 	    },
+	    getInfo() {
+	    	let payload = {
+	    		 	page: this.currentPage,
+				    pageSize: this.pageSize,
+				    employeeId: window.localStorage.getItem('employeeId')
+	    	}
+	    	payload = JSON.stringify(payload);
+	    	autoApi({
+	   			action: 'bonus_scale_audits',
+	   			version: '1.0',
+	   			payload: payload
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if(res.attach.list) {
+	   					this.tableData = res.attach.list;
+	   					this.pageCount = res.attach.total;
+	   				}
+       			}
+	   		})
+	    },
+	  	//分页逻辑
+	    pageChange(page) {
+	    	this.currentPage = page;
+	    	this.getInfo();
+	    }
 	  },
-	  mounted:function() {
-	  	
+	  mounted() {
+	  	this.getInfo();
 	  }
-	}
+}
 </script>

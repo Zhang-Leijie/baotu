@@ -29,8 +29,7 @@ import { masterApi } from '@/ajax/post.js'
 	        formData: [],
 	        pageCount: null,
 	        pageSize: 10,
-	        currentPage: 1,
-	        length: 0
+	        currentPage: 1
 	      };
 	    },
 	    methods: {
@@ -47,19 +46,20 @@ import { masterApi } from '@/ajax/post.js'
 			},
 
 			getInfo() {
-				let payload = {};
+				let payload = {
+					page: this.currentPage,
+					pageSize: this.pageSize
+				};
 				payload = JSON.stringify(payload);
 				masterApi({
-					action: 'non_auto_category_list',
+					action: 'non_auto_product_list',
 					version: '1.0',
 					payload: payload
 				},window.localStorage.getItem('token')).then((res)=> {
 					if (res.code == 0) {
 						if (res.attach) {
-		   					this.tableData = res.attach;
-		   					this.length = res.attach.length;
-		   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-		   					this.showPage();
+		   					this.tableData = res.attach.list;
+		   					this.pageCount = res.attach.total;
 		   				}
 					}
 				})
@@ -73,29 +73,9 @@ import { masterApi } from '@/ajax/post.js'
 
 			},
 
-			showPage() {
-		  		this.formData = [];
-		  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
-		  		{
-		  			for (let i = 0; i < this.tableData.length; i++) {
-		  				if (i >= (this.currentPage - 1) * this.pageSize) {
-		  					this.formData.push(this.tableData[i])
-		  				}
-		  			}
-		  		}
-		  		else
-		  		{
-		  			for (let i = 0; i < this.tableData.length; i++) {
-		  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
-		  					this.formData.push(this.tableData[i])
-		  				}
-		  			}
-		  		}
-		  	},
-
 		  	pageChange(pg) {
 		  		this.currentPage = pg;
-		        this.showPage(); 
+		        this.getInfo(); 
 		    },
 	    },
 	    mounted(){

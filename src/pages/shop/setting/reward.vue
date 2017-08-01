@@ -52,8 +52,8 @@
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
 		  		<el-radio-group v-model="formSetting.bonusScaleCountInsuranceMod">
-			    	<el-radio label="1">商业险</el-radio>
-					<el-radio label="2">交强险</el-radio>
+			    	<el-radio label="32">商业险</el-radio>
+					<el-radio label="64">交强险</el-radio>
 			  	</el-radio-group>
 		  	</el-form-item>
 		</el-form>
@@ -62,17 +62,17 @@
 		  	<el-form-item class="Btitle" label="奖励口径:" style="margin-bottom:0px;"></el-form-item>
 		  	<el-form-item label="统计车型:">
 				<el-radio-group v-model="formSetting.bonusScaleRewardMod">
-			    	<el-radio label="1">非营业客车</el-radio>
-					<el-radio label="2">非营业货车</el-radio>
-					<el-radio label="4">营业客车</el-radio>
-					<el-radio label="8">营业货车</el-radio>
-					<el-radio label="16">其他</el-radio>
+			    	<el-radio label="128">非营业客车</el-radio>
+					<el-radio label="256">非营业货车</el-radio>
+					<el-radio label="512">营业客车</el-radio>
+					<el-radio label="1024">营业货车</el-radio>
+					<el-radio label="2048">其他</el-radio>
 			  	</el-radio-group>
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
 				<el-radio-group v-model="formSetting.bonusScaleRewardInsuranceMod">
-			    	<el-radio label="1">商业险</el-radio>
-					<el-radio label="2">交强险</el-radio>
+			    	<el-radio label="4096">商业险</el-radio>
+					<el-radio label="8192">交强险</el-radio>
 			  	</el-radio-group>
 		  	</el-form-item>
 		</el-form>
@@ -497,44 +497,40 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			}
 		   		})
 	       	},
-	       	getInfo() {
-	       		commonApi({
-		   			action: 'tenant_info',
-		   			version: '1.0',
-		   			employeeId: window.localStorage.getItem('employeeId'),
-		   			client: 2
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-        				//缺少深度
-        				this.formSetting.bonusScaleCountMod = res.attach.bonusScaleCountMod.toString();
-        				this.formSetting.bonusScaleRewardMod = res.attach.bonusScaleRewardMod.toString();
-        				this.formSetting.bonusScaleCountInsuranceMod = res.attach.bonusScaleCountInsuranceMod.toString();
-        				this.formSetting.bonusScaleRewardInsuranceMod = res.attach.bonusScaleRewardInsuranceMod.toString();
-	       			}
-		   		})
-	       	},
+	      //  	getInfo() {
+	      //  		commonApi({
+		   		// 	action: 'tenant_info',
+		   		// 	version: '1.0',
+		   		// 	employeeId: window.localStorage.getItem('employeeId'),
+		   		// 	client: 2
+		   		// },window.localStorage.getItem('token')).then((res)=> {
+		   		// 	if (res.code == 0) {
+       //  				//缺少深度
+       //  				debugger
+       //  				this.formSetting.bonusScaleCountMod = res.attach.bonusScaleCountMod.toString();
+       //  				this.formSetting.bonusScaleRewardMod = res.attach.bonusScaleRewardMod.toString();
+       //  				this.formSetting.bonusScaleCountInsuranceMod = res.attach.bonusScaleCountInsuranceMod.toString();
+       //  				this.formSetting.bonusScaleRewardInsuranceMod = res.attach.bonusScaleRewardInsuranceMod.toString();
+	      //  			}
+		   		// })
+	      //  	},
 	       	comfirmSetting() {
-	       		let tenantSettingsSubmit = {
+	       		let tenantSettingsSubmit  = {
 				    // name : xxx,                                                // 商户名字
 				    teamDepth: null,                                            // 团队层级数
 				    // nonAutoBind :[1,2,3]                                 // 开通的非车险类型id列表
-				    bonusScaleCountMod: null,                          // 规模佣金统计口径模值
-				    bonusScaleRewardMod: null,                         // 规模佣金奖励口径模值
-				    bonusScaleCountInsuranceMod: null,            // 规模佣金统计口径险种模值
-				    bonusScaleRewardInsuranceMod: null          // 规模佣金奖励口径险种模值
+				    mod: 0
 				};
-				tenantSettingsSubmit.teamDepth = this.formSetting.teamDepth;
-				tenantSettingsSubmit.bonusScaleCountMod = this.formSetting.bonusScaleCountMod;
-				tenantSettingsSubmit.bonusScaleRewardMod = this.formSetting.bonusScaleRewardMod;
-				tenantSettingsSubmit.bonusScaleCountInsuranceMod = this.formSetting.bonusScaleCountInsuranceMod;
-				tenantSettingsSubmit.bonusScaleRewardInsuranceMod = this.formSetting.bonusScaleRewardInsuranceMod;
-				if (tenantSettingsSubmit.teamDepth && tenantSettingsSubmit.bonusScaleCountMod && tenantSettingsSubmit.bonusScaleRewardMod && tenantSettingsSubmit.bonusScaleCountInsuranceMod && tenantSettingsSubmit.bonusScaleRewardInsuranceMod) {
-					tenantSettingsSubmit = JSON.stringify(tenantSettingsSubmit);
+				tenantSettingsSubmit .teamDepth = this.formSetting.teamDepth;
+				tenantSettingsSubmit .mod = parseInt(this.formSetting.bonusScaleCountMod) + parseInt(this.formSetting.bonusScaleRewardMod) + parseInt(this.formSetting.bonusScaleCountInsuranceMod) + parseInt(this.formSetting.bonusScaleRewardInsuranceMod);
+				debugger
+				if (tenantSettingsSubmit .mod) {
+					tenantSettingsSubmit  = JSON.stringify(tenantSettingsSubmit );
 					autoApi({
 			   			action: 'tenant_set',
 			   			version: '1.0',
 			   			employeeId: window.localStorage.getItem('employeeId'),
-			   			tenantSettingsSubmit: tenantSettingsSubmit
+			   			tenantSettingsSubmit : tenantSettingsSubmit 
 			   		},window.localStorage.getItem('token')).then((res)=> {
 			   			if (res.code == 0) {
 			   				this.$message({
@@ -711,7 +707,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		    }
 	    },
 	    mounted:function(){
-	    	this.getInfo();
+	    	// this.getInfo();
 	        this.getGuanli();
 	        this.getGuimo();
 	    }

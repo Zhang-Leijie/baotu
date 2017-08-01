@@ -39,7 +39,7 @@
               <router-link :to="{name:'nonAutoCategoryList'}">
                 <el-menu-item index="4-1" class="sub-title">非车险类型设置</el-menu-item>
               </router-link>
-              <router-link :to="{name:'nonAutoProductEdit'}">
+              <router-link :to="{name:'nonAutoProductList'}">
                 <el-menu-item index="4-2" class="sub-title">非车险产品设置</el-menu-item>
               </router-link>
             </el-menu-item-group>
@@ -108,7 +108,7 @@ export default {
       this.activeRoute = '4-1';
       this.openedRouteList = ['4'];
     }
-    else if (this.$route.name == 'nonAutoProductEdit') {
+    else if (this.$route.name == 'nonAutoProductList') {
       this.activeRoute = '4-2';
       this.openedRouteList = ['4'];
     }

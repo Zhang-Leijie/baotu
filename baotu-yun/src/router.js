@@ -116,10 +116,10 @@ const routes = [
                 }
             },
             {
-                path: "/nonAutoProductEdit",
-                name: "nonAutoProductEdit",
+                path: "/nonAutoProductList",
+                name: "nonAutoProductList",
                 component(resolve) {
-                    require(['./pages/product/nonAutoProductEdit.vue'],resolve)
+                    require(['./pages/product/nonAutoProductList.vue'],resolve)
                 }
             }
         ]
