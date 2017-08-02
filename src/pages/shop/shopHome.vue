@@ -33,10 +33,10 @@
           </el-submenu>
 
           <el-submenu index="6">
-            <template slot="title">设置*</template>
+            <template slot="title">设置</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-set-insuranceN'}">
-                <el-menu-item index="6-1" class="sub-title">非车险险种设置</el-menu-item>
+              <router-link :to="{name:'shop-autoinsurance-manage'}">
+                <el-menu-item index="6-1" class="sub-title">车险设置</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <!-- <el-menu-item-group>
@@ -81,29 +81,44 @@
           </el-submenu>
 
           <el-submenu index="4">
-            <template slot="title">产品管理*</template>
+            <template slot="title">产品管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-autoinsurance-manage'}">
-                <el-menu-item index="4-1" class="sub-title">车险管理</el-menu-item>
+              <router-link :to="{name:'shop-set-insuranceN'}">
+                <el-menu-item index="4-1" class="sub-title">我的非车险</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
+              <router-link :to="{name:'shop-set-insuranceN'}">
+                <el-menu-item index="4-2" class="sub-title">共享车险商城*</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-set-insuranceN'}">
+                <el-menu-item index="4-3" class="sub-title">我的共享车险*</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+            <!-- <el-menu-item-group>
               <router-link :to="{name:'shop-autoinsurance-ratio'}">
                 <el-menu-item index="4-2" class="sub-title">车险自定义系数管理</el-menu-item>
               </router-link>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
           </el-submenu>
 
           <el-submenu index="7">
-            <template slot="title">车险订单管理*</template>
+            <template slot="title">订单管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-order-autoinsurance'}">
-                <el-menu-item index="7-1" class="sub-title">车险订单列表</el-menu-item>
+                <el-menu-item index="7-1" class="sub-title">车险订单</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
               <router-link :to="{name:'shop-order-policyList'}">
-                <el-menu-item index="7-2" class="sub-title">已出单列表</el-menu-item>
+                <el-menu-item index="7-2" class="sub-title">车险已出单</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-order-policyList'}">
+                <el-menu-item index="7-3" class="sub-title">共享车险订单*</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
@@ -128,10 +143,15 @@
           </el-submenu>
 
           <el-submenu index="8">
-            <template slot="title">统计管理*</template>
+            <template slot="title">统计管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-statistic-statisticManage'}">
                 <el-menu-item index="8-1" class="sub-title">统计管理</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+            <el-menu-item-group>
+              <router-link :to="{name:'shop-statistic-statisticManage'}">
+                <el-menu-item index="8-2" class="sub-title">商品销售统计*</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
@@ -154,8 +174,13 @@
 	        </div>
         </div>
     </div>
-    <div class="content-box">
+    <!-- <div class="content-box">
         <router-view></router-view>
+    </div> -->
+    <div class="content-box">
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
     </div>
   </div>
 </template>
@@ -212,14 +237,14 @@ export default {
       this.activeRoute = '3-3';
       this.openedRouteList = ['3'];
     }
-    else if (this.$route.name == 'shop-autoinsurance-manage') {
+    else if (this.$route.name == 'shop-set-insuranceN') {
       this.activeRoute = '4-1';
       this.openedRouteList = ['4'];
     }
-    else if (this.$route.name == 'shop-autoinsurance-ratio') {
-      this.activeRoute = '4-2';
-      this.openedRouteList = ['4'];
-    }
+    // else if (this.$route.name == 'shop-autoinsurance-ratio') {
+    //   this.activeRoute = '4-2';
+    //   this.openedRouteList = ['4'];
+    // }
     else if (this.$route.name == 'shop-autoinsurance-orders') {
       this.activeRoute = '4-3';
       this.openedRouteList = ['4'];
@@ -236,18 +261,18 @@ export default {
       this.activeRoute = '5-3';
       this.openedRouteList = ['5'];
     }
-    else if (this.$route.name == 'shop-set-insuranceN') {
+    else if (this.$route.name == 'shop-autoinsurance-manage') {
       this.activeRoute = '6-1';
       this.openedRouteList = ['6'];
     }
-    else if (this.$route.name == 'shop-set-moneyClient') {
-      this.activeRoute = '6-2';
-      this.openedRouteList = ['6'];
-    }
-    else if (this.$route.name == 'shop-set-phoneClient') {
-      this.activeRoute = '6-3';
-      this.openedRouteList = ['6'];
-    }
+    // else if (this.$route.name == 'shop-set-moneyClient') {
+    //   this.activeRoute = '6-2';
+    //   this.openedRouteList = ['6'];
+    // }
+    // else if (this.$route.name == 'shop-set-phoneClient') {
+    //   this.activeRoute = '6-3';
+    //   this.openedRouteList = ['6'];
+    // }
     else if (this.$route.name == 'shop-set-reward') {
       this.activeRoute = '6-4';
       this.openedRouteList = ['6'];
@@ -408,5 +433,11 @@ export default {
     .el-form-item__label{
       font-size: 18px;
     }
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .1s
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
+    opacity: 0
   }
 </style>

@@ -42,6 +42,12 @@ const routes = [
                 require(['./pages/shop/setting/rewardVerify.vue'],resolve)
             }
         },{
+            path: "/shop/rewardVerifyDetail",
+            name: 'shop-set-rewardVerifyDetail',
+            component(resolve) {
+                require(['./pages/shop/setting/rewardVerifyDetail.vue'],resolve)
+            }
+        },{
             path: "/shop/reward",
             name: 'shop-set-reward',
             component(resolve) {

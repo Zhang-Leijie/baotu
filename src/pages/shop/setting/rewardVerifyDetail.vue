@@ -46,11 +46,6 @@
 	    		<el-table-column label="操作">
 	    			<template scope="scope">		
 			      		<el-button type="text" size="small" @click="checkThisOne(scope.row)">审核</el-button>
-			      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-set-rewardVerifyDetail',query:{id:scope.row.employeeId}}">
-			      			查看流水
-			      		</router-link>
-		      		</el-button>
 				    </template>
 	    		</el-table-column>
 	    	</el-table>
@@ -65,9 +60,10 @@ export default {
 	  data() {
 	    return {
 	      tableData: [],
-	      currentPage: 1,
- 		  pageSize: 10,
- 		  pageCount: null,
+	      pageCount: null,
+          pageSize: 10,
+          currentPage: 1,
+          length: 0
 		}
 	  },
 	  methods: {
@@ -84,22 +80,23 @@ export default {
 	        var s = time.getSeconds();
 	        return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
 	    },
-	    getInfo() {
+	    
+	    getInfo(id) {
 	    	let payload = {
-	    		 	page: this.currentPage,
-				    pageSize: this.pageSize,
-				    employeeId: window.localStorage.getItem('employeeId')
+	    		 	key: id
 	    	}
 	    	payload = JSON.stringify(payload);
 	    	autoApi({
-	   			action: 'bonus_scale_audits',
+	   			action: 'bonus_scale_details',
 	   			version: '1.0',
 	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
-	   				if(res.attach.list) {
-	   					this.tableData = res.attach.list;
-	   					this.pageCount = res.attach.total;
+	   				if (res.attach && res.attach.length > 0) {
+	   					this.tableData = res.attach;
+	   					this.length = res.attach.length;
+	   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+	   					this.showPage();
 	   				}
        			}
 	   		})
@@ -120,14 +117,37 @@ export default {
        			}
 	   		})
 	    },
+
+		showPage() {
+	  		this.tableData = [];
+	  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
+	  		{
+	  			for (let i = 0; i < this.tableData.length; i++) {
+	  				if (i >= (this.currentPage - 1) * this.pageSize) {
+	  					this.tableData.push(this.tableData[i])
+	  				}
+	  			}
+	  		}
+	  		else
+	  		{
+	  			for (let i = 0; i < this.tableData.length; i++) {
+	  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
+	  					this.tableData.push(this.tableData[i])
+	  				}
+	  			}
+	  		}
+	  	},
+
 	  	//分页逻辑
-	    pageChange(page) {
-	    	this.currentPage = page;
-	    	this.getInfo();
-	    }
+	  	pageChange(pg) {
+	  		this.currentPage = pg;
+	        this.showPage(); 
+	    },
 	  },
 	  mounted() {
-	  	this.getInfo();
+	  	if (this.$route.query.id) {
+	  		this.getInfo(this.$route.query.id);
+	  	}
 	  }
 }
 </script>

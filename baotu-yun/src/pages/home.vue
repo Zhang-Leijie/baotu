@@ -12,24 +12,33 @@
                 <el-menu-item index="2-1" class="sub-title">管理员账号</el-menu-item>
               </router-link>
               <router-link :to="{name:'appList'}">
-                <el-menu-item index="2-2" class="sub-title">平台列表</el-menu-item>
+                <el-menu-item index="2-2" class="sub-title">平台管理</el-menu-item>
               </router-link>
               <router-link :to="{name:'tenantList'}">
-                <el-menu-item index="2-3" class="sub-title">商家列表</el-menu-item>
+                <el-menu-item index="2-3" class="sub-title">商家管理</el-menu-item>
+              </router-link>
+              <router-link :to="{name:'GMList'}">
+                <el-menu-item index="2-4" class="sub-title">角色管理*</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
-            <template slot="title">平台配置</template>
+            <template slot="title">设置</template>
             <el-menu-item-group>
               <router-link :to="{name:'insurerList'}">
-                <el-menu-item index="3-1" class="sub-title">险企列表</el-menu-item>
+                <el-menu-item index="3-1" class="sub-title">险企设置</el-menu-item>
               </router-link>
               <router-link :to="{name:'areaList'}">
-                <el-menu-item index="3-2" class="sub-title">地区列表</el-menu-item>
+                <el-menu-item index="3-2" class="sub-title">地区设置</el-menu-item>
               </router-link>
               <router-link :to="{name:'brandsList'}">
-                <el-menu-item index="3-3" class="sub-title">汽车品牌列表</el-menu-item>
+                <el-menu-item index="3-3" class="sub-title">特殊车辆管理</el-menu-item>
+              </router-link>
+              <router-link :to="{name:'insurerList'}">
+                <el-menu-item index="3-4" class="sub-title">系统设置*</el-menu-item>
+              </router-link>
+              <router-link :to="{name:'insurerList'}">
+                <el-menu-item index="3-5" class="sub-title">意见反馈管理*</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
@@ -37,10 +46,10 @@
             <template slot="title">产品管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'nonAutoCategoryList'}">
-                <el-menu-item index="4-1" class="sub-title">非车险类型设置</el-menu-item>
+                <el-menu-item index="4-1" class="sub-title">非车险管理</el-menu-item>
               </router-link>
               <router-link :to="{name:'nonAutoProductList'}">
-                <el-menu-item index="4-2" class="sub-title">非车险产品设置</el-menu-item>
+                <el-menu-item index="4-2" class="sub-title">共享车险产品管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
@@ -55,7 +64,9 @@
         </div>
     </div>
     <div class="content-box">
+      <transition name="fade" mode="out-in">
         <router-view></router-view>
+      </transition>
     </div>
   </div>
 </template>
@@ -252,5 +263,11 @@ export default {
     .el-form-item__label{
       font-size: 18px;
     }
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .1s
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
+    opacity: 0
   }
 </style>
