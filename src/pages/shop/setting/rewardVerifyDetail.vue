@@ -50,7 +50,7 @@
 	    		</el-table-column>
 	    	</el-table>
 
-			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageCount" v-if="pageCount"></el-pagination>
+			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, jumper" :page-count="pageCount" v-if="pageCount"></el-pagination>
 		</div>
 	</div>
 </template>

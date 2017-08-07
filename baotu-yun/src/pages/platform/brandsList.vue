@@ -43,7 +43,7 @@
 			    	</template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+			<el-pagination v-if="length" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='length' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 
 		<el-dialog title="新增汽车品牌" :visible.sync="dialogFormVisible" size="small" :before-close="handleFormClose">

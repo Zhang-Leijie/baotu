@@ -40,12 +40,12 @@
 			      </template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="pageCount"
+			<el-pagination v-if="total"
 		      @current-change="pageChange"
 		      :current-page="currentPage"
 		      :page-size="pageSize"
 		      layout="total , prev, pager, next, jumper"
-		      :page-count='pageCount'
+		      :total='total'
 		      style="margin:20px auto;text-align:center">
 		    </el-pagination>
 		</div>
@@ -57,7 +57,7 @@ import { autoApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
-	      pageCount: 1,
+	      total: 1,
 	      searchName: '',
 	      tableData: [],
 	      currentPage: 1,
@@ -96,7 +96,7 @@ import { autoApi } from '@/ajax/post.js'
 	   			if (res.code == 0) {
 	   				if(res.attach.list[0]) {
 	   					this.tableData = res.attach.list;
-	   					this.pageCount = res.attach.total;
+	   					this.total = res.attach.total;
 	   				}
        			}
 	   		})

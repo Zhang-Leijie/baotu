@@ -27,10 +27,10 @@
 		    <el-input style="width:300px;" v-model="form.servicePhone"></el-input>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="联系人:">
-		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入联系人"></el-input>
+		    <el-input style="width:300px;" v-model="form.people" placeholder="请输入联系人"></el-input>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="联系人电话:">
-		    <el-input type="text" style="width:300px;" v-model="form.contactsMobile" auto-complete="off" placeholder="请输入联系人电话"></el-input>
+		    <el-input style="width:300px;" v-model="form.contactsMobile" placeholder="请输入联系人电话"></el-input>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="过期时间:">
 		     <el-date-picker v-model="form.time" type="date" placeholder="选择日期"></el-date-picker>
@@ -229,41 +229,51 @@ import regionData from '@/region.js'
 		    // },
 
 		    confirmAdd() {
-		    	let tname = this.form.name;
-		    	// let region = this.form.region;
-		    	let identity = this.form.identity;
-		    	let identityFace = this.imageUrla;
-		    	// let identityBack = this.imageUrlb;
-		    	let mobile = this.form.phone;
-		    	let endTime = this.getFormTime(Date.parse(this.form.time));
-		    	let name = this.form.people;
-		    	let contactsMobile = this.form.contactsMobile;
-		    	let servicePhone = this.form.servicePhone;
-		    	autoApi({
-		   			action: 'tenant_add',
-		   			version: '1.0',
-		   			tname: tname,
-		   			// region: region,
-		   			identity: identity,
-		   			identityFace: identityFace,
-		   			// identityBack: identityBack,
-		   			mobile: mobile,
-		   			// captcha: captcha,
-		   			endTime: endTime,
-		   			name: name,
-		   			contactsMobile: contactsMobile,
-		   			servicePhone: servicePhone
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.$message({
-				            message: '新增商户成功',
-				            type: 'success'
-				        });
-				        router.push({
-					        path: '/shop/shop-list'
-					    });
-	       			}
-		   		})
+		    	if (this.form.identity && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.form.imageUrla) {
+		    		let tname = this.form.name;
+			    	// let region = this.form.region;
+			    	let identity = this.form.identity;
+			    	let identityFace = this.imageUrla;
+			    	// let identityBack = this.imageUrlb;
+			    	let mobile = this.form.phone;
+			    	let endTime = this.getFormTime(Date.parse(this.form.time));
+			    	let name = this.form.people;
+			    	let contactsMobile = this.form.contactsMobile;
+			    	let servicePhone = this.form.servicePhone;
+			    	autoApi({
+			   			action: 'tenant_add',
+			   			version: '1.0',
+			   			tname: tname,
+			   			// region: region,
+			   			identity: identity,
+			   			identityFace: identityFace,
+			   			// identityBack: identityBack,
+			   			mobile: mobile,
+			   			// captcha: captcha,
+			   			endTime: endTime,
+			   			name: name,
+			   			contactsMobile: contactsMobile,
+			   			servicePhone: servicePhone
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+			   				this.$message({
+					            message: '新增商户成功',
+					            type: 'success'
+					        });
+					        router.push({
+						        path: '/shop/shop-list'
+						    });
+		       			}
+			   		})
+		    	}
+		    	else
+		    	{
+		    		this.$message({
+		    			typp: 'info',
+		    			message: '输入信息不完整'
+		    		});
+		    	}	
+			    	
 		    }
 	    },
 	    mounted() {

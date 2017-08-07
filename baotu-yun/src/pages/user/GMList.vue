@@ -34,7 +34,7 @@
 			    	</template>
 			    </el-table-column> -->
 			</el-table>
-			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 	</div>
 </template>
@@ -45,7 +45,7 @@ import { masterApi } from '@/ajax/post.js'
 	  data() {
 	    return {
 	      currentPage: 1,
-	      pageCount: null,
+	      total: null,
 	      pageSize: 10,
 	      tableData: [],
 		}
@@ -73,7 +73,7 @@ import { masterApi } from '@/ajax/post.js'
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;
-	   				this.pageCount = res.attach.total;
+	   				this.total = res.attach.total;
        			}
 	   		})
 	  	},

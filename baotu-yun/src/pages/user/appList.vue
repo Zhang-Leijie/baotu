@@ -45,7 +45,7 @@
 			    	</template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+			<el-pagination v-if="length" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='length' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 	</div>
 </template>
@@ -78,9 +78,12 @@ import { masterApi } from '@/ajax/post.js'
 		},
 
 	  	getInfo() {
+	  		let payload = {};
+	  		payload = JSON.stringify(payload);
 	  		masterApi({
-	   			action: 'app_list',
-	   			version: '1.0'
+	   			action: 'apps',
+	   			version: '1.0',
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {

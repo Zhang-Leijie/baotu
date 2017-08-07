@@ -66,7 +66,7 @@
 			    </el-table-column>
 			</el-table>
 
-			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 
 		</div>
 	</div>
@@ -82,7 +82,7 @@ export default {
 	      tableData:[
 	      	// {index:1,account:'管理员',appname:'商家名称', license:'111111111', timeB:'2015-09-26 08:50:08',timeE:'2015-09-26 08:50:08',state:'正常'}
 	      ],
-	      pageCount: null,
+	      total: null,
 	      currentPage: 1,
 	      pageSize: 10
 		}
@@ -123,7 +123,7 @@ export default {
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;
-	   				this.pageCount = res.attach.total;
+	   				this.total = res.attach.total;
 	   				// this.$message({
 			     //        message: '修改的设置已保存',
 			     //        type: 'success'

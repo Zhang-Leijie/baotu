@@ -15,26 +15,27 @@
 
 		<div style="margin-top:20px;">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="orders" label="序号"></el-table-column>
-			    <el-table-column prop="orders" label="订单类型"></el-table-column>
-			    <el-table-column prop="orders" label="订单编号"></el-table-column>
+			    <el-table-column prop="uid" label="用户id"></el-table-column>
+			    <el-table-column prop="employeeId" label="雇员工号"></el-table-column>
+			    <el-table-column prop="userName" label="用户姓名"></el-table-column>
+			    <el-table-column prop="userMobile" label="用户手机"></el-table-column>
+			    <el-table-column prop="id" label="保单id"></el-table-column>
 			    <el-table-column label="订单时间">
 			    	<template scope="scope">
-			    		<span>{{scope.row?scope.row:''}}</span>
+			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>
 			    	</template>
 			    </el-table-column>
 			    <el-table-column prop="price" label="订单金额"></el-table-column>
-			    <el-table-column prop="employeeId" label="业务员"></el-table-column>
 			    <el-table-column label="订单状态">
 			    	<template scope="scope">
-			    		<span>{{scope.row?scope.row:''}}</span>
+			    		<span>{{ showState(scope.row.state) }}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column label="单证状态">
+			    <!-- <el-table-column label="单证状态">
 			    	<template scope="scope">
 			    		<span>{{scope.row?scope.row:''}}</span>
 			    	</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column label="操作">
 			    	<template scope="scope">
 			    		<el-button type="text" size="small">
@@ -45,7 +46,7 @@
 			    	</template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 	</div>
 </template>
@@ -57,7 +58,7 @@ import { autoApi } from '@/ajax/post.js'
 	    return {
 	      dialogFormVisible: false,	
 	      currentPage: 1,
-	      pageCount: null,
+	      total: null,
 	      pageSize: 10,
 	      tableData: [],
 	      search: {
@@ -69,12 +70,24 @@ import { autoApi } from '@/ajax/post.js'
 		      	label: "核保"
 		      },
 		      {
+		      	value: "SYSTEM_ERROR",
+		      	label: "系统错误"
+		      },
+		      {
+		      	value: "QUOTING",
+		      	label: "报价中"
+		      },
+		      {
 		      	value: "QUOTE_SUCCESS",
-		      	label: "未核保"
+		      	label: "报价成功"
 		      },
 		      {
 		      	value: "INSURE_FAILURE",
 		      	label: "核保失败"
+		      },
+		      {
+		      	value: "QUOTE_FAILURE",
+		      	label: "报价失败"
 		      },
 		      {
 		      	value: "INSURING",
@@ -86,11 +99,15 @@ import { autoApi } from '@/ajax/post.js'
 		      },
 		      {
 		      	value: "INSURE_SUCCESS",
-		      	label: "待预约"
+		      	label: "核保成功"
 		      },
 		      {
 		      	value: "ISSUE_SUCCES",
 		      	label: "待出单"
+		      },
+		      {
+		      	value: "ISSUE_APPOINTED",
+		      	label: "已预约"
 		      },
 		      {
 		      	value: "ISSUED",
@@ -142,6 +159,7 @@ import { autoApi } from '@/ajax/post.js'
 	   			if (res.code == 0) {
 	   				if (res.attach) {
 	   					this.tableData = res.attach.list;
+	   					this.total = res.attach.total;
 	   				}
        			}
 	   		})
@@ -154,6 +172,14 @@ import { autoApi } from '@/ajax/post.js'
 	  	pageChange(pg) {
 	  		this.currentPage = pg;
 	        this.getInfo(); 
+	    },
+
+	    showState(state) {
+	    	for (var i = 0; i < this.stateList.length; i++) {
+	    		if (this.stateList[i].value == state) {
+	    			return this.stateList[i].label;
+	    		}
+	    	}
 	    }
 	  },
 	  mounted() {

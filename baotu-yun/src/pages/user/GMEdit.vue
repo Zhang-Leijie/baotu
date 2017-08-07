@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'GMList'}">商家列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'GMList'}">管理员列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>{{id?'编辑':'新增'}}</el-breadcrumb-item>
 		</el-breadcrumb>
 		<el-form label-width="120px" class="appbox">

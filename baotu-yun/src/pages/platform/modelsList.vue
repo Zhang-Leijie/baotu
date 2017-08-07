@@ -1,6 +1,16 @@
 <template>
 	<div class="modelsList">
 		<el-breadcrumb separator="/">
+			<el-breadcrumb-item>
+				<router-link :to="{name:'brandsList'}">
+		      		汽车品牌列表
+	      		</router-link>
+			</el-breadcrumb-item>
+		  	<el-breadcrumb-item>
+		  	<router-link :to="{name:'deptsList',query:{id: grandId}}">
+		      		汽车车系列表
+	      		</router-link>
+		  	</el-breadcrumb-item>
 		  	<el-breadcrumb-item>厂牌型号列表</el-breadcrumb-item>
 		</el-breadcrumb>
 
@@ -38,7 +48,7 @@
 			    	</template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+			<el-pagination v-if="length" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='length' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 
 		<el-dialog title="新增厂牌型号" :visible.sync="dialogFormVisible" size="small" :before-close="handleFormClose">
@@ -56,7 +66,8 @@ import { masterApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
-	      id: null,
+	      grandId: null,		//所属品牌ID
+	      id: null,				//所属车系ID
 	      currentPage: 1,
 	      pageCount: null,
 	      length: null,
@@ -213,6 +224,7 @@ import { masterApi } from '@/ajax/post.js'
 	  mounted() {
 	  	if (this.$route.query) {
 	  		this.id = this.$route.query.id;
+	  		this.grandId = this.$route.query.parentId;
 	  		this.getInfo();
 	  	}
 	  }

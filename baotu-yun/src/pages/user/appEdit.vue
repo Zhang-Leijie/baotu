@@ -64,14 +64,18 @@ import regionData from '@/region.js'
 
 			comfirmAdd() {
 				if (this.form.name && this.form.region && this.form.maxHold && this.form.maxShop) {
-					masterApi({
-						action: 'app_edit',
-						version: '1.0',
-						crudType: 1,
+					let payload = {
 						region: this.form.region,
 						name: this.form.name,
 						maxTenantsCount: this.form.maxShop,
 						maxArticlesCount: this.form.maxHold
+					}
+					payload = JSON.stringify(payload);
+					masterApi({
+						action: 'app_edit',
+						version: '1.0',
+						crudType: 1,
+						payload: payload
 					},window.localStorage.getItem('token')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
@@ -95,15 +99,19 @@ import regionData from '@/region.js'
 
 			comfirmSave() {
 				if (this.form.maxHold && this.form.maxShop) {
-					masterApi({
-						action: 'app_edit',
-						version: '1.0',
-						crudType: 4,
-						id: this.id,
+					let payload = {
+						appId: this.id,
 						region: this.form.region,
 						name: this.form.name,
 						maxTenantsCount: this.form.maxShop,
 						maxArticlesCount: this.form.maxHold
+					}
+					payload = JSON.stringify(payload);
+					masterApi({
+						action: 'app_edit',
+						version: '1.0',
+						crudType: 4,
+						payload: payload
 					},window.localStorage.getItem('token')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({

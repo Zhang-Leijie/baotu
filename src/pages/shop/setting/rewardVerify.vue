@@ -55,7 +55,7 @@
 	    		</el-table-column>
 	    	</el-table>
 
-			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, jumper" :total="pageCount" v-if="pageCount"></el-pagination>
+			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, jumper" :total="total" v-if="total"></el-pagination>
 		</div>
 	</div>
 </template>
@@ -67,7 +67,7 @@ export default {
 	      tableData: [],
 	      currentPage: 1,
  		  pageSize: 10,
- 		  pageCount: null,
+ 		  total: null,
 		}
 	  },
 	  methods: {
@@ -99,7 +99,7 @@ export default {
 	   			if (res.code == 0) {
 	   				if(res.attach.list) {
 	   					this.tableData = res.attach.list;
-	   					this.pageCount = res.attach.total;
+	   					this.total = res.attach.total;
 	   				}
        			}
 	   		})

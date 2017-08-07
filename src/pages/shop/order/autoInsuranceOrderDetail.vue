@@ -8,7 +8,7 @@
       <el-button @click="goback">返回</el-button>
     </div>
 
-    <table class="tableA" border="11">
+    <!-- <table class="tableA" border="11">
           <tr>
             <th>车牌号</th>
             <td>{{ tableData.license }}</td>
@@ -109,7 +109,7 @@
             <th>保费总金额</th>
             <td colspan="2">{{ tableData.demo }}</td>
           </tr>
-        </table>
+        </table> -->
 
   </div>
 </template>
@@ -144,9 +144,9 @@ import { autoApi } from '@/ajax/post.js'
           },window.localStorage.getItem('token')).then((res)=> {
             if (res.code == 0) {
               if (res.attach) {
-                this.tableData = res.attach;
-                this.length = res.attach.length;
-              }
+                  this.tableData = res.attach;
+                  this.length = res.attach.length;
+                }
               }
           })
       },
@@ -157,7 +157,7 @@ import { autoApi } from '@/ajax/post.js'
           })
         }
       },
-      mounted(){
+      mounted(){debugger
           if (this.$route.query) {
             this.getInfo(this.$route.query.id);
           }

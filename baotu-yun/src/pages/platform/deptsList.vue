@@ -1,6 +1,11 @@
 <template>
 	<div class="deptsList">
 		<el-breadcrumb separator="/">
+			<el-breadcrumb-item>
+				<router-link :to="{name:'brandsList'}">
+	      			汽车品牌列表
+	      		</router-link>
+			</el-breadcrumb-item>
 		  	<el-breadcrumb-item>汽车车系列表</el-breadcrumb-item>
 		</el-breadcrumb>
 
@@ -36,14 +41,14 @@
 			    		<el-button type="text" size="small" @click="confirmEdit()" v-if="isEdit && scope.row.id == editForm.id">保存</el-button>
 			    		<el-button type="text" size="small" @click="cancelEdit()" v-if="isEdit && scope.row.id == editForm.id">取消</el-button>
 			    		<el-button type="text" size="small" v-if="!isEdit">
-			    			<router-link :to="{name:'modelsList',query:{id: scope.row.id}}">
+			    			<router-link :to="{name:'modelsList',query:{id: scope.row.id, parentId: id}}">
 			      			查看厂牌型号
 				      		</router-link>
 			    		</el-button>
 			    	</template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+			<el-pagination v-if="length" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='length' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 
 		<el-dialog title="新增汽车车系" :visible.sync="dialogFormVisible" size="small" :before-close="handleFormClose">

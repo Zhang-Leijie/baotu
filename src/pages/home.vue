@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 40px;">
-		<el-button disabled="true">
+		<el-button>
 			<router-link :to="{name:'adminHome'}">
 				后台管理端
 			</router-link>
@@ -12,7 +12,7 @@
 			</router-link>
 		</el-button>
 			
-
+		<el-button @click="tenantId = true">不选择商家,直接进入</el-button>
 
 		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">
 		    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
