@@ -11,33 +11,31 @@
 		</div>
 
 		<div class="dataBox" v-if="formData1[0] && !editing">
-			<transition-group name="fade" mode="out-in">
-				<div class="dataBoxCol" key="box1">
-					<ul>
-						<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
-					</ul>
-				</div>
-				<div class="dataBoxCol" v-if="(formData2[0])" key="box2">
-					<ul>
-						<li v-for="i in formData2" @click="enterToThird(i)" :class="chooseds[1] === i.value?'choosedList':''">{{i.label}}</li>
-					</ul>
-				</div>
-				<div class="dataBoxCol" v-if="(formData3[0])" key="box3">
-					<ul>
-						<li v-for="i in formData3" @click="enterTofourth(i)" :class="chooseds[2] === i.value?'choosedList':''">{{i.label}}</li>
-					</ul>
-				</div>
-				<div class="dataBoxCol" v-if="(formData4[0])" key="box4">
-					<ul>
-						<li v-for="i in formData4" @click="enterTofifth(i)" :class="chooseds[3] === i.value?'choosedList':''">{{i.label}}</li>
-					</ul>
-				</div>
-				<div class="dataBoxCol" v-if="(formData5[0])" key="box5">
-					<ul>
-						<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
-					</ul>
-				</div>
-			</transition-group>
+			<div class="dataBoxCol" key="box1">
+				<ul>
+					<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
+				</ul>
+			</div>
+			<div class="dataBoxCol" v-if="(formData2[0])" key="box2">
+				<ul>
+					<li v-for="i in formData2" @click="enterToThird(i)" :class="chooseds[1] === i.value?'choosedList':''">{{i.label}}</li>
+				</ul>
+			</div>
+			<div class="dataBoxCol" v-if="(formData3[0])" key="box3">
+				<ul>
+					<li v-for="i in formData3" @click="enterTofourth(i)" :class="chooseds[2] === i.value?'choosedList':''">{{i.label}}</li>
+				</ul>
+			</div>
+			<div class="dataBoxCol" v-if="(formData4[0])" key="box4">
+				<ul>
+					<li v-for="i in formData4" @click="enterTofifth(i)" :class="chooseds[3] === i.value?'choosedList':''">{{i.label}}</li>
+				</ul>
+			</div>
+			<div class="dataBoxCol" v-if="(formData5[0])" key="box5">
+				<ul>
+					<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
+				</ul>
+			</div>
 		</div>
 
 		<el-row class="commonSet" v-if="insurerId && tenantId.employeeId && choosed && !editing">
@@ -1055,12 +1053,6 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	.dataBox {
 		width: 1200px;
 		overflow-x: hidden;
-		.fade-enter-active, .fade-leave-active {
-		  transition: opacity .5s
-		}
-		.fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
-		  opacity: 0
-		}
 		.dataBoxCol {
 			float: left;
 			width: 18%;

@@ -12,7 +12,7 @@
 			</router-link>
 		</el-button>
 			
-		<el-button @click="tenantId = true">不选择商家,直接进入</el-button>
+		<el-button @click="tenantId = true" v-show="!tenantId">不选择商家,直接进入</el-button>
 
 		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">
 		    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
@@ -73,7 +73,7 @@ export default {
 	   		}) 
 	    },
 
-	    tenantChange(val) {
+	    tenantChange(val) {debugger
         	localStorage.setItem('employeeId',val.employeeId);
         	localStorage.setItem('tid',val.tid);
 	    }

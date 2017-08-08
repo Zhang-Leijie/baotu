@@ -57,7 +57,7 @@ import { autoApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
-	      total: 1,
+	      total: null,
 	      searchName: '',
 	      tableData: [],
 	      currentPage: 1,

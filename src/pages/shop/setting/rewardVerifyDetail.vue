@@ -1,48 +1,35 @@
 <template>
 	<div>
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item>规模奖励审核</el-breadcrumb-item>
+			<el-breadcrumb-item>
+				<router-link :to="{name:'shop-set-rewardVerify'}">
+	      			规模奖励审核
+	      		</router-link>
+			</el-breadcrumb-item>
+		  	<el-breadcrumb-item>规模奖励审核流水</el-breadcrumb-item>
 		</el-breadcrumb>
-		<div style="margin-top:10px;margin-bottom:10px;">
-			<router-link :to="{name:'shop-role-add'}">
-				<el-button type="primary" class="marginBtn">新增</el-button>
-			</router-link>
-			<div style="clear:both"></div>
-		</div>
+
 		<div style="margin-top:20px;">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
+	    		<el-table-column prop="name" label="姓名"></el-table-column>
 	    		<el-table-column prop="employeeId" label="雇员号"></el-table-column>
-	    		<el-table-column prop="name" label="名字"></el-table-column>
-	    		<el-table-column label="总保费">
+	    		<el-table-column label="时间">
+	    			<template scope="scope">
+	    				<span>{{ getFormTime(scope.row.time) }}</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="类型">
+	    			<template scope="scope">
+	    				<span>{{ showType(scope.row.bonusType) }}</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="额度">
 	    			<template scope="scope">
 	    				<span>{{ scope.row.quota }}元</span>
 	    			</template>
 	    		</el-table-column>
-	    		<el-table-column label="统计总保费">
-	    			<template scope="scope">
-	    				<span>{{ scope.row.SCQuota }}元</span>
-	    			</template>
-	    		</el-table-column>
-	    		<el-table-column label="奖励总保费">
-	    			<template scope="scope">
-	    				<span>{{ scope.row.RCQuota }}元</span>
-	    			</template>
-	    		</el-table-column>
-	    		<el-table-column label="商业险比例">
-	    			<template scope="scope">
-	    				<span>{{ scope.row.CMRate / 10}}%</span>
-	    			</template>
-	    		</el-table-column>
-	    		<el-table-column label="交强险比例">
-	    			<template scope="scope">
-	    				<span>{{ scope.row.CORate / 10}}%</span>
-	    			</template>
-	    		</el-table-column>
-	    		<el-table-column label="审核状态">
-	    			<template scope="scope">
-	    				<span>{{ scope.row.state == 'AUDIT'?'待审核':(scope.row.state == 'AGREE'?'同意':(scope.row.state == 'REJECT'?'拒绝':''))}}</span>
-	    			</template>
-	    		</el-table-column>
+	    		<el-table-column prop="insurerName" label="保险公司"></el-table-column>
+	    		<el-table-column prop="license" label="车牌"></el-table-column>
 	    		<el-table-column label="操作">
 	    			<template scope="scope">		
 			      		<el-button type="text" size="small" @click="checkThisOne(scope.row)">审核</el-button>
@@ -50,7 +37,7 @@
 	    		</el-table-column>
 	    	</el-table>
 
-			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, jumper" :page-count="pageCount" v-if="pageCount"></el-pagination>
+			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total, prev, pager, next, jumper" :total="length" v-if="length"></el-pagination>
 		</div>
 	</div>
 </template>
@@ -63,7 +50,29 @@ export default {
 	      pageCount: null,
           pageSize: 10,
           currentPage: 1,
-          length: 0
+          length: 0,
+          bonusTypeList: [//PC-营利客车，PT-营利货车，NPC-非营利客车，NPT-非营利货车，OTHER-其他
+          	  {
+	          	value: "PC",
+	          	label: "营利客车",
+	          },
+	          {
+	          	value: "PT",
+	          	label: "营利货车",
+	          },
+	          {
+	          	value: "NPC",
+	          	label: "非营利客车",
+	          },
+	          {
+	          	value: "NPT",
+	          	label: "非营利货车",
+	          },
+	          {
+	          	value: "OTHER",
+	          	label: "其他",
+	          },
+          ]
 		}
 	  },
 	  methods: {
@@ -83,8 +92,8 @@ export default {
 	    
 	    getInfo(id) {
 	    	let payload = {
-	    		 	key: id
-	    	}
+    		 	key: id
+    		}
 	    	payload = JSON.stringify(payload);
 	    	autoApi({
 	   			action: 'bonus_scale_details',
@@ -143,6 +152,14 @@ export default {
 	  		this.currentPage = pg;
 	        this.showPage(); 
 	    },
+
+	    showType(value) {
+	    	for (var i = 0; i < this.bonusTypeList.length; i++) {
+	    		if (this.bonusTypeList[i].value == value) {
+	    			return this.bonusTypeList[i].label;
+	    		}
+	    	}
+	    }
 	  },
 	  mounted() {
 	  	if (this.$route.query.id) {

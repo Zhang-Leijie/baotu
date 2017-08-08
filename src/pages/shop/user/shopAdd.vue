@@ -229,7 +229,7 @@ import regionData from '@/region.js'
 		    // },
 
 		    confirmAdd() {
-		    	if (this.form.identity && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.form.imageUrla) {
+		    	if (this.form.identity && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.imageUrla) {
 		    		let tname = this.form.name;
 			    	// let region = this.form.region;
 			    	let identity = this.form.identity;

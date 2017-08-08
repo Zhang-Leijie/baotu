@@ -72,21 +72,17 @@
 			    <el-checkbox value='64' label="64">其他</el-checkbox>
 			</el-checkbox-group>
 		  </el-form-item>
-		  <!-- <el-form-item label="商业险佣金比例(%):">
-		    <el-input-number size="small" v-model="num1" :step="0.01"></el-input-number>
-		    <div>
-		    	<el-radio class="radio" v-model="plus1" label="1">加</el-radio>
-  		 		<el-radio class="radio" v-model="plus1" label="2">减</el-radio>
-  		 	</div>
-		  </el-form-item>
-		  <el-form-item label="交强险佣金比例(%):">
-		    <el-input-number size="small" v-model="num2" :step="0.01"></el-input-number>
-		    <div>
-		    	<el-radio class="radio" v-model="plus2" label="1">加</el-radio>
-  		 		<el-radio class="radio" v-model="plus2" label="2">减</el-radio>
-  		 	</div>
-		  </el-form-item>
-		  <el-form-item label="角色配置:">
+		  <el-row style="margin-left: 70px;">
+		  	<el-col :span="12">
+		  		<span style="font-size: 14px;">商业险佣金比例(%): </span>
+		  		<el-input-number size="small" v-model="CMRate" :step="0.1"></el-input-number>
+		  	</el-col>
+		  	<el-col :span="12">
+		  		<span style="font-size: 14px;">交强险佣金比例(%): </span>
+			    <el-input-number size="small" v-model="CPRate" :step="0.1"></el-input-number>
+		  	</el-col>
+		  </el-row>
+		  <!-- el-form-item label="角色配置:">
 		    <el-checkbox-group v-model="form.role">
 			    <el-checkbox value='1' label="角色1"></el-checkbox>
 			    <el-checkbox value='2' label="角色2"></el-checkbox>
@@ -106,10 +102,8 @@ import { autoApi } from '@/ajax/post.js'
 	    data() {
 	      return {
 	      	id: null,
-	      	num1:1,
-	      	plus1:'',
-	      	num2:1,
-	      	plus2:'',
+	      	CMRate: 0,
+	      	CPRate: 0,
 	      	imageUrl: '',
 	        labelPosition: 'right',
 	        info:'',
@@ -169,7 +163,9 @@ import { autoApi } from '@/ajax/post.js'
 		    	let payload = {
 		    		employeeId: window.localStorage.getItem('employeeId'),
 		    		mod: 0,
-		    		targetId: this.id
+		    		targetId: this.id,
+		    		CMRate: 0,
+		    		CPRate: 0
 		    	}
 		  		for (var i = 0; i < this.form.commonmoney.length; i++) {
 		  			payload.mod = payload.mod + parseInt(this.form.commonmoney[i]);
@@ -177,8 +173,12 @@ import { autoApi } from '@/ajax/post.js'
 		  		for (var i = 0; i < this.form.teammoney.length; i++) {
 		  			payload.mod = payload.mod + parseInt(this.form.teammoney[i]);
 		  		}
+
 		    	payload.mod = payload.mod + parseInt(this.form.payway);
 		    	
+		    	payload.CMRate = this.CMRate * 10;
+		    	payload.CPRate = this.CPRate * 10;
+		    	debugger
 		    	payload = JSON.stringify(payload);
 		    	autoApi({
 		   			action: 'employee_edit',
@@ -186,7 +186,9 @@ import { autoApi } from '@/ajax/post.js'
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-
+		   				router.push({
+					        path: '/shop/staff-list'
+					    })
 		   			}
 		   		});
 		    }

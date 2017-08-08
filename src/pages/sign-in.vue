@@ -49,8 +49,8 @@ export default {
       	haveCode:3,
          form:{
          	platCode: null,
-         	account:'13105716367',
-         	password:'zxl870613',
+         	account:'13295815927',
+         	password:'408723',
          },
          formLabelWidth: '80px',
          rules: {

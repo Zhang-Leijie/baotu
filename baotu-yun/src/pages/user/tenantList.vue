@@ -16,15 +16,12 @@
 			    <el-table-column label="营业执照">
 			    	<template scope="scope">
 		            	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
-		            	    <img :src="scope.row.licenseFace" class="bre"  slot="reference" style="width: 80px;">
-	                    	<img :src='scope.row.licenseFace' style="width: 475px;">
-	                	</el-popover>
-	                	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
-		            	    <img :src="scope.row.licenseBack" class="bre"  slot="reference" style="width: 80px;">
-	                    	<img :src='scope.row.licenseBack' style="width: 475px;">
+		            	    <img :src="scope.row.licenseImage" class="bre"  slot="reference" style="width: 80px;">
+	                    	<img :src='scope.row.licenseImage' style="width: 475px;">
 	                	</el-popover>
 			    	</template>
 			    </el-table-column>
+			    <el-table-column prop="license" label="营业执照号"></el-table-column>
 			     <el-table-column label="注册时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.created)}}</span>

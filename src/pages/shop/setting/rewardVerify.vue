@@ -3,12 +3,7 @@
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>规模奖励审核</el-breadcrumb-item>
 		</el-breadcrumb>
-		<div style="margin-top:10px;margin-bottom:10px;">
-			<router-link :to="{name:'shop-role-add'}">
-				<el-button type="primary" class="marginBtn">新增</el-button>
-			</router-link>
-			<div style="clear:both"></div>
-		</div>
+
 		<div style="margin-top:20px;">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 	    		<el-table-column prop="employeeId" label="雇员号"></el-table-column>
@@ -45,7 +40,8 @@
 	    		</el-table-column>
 	    		<el-table-column label="操作">
 	    			<template scope="scope">		
-			      		<el-button type="text" size="small" @click="checkThisOne(scope.row)">审核</el-button>
+			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,true)">同意</el-button>
+			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,false)">拒绝</el-button>
 			      		<el-button type="text" size="small">
 						<router-link :to="{name:'shop-set-rewardVerifyDetail',query:{id:scope.row.employeeId}}">
 			      			查看流水
@@ -55,7 +51,7 @@
 	    		</el-table-column>
 	    	</el-table>
 
-			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, jumper" :total="total" v-if="total"></el-pagination>
+			<el-pagination @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total, prev, pager, next, jumper" :total="total" v-if="total"></el-pagination>
 		</div>
 	</div>
 </template>
@@ -86,10 +82,10 @@ export default {
 	    },
 	    getInfo() {
 	    	let payload = {
-	    		 	page: this.currentPage,
-				    pageSize: this.pageSize,
-				    employeeId: window.localStorage.getItem('employeeId')
-	    	}
+    		 	page: this.currentPage,
+			    pageSize: this.pageSize,
+			    employeeId: window.localStorage.getItem('employeeId')
+    		}
 	    	payload = JSON.stringify(payload);
 	    	autoApi({
 	   			action: 'bonus_scale_audits',
@@ -104,10 +100,10 @@ export default {
        			}
 	   		})
 	    },
-	    checkThisOne(row) {
+	    checkThisOne(row,agree) {
 	    	let payload = {
 	    		 	key: row.employeeId,
-				    agree: true
+				    agree: agree
 	    	}
 	    	payload = JSON.stringify(payload);
 	    	autoApi({
