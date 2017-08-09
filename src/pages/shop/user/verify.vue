@@ -56,7 +56,7 @@ export default {
 	      tableData: [],
 	      total: null,
 	      currentPage: 1,
-	      pageSize: null
+	      pageSize: 10
 		}
 	  },
 	  methods: {
@@ -73,10 +73,16 @@ export default {
 		},
 
 	  	getInfo() {
+	  		let payload = {
+	  			page: this.currentPage,
+	  			pageSize: this.pageSize,
+	  			employeeId: window.localStorage.getItem('employeeId')
+	  		}
+	  		payload = JSON.stringify(payload);
 	  		autoApi({
 	   			action: 'apply_list',
 	   			version: '1.0',
-	   			employeeId: window.localStorage.getItem('employeeId')
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;
@@ -89,13 +95,15 @@ export default {
 	        this.getInfo();
 	    },
 	    confirm(row) {
-	    	let uid = row.uid;
+	    	let payload = {
+	    		uid: row.uid,
+	    		reject: false,
+	    		employeeId: window.localStorage.getItem('employeeId'),
+	    	}
 	  		autoApi({
-	   			action: 'apply_process',
+	   			action: 'apply_audit',
 	   			version: '1.0',
-	   			employeeId: window.localStorage.getItem('employeeId'),
-	   			uid: uid,
-	   			agree: true
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.getInfo();
@@ -103,13 +111,15 @@ export default {
 	   		})
 	    },
 	    refuse(row) {
-	    	let uid = row.uid;
+	    	let payload = {
+	    		uid: row.uid,
+	    		reject: true,
+	    		employeeId: window.localStorage.getItem('employeeId'),
+	    	}
 	  		autoApi({
-	   			action: 'apply_process',
+	   			action: 'apply_audit',
 	   			version: '1.0',
-	   			employeeId: window.localStorage.getItem('employeeId'),
-	   			uid: uid,
-	   			agree: false
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.getInfo();

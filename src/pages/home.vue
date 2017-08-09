@@ -12,7 +12,11 @@
 			</router-link>
 		</el-button>
 			
-		<el-button @click="tenantId = true" v-show="!tenantId">不选择商家,直接进入</el-button>
+		<el-button v-show="!tenantId">
+			<router-link :to="{name:'shopHome'}"> 
+				不选择商家,直接进入
+			</router-link>
+		</el-button>
 
 		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">
 		    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>

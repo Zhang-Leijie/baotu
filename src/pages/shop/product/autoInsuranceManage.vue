@@ -401,11 +401,13 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	this.chooseds[3] = null;
 	    	this.chooseds[4] = null;
 	    	if (this.chooseds[1] == 'brand') {
-	    		let employeeId = this.tenantId.employeeId;
+	    		let payload = {
+	    			employeeId: this.tenantId.employeeId
+	    		}
 	    		autoApi({
 		   			action: 'vehicle_brands',
 		   			version: '1.0',
-		   			employeeId: employeeId
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				if (res.attach && res.attach.length > 0) {
@@ -447,13 +449,14 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	this.chooseds[3] = null;
 	    	this.chooseds[4] = null;
 	    	if (this.chooseds[1] == 'brand') {
-	    		let employeeId = this.tenantId.employeeId;
-	    		let id = val.value;
+	    		let payload = {
+	    			employeeId: this.tenantId.employeeId,
+	    			brandId: val.value
+	    		}
 	    		autoApi({
 		   			action: 'vehicle_depts',
 		   			version: '1.0',
-		   			employeeId: employeeId,
-		   			id: id
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				if (res.attach && res.attach.length > 0) {
@@ -493,13 +496,14 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	this.chooseds[3] = val.value;
 	    	this.chooseds[4] = null;
 	    	if (this.chooseds[1] == 'brand') {
-	    		let employeeId = this.tenantId.employeeId;
-	    		let id = val.value;
+	    		let payload = {
+	    			employeeId: this.tenantId.employeeId,
+	    			deptId: val.value,
+	    		}
 	    		autoApi({
 		   			action: 'vehicle_models',
 		   			version: '1.0',
-		   			employeeId: employeeId,
-		   			id: id
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				if (res.attach && res.attach.length > 0) {

@@ -136,11 +136,17 @@ import { autoApi } from '@/ajax/post.js'
       },
 
       getInfo(id) {
+        let payload = {
+          employeeId: window.localStorage.getItem('employeeId'),
+          orderId: id,
+        }
+
+        payload = JSON.stringify(payload);
+
         autoApi({
-            action: 'vehicle_policy_info',
+            action: 'vehicle_order',
             version: '1.0',
-            orderId: id,
-            employeeId: window.localStorage.getItem('employeeId')
+            payload: payload 
           },window.localStorage.getItem('token')).then((res)=> {
             if (res.code == 0) {
               if (res.attach) {

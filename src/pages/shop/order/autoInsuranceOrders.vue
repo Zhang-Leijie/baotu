@@ -132,7 +132,7 @@ import { autoApi } from '@/ajax/post.js'
 
 	  	getInfo() {
 	  		if (this.search.state) {
-	  			var vehicleOrderSearcher = {
+	  			var payload = {
 		  			page: this.currentPage,
 		  			pageSize: this.pageSize,
 		  			// uid: null,	保途端
@@ -141,7 +141,7 @@ import { autoApi } from '@/ajax/post.js'
 	  		}
 	  		else
 	  		{
-	  			var vehicleOrderSearcher = {
+	  			var payload = {
 		  			page: this.currentPage,
 		  			pageSize: this.pageSize,
 		  			// uid: null,	保途端
@@ -149,12 +149,12 @@ import { autoApi } from '@/ajax/post.js'
 		  		};
 	  		}
 	  			
-	  		vehicleOrderSearcher = JSON.stringify(vehicleOrderSearcher)
+	  		payload = JSON.stringify(payload);
 	  		autoApi({
 	   			action: 'vehicle_orders',
 	   			version: '1.0',
 		  		employeeId: window.localStorage.getItem('employeeId'),
-	   			vehicleOrderSearcher: vehicleOrderSearcher
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {

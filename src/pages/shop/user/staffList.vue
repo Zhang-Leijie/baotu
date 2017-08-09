@@ -76,19 +76,19 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		},
 
 		getInfo() {
-			let employeeSearcher = {
+			let payload = {
 		  		page: this.currentPage,
 		  		pageSize: this.pageSize,
 		  		asc: false,
-		  		employeeId: this.searchID?this.searchID:null
+		  		employeeId: window.localStorage.getItem('employeeId'),
+		  		tarId: this.searchID?this.searchID:null
 		  	}
-		  	employeeSearcher = JSON.stringify(employeeSearcher)
+		  	payload = JSON.stringify(payload)
 		  	autoApi({
-	   			action: 'employee_list',
+	   			action: 'employees',
 	   			version: '1.0',
 	   			client: 2,
-	   			employeeId: window.localStorage.getItem('employeeId'),
-	   			employeeSearcher: employeeSearcher
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;

@@ -12,14 +12,14 @@
 		    <el-input style="width:300px;" v-model="form.phone" placeholder="请输入手机号"></el-input>
 		    <!-- <el-button type="primary" @click="getyzm" :disabled="!(getyzmMsg === '获取验证码')">{{getyzmMsg}}</el-button> -->
 		  </el-form-item>
-		  <!-- <el-form-item class="appblock" label="行政区划选择:">
-		    <el-select style="width:145px;" v-model="regions" placeholder="请选择" @change="form.region = null">
+		  <el-form-item class="appblock" label="行政区划选择:">
+		    <el-select style="width:145px;" v-model="form.region" placeholder="请选择">
 			    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value"></el-option>
 			</el-select>
-			<el-select style="width:145px;" v-model="form.region" placeholder="请选择" v-if="regions">
+			<!-- <el-select style="width:145px;" v-model="form.region" placeholder="请选择" v-if="regions">
 			    <el-option v-for="item in regions" :label="item[0]" :value="item[1]"></el-option>
-			</el-select>
-		  </el-form-item> -->
+			</el-select> -->
+		  </el-form-item>
 		  <!-- <el-form-item class="appblock" label="填写验证码:">
 		    <el-input style="width:300px;" v-model="form.yzm" placeholder="请输入验证码"></el-input>
 		  </el-form-item> -->
@@ -36,7 +36,7 @@
 		     <el-date-picker v-model="form.time" type="date" placeholder="选择日期"></el-date-picker>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="营业执照号:">
-		    <el-input style="width:300px;" v-model="form.identity"></el-input>
+		    <el-input style="width:300px;" v-model="form.license"></el-input>
 		  </el-form-item>
 		  <!-- <el-form-item class="appblock" label="注册时间:">
 		    2017-09-26 08:50:08
@@ -145,16 +145,16 @@ import regionData from '@/region.js'
 	      	// imageUrlb: '',
 	        labelPosition: 'right',
 	        info:'',
-	        // regionFormData: [],		//格式化行政区划表
+	        regionFormData: [],		//格式化行政区划表
 	        // regions: [],			//一级行政区划表
 	        form:{
 	        	name:'',
 	        	account:'',
-	        	// region:'',
+	        	region:'',
 	        	phone:'',
 	        	// yzm: null,
 	        	servicePhone: null,
-	        	identity: null,		//营业执照号
+	        	license: null,		//营业执照号
 	        	// shopNum:'',
 	        	// pay:[],
 	        	// point:'',
@@ -199,6 +199,28 @@ import regionData from '@/region.js'
 			        return y+'-'+this.add0(m)+'-'+this.add0(d)+' '+this.add0(h)+':'+this.add0(mm)+':'+this.add0(s);
 		        },
 
+		    getRegion() {
+		    	let payload = {}
+		    	payload = JSON.stringify(payload);
+		    	autoApi({
+		   			action: 'areas',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				if (res.attach) {
+		   					for (var i = 0; i < res.attach.length; i++) {
+		   						let buf = {
+		   							value: res.attach[i].code,
+		   							label: res.attach[i].name,
+		   						}
+		   						this.regionFormData.push(buf);
+		   					}
+		   				}
+	       			}
+		   		})
+		    },
+
 			handleAvatarScucessA(res, file) {
 		        this.imageUrla = URL.createObjectURL(file.raw);
 		    },
@@ -229,31 +251,26 @@ import regionData from '@/region.js'
 		    // },
 
 		    confirmAdd() {
-		    	if (this.form.identity && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.imageUrla) {
-		    		let tname = this.form.name;
-			    	// let region = this.form.region;
-			    	let identity = this.form.identity;
-			    	let identityFace = this.imageUrla;
-			    	// let identityBack = this.imageUrlb;
-			    	let mobile = this.form.phone;
-			    	let endTime = this.getFormTime(Date.parse(this.form.time));
-			    	let name = this.form.people;
-			    	let contactsMobile = this.form.contactsMobile;
-			    	let servicePhone = this.form.servicePhone;
+		    	if (this.form.license && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.imageUrla && this.form.region) {
+		    		let payload = {
+		    			tname: this.form.name,
+			   			region: this.form.region,
+			   			license: this.form.license,
+			   			licenseImage: this.imageUrla,
+			   			// licenseBack: licenseBack,
+			   			mobile: this.form.phone,
+			   			// captcha: captcha,
+			   			expire: Date.parse(this.form.time) / 1000,
+			   			contacts: this.form.people,
+			   			contactsMobile: this.form.contactsMobile,
+			   			servicePhone: this.form.servicePhone
+		    		}
+		    		payload = JSON.stringify(payload);
+
 			    	autoApi({
 			   			action: 'tenant_add',
 			   			version: '1.0',
-			   			tname: tname,
-			   			// region: region,
-			   			identity: identity,
-			   			identityFace: identityFace,
-			   			// identityBack: identityBack,
-			   			mobile: mobile,
-			   			// captcha: captcha,
-			   			endTime: endTime,
-			   			name: name,
-			   			contactsMobile: contactsMobile,
-			   			servicePhone: servicePhone
+			   			payload: payload
 			   		},window.localStorage.getItem('token')).then((res)=> {
 			   			if (res.code == 0) {
 			   				this.$message({
@@ -285,6 +302,7 @@ import regionData from '@/region.js'
 	        // 	}
 	        // 	this.regionFormData.push(buf);
 	        // }
+	        this.getRegion();
 	    }
 	}
 </script>
