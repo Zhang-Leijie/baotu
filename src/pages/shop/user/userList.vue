@@ -67,19 +67,19 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		},
 
 	  	getInfo() {
-	  		let userSearch = {
+	  		let payload = {
 	  			page: this.currentPage,
 	  			pageSize: this.pageSize,
 	  			asc: false,
 	  			name: this.searchName?this.searchName:null,
 	  			mobile: this.searchMobile?'+86' + this.searchMobile:null
 	  		}
-	  		userSearch = JSON.stringify(userSearch);
+	  		payload = JSON.stringify(payload);
 	  		autoApi({
-	   			action: 'user_list',
+	   			action: 'users',
 	   			version: '1.0',
 	   			client: 2,
-	   			userSearch: userSearch
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;

@@ -80,6 +80,12 @@
 			  	<el-form-item class="appblock" label="简捷ID:">
 			    	<el-input type="text" style="width:150px;" v-model="formAdd.jianjieId" placeholder="请输入ID"></el-input>
 			  	</el-form-item>
+			  	<el-form-item class="appblock" label="壁虎 agent 值:" v-if="formAdd.laneId == 1">
+			    	<el-input type="text" style="width:150px;" v-model="formAdd.agent" placeholder="请输入"></el-input>
+			  	</el-form-item>
+			  	<el-form-item class="appblock" label="壁虎 key 值:" v-if="formAdd.laneId == 1">
+			    	<el-input type="text" style="width:150px;" v-model="formAdd.key" placeholder="请输入"></el-input>
+			  	</el-form-item>
 			</el-form>
 			<div style="clear:both"></div>
 			<div style="text-align:center;margin-top:20px;">
@@ -109,7 +115,9 @@ import { masterApi } from '@/ajax/post.js'
 	      		tid: null,
 	        	laneId: null,
 	        	insurerId: null,
-	        	jianjieId: null
+	        	jianjieId: null,
+	        	agent: null,
+	        	key: null
 		    },
 		    lanes: [
 	      		{
@@ -205,6 +213,22 @@ import { masterApi } from '@/ajax/post.js'
 	  	comfirmAdd() {
 	  		this.dialogTableVisible = false;
 	  		if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianjieId) {
+	  			
+	  			if(this.form.laneId == 1) {
+	  				masterApi({
+			   			action: 'bi_hu_tenant_config_edit',
+			   			version: '1.0',
+			   			crudType: 1,
+			   			tid: this.tid,
+			   			agent: this.formAdd.agent,
+			   			key: this.formAdd.key
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+
+		       			}
+			   		})
+	  			}
+
 	  			masterApi({
 		   			action: 'route_edit',
 		   			version: '1.0',
@@ -215,6 +239,9 @@ import { masterApi } from '@/ajax/post.js'
 		   			jianJieId: this.formAdd.jianjieId
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
+		   				for(item in this.formAdd) {
+		   					this.formAdd[item] = null;
+		   				}
 		   				this.getInfo();
 	       			}
 		   		})

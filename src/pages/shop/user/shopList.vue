@@ -100,26 +100,19 @@ export default {
 		},
 
 	  	getInfo() {
-  			let tenantSearcher = {
+  			let payload = {
   				page: this.currentPage,
   				pageSize: this.pageSize,
+  				tid: this.searchId,
+  				name: this.searchName
   			};
 
-  			if (this.searchId) {
-  				tenantSearcher.tid = this.searchId;
-  			}
-
-  			if (this.searchName) {
-  				tenantSearcher.name = this.searchName;
-  			}
-
-  			tenantSearcher = JSON.stringify(tenantSearcher);
+  			payload = JSON.stringify(payload);
 
 	  		autoApi({
-	   			action: 'tenant_list',
+	   			action: 'tenants',
 	   			version: '1.0',
-	   			tenantSearcher: tenantSearcher,
-	   			client: 2
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;

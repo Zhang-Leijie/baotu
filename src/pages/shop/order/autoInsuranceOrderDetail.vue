@@ -95,7 +95,7 @@
           </tr>
           <tr>
             <th>商业险保费合计</th>
-            <td colspan="2">{{ tableData.schema.commericalTotal }}</td>
+            <td colspan="2">{{ tableData.schema.commericialTotal }}</td>
           </tr>
           <tr>
             <th>交强险保费合计</th>

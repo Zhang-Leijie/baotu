@@ -342,11 +342,14 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    //获取路由列表数据
 	    getRouteList() {
 	    	if(this.tenantId.employeeId) {
-	    		let employeeId = this.tenantId.employeeId
+	    		let payload = {
+	    			employeeId: this.tenantId.employeeId
+	    		}
+	    		payload = JSON.stringify(payload);
 	    		autoApi({
-		   			action: 'vehicle_bonus_skeleton',
+		   			action: 'bonus_poundage_configs',
 		   			version: '1.0',
-		   			employeeId: employeeId,
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.originData = res.attach;
@@ -404,6 +407,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    		let payload = {
 	    			employeeId: this.tenantId.employeeId
 	    		}
+	    		payload = JSON.stringify(payload);
 	    		autoApi({
 		   			action: 'vehicle_brands',
 		   			version: '1.0',
@@ -545,31 +549,31 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    //获取节点配置
 	    getSetting() {
 	    	if (this.choosed && this.insurerId) {
-	    		let employeeId = this.tenantId.employeeId;
-		    	let bonusSearcher = {
+		    	let payload = {
 		    		 path: '',                        	// 路由节点id链接字符串
-	   				 insurerId: null,          
+		    		 employeeId: this.tenantId.employeeId,
+	   				 insurerId: null,   
+	   				 all: 'false'       
 		    	};
 		    	
-		    	bonusSearcher.insurerId = this.insurerId;			//险企ID
+		    	payload.insurerId = this.insurerId;			//险企ID
 				//页面节点路径    	
 				for (var i = 0; i < this.chooseds.length; i++) {
 					if(this.chooseds[i] === this.choosed) {
-						bonusSearcher.path = bonusSearcher.path + this.chooseds[i];
+						payload.path = payload.path + this.chooseds[i];
 						break;
 					}
 					else
 					{
-						bonusSearcher.path = bonusSearcher.path + this.chooseds[i] + "_";
+						payload.path = payload.path + this.chooseds[i] + "_";
 					}
 				}
 
-				bonusSearcher = JSON.stringify(bonusSearcher);
+				payload = JSON.stringify(payload);
 		    	autoApi({
-		   			action: 'vehicle_coefficients',
+		   			action: 'poundage_coefficients',
 		   			version: '1.0',
-		   			employeeId: employeeId,
-		   			bonusSearcher: bonusSearcher
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				if (res.attach) {
@@ -607,9 +611,10 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 
 	    confirmSetSave() {
-	    	let bonusSearcher = 
+	    	let payload = 
 				{
-				    path: '',       					//页面节点路径                 
+				    path: '',       					//页面节点路径 
+	   				employeeId: this.tenantId.employeeId,                
 				    insurerId: null,                       //险企ID         
 				    routeBody: {
 			            commercialRate: null,           	//基础 - 商业  
@@ -623,43 +628,39 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			//页面节点路径    	
 			for (var i = 0; i < this.chooseds.length; i++) {
 				if(this.chooseds[i] === this.choosed) {
-					bonusSearcher.path = bonusSearcher.path + this.chooseds[i];
+					payload.path = payload.path + this.chooseds[i];
 					break;
 				}
 				else
 				{
-					bonusSearcher.path = bonusSearcher.path + this.chooseds[i] + "_";
+					payload.path = payload.path + this.chooseds[i] + "_";
 				}
 			}
 			
 			//基础 - 商业
-			bonusSearcher.routeBody.commercialRate = parseInt(this.baseCommission.shangye * 10);
+			payload.routeBody.commercialRate = parseInt(this.baseCommission.shangye * 10);
 			//基础 - 交强
-			bonusSearcher.routeBody.compulsoryRate = parseInt(this.baseCommission.jiaoqiang * 10);
+			payload.routeBody.compulsoryRate = parseInt(this.baseCommission.jiaoqiang * 10);
 			//自留 - 商业
-			bonusSearcher.routeBody.commercialRetainRate = parseInt(this.selfCommission.shangye * 10);
+			payload.routeBody.commercialRetainRate = parseInt(this.selfCommission.shangye * 10);
 			//自留 - 交强
-			bonusSearcher.routeBody.compulsoryRetainRate = parseInt(this.selfCommission.shangye * 10);
+			payload.routeBody.compulsoryRetainRate = parseInt(this.selfCommission.shangye * 10);
 			//商业险系数绑定
 			for (var i = 0; i < this.tableData.length; i++) {
 				if (this.tableData[i].choosed) {
-					bonusSearcher.routeBody.commercialCommisionSpinner[this.tableData[i].choosed] = this.tableData[i].addORdec?(this.tableData[i].addORdec === 1?parseInt(this.tableData[i].rate * 10):-parseInt(this.tableData[i].rate * 10)):0;
+					payload.routeBody.commercialCommisionSpinner[this.tableData[i].choosed] = this.tableData[i].addORdec?(this.tableData[i].addORdec === 1?parseInt(this.tableData[i].rate * 10):-parseInt(this.tableData[i].rate * 10)):0;
 				}
 			}
 			
 			//险企ID
-			bonusSearcher.insurerId = this.insurerId;
+			payload.insurerId = this.insurerId;
 
-			bonusSearcher = JSON.stringify(bonusSearcher);
-
-			//代理商ID
-			let employeeId = this.tenantId.employeeId;
+			payload = JSON.stringify(payload);
 
 			autoApi({
-	   			action: 'vehicle_bonus_set',
+	   			action: 'bonus_poundage_config_edit',
 	   			version: '1.0',
-	   			employeeId: employeeId,
-	   			bonusSearcher: bonusSearcher
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.$message({
@@ -671,30 +672,28 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 
 	    confirmSetDelete () {
-	    	let bonusSearcher = 
+	    	let payload = 
 				{
-				    path: '',       					//页面节点路径                 
+				    path: '',       					//页面节点路径
+		   			employeeId: this.tenantId.employeeId,                 
 				    insurerId: null,                       //险企ID         
 				    delete: true
 				}
 			//页面节点路径    	
 			for (var i = 0; i < this.chooseds.length; i++) {
 				if(this.chooseds[i] === this.choosed) {
-					bonusSearcher.path = bonusSearcher.path + this.chooseds[i];
+					payload.path = payload.path + this.chooseds[i];
 					break;
 				}
 				else
 				{
-					bonusSearcher.path = bonusSearcher.path + this.chooseds[i] + "_";
+					payload.path = payload.path + this.chooseds[i] + "_";
 				}
 			}
 			//险企ID
-			bonusSearcher.insurerId = this.insurerId;
+			payload.insurerId = this.insurerId;
 
-			bonusSearcher = JSON.stringify(bonusSearcher);
-			
-			//代理商ID
-			let employeeId = this.tenantId.employeeId;
+			payload = JSON.stringify(payload);
 
 			this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
@@ -702,10 +701,9 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	          type: 'warning'
 	        }).then(() => {
 	    		autoApi({
-		   			action: 'vehicle_bonus_set',
+		   			action: 'bonus_poundage_config_edit',
 		   			version: '1.0',
-		   			employeeId: employeeId,
-		   			bonusSearcher: bonusSearcher
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.$message({
@@ -725,13 +723,15 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 
 	    //获取节点编辑配置
 	    getEditSetting() {
-	    	let employeeId = this.tenantId.employeeId;
-
+	    	let payload = {
+	    		employeeId: this.tenantId.employeeId,
+	    		all: 'true'
+	    	}
+	    	payload = JSON.stringify(payload);
 	    	autoApi({
-	   			action: 'vehicle_coefficients',
+	   			action: 'poundage_coefficients',
 	   			version: '1.0',
-	   			employeeId: employeeId,
-	   			bonusSearcher: null
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {

@@ -128,6 +128,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	        form:{
 	        	tid: null,
 	        	name: null,
+	        	num: null,
 	        	time: null,
 	        	imageUrl: null,
 	        	people: null,
@@ -154,22 +155,20 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		        this.form.imageUrl = URL.createObjectURL(file.raw);
 		    },
 		    confirmEdit() {
-		    	let tid = this.form.tid;
-		    	let tname = this.form.name;
-		    	let endTime = this.getFormTime(Date.parse(this.form.time));
-		    	let identityFace = this.form.imageUrl;
-		    	let name = this.form.people;
-		    	let contactsMobile = this.form.phone
+		    	let payload = {
+		   			tname: this.form.name,
+		   			licenseImage: this.form.imageUrl,
+		   			expire: this.getFormTime(Date.parse(this.form.time)),
+		   			license: this.form.num,
+		   			tid: this.form.tid,
+		   			contacts: this.form.people,
+		   			contactsMobile: this.form.phone
+		    	}
+		    	payload = JSON.stringify(payload);
 		    	autoApi({
 		   			action: 'platform_tenant_set',
 		   			version: '1.0',
-		   			tname: tname,
-		   			// identity: identity,
-		   			identityFace: identityFace,
-		   			endTime: endTime,
-		   			tid: tid,
-		   			name: name,
-		   			contactsMobile: contactsMobile
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				// this.tableData = res.attach.list;
