@@ -65,14 +65,18 @@ import regionData from '@/region.js'
 			},
 			comfirmAdd() {
 				if (this.form.region) {
+					let payload = {
+						code: this.form.region,
+						biHuId: this.form.biHuId,
+						renewalPeriod: this.form.num,
+						priceNoTax: this.form.priceNoTax,
+					}
+					payload = JSON.stringify(payload);
 					masterApi({
 						action: 'area_edit',
 						version: '1.0',
 						crudType: 1,
-						region: this.form.region,
-						idx: this.form.biHuId,
-						num: this.form.num,
-						priceNoTax: this.form.priceNoTax,
+						payload: payload
 					},window.localStorage.getItem('token')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
@@ -96,14 +100,18 @@ import regionData from '@/region.js'
 
 			comfirmSave() {
 				if (this.form.region) {
+					let payload = {
+						code: this.form.region,
+						biHuId: this.form.biHuId,
+						renewalPeriod: this.form.num,
+						priceNoTax: this.form.priceNoTax,
+					}
+					payload = JSON.stringify(payload);
 					masterApi({
 						action: 'area_edit',
 						version: '1.0',
 						crudType: 4,
-						region: this.form.region,
-						idx: this.form.biHuId,
-						num: this.form.num,
-						priceNoTax: this.form.priceNoTax
+						payload: payload
 					},window.localStorage.getItem('token')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({

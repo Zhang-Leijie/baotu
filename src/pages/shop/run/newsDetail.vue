@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'shop-run-newslist'}">咨询专区管理</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'shop-run-newslist'}">资讯专区管理</el-breadcrumb-item>
 		  	<el-breadcrumb-item>详情</el-breadcrumb-item>
 		</el-breadcrumb>
 		<div style="margin-top:20px;">

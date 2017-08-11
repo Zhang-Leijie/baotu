@@ -53,6 +53,14 @@
               </router-link>
             </el-menu-item-group>
           </el-submenu>
+          <el-submenu index="5">
+            <template slot="title">系数管理</template>
+            <el-menu-item-group>
+              <router-link :to="{name:'poundageCoefficient'}">
+                <el-menu-item index="5-1" class="sub-title">手续费系数管理</el-menu-item>
+              </router-link>
+            </el-menu-item-group>
+          </el-submenu>
         </el-menu>
       </el-col>
     </div>

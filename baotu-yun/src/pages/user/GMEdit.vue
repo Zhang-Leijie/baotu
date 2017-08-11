@@ -46,12 +46,16 @@ import { masterApi } from '@/ajax/post.js'
 
 			comfirmAdd() {
 				if (this.name && this.password) {
+					let payload = {
+						name: this.name,
+						pwd: this.password,
+					}
+					payload = JSON.stringify(payload);
 					masterApi({
 						action: 'administrator_edit',
 						version: '1.0',
 						crudType: 1,
-						name: this.name,
-						pwd: this.password
+						payload: payload
 					},window.localStorage.getItem('token')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({

@@ -36,7 +36,7 @@
 			    	<template scope="scope">
 			    		<el-button type="text" size="small">
 			    			<router-link :to="{name:'tenant-edit',query:{tid:scope.row.tid}}">
-			      			设置
+			      			详情
 				      		</router-link>
 			    		</el-button>
 			    	</template>
@@ -73,7 +73,7 @@ import { masterApi } from '@/ajax/post.js'
 		},
 
 	  	getInfo() {
-	  		let tenantSearcher = {
+	  		let payload = {
 	  			page: this.currentPage,
 	  			pageSize: this.pageSize,
 	  			tid: this.tidSearch,
@@ -82,11 +82,11 @@ import { masterApi } from '@/ajax/post.js'
 	  			// sortCol: null
 	  			asc: true
 	  		}
-	  		tenantSearcher = JSON.stringify(tenantSearcher);
+	  		payload = JSON.stringify(payload);
 	  		masterApi({
-	   			action: 'tenant_list',
+	   			action: 'tenants',
 	   			version: '1.0',
-	   			tenantSearcher: tenantSearcher
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;

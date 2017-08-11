@@ -2,7 +2,7 @@
 	<div class="newsadd">
 		<div>
 			<el-breadcrumb separator="/">
-			  <el-breadcrumb-item :to="{name:'shop-run-newslist'}">咨询专区管理</el-breadcrumb-item>
+			  <el-breadcrumb-item :to="{name:'shop-run-newslist'}">资讯专区管理</el-breadcrumb-item>
 			  <el-breadcrumb-item>新增</el-breadcrumb-item>
 			</el-breadcrumb>
 		</div>
@@ -11,10 +11,10 @@
 			    <el-form-item label="标题" :label-width="formLabelWidth" class="appblock">
 			      	<el-input style="width:300px;" v-model="form.title" placeholder="请输入标题"></el-input>
 			    </el-form-item>
-			    <el-form-item label="咨询链接" :label-width="formLabelWidth" class="appblock">
+			    <el-form-item label="资讯链接" :label-width="formLabelWidth" class="appblock">
 			      	<el-input style="width:300px;" v-model="form.link" placeholder="请输入标题"></el-input>
 			    </el-form-item>
-			    <el-form-item class="appblock" label="咨询图标:" :label-width="formLabelWidth">
+			    <el-form-item class="appblock" label="资讯图标:" :label-width="formLabelWidth">
 				    <el-upload class="avatar-uploader"
 					  action="//jsonplaceholder.typicode.com/posts/"
 					  :show-file-list="false"
@@ -62,7 +62,7 @@ import { autoApi } from '@/ajax/post.js'
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.$message({
-				            message: '新增咨询成功',
+				            message: '新增资讯成功',
 				            type: 'success'
 				        });
 				        router.push({

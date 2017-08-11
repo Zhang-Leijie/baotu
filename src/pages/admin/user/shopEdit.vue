@@ -77,7 +77,7 @@
 		  </el-form-item>
 		  <el-form-item class="appblock" label="其他:">
 		    <el-checkbox-group v-model="form.other">
-			    <el-checkbox value='1' label="咨询"></el-checkbox>
+			    <el-checkbox value='1' label="资讯"></el-checkbox>
 			    <el-checkbox value='2' label="共享商城"></el-checkbox>
 			</el-checkbox-group>
 		  </el-form-item>

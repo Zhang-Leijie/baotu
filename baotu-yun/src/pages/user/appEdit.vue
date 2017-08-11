@@ -19,7 +19,7 @@
 			    <el-option v-for="item in regions" :label="item[0]" :value="item[1]"></el-option>
 			</el-select>
 		  </el-form-item>
-		  <el-form-item class="appblock" label="最大咨询数:">
+		  <el-form-item class="appblock" label="最大资讯数:">
 		    <el-input type="number" style="width:300px;" v-model="form.maxHold" placeholder="请输入数字(0表示不限制)"></el-input>
 		  </el-form-item>
 		</el-form>

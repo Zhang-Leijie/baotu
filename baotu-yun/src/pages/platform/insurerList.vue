@@ -90,9 +90,12 @@ import { masterApi } from '@/ajax/post.js'
 		},
 
 	  	getInfo() {
+	  		let payload = {};
+	  		payload = JSON.stringify(payload);
 	  		masterApi({
 	   			action: 'insurers',
-	   			version: '1.0'
+	   			version: '1.0',
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {

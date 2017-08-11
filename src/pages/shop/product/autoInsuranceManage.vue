@@ -233,23 +233,23 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      isAdded: null,	//被添加的系数
 	      comparisons: [
 	      	{
-	      		value: 1,
+	      		value: 'gt',
 	      		label: "大于"
 	      	},
 	      	{
-	      		value: 2,
+	      		value: 'gte',
 	      		label: "大于等于"
 	      	},
 	      	{
-	      		value: 3,
+	      		value: 'lt',
 	      		label: "小于"
 	      	},
 	      	{
-	      		value: 4,
+	      		value: 'lte',
 	      		label: "小于等于"
 	      	},
 	      	{
-	      		value: 5,
+	      		value: 'eq',
 	      		label: "等于"
 	      	},
 	      	// {
@@ -257,15 +257,15 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	// 	label: "不等于"
 	      	// },
 	      	{
-	      		value: 7,
+	      		value: 'bteween',
 	      		label: "开区间 ( )"
 	      	},
 	      	{
-	      		value: 8,
+	      		value: 'lbteween',
 	      		label: "前闭后开区间 [ )"
 	      	},
 	      	{
-	      		value: 9,
+	      		value: 'rbteween',
 	      		label: "前开后闭区间 ( ]"
 	      	},
 	      	// {
@@ -311,12 +311,14 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 
 	    //获取险企列表
 	    getInsurerList() {
-	    	let tid = this.tenantId.tid;
-			commonApi({
-	   			action: 'insurer_list',
+	    	let payload = {
+	    		employeeId: this.tenantId.employeeId
+	    	};
+	    	payload = JSON.stringify(payload);
+			autoApi({
+	   			action: 'insurers',
 	   			version: '1.0',
-	   			tid: tid, 						
-	   			client: 2			
+	   			payload: payload			
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if(res.attach[0]) {
@@ -725,7 +727,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    getEditSetting() {
 	    	let payload = {
 	    		employeeId: this.tenantId.employeeId,
-	    		all: 'true'
+	    		all: 'true',
+
 	    	}
 	    	payload = JSON.stringify(payload);
 	    	autoApi({
@@ -798,7 +801,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	}
 	    	if (checkChange) {
 	    		let employeeId = this.tenantId.employeeId;
-		    	let coefficientType = row.typeId;
+		    	let coefficientType = this.reCoefficientType(row.typeId);
 		    	let comparison = row.comparisonType;
 		    	let name = row.name;
 		    	let array = row.comparisonValue.split("_");
@@ -811,17 +814,20 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		    	}
 		    	else
 		    	{
-		    		array = JSON.stringify(array);
-		    		autoApi({
-			   			action: 'vehicle_coefficient_edit',
-			   			version: '1.0',
+		    		let payload = {
 			   			employeeId: employeeId,
-			   			crudType: 4,	//4:修改
 			   			coefficientType: coefficientType,
 			   			id: id,
-			   			comparison: comparison,
-			   			array: array,
+			   			symbol: comparison,
+			   			val: array,
 			   			name: name,
+		    		}
+		    		payload = JSON.stringify(payload);
+		    		autoApi({
+			   			action: 'poundage_coefficient_edit',
+			   			version: '1.0',
+			   			crudType: 4,	//4:修改
+			   			payload: payload
 			   		},window.localStorage.getItem('token')).then((res)=> {
 			   			if (res.code == 0) {
 			   				this.isEdited = null;
@@ -857,16 +863,17 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	          cancelButtonText: '取消',
 	          type: 'warning'
 	        }).then(() => {
-	         	let employeeId = this.tenantId.employeeId;
-		    	let coefficientType = row.typeId;
-		    	let id = row.choosed;
+	         	let payload = {
+	         		employeeId: this.tenantId.employeeId,
+			    	coefficientType: this.reCoefficientType(row.typeId),
+			    	id: row.choosed,
+	         	}
+	         	payload = JSON.stringify(payload);
 	    		autoApi({
-		   			action: 'vehicle_coefficient_edit',
+		   			action: 'poundage_coefficient_edit',
 		   			version: '1.0',
-		   			employeeId: employeeId,
 		   			crudType: 8,	//4:修改
-		   			coefficientType: coefficientType,
-		   			id: id,
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		    			this.getEditSetting();
@@ -897,7 +904,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 	    confirmAdd(row) {
 	    	let employeeId = this.tenantId.employeeId;
-	    	let coefficientType = this.isAdded;
+	    	let coefficientType = this.reCoefficientType(this.isAdded);
 	    	let comparison = row.comparisonType;
 	    	let name = row.name;
 	    	let array = row.comparisonValue.split("_");
@@ -909,16 +916,19 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	}
 	    	else
 	    	{
-	    		array = JSON.stringify(array);
-	    		autoApi({
-		   			action: 'vehicle_coefficient_edit',
-		   			version: '1.0',
-		   			employeeId: employeeId,
-		   			crudType: 1,	//1:添加
+	    		let payload = {
+	    			employeeId: employeeId,
 		   			coefficientType: coefficientType,
-		   			comparison: comparison,
-		   			array: array,
+		   			symbol: comparison,
+		   			val: array,
 		   			name: name,
+	    		}
+	    		payload = JSON.stringify(payload);
+	    		autoApi({
+		   			action: 'poundage_coefficient_edit',
+		   			version: '1.0',
+		   			crudType: 1,	//1:添加
+		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.isAdded = null;
@@ -979,7 +989,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    reComparisonName(val) {
 	    	switch(val)
 	    	{
-				case 1:
+	    		case 1:
 					return "大于"
 					break;
 				case 2:
@@ -1012,6 +1022,80 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				// case 11:
 				// 	return "不在 ... 之中"
 				// 	break;
+				case 'gt':
+					return "大于"
+					break;
+				case 'gte':
+					return "大于等于"
+					break;
+				case 'lt':
+					return "小于"
+					break;
+				case 'lte':
+					return "小于等于"
+					break;
+				case 'eq':
+					return "等于"
+					break;
+				// case 6:
+				// 	return "不等于"
+				// 	break;
+				case 'bteween':
+					return "开区间"
+					break;
+				case 'lbteween':
+					return "前闭后开区间"
+					break;
+				case 'rbteween':
+					return "前开后闭区间"
+					break;
+				// case 10:
+				// 	return "在 ... 之中"
+				// 	break;
+				// case 11:
+				// 	return "不在 ... 之中"
+				// 	break;
+	    	}
+	    },
+	    reCoefficientType(val) {
+	    	switch(val)
+	    	{
+				case 1:
+					return "CLAIMS"
+					break;
+				case 2:
+					return "NO_CLAIMS"
+					break;
+				case 3:
+					return "GENDER"
+					break;
+				case 4:
+					return "ZXB"
+					break;
+				case 5:
+					return "SEAT_COUNT"
+					break;
+				case 6:
+					return "LICENSE"
+					break;
+				case 7:
+					return "VEHICLE_AGE"
+					break;
+				case 8:
+					return "PURCHASE_PRICE"
+					break;
+				case 9:
+					return "AGE"
+					break;
+				// case 10:
+				// 	return "在 ... 之中"
+				// 	break;
+				// case 11:
+				// 	return "不在 ... 之中"
+				// 	break;
+				default:
+					return val
+					break;
 	    	}
 	    	
 	    },

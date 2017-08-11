@@ -65,11 +65,15 @@ import { masterApi } from '@/ajax/post.js'
 		},
 
 	  	getInfo() {
+	  		let payload = {
+	  			page: this.currentPage,
+	   			pageSize: this.pageSize,
+	  		}
+	  		payload = JSON.stringify(payload);
 	  		masterApi({
-	   			action: 'administrator_list',
+	   			action: 'admins',
 	   			version: '1.0',
-	   			page: this.currentPage,
-	   			pageSize: this.pageSize
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;

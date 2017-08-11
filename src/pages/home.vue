@@ -37,10 +37,12 @@ export default {
 	  methods: {
 		//获取代理商列表
 	    getTenanList() {
-	    	commonApi({
-	   			action: 'tenant_list',
+	    	let payload = {}
+	    	payload = JSON.stringify(payload)
+	    	autoApi({
+	   			action: 'tenants_user',
 	   			version: '1.0',
-	   			client: 2		
+	   			payload: payload		
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach.audit[0]) {
@@ -77,7 +79,7 @@ export default {
 	   		}) 
 	    },
 
-	    tenantChange(val) {debugger
+	    tenantChange(val) {
         	localStorage.setItem('employeeId',val.employeeId);
         	localStorage.setItem('tid',val.tid);
 	    }

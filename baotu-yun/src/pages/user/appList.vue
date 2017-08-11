@@ -20,7 +20,7 @@
 			    		<span>{{scope.row.maxTenantsCount?scope.row.maxTenantsCount:'无限制'}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column label="最大咨询数">
+			    <el-table-column label="最大资讯数">
 			    	<template scope="scope">
 			    		<span>{{scope.row.maxArticlesCount?scope.row.maxArticlesCount:'无限制'}}</span>
 			    	</template>

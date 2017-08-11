@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item>咨询专区管理</el-breadcrumb-item>
+		  	<el-breadcrumb-item>资讯专区管理</el-breadcrumb-item>
 		</el-breadcrumb>
 		<div style="margin-top:10px;margin-bottom:10px;">
 			<router-link :to="{name:'shop-run-newsadd'}">
@@ -16,7 +16,7 @@
 			    <el-table-column prop="title" label="标题"></el-table-column>
 			    <el-table-column prop="browseNum" label="阅读数" sortable="custom" ></el-table-column>
 			    <el-table-column prop="commentNum" label="评论数" sortable="custom"></el-table-column> 
-			    <el-table-column label="咨询图标">
+			    <el-table-column label="资讯图标">
 			    	<template scope="scope">
 			    		<img :src="scope.row.icon">
 			    	</template>

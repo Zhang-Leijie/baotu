@@ -75,7 +75,7 @@
             </el-menu-item-group>
             <el-menu-item-group>
               <router-link :to="{name:'shop-run-newslist'}">
-                <el-menu-item index="3-3" class="sub-title">咨询专区管理</el-menu-item>
+                <el-menu-item index="3-3" class="sub-title">资讯专区管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>

@@ -443,19 +443,19 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   						if(res.attach[i].depth == 3){
 		   							switch(res.attach[i].type){
 	   								case 1:
-	   									//营利车商业险2级
+	   									//营利车商业险3级
 	   									this.guanli.shangyeData.Y3.value = res.attach[i].rate / 10;
 		   								this.guanli.shangyeData.Y3.origin = res.attach[i].rate / 10;
 		   								this.guanli.shangyeData.Y3.key = res.attach[i].key;
 	   									break;
 	   								case 2:
-	   									//盈利车交强险2级
+	   									//盈利车交强险3级
 	   									this.guanli.jiaoqiangData.Y3.value = res.attach[i].rate / 10;
 		   								this.guanli.jiaoqiangData.Y3.origin = res.attach[i].rate / 10;
 		   								this.guanli.jiaoqiangData.Y3.key = res.attach[i].key;
 	   									break;
 	   								case 4:
-	   									//非营利车交强险2级
+	   									//非营利车交强险3级
 	   									this.guanli.jiaoqiangData.N3.value = res.attach[i].rate / 10;
 		   								this.guanli.jiaoqiangData.N3.origin = res.attach[i].rate / 10;
 		   								this.guanli.jiaoqiangData.N3.key = res.attach[i].key;
@@ -467,13 +467,13 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   								this.guanli.shangyeData.N3.key = res.attach[i].key;
 	   									break;
 	   								case 16:
-		   								//其他3级
+		   								//其他商业险3级
 		   								this.guanli.shangyeData.other3.value = res.attach[i].rate / 10;
 		   								this.guanli.shangyeData.other3.origin = res.attach[i].rate / 10;
 		   								this.guanli.shangyeData.other3.key = res.attach[i].key;
 		   								break;
 		   							case 32:
-		   								//其他3级
+		   								//其他交强险3级
 		   								this.guanli.jiaoqiangData.other3.value = res.attach[i].rate / 10;
 		   								this.guanli.jiaoqiangData.other3.origin = res.attach[i].rate / 10;
 		   								this.guanli.jiaoqiangData.other3.key = res.attach[i].key;
@@ -531,7 +531,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 				};
 				tenantSettingsSubmit .teamDepth = this.formSetting.teamDepth;
 				tenantSettingsSubmit .mod = parseInt(this.formSetting.bonusScaleCountMod) + parseInt(this.formSetting.bonusScaleRewardMod) + parseInt(this.formSetting.bonusScaleCountInsuranceMod) + parseInt(this.formSetting.bonusScaleRewardInsuranceMod);
-				debugger
+				
 				if (tenantSettingsSubmit .mod) {
 					tenantSettingsSubmit  = JSON.stringify(tenantSettingsSubmit );
 					autoApi({
@@ -555,7 +555,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       				id: id,
 			   			rate: val * 10,
 			   			teamDepth: depth,
-			   			configType: type
+			   			configType: this.reConfigType(type)
 	       			}
 	       			payload = JSON.stringify(payload);
 	       			autoApi({
@@ -591,7 +591,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			let payload = {
 			   			rate: val * 10,
 			   			teamDepth: depth,
-			   			configType: type
+			   			configType: this.reConfigType(type)
 	       			}
 	       			payload = JSON.stringify(payload);
 	       			autoApi({
@@ -622,7 +622,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			employeeId: window.localStorage.getItem('employeeId'),
 	       			id: this.guimoEdit.id,
 	       			rate: this.guimoEdit.num * 10,
-	       			symbol: this.guimoEdit.comparison,
+	       			symbol: this.reComparisonName(this.guimoEdit.comparison),
 	       			val: this.guimoEdit.comparableValue.split("_"),
 	       		}
 	       		payload = JSON.stringify(array);
@@ -649,7 +649,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       		let payload = {
 	       			employeeId: window.localStorage.getItem('employeeId'),
 	       			rate: this.guimoAdd.num * 10,
-	       			symbol: this.guimoAdd.comparison,
+	       			symbol: this.reComparisonName(this.guimoAdd.comparison),
 	       			val: this.guimoAdd.comparableValue.split("_"),
 	       		}
 	       		payload = JSON.stringify(array);
@@ -725,8 +725,63 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 					// case 11:
 					// 	return "不在 ... 之中"
 					// 	break;
+					case 'gt':
+						return "大于"
+						break;
+					case 'gte':
+						return "大于等于"
+						break;
+					case 'lt':
+						return "小于"
+						break;
+					case 'lte':
+						return "小于等于"
+						break;
+					case 'eq':
+						return "等于"
+						break;
+					// case 6:
+					// 	return "不等于"
+					// 	break;
+					case 'bteween':
+						return "开区间"
+						break;
+					case 'lbteween':
+						return "前闭后开区间"
+						break;
+					case 'rbteween':
+						return "前开后闭区间"
+						break;
+					// case 10:
+					// 	return "在 ... 之中"
+					// 	break;
+					// case 11:
+					// 	return "不在 ... 之中"
+					// 	break;
 		    	}
-		    	
+		    },
+		    reConfigType(val) {
+		    	switch(val)
+		    	{
+					case 1://营利车商业险
+						return "COMMERCIAL_PROFIT"
+						break;
+					case 2://盈利车交强险
+						return "COMPULSORY_PROTFIT"
+						break;
+					case 3://非营利车交强险
+						return "COMPULSORY_NO_PROFIT"
+						break;
+					case 4://非营利车商业险
+						return "COMMERCIAL_NO_PROFIT"
+						break;
+					case 5://其他商业险
+						return "COMMERCIAL_OTHER"
+						break;
+					case 7://其他交强险
+						return "COMPULSORY_OTHER"
+						break;
+		    	}
 		    }
 	    },
 	    mounted:function(){

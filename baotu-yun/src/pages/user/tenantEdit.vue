@@ -1,8 +1,75 @@
 <template>
 	<div class="routeList">
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item>路由列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item>基本信息</el-breadcrumb-item>
 		</el-breadcrumb>
+
+		<el-form label-width="120px" class="appbox">
+		  	<el-form-item class="appblock" label="平台名称:">
+	    		 <span>{{ tenantData.appName }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="商家名称:">
+	    		 <span>{{ tenantData.name  }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="联系人:">
+	    		 <span>{{ tenantData.contacts  }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="联系人电话:">
+	    		 <span>{{ tenantData.contactsMobile  }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="创建时间:">
+	    		 <span>{{ formatDate(tenantData.created)  }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="到期时间:">
+	    		 <span>{{ formatDate(tenantData.expire)  }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="营业执照号:">
+	    		 <span>{{ tenantData.license  }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="营业执照图片:">
+	    		 <img :src="tenantData.licenseImage">
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="所属地区:">
+	    		 <span>{{ tenantData.regionName  }}</span>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="客服电话:">
+	    		 <span>{{ tenantData.servicePhone  }}</span>
+		  	</el-form-item>
+		</el-form>
+
+		<el-breadcrumb separator="/">
+		  	<el-breadcrumb-item>壁虎配置</el-breadcrumb-item>
+		</el-breadcrumb>
+
+		<el-form label-width="120px" class="appbox">
+			<el-form-item class="appblock" label="gent:" v-if="(formBiHu.agent && formBiHu.key)">
+		    	<el-input type="text" style="width:150px;" v-model="formBiHu.agent" placeholder="请输入"></el-input>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="gent:" v-if="isAddBiHu">
+		    	<el-input type="text" style="width:150px;" v-model="addBiHuData.agent" placeholder="请输入"></el-input>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="key:" v-if="(formBiHu.agent && formBiHu.key)">
+		    	<el-input type="text" style="width:150px;" v-model="formBiHu.key" placeholder="请输入"></el-input>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="key:" v-if="isAddBiHu">
+		    	<el-input type="text" style="width:150px;" v-model="addBiHuData.key" placeholder="请输入"></el-input>
+		  	</el-form-item>
+		</el-form>
+
+
+		<div style="margin-bottom: 20px;">
+			<div class="toolBar">
+				<div class="toolBarR">
+					<el-button type="primary" @click="addBiHu" v-if="!(formBiHu.agent && formBiHu.key)">开通壁虎</el-button>
+					<el-button type="primary" @click="saveBiHu" v-if="formBiHu.agent && formBiHu.key">保存配置</el-button>
+					<el-button type="primary" @click="deleteBiHu" v-if="formBiHu.agent && formBiHu.key">关闭壁虎</el-button>
+				</div>
+			</div>
+
+			<el-breadcrumb separator="/">
+			  	<el-breadcrumb-item>险企信息</el-breadcrumb-item>
+			</el-breadcrumb>
+		</div>
 
 		<div class="toolBar">
 			<div class="toolBarR">
@@ -63,28 +130,23 @@
 		<el-dialog title="新增路由" :visible.sync="dialogTableVisible">
 			<el-form label-width="120px" class="appbox">
 			  	<el-form-item class="appblock" label="险企:">
+					<span v-show="!formAdd.insurerId" style="color: red;">*</span>
 					<el-select v-model="formAdd.insurerId" placeholder="请选择险企">
 					    <el-option v-for="item in insurerList" :label="item.label" :value="item.value"></el-option>
 					</el-select>
-					<span v-show="!formAdd.insurerId" style="color: red;">*必选</span>
 				</el-form-item>
 			  	<el-form-item class="appblock" label="线路:">
+					<span v-show="!formAdd.laneId" style="color: red;">*</span>
 		    		<el-select v-model="formAdd.laneId" placeholder="请选择线路">
 					    <el-option v-for="item in lanes" :label="item.label" :value="item.value"></el-option>
 					</el-select>
-					<span v-show="!formAdd.laneId" style="color: red;">*必选</span>
 			  	</el-form-item>
 			  	<!-- <el-form-item class="appblock" label="商户ID:">
 			    	<span>{{tid}}</span>
 			  	</el-form-item> -->
 			  	<el-form-item class="appblock" label="简捷ID:">
+			  		<span v-show="!formAdd.jianjieId" style="color: red;">*</span>
 			    	<el-input type="text" style="width:150px;" v-model="formAdd.jianjieId" placeholder="请输入ID"></el-input>
-			  	</el-form-item>
-			  	<el-form-item class="appblock" label="壁虎 agent 值:" v-if="formAdd.laneId == 1">
-			    	<el-input type="text" style="width:150px;" v-model="formAdd.agent" placeholder="请输入"></el-input>
-			  	</el-form-item>
-			  	<el-form-item class="appblock" label="壁虎 key 值:" v-if="formAdd.laneId == 1">
-			    	<el-input type="text" style="width:150px;" v-model="formAdd.key" placeholder="请输入"></el-input>
 			  	</el-form-item>
 			</el-form>
 			<div style="clear:both"></div>
@@ -106,18 +168,25 @@ import { masterApi } from '@/ajax/post.js'
 		    pageCount: null,
 		    length: null,
 		    pageSize: 10,
+		    tenantData: [],
 		    tableData: [],
 		    insurerList: [],
 		    formData: [],
 		    dialogTableVisible: false,
+		    formBiHu: {
+	        	agent: null,
+	        	key: null
+		    },
+		    addBiHuData: {
+	        	agent: null,
+	        	key: null
+		    },
 		    formAdd: {
 		      	id: null,
 	      		tid: null,
 	        	laneId: null,
 	        	insurerId: null,
 	        	jianjieId: null,
-	        	agent: null,
-	        	key: null
 		    },
 		    lanes: [
 	      		{
@@ -138,7 +207,8 @@ import { masterApi } from '@/ajax/post.js'
 	      		laneId: null
 	      	},
 	      	isEdit: false,
-	      	editedId: null
+	      	editedId: null,
+	      	isAddBiHu: false,
 		}
 	  },
 	  methods: {
@@ -155,7 +225,24 @@ import { masterApi } from '@/ajax/post.js'
 		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
 		},
 
-	  	getInfo() {
+
+		getTenantInfo() {
+			let payload = {
+				id: this.tid
+			};
+			payload = JSON.stringify(payload);
+			masterApi({
+	   			action: 'tenant_info',
+	   			version: '1.0',
+	   			payload: payload
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				this.tenantData = res.attach
+       			}
+	   		})
+		},
+
+	  	getRouterInfo() {
 	  		masterApi({
 	   			action: 'routes',
 	   			version: '1.0',
@@ -173,10 +260,107 @@ import { masterApi } from '@/ajax/post.js'
 	   		})
 	  	},
 
+	  	getBiHuInfo() {
+	  		let payload = {
+	  			id: this.tid
+	  		}
+	  		payload = JSON.stringify(payload);
+	  		masterApi({
+	   			action: 'bi_hu_tenant_config',
+	   			version: '1.0',
+	   			payload: payload
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if (res.attach) {
+	   					this.formBiHu.agent = res.attach.agent;
+	   					this.formBiHu.key = res.attach.key;
+	   				}
+       			}
+	   		})
+	  	},
+
+	  	saveBiHu() {
+	  		let payload = {
+	  			tid: this.tid,
+	  			key: this.formBiHu.key,
+	  			agent: this.formBiHu.agent
+	  		}
+	  		payload = JSON.stringify(payload);
+	  		masterApi({
+	   			action: 'bi_hu_tenant_config_edit',
+	   			version: '1.0',
+	   			crudType: 4,
+	   			payload: payload
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+   					this.getBiHuInfo();
+   					this.$message({
+   						message: '壁虎配置成功',
+   						type: 'success'
+   					});
+       			}
+	   		})
+	  	},	
+
+	  	addBiHu() {
+	  		this.isAddBiHu = true;
+	  		if (this.addBiHuData.agent && this.addBiHuData.key) {
+	  			let payload = {
+		  			tid: this.tid,
+		  			key: this.addBiHuData.key,
+		  			agent: this.addBiHuData.agent
+		  		}
+		  		payload = JSON.stringify(payload);
+		  		masterApi({
+		   			action: 'bi_hu_tenant_config_edit',
+		   			version: '1.0',
+		   			crudType: 1,
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.addBiHuData.agent = null;
+		   				this.addBiHuData.key = null;
+		   				this.isAddBiHu = false;
+	   					this.getBiHuInfo();
+	   					this.$message({
+	   						message: '关联壁虎成功',
+	   						type: 'success'
+	   					});
+	       			}
+		   		})
+	  		}
+	  	},	
+
+	  	deleteBiHu() {
+	  		let payload = {
+	  			tid: this.tid
+	  		}
+	  		payload = JSON.stringify(payload);
+	  		masterApi({
+	   			action: 'bi_hu_tenant_config_edit',
+	   			version: '1.0',
+	   			crudType: 8,
+	   			payload: payload
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				this.formBiHu.agent = null;
+	   				this.formBiHu.key = null;
+	   				this.$message({
+   						message: '壁虎已关闭',
+   						type: 'success'
+   					});
+   					this.getBiHuInfo();
+       			}
+	   		})
+	  	},	
+
 	  	getInsurerList() {
+	  		let payload = {};
+	  		payload = JSON.stringify(payload);
 	  		masterApi({
 	   			action: 'insurers',
-	   			version: '1.0'
+	   			version: '1.0',
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
@@ -214,7 +398,7 @@ import { masterApi } from '@/ajax/post.js'
 	  		this.dialogTableVisible = false;
 	  		if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianjieId) {
 	  			
-	  			if(this.form.laneId == 1) {
+	  			if(this.formAdd.laneId == 1) {
 	  				masterApi({
 			   			action: 'bi_hu_tenant_config_edit',
 			   			version: '1.0',
@@ -239,10 +423,10 @@ import { masterApi } from '@/ajax/post.js'
 		   			jianJieId: this.formAdd.jianjieId
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				for(item in this.formAdd) {
+		   				for(let item in this.formAdd) {
 		   					this.formAdd[item] = null;
 		   				}
-		   				this.getInfo();
+		   				this.getRouterInfo();
 	       			}
 		   		})
 	  		}
@@ -297,7 +481,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			jianJieId: this.formEdit.jianjieId
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
-	   				this.getInfo();
+	   				this.getRouterInfo();
        			}
 	   		})
 	    	this.editedId = null;
@@ -321,7 +505,7 @@ import { masterApi } from '@/ajax/post.js'
 		   			key: row.key,
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				this.getInfo();
+		   				this.getRouterInfo();
 	       			}
 		   		})
 	        }).catch(() => {
@@ -335,7 +519,9 @@ import { masterApi } from '@/ajax/post.js'
 	mounted() {
 	  	if (this.$route.query.tid) {
 	        this.tid = this.$route.query.tid;
-	  		this.getInfo();
+	  		this.getRouterInfo();
+	  		this.getTenantInfo();
+	  		this.getBiHuInfo();
         }
 	}
 }

@@ -29,7 +29,7 @@
 			    </el-table-column>
 			    <el-table-column label="支付方式">
 			    	<template scope="scope">
-			    		<span>{{scope.row.payType?'':(scope.row.payType == 1?'全额支付':(scope.row.payType == 2?'净保费支付':(scope.row.payType == 4?'公司垫付':'')))}}</span>
+			    		<span>{{payType(scope.row.mod)}}</span>
 			    	</template>
 			    </el-table-column>
 			    <el-table-column prop="parentId" label="上级工号"></el-table-column>
@@ -104,6 +104,28 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 
 	    search() {
 	    	this.getInfo();
+	    },
+
+	    payType(val) {
+	    	const mod = [
+	    	{
+	    		value: 128,
+	    		label: '全额支付'
+	    	},
+	    	{
+	    		value: 256,
+	    		label: '净保费支付'
+	    	},
+	    	{
+	    		value: 512,
+	    		label: '公司垫付'
+	    	}];
+	    	for (var i = 0; i < mod.length; i++) {
+	    		let result = mod[i].value & val;
+	    		if (mod[i].value == result) {
+	    			return mod[i].label;
+	    		}
+	    	}
 	    }
 	  },
 	  mounted:function() {

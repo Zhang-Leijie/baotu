@@ -121,7 +121,14 @@ const routes = [
                 component(resolve) {
                     require(['./pages/product/nonAutoProductList.vue'],resolve)
                 }
-            }
+            },
+            {
+                path: "/poundageCoefficient",
+                name: "poundageCoefficient",
+                component(resolve) {
+                    require(['./pages/poundageCoefficient.vue'],resolve)
+                }
+            },
         ]
     },{
         path: "/",

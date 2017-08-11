@@ -124,24 +124,7 @@ import { autoApi } from '@/ajax/post.js'
 	        	other:[],
 	        	people:'',
 	        	payway:'',
-	        },
-	        radio: '',
-	        options: [{
-	          value: '1',
-	          label: '5'
-	        }, {
-	          value: '2',
-	          label: '10'
-	        }, {
-	          value: '3',
-	          label: '15'
-	        }, {
-	          value: '4',
-	          label: '20'
-	        }, {
-	          value: '5',
-	          label: '25'
-	        }],
+	        }
 	      };
 	    },
 	    methods: {
@@ -178,7 +161,7 @@ import { autoApi } from '@/ajax/post.js'
 		    	
 		    	payload.CMRate = this.CMRate * 10;
 		    	payload.CPRate = this.CPRate * 10;
-		    	debugger
+		    	
 		    	payload = JSON.stringify(payload);
 		    	autoApi({
 		   			action: 'employee_edit',
@@ -191,11 +174,71 @@ import { autoApi } from '@/ajax/post.js'
 					    })
 		   			}
 		   		});
+		    },
+		    getInfo(id) {
+		    	let payload = {
+		    		employeeId: window.localStorage.getItem('employeeId'),
+		    		target: id,
+		    	}
+		    	payload = JSON.stringify(payload);
+		    	autoApi({
+		   			action: 'employee_info',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.modConut(res.attach.mod);
+		   				this.CMRate = res.attach.CMRate;
+		   				this.CPRate = res.attach.CPRate;
+		   			}
+		   		});
+		    },
+		    modConut(mod) {
+		    	if (mod & 1) {//规模佣金
+		    		this.form.teammoney.push('1');
+		    	}
+
+		    	if (mod & 2) {//管理佣金
+		    		this.form.teammoney.push('2');
+		    	}
+
+		    	if (mod & 4) {//非营业客车
+		    		this.form.commonmoney.push('4');
+		    	}
+
+		    	if (mod & 8) {//非营利货车
+		    		this.form.commonmoney.push('8');
+		    	}
+
+		    	if (mod & 16) {//营利客车
+		    		this.form.commonmoney.push('16');
+		    	}
+
+		    	if (mod & 32) {//营利货车
+		    		this.form.commonmoney.push('32');
+		    	}
+
+		    	if (mod & 64) {//其他车
+		    		this.form.commonmoney.push('64');
+		    	}
+
+		    	if (mod & 128) {//全额支付
+		    		this.form.payway = '128';
+		    	}
+
+		    	if (mod & 256) {//净保费支付
+		    		this.form.payway = '256';
+		    	}
+
+		    	if (mod & 512) {//公司垫付
+		    		this.form.payway = '512';
+		    	}
 		    }
 	    },
 	    mounted(){
 	        if (this.$route.query.id) {
 	        	this.id = this.$route.query.id;
+	        	this.getInfo(this.$route.query.id);
 	        }
 	    }
 	}

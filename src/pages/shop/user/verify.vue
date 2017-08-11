@@ -100,6 +100,7 @@ export default {
 	    		reject: false,
 	    		employeeId: window.localStorage.getItem('employeeId'),
 	    	}
+	    	payload = JSON.stringify(payload);
 	  		autoApi({
 	   			action: 'apply_audit',
 	   			version: '1.0',
