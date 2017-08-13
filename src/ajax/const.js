@@ -36,6 +36,9 @@ export default function request(url, options) {
             Salert('系统错误')
         } else if(data.code == 4){
             Salert('非法访问')
+        }else if(data.code == 5){
+            Salert('token已过期,请重新登录')
+            router.push({ name: "sign-in"});
         } else if(data.code == 21){
             Salert('用户已经存在')
         } else if(data.code == 22){
@@ -74,7 +77,10 @@ export default function request(url, options) {
             Salert('雇员不存在')
         } else if(data.code == 510){
             Salert('用户资料缺少')
+        }else if(data.desc) {//测试版本错误提示代码
+            data.desc == 'success'?'':alert('接口错误提示:' + data.desc);
         }
+
         return data
     })
     .catch(() => {

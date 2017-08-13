@@ -18,7 +18,7 @@
                 <el-menu-item index="2-3" class="sub-title">商家管理</el-menu-item>
               </router-link>
               <router-link :to="{name:'GMList'}">
-                <el-menu-item index="2-4" class="sub-title">角色管理*</el-menu-item>
+                <!-- <el-menu-item index="2-4" class="sub-title">角色管理*</el-menu-item> -->
               </router-link>
             </el-menu-item-group>
           </el-submenu>
@@ -35,14 +35,14 @@
                 <el-menu-item index="3-3" class="sub-title">特殊车辆管理</el-menu-item>
               </router-link>
               <router-link :to="{name:'insurerList'}">
-                <el-menu-item index="3-4" class="sub-title">系统设置*</el-menu-item>
+                <!-- <el-menu-item index="3-4" class="sub-title">系统设置*</el-menu-item> -->
               </router-link>
               <router-link :to="{name:'insurerList'}">
-                <el-menu-item index="3-5" class="sub-title">意见反馈管理*</el-menu-item>
+                <!-- <el-menu-item index="3-5" class="sub-title">意见反馈管理*</el-menu-item> -->
               </router-link>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="4">
+         <!--  <el-submenu index="4">
             <template slot="title">产品管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'nonAutoCategoryList'}">
@@ -52,7 +52,7 @@
                 <el-menu-item index="4-2" class="sub-title">共享车险产品管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
-          </el-submenu>
+          </el-submenu> -->
           <el-submenu index="5">
             <template slot="title">系数管理</template>
             <el-menu-item-group>
@@ -256,6 +256,22 @@ export default {
       height: 100%;
       .btnDefult{
         margin-bottom: 10px;
+      }
+      .tableBox {
+        margin-top: 20px;
+        .cell {
+          word-break: break-all !important;
+            text-overflow: ellipsis !important;
+            display: -webkit-box !important; /** 对象作为伸缩盒子模型显示 **/
+            -webkit-box-orient: vertical !important; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+          -webkit-line-clamp: 1 !important; /** 显示的行数 **/
+            overflow: hidden !important;  /** 隐藏超出的内容 **/
+        }
+        .cell:hover {
+          text-overflow:inherit !important; 
+          white-space: nowrap !important; 
+          overflow: auto !important;
+        }
       }
     }
   }

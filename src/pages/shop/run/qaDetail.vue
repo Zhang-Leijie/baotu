@@ -4,7 +4,7 @@
 		  	<el-breadcrumb-item :to="{name:'shop-run-qalist'}">问答专区管理</el-breadcrumb-item>
 		  	<el-breadcrumb-item>详情</el-breadcrumb-item>
 		</el-breadcrumb>
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table
 			    :data="tableData"
 			    border

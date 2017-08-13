@@ -7,7 +7,7 @@
 			<el-button type="primary" class="marginBtn" @click="dialogFormVisible = true">新增</el-button>
 			<div style="clear:both"></div>
 		</div>
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table
 			    :data="tableData"
 			    border

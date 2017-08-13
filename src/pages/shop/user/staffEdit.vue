@@ -75,11 +75,11 @@
 		  <el-row style="margin-left: 70px;">
 		  	<el-col :span="12">
 		  		<span style="font-size: 14px;">商业险佣金比例(%): </span>
-		  		<el-input-number size="small" v-model="CMRate" :step="0.1"></el-input-number>
+		  		<el-input-number size="small" v-model="CMRate" :step="0.1" :max="10" :min="-10"></el-input-number>
 		  	</el-col>
 		  	<el-col :span="12">
 		  		<span style="font-size: 14px;">交强险佣金比例(%): </span>
-			    <el-input-number size="small" v-model="CPRate" :step="0.1"></el-input-number>
+			    <el-input-number size="small" v-model="CPRate" :step="0.1" :max="10" :min="-10"></el-input-number>
 		  	</el-col>
 		  </el-row>
 		  <!-- el-form-item label="角色配置:">
@@ -188,8 +188,8 @@ import { autoApi } from '@/ajax/post.js'
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.modConut(res.attach.mod);
-		   				this.CMRate = res.attach.CMRate;
-		   				this.CPRate = res.attach.CPRate;
+		   				this.CMRate = res.attach.CMRate / 10;
+		   				this.CPRate = res.attach.CPRate / 10;
 		   			}
 		   		});
 		    },

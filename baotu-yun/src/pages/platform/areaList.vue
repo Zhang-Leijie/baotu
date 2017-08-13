@@ -10,7 +10,7 @@
 			</div>
 		</div>
 
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table :data="formData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="code" label="行政区划代码"></el-table-column>
 			    <el-table-column prop="name" label="名字"></el-table-column>

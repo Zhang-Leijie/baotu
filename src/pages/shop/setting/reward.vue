@@ -148,36 +148,36 @@
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-二级比例：</label>
 					<el-input-number v-model="guanli.shangyeData.N2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.shangyeData.N2.key,guanli.shangyeData.N2.value,guanli.shangyeData.N2.origin,2,COMMERCIAL_NO_PROFIT)" style="margin-left: 20px" v-show="!(guanli.shangyeData.N2.value == guanli.shangyeData.N2.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.shangyeData.N2.key,guanli.shangyeData.N2.value,guanli.shangyeData.N2.origin,2,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N2.value == guanli.shangyeData.N2.origin)">确定</el-button>
 				</el-col>	
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-三级比例：</label>
 					<el-input-number v-model="guanli.shangyeData.N3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.shangyeData.N3.key,guanli.shangyeData.N3.value,guanli.shangyeData.N3.origin,3,COMMERCIAL_NO_PROFIT)" style="margin-left: 20px" v-show="!(guanli.shangyeData.N3.value == guanli.shangyeData.N3.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.shangyeData.N3.key,guanli.shangyeData.N3.value,guanli.shangyeData.N3.origin,3,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N3.value == guanli.shangyeData.N3.origin)">确定</el-button>
 				</el-col>	
 			</el-row>
 			<el-row class="optionCol">
 				<el-col :span="12">
 					<label class="titleLabel">营业车-二级比例：</label>
 					<el-input-number v-model="guanli.shangyeData.Y2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.shangyeData.Y2.key,guanli.shangyeData.Y2.value,guanli.shangyeData.Y2.origin,2,COMMERCIAL_PROFIT)" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y2.value == guanli.shangyeData.Y2.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.shangyeData.Y2.key,guanli.shangyeData.Y2.value,guanli.shangyeData.Y2.origin,2,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y2.value == guanli.shangyeData.Y2.origin)">确定</el-button>
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">营业车-三级比例：</label>
 					<el-input-number v-model="guanli.shangyeData.Y3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.shangyeData.Y3.key,guanli.shangyeData.Y3.value,guanli.shangyeData.Y3.origin,3,COMMERCIAL_PROFIT)" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y3.value == guanli.shangyeData.Y3.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.shangyeData.Y3.key,guanli.shangyeData.Y3.value,guanli.shangyeData.Y3.origin,3,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y3.value == guanli.shangyeData.Y3.origin)">确定</el-button>
 				</el-col>
 			</el-row>
 			<el-row class="optionCol">
 				<el-col :span="12">
 					<label class="titleLabel">其他车-二级比例：</label>
 					<el-input-number v-model="guanli.shangyeData.other2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.shangyeData.other2.key,guanli.shangyeData.other2.value,guanli.shangyeData.other2.origin,2,COMMERCIAL_OTHER)" style="margin-left: 20px" v-show="!(guanli.shangyeData.other2.value == guanli.shangyeData.other2.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.shangyeData.other2.key,guanli.shangyeData.other2.value,guanli.shangyeData.other2.origin,2,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other2.value == guanli.shangyeData.other2.origin)">确定</el-button>
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">其他车-三级比例：</label>
 					<el-input-number v-model="guanli.shangyeData.other3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.shangyeData.other3.key,guanli.shangyeData.other3.value,guanli.shangyeData.other3.origin,3,COMMERCIAL_OTHER)" style="margin-left: 20px" v-show="!(guanli.shangyeData.other3.value == guanli.shangyeData.other3.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.shangyeData.other3.key,guanli.shangyeData.other3.value,guanli.shangyeData.other3.origin,3,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other3.value == guanli.shangyeData.other3.origin)">确定</el-button>
 				</el-col>
 			</el-row>
 
@@ -186,36 +186,36 @@
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-二级比例：</label>
 					<el-input-number v-model="guanli.jiaoqiangData.N2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N2.key,guanli.jiaoqiangData.N2.value,guanli.jiaoqiangData.N2.origin,2,COMPULSORY_NO_PROFIT)" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N2.value == guanli.jiaoqiangData.N2.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N2.key,guanli.jiaoqiangData.N2.value,guanli.jiaoqiangData.N2.origin,2,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N2.value == guanli.jiaoqiangData.N2.origin)">确定</el-button>
 				</el-col>	
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-三级比例：</label>
 					<el-input-number v-model="guanli.jiaoqiangData.N3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N3.key,guanli.jiaoqiangData.N3.value,guanli.jiaoqiangData.N3.origin,3,COMPULSORY_NO_PROFIT)" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N3.value == guanli.jiaoqiangData.N3.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N3.key,guanli.jiaoqiangData.N3.value,guanli.jiaoqiangData.N3.origin,3,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N3.value == guanli.jiaoqiangData.N3.origin)">确定</el-button>
 				</el-col>	
 			</el-row>
 			<el-row class="optionCol">
 				<el-col :span="12">
 					<label class="titleLabel">营业车-二级比例：</label>
 					<el-input-number v-model="guanli.jiaoqiangData.Y2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y2.key,guanli.jiaoqiangData.Y2.value,guanli.jiaoqiangData.Y2.origin,2,COMPULSORY_PROTFIT)" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y2.value == guanli.jiaoqiangData.Y2.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y2.key,guanli.jiaoqiangData.Y2.value,guanli.jiaoqiangData.Y2.origin,2,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y2.value == guanli.jiaoqiangData.Y2.origin)">确定</el-button>
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">营业车-三级比例：</label>
 					<el-input-number v-model="guanli.jiaoqiangData.Y3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y3.key,guanli.jiaoqiangData.Y3.value,guanli.jiaoqiangData.Y3.origin,3,COMPULSORY_PROTFIT)" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y3.value == guanli.jiaoqiangData.Y3.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y3.key,guanli.jiaoqiangData.Y3.value,guanli.jiaoqiangData.Y3.origin,3,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y3.value == guanli.jiaoqiangData.Y3.origin)">确定</el-button>
 				</el-col>
 			</el-row>
 			<el-row class="optionCol">
 				<el-col :span="12">
 					<label class="titleLabel">其他车-二级比例：</label>
 					<el-input-number v-model="guanli.jiaoqiangData.other2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other2.key,guanli.jiaoqiangData.other2.value,guanli.jiaoqiangData.other2.origin,2,COMPULSORY_OTHER)" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other2.value == guanli.jiaoqiangData.other2.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other2.key,guanli.jiaoqiangData.other2.value,guanli.jiaoqiangData.other2.origin,2,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other2.value == guanli.jiaoqiangData.other2.origin)">确定</el-button>
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">其他车-三级比例：</label>
 					<el-input-number v-model="guanli.jiaoqiangData.other3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
-					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other3.key,guanli.jiaoqiangData.other3.value,guanli.jiaoqiangData.other3.origin,3,COMPULSORY_OTHER)" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other3.value == guanli.jiaoqiangData.other3.origin)">确定</el-button>
+					<el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other3.key,guanli.jiaoqiangData.other3.value,guanli.jiaoqiangData.other3.origin,3,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other3.value == guanli.jiaoqiangData.other3.origin)">确定</el-button>
 				</el-col>
 			</el-row>
 		</div>
@@ -514,7 +514,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   		// },window.localStorage.getItem('token')).then((res)=> {
 		   		// 	if (res.code == 0) {
        //  				//缺少深度
-       //  				debugger
+       //  				
        //  				this.formSetting.bonusScaleCountMod = res.attach.bonusScaleCountMod.toString();
        //  				this.formSetting.bonusScaleRewardMod = res.attach.bonusScaleRewardMod.toString();
        //  				this.formSetting.bonusScaleCountInsuranceMod = res.attach.bonusScaleCountInsuranceMod.toString();
@@ -523,22 +523,22 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   		// })
 	      //  	},
 	       	comfirmSetting() {
-	       		let tenantSettingsSubmit  = {
+	       		let payload  = {
 				    // name : xxx,                                                // 商户名字
 				    teamDepth: null,                                            // 团队层级数
 				    // nonAutoBind :[1,2,3]                                 // 开通的非车险类型id列表
 				    mod: 0
 				};
-				tenantSettingsSubmit .teamDepth = this.formSetting.teamDepth;
-				tenantSettingsSubmit .mod = parseInt(this.formSetting.bonusScaleCountMod) + parseInt(this.formSetting.bonusScaleRewardMod) + parseInt(this.formSetting.bonusScaleCountInsuranceMod) + parseInt(this.formSetting.bonusScaleRewardInsuranceMod);
+				payload .teamDepth = this.formSetting.teamDepth;
+				payload .mod = parseInt(this.formSetting.bonusScaleCountMod) + parseInt(this.formSetting.bonusScaleRewardMod) + parseInt(this.formSetting.bonusScaleCountInsuranceMod) + parseInt(this.formSetting.bonusScaleRewardInsuranceMod);
 				
-				if (tenantSettingsSubmit .mod) {
-					tenantSettingsSubmit  = JSON.stringify(tenantSettingsSubmit );
+				if (payload .mod) {
+					payload  = JSON.stringify(payload );
 					autoApi({
 			   			action: 'tenant_set',
 			   			version: '1.0',
 			   			employeeId: window.localStorage.getItem('employeeId'),
-			   			tenantSettingsSubmit : tenantSettingsSubmit 
+			   			payload : payload 
 			   		},window.localStorage.getItem('token')).then((res)=> {
 			   			if (res.code == 0) {
 			   				this.$message({
@@ -552,16 +552,17 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       	guanliConfirmEdit(id,val,origin,depth,type) {
 	       		if (val && origin) {//value/origin值不为零,操作为修改
 	       			let payload = {
+			   			employeeId: window.localStorage.getItem('employeeId'),
 	       				id: id,
 			   			rate: val * 10,
 			   			teamDepth: depth,
-			   			configType: this.reConfigType(type)
+			   			// configType: this.reConfigType(type)
+			   			configType: type
 	       			}
 	       			payload = JSON.stringify(payload);
 	       			autoApi({
 			   			action: 'bonus_manage_config_edit',
 			   			version: '1.0',
-			   			employeeId: window.localStorage.getItem('employeeId'),
 			   			crudType: 4,
 			   			payload: payload
 			   		},window.localStorage.getItem('token')).then((res)=> {
@@ -572,13 +573,13 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       		}
 	       		else if (!val) {//value为零,操作为删除
 	       			let payload = {
+			   			employeeId: window.localStorage.getItem('employeeId'),
 	       				id: id
 	       			}
 	       			payload = JSON.stringify(payload);
 	       			autoApi({
 			   			action: 'bonus_manage_config_edit',
 			   			version: '1.0',
-			   			employeeId: window.localStorage.getItem('employeeId'),
 			   			crudType: 8,
 			   			payload: payload
 			   		},window.localStorage.getItem('token')).then((res)=> {
@@ -589,15 +590,16 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       		}
 	       		else if (!origin) {//origin为零,操作为新增
 	       			let payload = {
+			   			employeeId: window.localStorage.getItem('employeeId'),
 			   			rate: val * 10,
 			   			teamDepth: depth,
-			   			configType: this.reConfigType(type)
+			   			// configType: this.reConfigType(type)
+			   			configType: type,
 	       			}
 	       			payload = JSON.stringify(payload);
 	       			autoApi({
 			   			action: 'bonus_manage_config_edit',
 			   			version: '1.0',
-			   			employeeId: window.localStorage.getItem('employeeId'),
 			   			crudType: 1,
 			   			payload: payload
 			   		},window.localStorage.getItem('token')).then((res)=> {
@@ -625,7 +627,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			symbol: this.reComparisonName(this.guimoEdit.comparison),
 	       			val: this.guimoEdit.comparableValue.split("_"),
 	       		}
-	       		payload = JSON.stringify(array);
+	       		payload = JSON.stringify(payload);
 
 	       		autoApi({
 		   			action: 'bonus_scale_config_edit',
@@ -652,12 +654,12 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			symbol: this.reComparisonName(this.guimoAdd.comparison),
 	       			val: this.guimoAdd.comparableValue.split("_"),
 	       		}
-	       		payload = JSON.stringify(array);
+	       		payload = JSON.stringify(payload);
 	       		
 	       		autoApi({
 		   			action: 'bonus_scale_config_edit',
 		   			version: '1.0',
-		   			employeeId: window.localStorage.getItem('employeeId'),
+		   			// employeeId: window.localStorage.getItem('employeeId'),
 		   			crudType: 1,
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
@@ -674,13 +676,14 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       	},
 	       	guimoDelete(row) {
 	       		let payload = {
-	       			id: row.id
+	       			id: row.id,
+		   			employeeId: window.localStorage.getItem('employeeId'),
 	       		}
-	       		payload = JSON.stringify(array);
+	       		payload = JSON.stringify(payload);
 	       		autoApi({
 		   			action: 'bonus_scale_config_edit',
 		   			version: '1.0',
-		   			employeeId: window.localStorage.getItem('employeeId'),
+		   			// employeeId: window.localStorage.getItem('employeeId'),
 		   			crudType: 8,
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
@@ -693,31 +696,31 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		    	switch(val)
 		    	{
 					case 1:
-						return "大于"
+						return "gt"
 						break;
 					case 2:
-						return "大于等于"
+						return "gte"
 						break;
 					case 3:
-						return "小于"
+						return "lt"
 						break;
 					case 4:
-						return "小于等于"
+						return "lte"
 						break;
 					case 5:
-						return "等于"
+						return "eq"
 						break;
 					// case 6:
 					// 	return "不等于"
 					// 	break;
 					case 7:
-						return "开区间"
+						return "bteween"
 						break;
 					case 8:
-						return "前闭后开区间"
+						return "lbteween"
 						break;
 					case 9:
-						return "前开后闭区间"
+						return "rbteween"
 						break;
 					// case 10:
 					// 	return "在 ... 之中"

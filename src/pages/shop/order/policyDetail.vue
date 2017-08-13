@@ -8,7 +8,7 @@
 			<el-button @click="goback">返回</el-button>
 		</div>
 
-		<table class="tableA" border="11">
+<table class="tableA" border="11">
           <tr>
             <th>车牌号</th>
             <td>{{ tableData.license }}</td>
@@ -50,8 +50,8 @@
         <table class="tableB">
           <tr>
             <th>承保险种</th>
-           	<th>保额</th>
-           	<th>保险费</th>
+            <th>保额</th>
+            <th>保险费</th>
           </tr>
           <tr>
             <th>机动车损失保险</th>
@@ -70,8 +70,8 @@
           </tr>
           <tr>
             <th>车上人员责任险(乘客)</th>
-            <td>{{ tableData.insurances.PASSENGER.quota }}</td>
-            <td>{{ tableData.insurances.PASSENGER.price }}</td>
+            <td>{{ tableData.schema.insurances.PASSENGER.quota }}</td>
+            <td>{{ tableData.schema.insurances.PASSENGER.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(车损)</th>
@@ -136,16 +136,18 @@ import { autoApi } from '@/ajax/post.js'
 			},
 
 			getInfo(id) {
+        let payload ={
+            orderId: id,
+            employeeId: window.localStorage.getItem('employeeId')
+        }
+        payload = JSON.stringify(payload);
 				autoApi({
 		   			action: 'vehicle_policy_info',
-		   			version: '1.0',
-		   			orderId: id,
-	   				employeeId: window.localStorage.getItem('employeeId')
+		   			version: '1.0'
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				if (res.attach) {
-		   					this.tableData = res.attach;
-		   					this.length = res.attach.length;
+		   					this.tableData = res.attach.tips;
 		   				}
 	       			}
 		   		})

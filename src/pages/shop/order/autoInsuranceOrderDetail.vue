@@ -8,7 +8,7 @@
       <el-button @click="goback">返回</el-button>
     </div>
 
-    <!-- <table class="tableA" border="11">
+    <table class="tableA" border="11">
           <tr>
             <th>车牌号</th>
             <td>{{ tableData.license }}</td>
@@ -70,8 +70,8 @@
           </tr>
           <tr>
             <th>车上人员责任险(乘客)</th>
-            <td>{{ tableData.insurances.PASSENGER.quota }}</td>
-            <td>{{ tableData.insurances.PASSENGER.price }}</td>
+            <td>{{ tableData.schema.insurances.PASSENGER.quota }}</td>
+            <td>{{ tableData.schema.insurances.PASSENGER.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(车损)</th>
@@ -109,7 +109,7 @@
             <th>保费总金额</th>
             <td colspan="2">{{ tableData.demo }}</td>
           </tr>
-        </table> -->
+        </table>
 
   </div>
 </template>
@@ -119,7 +119,81 @@ import { autoApi } from '@/ajax/post.js'
   export default {
       data() {
         return {
-          tableData: {}
+          tableData: {
+              // "license": "浙A13042",
+              // "vin": "L6T7824Z1GN156266",
+              // "engine": "G6NA00172",
+              // "enrollDate": "2016-07-18",
+              // "transfer": false,
+              // "vehicleUsedType": "HOME_USE",
+              // "seat": 5,
+              // "year": 0,
+              // "name": "吉利美日MR7152C06轿车",
+              // "price": 0.0,
+              // "priceNoTax": 0.0,
+              // "owner": {
+              //   "type": "PERSONAL",
+              //   "name": "吴志兴",
+              //   "mobile": "13306532229",
+              //   "idType": "IDENTITY",
+              //   "idNo": "41052119830426055X"
+              // },
+              // "insurer": {
+              //   "type": "PERSONAL",
+              //   "name": "吴志兴",
+              //   "mobile": "13306532229",
+              //   "idType": "IDENTITY",
+              //   "idNo": "41052119830426055X"
+              // },
+              // "insured": {
+              //   "type": "PERSONAL",
+              //   "name": "吴志兴",
+              //   "mobile": "13306532229",
+              //   "idType": "IDENTITY",
+              //   "idNo": "41052119830426055X"
+              // },
+              // "schema": {
+              //   "commericialTotal": 0.0,
+              //   "commercialStart": "2017-08-13 00:00:00",
+              //   "compulsiveTotal": 0.0,
+              //   "vehicleVesselTotal": 0.0,
+              //   "compulsiveStart": "2017-08-13 00:00:00",
+              //   "insurances": {
+              //     "DAMAGE": {
+              //       "quota": 1.0,
+              //       "price": 0.0
+              //     },
+              //     "DAMAGE_DEDUCTIBLE": {
+              //       "quota": 1.0,
+              //       "price": 0.0
+              //     },
+              //     "THIRD": {
+              //       "quota": 1000000.0,
+              //       "price": 0.0
+              //     },
+              //     "THIRD_DEDUCTIBLE": {
+              //       "quota": 1.0,
+              //       "price": 0.0
+              //     },
+              //     "DRIVER": {
+              //       "quota": 10000.0,
+              //       "price": 0.0
+              //     },
+              //     "DRIVER_DEDUCTIBLE": {
+              //       "quota": 1.0,
+              //       "price": 0.0
+              //     },
+              //     "PASSENGER": {
+              //       "quota": 10000.0,
+              //       "price": 0.0
+              //     },
+              //     "PASSENGER_DEDUCTIBLE": {
+              //       "quota": 1.0,
+              //       "price": 0.0
+              //     }
+              //   }
+              // }
+          }
         };
       },
       methods: {
@@ -150,8 +224,7 @@ import { autoApi } from '@/ajax/post.js'
           },window.localStorage.getItem('token')).then((res)=> {
             if (res.code == 0) {
               if (res.attach) {
-                  this.tableData = res.attach;
-                  this.length = res.attach.length;
+                  this.tableData = res.attach.tips;
                 }
               }
           })
@@ -163,7 +236,7 @@ import { autoApi } from '@/ajax/post.js'
           })
         }
       },
-      mounted(){debugger
+      mounted(){
           if (this.$route.query) {
             this.getInfo(this.$route.query.id);
           }

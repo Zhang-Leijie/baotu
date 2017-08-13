@@ -13,7 +13,7 @@
 			</div>
 		</div>
 
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="uid" label="用户id"></el-table-column>
 			    <el-table-column prop="employeeId" label="雇员工号"></el-table-column>
@@ -136,7 +136,8 @@ import { autoApi } from '@/ajax/post.js'
 		  			page: this.currentPage,
 		  			pageSize: this.pageSize,
 		  			// uid: null,	保途端
-		  			state: this.search.state
+		  			state: this.search.state,
+		  			employeeId: window.localStorage.getItem('employeeId')
 		  		};
 	  		}
 	  		else

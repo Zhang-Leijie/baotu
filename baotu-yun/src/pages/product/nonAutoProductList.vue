@@ -4,7 +4,7 @@
 		  	<el-breadcrumb-item>非车险类型管理</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table :data="formData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="id" label="ID"></el-table-column>
 			    <el-table-column label="操作">

@@ -4,7 +4,7 @@
 		  	<el-breadcrumb-item>商家列表</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="tid" label="商户ID"></el-table-column>
 			    <el-table-column prop="name" label="商户名"></el-table-column>

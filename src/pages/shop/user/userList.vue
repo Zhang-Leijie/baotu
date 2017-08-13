@@ -8,7 +8,7 @@
 			<el-input icon="search" v-model="searchMobile" placeholder="请输入账号(+86)" :on-icon-click="search" style="float:right;width:240px;"></el-input>
 			<div style="clear:both"></div>
 		</div>
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="uid" label="序号"></el-table-column>
 			    <el-table-column prop="name" label="姓名"></el-table-column>
@@ -20,17 +20,17 @@
 			    <el-table-column prop="mobile" label="账号"></el-table-column>
 			    <el-table-column label="登录时间">
 			    	<template scope="scope">
-			    		<span>{{scope.row.pcLoginTime?formatDate(scope.row.pcLoginTime):''}}</span>
+			    		<span>{{formatDate(scope.row.pcLoginTime)}}</span>
 			    	</template>
 			    </el-table-column>
 			     <el-table-column label="注册时间">
 			    	<template scope="scope">
-			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>
+			    		<span>{{formatDate(scope.row.created)}}</span>
 			    	</template>
 			    </el-table-column>
 			     <el-table-column label="最近修改时间">
 			    	<template scope="scope">
-			    		<span>{{scope.row.updated?formatDate(scope.row.updated):''}}</span>
+			    		<span>{{formatDate(scope.row.updated)}}</span>
 			    	</template>
 			    </el-table-column>
 			</el-table>

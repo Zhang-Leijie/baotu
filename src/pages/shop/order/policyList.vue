@@ -6,8 +6,8 @@
 
 		<div class="toolBar">
 			<div class="searchBox">
-				<el-input icon="search" v-model="search.company" placeholder="搜索保险公司" :on-icon-click="search" style="width:240px"></el-input>
-				<el-input icon="search" v-model="search.sale" placeholder="搜索业务员" :on-icon-click="search" style="width:240px"></el-input>
+				<!-- <el-input icon="search" v-model="search.company" placeholder="搜索保险公司" :on-icon-click="search" style="width:240px"></el-input> -->
+				<el-input icon="search" v-model="search.sale" placeholder="搜索业务员" :on-icon-click="searchIt" style="width:240px"></el-input>
 			</div>
 		</div>
 
@@ -73,18 +73,23 @@ export default {
 		},
 
 	  	getInfo() {
-  			let vehiclePolicySearcher = {
+  			let payload = {
   				page: this.currentPage,
   				pageSize: this.pageSize,
+	   			employeeId: window.localStorage.getItem('employeeId'),
+	   			// salesman: this.search.sale
   			};
+  			
+	  		if (this.search.sale) {
+	  			payload.salesman = this.search.sale;	
+	  		}
 
-  			vehiclePolicySearcher = JSON.stringify(vehiclePolicySearcher);
+  			payload = JSON.stringify(payload);
 
 	  		autoApi({
 	   			action: 'vehicle_policies',
 	   			version: '1.0',
-	   			employeeId: window.localStorage.getItem('employeeId'),
-	   			vehiclePolicySearcher: vehiclePolicySearcher
+	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;
@@ -102,7 +107,7 @@ export default {
 	        this.getInfo(); 
 	    },
 
-	    search() {
+	    searchIt() {
 	    	this.getInfo(); 
 	    },
 

@@ -4,7 +4,7 @@
 		  	<el-breadcrumb-item>规模奖励审核</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 	    		<el-table-column prop="employeeId" label="雇员号"></el-table-column>
 	    		<el-table-column prop="name" label="名字"></el-table-column>

@@ -419,6 +419,22 @@ export default {
       .btnDefult{
         margin-bottom: 10px;
       }
+      .tableBox {
+        margin-top: 20px;
+        .cell {
+          word-break: break-all !important;
+            text-overflow: ellipsis !important;
+            display: -webkit-box !important; /** 对象作为伸缩盒子模型显示 **/
+            -webkit-box-orient: vertical !important; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+          -webkit-line-clamp: 1 !important; /** 显示的行数 **/
+            overflow: hidden !important;  /** 隐藏超出的内容 **/
+        }
+        .cell:hover {
+          text-overflow:inherit !important; 
+          white-space: nowrap !important; 
+          overflow: auto !important;
+        }
+      }
     }
   }
   .iconfont{

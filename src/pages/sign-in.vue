@@ -50,7 +50,7 @@ export default {
          form:{
          	platCode: null,
          	account:'13295815927',
-         	password:'408723',
+         	password:'aa111111',
          },
          formLabelWidth: '80px',
          rules: {

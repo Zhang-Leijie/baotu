@@ -9,7 +9,7 @@
 			<el-input style="float:right;width:300px;" v-model="searchName" placeholder="请输入信息"></el-input>
 			<div style="clear:both"></div>
 		</div>
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table
 			    :data="tableData"
 			    border

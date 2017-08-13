@@ -9,7 +9,7 @@
 			</router-link>
 			<div style="clear:both"></div>
 		</div>
-		<div style="margin-top:20px;">
+		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;" @sort-change="sortChange">
 			    <el-table-column prop="id" label="序号"></el-table-column>
 			    <el-table-column prop="appId" label="所属appId"></el-table-column>
