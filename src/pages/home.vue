@@ -1,26 +1,15 @@
 <template>
 	<div style="padding: 40px;">
-		<el-button>
-			<router-link :to="{name:'adminHome'}">
-				后台管理端
-			</router-link>
-		</el-button>
+		<el-button @click="go">平台端</el-button>
 		
-		<el-button v-if="tenantId">
-			<router-link :to="{name:'shopHome'}"> 
-				前往商家端
-			</router-link>
-		</el-button>
+		<el-button @click="chooseShangjia">商家端</el-button>
 			
-		<el-button v-show="!tenantId">
-			<router-link :to="{name:'shopHome'}"> 
-				不选择商家,直接进入
-			</router-link>
-		</el-button>
-
-		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange">
+		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia">
 		    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
 		</el-select>
+
+		<el-button :disabled="true">PC端</el-button>
+		
 	</div>
 </template>
 
@@ -31,7 +20,8 @@ export default {
 	  data() {
 	    return {
 	      tenantId: null,
-	      tenants: []
+	      tenants: [],
+	      gotoShangjia: false
 		}
 	  },
 	  methods: {
@@ -82,9 +72,25 @@ export default {
 	    tenantChange(val) {
         	localStorage.setItem('employeeId',val.employeeId);
         	localStorage.setItem('tid',val.tid);
+        	this.go();
+	    },
+
+	    go() {
+	    	router.push({name:'shopHome'});
+	    },
+
+	    chooseShangjia() {
+	    	this.gotoShangjia = true;
+	    	this.$message({
+	    		message: '请选择商家',
+	    		type: 'info'
+	    	});
 	    }
+
 	  },
 	  mounted() {
+        // localStorage.setItem('employeeId',null);
+        // localStorage.setItem('tid',null);
 	  	this.getTenanList();
 	  }
 	}
