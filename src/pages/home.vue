@@ -82,6 +82,8 @@ export default {
 
 	    goPingtai() {
 	    	localStorage.setItem('baotuUserType','pingtai');
+	    	localStorage.setItem('employeeId',null);
+        	localStorage.setItem('tid',null);
 	    	router.push({name:'shopHome'});
 	    },
 
@@ -95,8 +97,6 @@ export default {
 
 	  },
 	  mounted() {
-        // localStorage.setItem('employeeId',null);
-        // localStorage.setItem('tid',null);
 	  	this.getTenanList();
 	  }
 	}
