@@ -74,7 +74,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			action: 'admins',
 	   			version: '1.0',
 	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;
 	   				this.total = res.attach.total;

@@ -67,7 +67,7 @@ export default {
        			pwd: this.form.password,
        		}).then((res)=> {
        			if (res.code == 0) {
-              localStorage.setItem('token',res.attach.token);
+              localStorage.setItem('tokenPlate',res.attach.token);
               // localStorage.setItem('userId',res.attach.user.uid);
               localStorage.setItem('uid',res.attach.uid);
        				router.push({name:'GMList'})

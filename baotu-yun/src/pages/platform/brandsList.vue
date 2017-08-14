@@ -96,7 +96,7 @@ import { masterApi } from '@/ajax/post.js'
 	  		masterApi({
 	   			action: 'vehicle_brands',
 	   			version: '1.0'
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
 	   					this.tableData = res.attach;
@@ -116,7 +116,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			version: '1.0',
 	   			crudType: 1,
 	   			name: name
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
    					this.$message({
    						message: '新增汽车品牌成功',
@@ -143,7 +143,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			crudType: 4,
 	   			name: name,
 	   			id, id
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
    					this.$message({
    						message: '已保存修改',
@@ -170,7 +170,7 @@ import { masterApi } from '@/ajax/post.js'
 	   // 			version: '1.0',
 	   // 			crudType: 8,
 	   // 			id, id
-	   // 		},window.localStorage.getItem('token')).then((res)=> {
+	   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   // 			if (res.code == 0) {
    	// 				this.$message({
    	// 					message: '删除完成',

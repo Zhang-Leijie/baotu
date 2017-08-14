@@ -79,7 +79,7 @@ import { masterApi } from '@/ajax/post.js'
 						icon: this.form.iconUrl,
 						agree: this.form.agree,
 						key: this.form.leBaoBaId
-					},window.localStorage.getItem('token')).then((res)=> {
+					},window.localStorage.getItem('tokenPlate')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
 					            type: 'success',
@@ -111,7 +111,7 @@ import { masterApi } from '@/ajax/post.js'
 						icon: this.form.iconUrl,
 						agree: this.form.agree,
 						key: this.form.leBaoBaId
-					},window.localStorage.getItem('token')).then((res)=> {
+					},window.localStorage.getItem('tokenPlate')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
 					            type: 'success',

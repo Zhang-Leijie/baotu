@@ -52,7 +52,7 @@ import { masterApi } from '@/ajax/post.js'
 					}
 					payload = JSON.stringify(payload);
 					masterApi({
-						action: 'administrator_edit',
+						action: 'admin_edit',
 						version: '1.0',
 						crudType: 1,
 						payload: payload

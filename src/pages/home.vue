@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 40px;">
-		<el-button @click="go">平台端</el-button>
+		<el-button @click="goPingtai">平台端</el-button>
 		
 		<el-button @click="chooseShangjia">商家端</el-button>
 			
@@ -72,10 +72,16 @@ export default {
 	    tenantChange(val) {
         	localStorage.setItem('employeeId',val.employeeId);
         	localStorage.setItem('tid',val.tid);
-        	this.go();
+        	this.goShangjia();
 	    },
 
-	    go() {
+	    goShangjia() {
+	    	localStorage.setItem('baotuUserType','shangjia');
+	    	router.push({name:'shopHome'});
+	    },
+
+	    goPingtai() {
+	    	localStorage.setItem('baotuUserType','pingtai');
 	    	router.push({name:'shopHome'});
 	    },
 

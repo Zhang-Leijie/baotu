@@ -118,7 +118,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			action: 'poundage_coefficients',
 	   			version: '1.0',
 	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
 	   					for (var i = 0; i < res.attach.length; i++) {
@@ -210,7 +210,7 @@ import { masterApi } from '@/ajax/post.js'
 			   			version: '1.0',
 			   			crudType: 4,	//4:修改
 			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
+			   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 			   			if (res.code == 0) {
 			   				this.isEdited = null;
 			    			this.getEditSetting();
@@ -255,7 +255,7 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			crudType: 8,	//4:修改
 		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 		   			if (res.code == 0) {
 		    			this.getEditSetting();
 		   				this.$message({
@@ -309,7 +309,7 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			crudType: 1,	//1:添加
 		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.isAdded = null;
 		    			this.getEditSetting();

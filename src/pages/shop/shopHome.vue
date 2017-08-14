@@ -14,10 +14,10 @@
           <el-submenu index="2">
             <template slot="title">账号管理*</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-shop-list'}">
+              <router-link :to="{name:'shop-shop-list'}" v-if="isAdmin">
                 <el-menu-item index="2-1" class="sub-title">商家管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-user-list'}">
+              <router-link :to="{name:'shop-user-list'}" v-if="isAdmin">
                 <el-menu-item index="2-5" class="sub-title">用户信息</el-menu-item>
               </router-link>
               <router-link :to="{name:'shop-staff-list'}">
@@ -32,7 +32,7 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="6">
+          <el-submenu index="6" v-if="!isAdmin">
             <template slot="title">设置</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-autoinsurance-manage'}">
@@ -61,7 +61,7 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="3">
+          <el-submenu index="3" v-if="isAdmin">
             <template slot="title">运营管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-run-rollimg'}">
@@ -80,7 +80,7 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="4">
+          <el-submenu index="4" v-if="!isAdmin">
             <template slot="title">产品管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-set-insuranceN'}">
@@ -104,7 +104,7 @@
             </el-menu-item-group> -->
           </el-submenu>
 
-          <el-submenu index="7">
+          <el-submenu index="7"  v-if="!isAdmin">
             <template slot="title">订单管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-order-autoinsurance'}">
@@ -123,7 +123,7 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="5">
+          <el-submenu index="5" v-if="!isAdmin">
             <template slot="title">消息体系</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-msg-business'}">
@@ -142,7 +142,7 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="8">
+          <el-submenu index="8" v-if="!isAdmin">
             <template slot="title">统计管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-statistic-statisticManage'}">
@@ -195,6 +195,7 @@ export default {
       roleName:null,
       activeRoute: '',
       openedRouteList: [],
+      isAdmin: null,
     }
   },
   methods: {
@@ -205,6 +206,9 @@ export default {
     }
   },
   mounted:function() {
+
+    this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
+
     if (this.$route.name == 'shop-shop-list') {
       this.activeRoute = '2-1';
       this.openedRouteList = ['2'];

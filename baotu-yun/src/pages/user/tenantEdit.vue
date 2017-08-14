@@ -235,7 +235,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			action: 'tenant_info',
 	   			version: '1.0',
 	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.tenantData = res.attach
        			}
@@ -247,7 +247,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			action: 'routes',
 	   			version: '1.0',
 	   			tid: this.tid
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
 	   					this.tableData = res.attach;
@@ -269,7 +269,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			action: 'bi_hu_tenant_config',
 	   			version: '1.0',
 	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
 	   					this.formBiHu.agent = res.attach.agent;
@@ -291,7 +291,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			version: '1.0',
 	   			crudType: 4,
 	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
    					this.getBiHuInfo();
    					this.$message({
@@ -316,7 +316,7 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			crudType: 1,
 		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.addBiHuData.agent = null;
 		   				this.addBiHuData.key = null;
@@ -341,7 +341,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			version: '1.0',
 	   			crudType: 8,
 	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.formBiHu.agent = null;
 	   				this.formBiHu.key = null;
@@ -361,7 +361,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			action: 'insurers',
 	   			version: '1.0',
 	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
 	   					this.insurerList = [];
@@ -398,20 +398,20 @@ import { masterApi } from '@/ajax/post.js'
 	  		this.dialogTableVisible = false;
 	  		if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianjieId) {
 	  			
-	  			if(this.formAdd.laneId == 1) {
-	  				masterApi({
-			   			action: 'bi_hu_tenant_config_edit',
-			   			version: '1.0',
-			   			crudType: 1,
-			   			tid: this.tid,
-			   			agent: this.formAdd.agent,
-			   			key: this.formAdd.key
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
+	  			// if(this.formAdd.laneId == 1) {
+	  			// 	masterApi({
+			   // 			action: 'bi_hu_tenant_config_edit',
+			   // 			version: '1.0',
+			   // 			crudType: 1,
+			   // 			tid: this.tid,
+			   // 			agent: this.formAdd.agent,
+			   // 			key: this.formAdd.key
+			   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+			   // 			if (res.code == 0) {
 
-		       			}
-			   		})
-	  			}
+		    //    			}
+			   // 		})
+	  			// }
 
 	  			masterApi({
 		   			action: 'route_edit',
@@ -421,7 +421,7 @@ import { masterApi } from '@/ajax/post.js'
 		   			tid: this.tid,
 		   			id: this.formAdd.insurerId,
 		   			jianJieId: this.formAdd.jianjieId
-		   		},window.localStorage.getItem('token')).then((res)=> {
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 		   			if (res.code == 0) {
 		   				for(let item in this.formAdd) {
 		   					this.formAdd[item] = null;
@@ -479,7 +479,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			key: this.editedId,
 	   			lane: this.formEdit.laneId,
 	   			jianJieId: this.formEdit.jianjieId
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				this.getRouterInfo();
        			}
@@ -503,7 +503,7 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			crudType: 8,
 		   			key: row.key,
-		   		},window.localStorage.getItem('token')).then((res)=> {
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 		   			if (res.code == 0) {
 		   				this.getRouterInfo();
 	       			}

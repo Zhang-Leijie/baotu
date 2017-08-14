@@ -72,7 +72,7 @@ import { masterApi } from '@/ajax/post.js'
 	  		// masterApi({
 	   	// 		action: 'demos',
 	   	// 		version: '1.0'
-	   	// 	},window.localStorage.getItem('token')).then((res)=> {
+	   	// 	},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   	// 		if (res.code == 0) {
 	   	// 			if (res.attach) {
 	   	// 				this.tableData = res.attach;

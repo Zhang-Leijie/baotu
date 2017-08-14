@@ -160,6 +160,10 @@ export default {
                 localStorage.setItem('token',res.attach.token);
                 // localStorage.setItem('userId',res.attach.user.uid);
                 localStorage.setItem('appId',this.form.platCode);
+
+                localStorage.setItem('userName',this.form.account);
+                localStorage.setItem('userPsd',this.form.password);
+
 	       				router.push({name:'home'})
                  this.$message({
                   type: 'success',
@@ -170,9 +174,11 @@ export default {
        		}
        },
     },
-    mounted:function(){
+    mounted(){
         this.ipAddrPlate = '101.37.34.55';
         localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
+        this.form.account = window.localStorage.getItem('userName');
+        this.form.password = window.localStorage.getItem('userPsd');
     }
 }
 </script>

@@ -55,7 +55,7 @@ import { masterApi } from '@/ajax/post.js'
 					action: 'non_auto_product_list',
 					version: '1.0',
 					payload: payload
-				},window.localStorage.getItem('token')).then((res)=> {
+				},window.localStorage.getItem('tokenPlate')).then((res)=> {
 					if (res.code == 0) {
 						if (res.attach) {
 		   					this.tableData = res.attach.list;

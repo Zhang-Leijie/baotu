@@ -49,7 +49,7 @@ import { masterApi } from '@/ajax/post.js'
 					// 	action: 'demo_edit',
 					// 	version: '1.0',
 					// 	crudType: 1
-					// },window.localStorage.getItem('token')).then((res)=> {
+					// },window.localStorage.getItem('tokenPlate')).then((res)=> {
 					// 	if (res.code == 0) {
 					// 		this.$message({
 					//             type: 'success',
@@ -76,7 +76,7 @@ import { masterApi } from '@/ajax/post.js'
 					// 	action: 'demo_edit',
 					// 	version: '1.0',
 					// 	crudType: 4,
-					// },window.localStorage.getItem('token')).then((res)=> {
+					// },window.localStorage.getItem('tokenPlate')).then((res)=> {
 					// 	if (res.code == 0) {
 					// 		this.$message({
 					//             type: 'success',

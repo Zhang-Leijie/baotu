@@ -104,7 +104,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			action: 'vehicle_depts',
 	   			version: '1.0',
 	   			id: id
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
 	   					this.tableData = res.attach;
@@ -126,7 +126,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			crudType: 1,
 	   			name: name,
 	   			id: id
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
    					this.$message({
    						message: '新增汽车车系成功',
@@ -153,7 +153,7 @@ import { masterApi } from '@/ajax/post.js'
 	   			crudType: 4,
 	   			name: name,
 	   			id, id
-	   		},window.localStorage.getItem('token')).then((res)=> {
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
    					this.$message({
    						message: '已保存修改',
@@ -180,7 +180,7 @@ import { masterApi } from '@/ajax/post.js'
 	   // 			version: '1.0',
 	   // 			crudType: 8,
 	   // 			id, id
-	   // 		},window.localStorage.getItem('token')).then((res)=> {
+	   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   // 			if (res.code == 0) {
    	// 				this.$message({
    	// 					message: '删除完成',
