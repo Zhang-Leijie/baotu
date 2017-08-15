@@ -12,11 +12,11 @@
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="uid" label="序号"></el-table-column>
 			    <el-table-column prop="name" label="姓名"></el-table-column>
-			    <el-table-column label="头像">
+			    <!-- <el-table-column label="头像">
 			    	<template scope="scope">
 			        	<img :src="scope.row.avatar">
 			      	</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column prop="mobile" label="账号"></el-table-column>
 			    <el-table-column label="登录时间">
 			    	<template scope="scope">
@@ -28,11 +28,11 @@
 			    		<span>{{formatDate(scope.row.created)}}</span>
 			    	</template>
 			    </el-table-column>
-			     <el-table-column label="最近修改时间">
+			    <!-- <el-table-column label="最近修改时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.updated)}}</span>
 			    	</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			</el-table>
 			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>

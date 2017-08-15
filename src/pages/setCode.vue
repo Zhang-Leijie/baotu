@@ -100,7 +100,28 @@ export default {
 	   			appId: '1',
 	   		}).then((res)=> {
 	   			if (res.code == 0) {
-       				router.push({name:'home'})
+       				logApi({
+                appId:'1',
+                action:'login',
+                client:'2',
+                mobile:'+86'+this.$route.query.account,
+                pwd:this.form.passwordS,
+              }).then((res)=> {
+                if (res.code == 0) {
+                  localStorage.setItem('token',res.attach.token);
+                  // localStorage.setItem('userId',res.attach.user.uid);
+                  localStorage.setItem('appId',this.form.platCode);
+
+                  localStorage.setItem('userName',this.$route.query.account);
+                  localStorage.setItem('userPsd',this.form.passwordS);
+
+                  router.push({name:'home'})
+                   this.$message({
+                    type: 'success',
+                    message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
+                  });   
+                }
+              })
        			}
 	   		})
        	}     	

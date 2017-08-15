@@ -42,38 +42,38 @@
 		<el-form :label-position="labelPosition" label-width="120px" class="appbox" v-if="viewMode == 1">
 		    <el-form-item class="Btitle" label="统计口径:" style="margin-bottom:0px;"></el-form-item>
 		  	<el-form-item label="统计车型:">
-		  		<el-radio-group v-model="formSetting.bonusScaleCountMod">
-			    	<el-radio label="1" value="1">非营业客车</el-radio>
-					<el-radio label="2" value="2">非营业货车</el-radio>
-					<el-radio label="4" value="4">营业客车</el-radio>
-					<el-radio label="8" value="8">营业货车</el-radio>
-					<el-radio label="16" value="16">其他</el-radio>
-			  	</el-radio-group>
+		  		<el-checkbox-group v-model="formSetting.bonusScaleCountMod">
+			    	<el-checkbox label="1" value="1">非营业客车</el-checkbox>
+					<el-checkbox label="2" value="2">非营业货车</el-checkbox>
+					<el-checkbox label="4" value="4">营业客车</el-checkbox>
+					<el-checkbox label="8" value="8">营业货车</el-checkbox>
+					<el-checkbox label="16" value="16">其他</el-checkbox>
+			  	</el-checkbox-group>
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
-		  		<el-radio-group v-model="formSetting.bonusScaleCountInsuranceMod">
-			    	<el-radio label="32">商业险</el-radio>
-					<el-radio label="64">交强险</el-radio>
-			  	</el-radio-group>
+		  		<el-checkbox-group v-model="formSetting.bonusScaleCountInsuranceMod">
+			    	<el-checkbox label="32">商业险</el-checkbox>
+					<el-checkbox label="64">交强险</el-checkbox>
+			  	</el-checkbox-group>
 		  	</el-form-item>
 		</el-form>
 		
 		<el-form :label-position="labelPosition" label-width="120px" class="appbox" v-if="viewMode == 1">
 		  	<el-form-item class="Btitle" label="奖励口径:" style="margin-bottom:0px;"></el-form-item>
 		  	<el-form-item label="统计车型:">
-				<el-radio-group v-model="formSetting.bonusScaleRewardMod">
-			    	<el-radio label="128">非营业客车</el-radio>
-					<el-radio label="256">非营业货车</el-radio>
-					<el-radio label="512">营业客车</el-radio>
-					<el-radio label="1024">营业货车</el-radio>
-					<el-radio label="2048">其他</el-radio>
-			  	</el-radio-group>
+				<el-checkbox-group v-model="formSetting.bonusScaleRewardMod">
+			    	<el-checkbox label="128">非营业客车</el-checkbox>
+					<el-checkbox label="256">非营业货车</el-checkbox>
+					<el-checkbox label="512">营业客车</el-checkbox>
+					<el-checkbox label="1024">营业货车</el-checkbox>
+					<el-checkbox label="2048">其他</el-checkbox>
+			  	</el-checkbox-group>
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
-				<el-radio-group v-model="formSetting.bonusScaleRewardInsuranceMod">
-			    	<el-radio label="4096">商业险</el-radio>
-					<el-radio label="8192">交强险</el-radio>
-			  	</el-radio-group>
+				<el-checkbox-group v-model="formSetting.bonusScaleRewardInsuranceMod">
+			    	<el-checkbox label="4096">商业险</el-checkbox>
+					<el-checkbox label="8192">交强险</el-checkbox>
+			  	</el-checkbox-group>
 		  	</el-form-item>
 		</el-form>
 
@@ -88,7 +88,7 @@
 	  			</el-col>
 	  			<el-col :span="6">
 	  				<span class="dataFont">比较类型: </span>
-	  				<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{reComparisonName(item.comparison)}}</span>
+	  				<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{reComparisonName(reComparisonName(item.comparison))}}</span>
 	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择" v-if="isGuimoEdited && item.id == guimoEdit.id" style="width:150px;">
 						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
 					</el-select>
@@ -235,10 +235,10 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	        labelPosition: 'right',
 	        formSetting:{
 	        	teamDepth: null,		//团队层级数
-	        	bonusScaleCountMod: null,	//规模佣金统计口径模值
-	        	bonusScaleRewardMod: null,			//规模佣金奖励口径模值
-	        	bonusScaleCountInsuranceMod: null,		//规模佣金统计口径险种模值
-	        	bonusScaleRewardInsuranceMod: null, 		//规模佣金奖励口径险种模值
+	        	bonusScaleCountMod: [],	//规模佣金统计口径模值
+	        	bonusScaleRewardMod: [],			//规模佣金奖励口径模值
+	        	bonusScaleCountInsuranceMod: [],		//规模佣金统计口径险种模值
+	        	bonusScaleRewardInsuranceMod: [], 		//规模佣金奖励口径险种模值
 	        },
 	        guanli: {
 	        	
@@ -505,35 +505,46 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			}
 		   		})
 	       	},
-	      //  	getInfo() {
-	      //  		commonApi({
-		   		// 	action: 'tenant_info',
-		   		// 	version: '1.0',
-		   		// 	employeeId: window.localStorage.getItem('employeeId'),
-		   		// 	client: 2
-		   		// },window.localStorage.getItem('token')).then((res)=> {
-		   		// 	if (res.code == 0) {
-       //  				//缺少深度
-       //  				
-       //  				this.formSetting.bonusScaleCountMod = res.attach.bonusScaleCountMod.toString();
-       //  				this.formSetting.bonusScaleRewardMod = res.attach.bonusScaleRewardMod.toString();
-       //  				this.formSetting.bonusScaleCountInsuranceMod = res.attach.bonusScaleCountInsuranceMod.toString();
-       //  				this.formSetting.bonusScaleRewardInsuranceMod = res.attach.bonusScaleRewardInsuranceMod.toString();
-	      //  			}
-		   		// })
-	      //  	},
+	       	getInfo() {
+	       		let payload = {
+		   			employeeId: window.localStorage.getItem('employeeId')
+	       		}
+	       		payload = JSON.stringify(payload);
+	       		autoApi({
+		   			action: 'tenant_info',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+        				//缺少深度
+        				this.modCount(res.attach.mod);
+	       			}
+		   		})
+	       	},
 	       	comfirmSetting() {
-	       		let payload  = {
+	       		let payload = {
 				    // name : xxx,                                                // 商户名字
-				    teamDepth: null,                                            // 团队层级数
+				    teamDepth: this.formSetting.teamDepth,                  // 团队层级数
 				    // nonAutoBind :[1,2,3]                                 // 开通的非车险类型id列表
 				    mod: 0
 				};
-				payload .teamDepth = this.formSetting.teamDepth;
-				payload .mod = parseInt(this.formSetting.bonusScaleCountMod) + parseInt(this.formSetting.bonusScaleRewardMod) + parseInt(this.formSetting.bonusScaleCountInsuranceMod) + parseInt(this.formSetting.bonusScaleRewardInsuranceMod);
+				var modCount = 0; 
+				for (let i = 0; i < this.formSetting.bonusScaleCountMod.length; i++) {
+					modCount = modCount + parseInt(this.formSetting.bonusScaleCountMod[i]);
+				}
+				for (let i = 0; i < this.formSetting.bonusScaleRewardMod.length; i++) {
+					modCount = modCount + parseInt(this.formSetting.bonusScaleRewardMod[i]);
+				}
+				for (let i = 0; i < this.formSetting.bonusScaleCountInsuranceMod.length; i++) {
+					modCount = modCount + parseInt(this.formSetting.bonusScaleCountInsuranceMod[i]);
+				}
+				for (let i = 0; i < this.formSetting.bonusScaleRewardInsuranceMod.length; i++) {
+					modCount = modCount + parseInt(this.formSetting.bonusScaleRewardInsuranceMod[i]);
+				}
+				payload.mod = modCount;
 				
-				if (payload .mod) {
-					payload  = JSON.stringify(payload );
+				if (payload.mod) {
+					payload = JSON.stringify(payload);
 					autoApi({
 			   			action: 'tenant_set',
 			   			version: '1.0',
@@ -785,12 +796,70 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 						return "COMPULSORY_OTHER"
 						break;
 		    	}
+		    },
+		    modCount(mod) {
+		    	if (mod & 1) {//非营业客车 - 统计口径
+		    		this.form.bonusScaleCountMod.push('1');
+		    	}
+
+		    	if (mod & 2) {//非营业货车 - 统计口径
+		    		this.form.bonusScaleCountMod.push('2');
+		    	}
+
+		    	if (mod & 4) {//营业客车 - 统计口径
+		    		this.form.bonusScaleCountMod.push('4');
+		    	}
+
+		    	if (mod & 8) {//营业货车 - 统计口径
+		    		this.form.bonusScaleCountMod.push('8');
+		    	}
+
+		    	if (mod & 16) {//其他 - 统计口径
+		    		this.form.bonusScaleCountMod.push('16');
+		    	}
+
+		    	if (mod & 32) {//商业险 - 统计
+		    		this.form.bonusScaleCountInsuranceMod.push('32');
+		    	}
+
+		    	if (mod & 64) {//交强险 - 统计
+		    		this.form.bonusScaleCountInsuranceMod.push('64');
+		    	}
+
+		    	if (mod & 128) {//非营业客车 - 奖励
+		    		this.form.bonusScaleCountInsuranceMod.push('128');
+		    	}
+
+		    	if (mod & 256) {//非营业货车 - 奖励
+		    		this.form.bonusScaleCountInsuranceMod.push('256');
+		    	}
+
+		    	if (mod & 512) {//营业客车 - 奖励
+		    		this.form.bonusScaleCountInsuranceMod.push('512');
+		    	}
+
+		    	if (mod & 1024) {//营业货车 - 奖励
+		    		this.form.bonusScaleCountInsuranceMod.push('1024');
+		    	}
+
+		    	if (mod & 2048) {//其他 - 奖励
+		    		this.form.bonusScaleCountInsuranceMod.push('2048');
+		    	}
+
+		    	if (mod & 4096) {//商业险 - 奖励
+		    		this.form.bonusScaleCountInsuranceMod.push('4096');
+		    	}
+
+		    	if (mod & 8192) {//交强险 - 奖励
+		    		this.form.bonusScaleCountInsuranceMod.push('8192');
+		    	}
 		    }
 	    },
-	    mounted:function(){
+	    mounted(){
 	    	// this.getInfo();
 	        this.getGuanli();
 	        this.getGuimo();
+	        this.getInfo();
 	    }
 	}
 </script>

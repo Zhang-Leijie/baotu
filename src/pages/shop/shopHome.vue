@@ -2,9 +2,9 @@
   <div class="content">
     <div class="left-box">
       <div class="logo" style="text-align:center;">
-      	<!-- <router-link :to="{name:'product-menu'}">
-          <img src="/static/img/logo.png" style="height:70px;">
-        </router-link> -->
+      	<!-- <router-link :to="{name:'product-menu'}"> -->
+          <img src="../../assets/topLogo.png" style="height:70px;">
+        <!-- </router-link> -->
       </div>
       <el-col :span="8" style="width:100%">
         <el-menu  style="background-color:#32323a" unique-opened :default-active="activeRoute" :default-openeds="openedRouteList">
@@ -20,13 +20,13 @@
               <router-link :to="{name:'shop-user-list'}" v-if="isAdmin">
                 <el-menu-item index="2-5" class="sub-title">用户信息</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-staff-list'}">
+              <router-link :to="{name:'shop-staff-list'}" v-if="!isAdmin">
                 <el-menu-item index="2-3" class="sub-title">员工管理</el-menu-item>
               </router-link>
               <router-link :to="{name:'shop-role-list'}">
                 <el-menu-item index="2-2" class="sub-title">角色管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-verify'}">
+              <router-link :to="{name:'shop-verify'}" v-if="!isAdmin">
                 <el-menu-item index="2-4" class="sub-title">审核管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
@@ -142,18 +142,18 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="8" v-if="!isAdmin">
+          <el-submenu index="8">
             <template slot="title">统计管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-statistic-statisticManage'}">
                 <el-menu-item index="8-1" class="sub-title">统计管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <!-- <el-menu-item-group>
               <router-link :to="{name:'shop-statistic-statisticManage'}">
                 <el-menu-item index="8-2" class="sub-title">商品销售统计*</el-menu-item>
               </router-link>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
           </el-submenu>
 
           <!-- <router-link :to="{name:'password'}">

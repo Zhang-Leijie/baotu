@@ -35,13 +35,22 @@
 		  	<el-form-item class="appblock" label="客服电话:">
 	    		 <span>{{ tenantData.servicePhone  }}</span>
 		  	</el-form-item>
+		  	<el-form-item class="appblock" label="gent:">
+		    	<el-input type="text" style="width:150px;" v-model="formBiHu.agent" placeholder="未绑定壁虎"></el-input>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="key:">
+		    	<el-input type="text" style="width:150px;" v-model="formBiHu.key" placeholder="未绑定壁虎"></el-input>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="简捷ID:">
+		    	<el-input type="text" style="width:150px;" v-model="tenantData.jianJieId" placeholder="暂无简捷ID"></el-input>
+		  	</el-form-item>
 		</el-form>
 
-		<el-breadcrumb separator="/">
+		<!-- <el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>壁虎配置</el-breadcrumb-item>
-		</el-breadcrumb>
+		</el-breadcrumb> -->
 
-		<el-form label-width="120px" class="appbox">
+		<!-- <el-form label-width="120px" class="appbox">
 			<el-form-item class="appblock" label="gent:" v-if="(formBiHu.agent && formBiHu.key)">
 		    	<el-input type="text" style="width:150px;" v-model="formBiHu.agent" placeholder="请输入"></el-input>
 		  	</el-form-item>
@@ -54,17 +63,18 @@
 		  	<el-form-item class="appblock" label="key:" v-if="isAddBiHu">
 		    	<el-input type="text" style="width:150px;" v-model="addBiHuData.key" placeholder="请输入"></el-input>
 		  	</el-form-item>
-		</el-form>
+		</el-form> -->
 
+		<div style="clear: both;"></div>
 
 		<div style="margin-bottom: 20px;">
-			<div class="toolBar">
+			<!-- <div class="toolBar">
 				<div class="toolBarR">
 					<el-button type="primary" @click="addBiHu" v-if="!(formBiHu.agent && formBiHu.key)">开通壁虎</el-button>
 					<el-button type="primary" @click="saveBiHu" v-if="formBiHu.agent && formBiHu.key">保存配置</el-button>
 					<el-button type="primary" @click="deleteBiHu" v-if="formBiHu.agent && formBiHu.key">关闭壁虎</el-button>
 				</div>
-			</div>
+			</div> -->
 
 			<el-breadcrumb separator="/">
 			  	<el-breadcrumb-item>险企信息</el-breadcrumb-item>
@@ -94,7 +104,7 @@
 			    <el-table-column label="简捷ID">
 			    	<template scope="scope">
 			    		<span v-if="!(isEdit && editedId === scope.row.key)">{{scope.row.jianJieId?scope.row.jianJieId:"未绑定"}}</span>
-			    		<el-input v-model="formEdit.jianjieId" v-if="isEdit && editedId === scope.row.key"></el-input>
+			    		<el-input v-model="formEdit.jianJieId" v-if="isEdit && editedId === scope.row.key"></el-input>
 			    	</template>
 			    </el-table-column>
 			    <!-- <el-table-column label="险企图标地址">
@@ -127,6 +137,12 @@
 			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 
+		<div class="toolBar">
+			<div class="toolBarR">
+				<el-button type="primary" @click="saveAll">全部保存</el-button>
+			</div>
+		</div>
+
 		<el-dialog title="新增路由" :visible.sync="dialogTableVisible">
 			<el-form label-width="120px" class="appbox">
 			  	<el-form-item class="appblock" label="险企:">
@@ -145,8 +161,8 @@
 			    	<span>{{tid}}</span>
 			  	</el-form-item> -->
 			  	<el-form-item class="appblock" label="简捷ID:">
-			  		<span v-show="!formAdd.jianjieId" style="color: red;">*</span>
-			    	<el-input type="text" style="width:150px;" v-model="formAdd.jianjieId" placeholder="请输入ID"></el-input>
+			  		<span v-show="!formAdd.jianJieId" style="color: red;">*</span>
+			    	<el-input type="text" style="width:150px;" v-model="formAdd.jianJieId" placeholder="请输入ID"></el-input>
 			  	</el-form-item>
 			</el-form>
 			<div style="clear:both"></div>
@@ -168,26 +184,35 @@ import { masterApi } from '@/ajax/post.js'
 		    pageCount: null,
 		    length: null,
 		    pageSize: 10,
-		    tenantData: [],
-		    tableData: [],
-		    insurerList: [],
-		    formData: [],
+		    tenantData: [],				//基本信息
+		    tableData: [],				//路由列表数据
+		    insurerList: [],			//险企列表数据
+		    formData: [],				//分页路由列表数据
 		    dialogTableVisible: false,
 		    formBiHu: {
 	        	agent: null,
 	        	key: null
 		    },
-		    addBiHuData: {
-	        	agent: null,
-	        	key: null
-		    },
+		    // addBiHuData: {
+	     //    	agent: null,
+	     //    	key: null
+		    // },
 		    formAdd: {
-		      	id: null,
 	      		tid: null,
 	        	laneId: null,
 	        	insurerId: null,
-	        	jianjieId: null,
+	        	jianJieId: null,
 		    },
+		    addBuf: [],
+	      	formEdit: {
+	      		jianJieId: null,
+	      		laneId: null
+	      	},
+	      	editBuf: [],
+	      	isEdit: false,
+	      	editedId: null,
+	      	deleteBuf: [],
+	      	// isAddBiHu: false,
 		    lanes: [
 	      		{
 	      			value: 1,
@@ -202,13 +227,6 @@ import { masterApi } from '@/ajax/post.js'
 	      			label: '保途车险'
 	      		}
 	      	],
-	      	formEdit: {
-	      		jianjieId: null,
-	      		laneId: null
-	      	},
-	      	isEdit: false,
-	      	editedId: null,
-	      	isAddBiHu: false,
 		}
 	  },
 	  methods: {
@@ -225,8 +243,7 @@ import { masterApi } from '@/ajax/post.js'
 		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
 		},
 
-
-		getTenantInfo() {
+		getInfo() {
 			let payload = {
 				id: this.tid
 			};
@@ -237,122 +254,155 @@ import { masterApi } from '@/ajax/post.js'
 	   			payload: payload
 	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
-	   				this.tenantData = res.attach
+	   				this.tableData = [];
+	   				this.tenantData = res.attach;
+	   				for(let item in res.attach.insurers) {
+	   					let buf = res.attach.insurers[item];
+	   					for (let i = 0; i < this.lanes.length; i++) {
+	   						if (buf.lane == this.lanes[i].value) {
+	   							buf.laneName = this.lanes[i].label;
+	   						}
+	   					}
+	   					this.tableData.push(buf);
+	   				}
+	   				// this.tableData = res.attach.insurers;
+   					this.length = this.tableData.length;
+   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+   					this.showPage();
+  					this.getInsurerList();
+  					this.formBiHu.agent = res.attach.biHuAgent;
+	   				this.formBiHu.key = res.attach.biHuKey;
        			}
 	   		})
 		},
 
-	  	getRouterInfo() {
-	  		masterApi({
-	   			action: 'routes',
-	   			version: '1.0',
-	   			tid: this.tid
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.tableData = res.attach;
-	   					this.length = res.attach.length;
-	   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-	   					this.showPage();
-	  					this.getInsurerList();
-	   				}
-       			}
-	   		})
-	  	},
+		// getTenantInfo() {
+		// 	let payload = {
+		// 		id: this.tid
+		// 	};
+		// 	payload = JSON.stringify(payload);
+		// 	masterApi({
+	 //   			action: 'tenant_info',
+	 //   			version: '1.0',
+	 //   			payload: payload
+	 //   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	 //   			if (res.code == 0) {
+	 //   				this.tenantData = res.attach
+  //      			}
+	 //   		})
+		// },
 
-	  	getBiHuInfo() {
-	  		let payload = {
-	  			id: this.tid
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'bi_hu_tenant_config',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.formBiHu.agent = res.attach.agent;
-	   					this.formBiHu.key = res.attach.key;
-	   				}
-       			}
-	   		})
-	  	},
+	 //  	getRouterInfo() {
+	 //  		masterApi({
+	 //   			action: 'routes',
+	 //   			version: '1.0',
+	 //   			tid: this.tid
+	 //   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	 //   			if (res.code == 0) {
+	 //   				if (res.attach) {
+	 //   					this.tableData = res.attach;
+	 //   					this.length = res.attach.length;
+	 //   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+	 //   					this.showPage();
+	 //  					this.getInsurerList();
+	 //   				}
+  //      			}
+	 //   		})
+	 //  	},
 
-	  	saveBiHu() {
-	  		let payload = {
-	  			tid: this.tid,
-	  			key: this.formBiHu.key,
-	  			agent: this.formBiHu.agent
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'bi_hu_tenant_config_edit',
-	   			version: '1.0',
-	   			crudType: 4,
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-   					this.getBiHuInfo();
-   					this.$message({
-   						message: '壁虎配置成功',
-   						type: 'success'
-   					});
-       			}
-	   		})
-	  	},	
+	 //  	getBiHuInfo() {
+	 //  		let payload = {
+	 //  			id: this.tid
+	 //  		}
+	 //  		payload = JSON.stringify(payload);
+	 //  		masterApi({
+	 //   			action: 'bi_hu_tenant_config',
+	 //   			version: '1.0',
+	 //   			payload: payload
+	 //   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	 //   			if (res.code == 0) {
+	 //   				if (res.attach) {
+	 //   					this.formBiHu.agent = res.attach.agent;
+	 //   					this.formBiHu.key = res.attach.key;
+	 //   				}
+  //      			}
+	 //   		})
+	 //  	},
 
-	  	addBiHu() {
-	  		this.isAddBiHu = true;
-	  		if (this.addBiHuData.agent && this.addBiHuData.key) {
-	  			let payload = {
-		  			tid: this.tid,
-		  			key: this.addBiHuData.key,
-		  			agent: this.addBiHuData.agent
-		  		}
-		  		payload = JSON.stringify(payload);
-		  		masterApi({
-		   			action: 'bi_hu_tenant_config_edit',
-		   			version: '1.0',
-		   			crudType: 1,
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.addBiHuData.agent = null;
-		   				this.addBiHuData.key = null;
-		   				this.isAddBiHu = false;
-	   					this.getBiHuInfo();
-	   					this.$message({
-	   						message: '关联壁虎成功',
-	   						type: 'success'
-	   					});
-	       			}
-		   		})
-	  		}
-	  	},	
+	  	// saveBiHu() {
+	  	// 	let payload = {
+	  	// 		tid: this.tid,
+	  	// 		key: this.formBiHu.key,
+	  	// 		agent: this.formBiHu.agent
+	  	// 	}
+	  	// 	payload = JSON.stringify(payload);
+	  	// 	masterApi({
+	   // 			action: 'bi_hu_tenant_config_edit',
+	   // 			version: '1.0',
+	   // 			crudType: 4,
+	   // 			payload: payload
+	   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	   // 			if (res.code == 0) {
+   	// 				this.getBiHuInfo();
+   	// 				this.$message({
+   	// 					message: '壁虎配置成功',
+   	// 					type: 'success'
+   	// 				});
+    //    			}
+	   // 		})
+	  	// },	
 
-	  	deleteBiHu() {
-	  		let payload = {
-	  			tid: this.tid
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'bi_hu_tenant_config_edit',
-	   			version: '1.0',
-	   			crudType: 8,
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.formBiHu.agent = null;
-	   				this.formBiHu.key = null;
-	   				this.$message({
-   						message: '壁虎已关闭',
-   						type: 'success'
-   					});
-   					this.getBiHuInfo();
-       			}
-	   		})
-	  	},	
+	  	// addBiHu() {
+	  	// 	this.isAddBiHu = true;
+	  	// 	if (this.addBiHuData.agent && this.addBiHuData.key) {
+	  	// 		let payload = {
+		  // 			tid: this.tid,
+		  // 			key: this.addBiHuData.key,
+		  // 			agent: this.addBiHuData.agent
+		  // 		}
+		  // 		payload = JSON.stringify(payload);
+		  // 		masterApi({
+		  //  			action: 'bi_hu_tenant_config_edit',
+		  //  			version: '1.0',
+		  //  			crudType: 1,
+		  //  			payload: payload
+		  //  		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		  //  			if (res.code == 0) {
+		  //  				this.addBiHuData.agent = null;
+		  //  				this.addBiHuData.key = null;
+		  //  				this.isAddBiHu = false;
+	   // 					this.getBiHuInfo();
+	   // 					this.$message({
+	   // 						message: '关联壁虎成功',
+	   // 						type: 'success'
+	   // 					});
+	   //     			}
+		  //  		})
+	  	// 	}
+	  	// },	
+
+	  	// deleteBiHu() {
+	  	// 	let payload = {
+	  	// 		tid: this.tid
+	  	// 	}
+	  	// 	payload = JSON.stringify(payload);
+	  	// 	masterApi({
+	   // 			action: 'bi_hu_tenant_config_edit',
+	   // 			version: '1.0',
+	   // 			crudType: 8,
+	   // 			payload: payload
+	   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	   // 			if (res.code == 0) {
+	   // 				this.formBiHu.agent = null;
+	   // 				this.formBiHu.key = null;
+	   // 				this.$message({
+   	// 					message: '壁虎已关闭',
+   	// 					type: 'success'
+   	// 				});
+   	// 				this.getBiHuInfo();
+    //    			}
+	   // 		})
+	  	// },	
 
 	  	getInsurerList() {
 	  		let payload = {};
@@ -390,45 +440,49 @@ import { masterApi } from '@/ajax/post.js'
 	  	editRoute(row) {
 	  		this.isEdit = true;
 			this.editedId = row.key;
-	    	this.formEdit.jianjieId = row.jianJieId;
+	    	this.formEdit.jianJieId = row.jianJieId;
 	    	this.formEdit.laneId = row.lane;
 	  	},
 
 	  	comfirmAdd() {
 	  		this.dialogTableVisible = false;
-	  		if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianjieId) {
-	  			
-	  			// if(this.formAdd.laneId == 1) {
-	  			// 	masterApi({
-			   // 			action: 'bi_hu_tenant_config_edit',
-			   // 			version: '1.0',
-			   // 			crudType: 1,
-			   // 			tid: this.tid,
-			   // 			agent: this.formAdd.agent,
-			   // 			key: this.formAdd.key
-			   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-			   // 			if (res.code == 0) {
-
-		    //    			}
-			   // 		})
-	  			// }
-
-	  			masterApi({
-		   			action: 'route_edit',
-		   			version: '1.0',
-		   			crudType: 1,
-		   			lane: this.formAdd.laneId,
-		   			tid: this.tid,
-		   			id: this.formAdd.insurerId,
-		   			jianJieId: this.formAdd.jianjieId
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				for(let item in this.formAdd) {
-		   					this.formAdd[item] = null;
-		   				}
-		   				this.getRouterInfo();
-	       			}
-		   		})
+	  		if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianJieId) {
+	  			let buf = {
+	  				insurerName: this.formAdd.insurerName,
+	  				insurerId: this.formAdd.insurerId,
+	  				laneName: this.formAdd.laneId,
+	  				laneId: this.formAdd.laneId,
+	  				jianJieId: this.formAdd.jianJieId,
+	  			}
+	  			for (let i = 0; i < this.lanes.length; i++) {
+	  				if (this.lanes[i].value == buf.laneName) {
+	  					buf.laneName = this.lanes[i].label;
+	  				}
+	  			}
+	  			for (let i = 0; i < this.insurerList.length; i++) {
+	  				if (this.insurerList[i].value == buf.insurerId) {
+	  					buf.insurerName = this.insurerList[i].label;
+	  				}
+	  			}
+	  			this.tableData.push(buf);
+	  			this.addBuf.push(buf);
+	  			this.showPage();
+	  			// masterApi({
+		   	// 		action: 'route_edit',
+		   	// 		version: '1.0',
+		   	// 		crudType: 1,
+		   	// 		lane: this.formAdd.laneId,
+		   	// 		tid: this.tid,
+		   	// 		id: this.formAdd.insurerId,
+		   	// 		jianJieId: this.formAdd.jianJieId
+		   	// 	},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   	// 		if (res.code == 0) {
+		   	// 			for(let item in this.formAdd) {
+		   	// 				this.formAdd[item] = null;
+		   	// 			}
+		   	// 			this.getRouterInfo();
+	     //   			}
+		   	// 	})
 	  		}
 	  		else
 	  		{
@@ -472,19 +526,39 @@ import { masterApi } from '@/ajax/post.js'
 	    confirmEdit() {
 	    	//post
 	    	this.isEdit = null;
-	    	masterApi({
-	   			action: 'route_edit',
-	   			version: '1.0',
-	   			crudType: 4,
-	   			key: this.editedId,
-	   			lane: this.formEdit.laneId,
-	   			jianJieId: this.formEdit.jianjieId
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.getRouterInfo();
-       			}
-	   		})
+	    	let buf = {
+	    		id: this.editedId,
+	    		laneName: this.formEdit.laneId,
+	    		laneId: this.formEdit.laneId,
+	    		jianJieId: this.formEdit.jianJieId,
+	    	}
+	    	for (let i = 0; i < this.lanes.length; i++) {
+  				if (this.lanes[i].value == buf.laneName) {
+  					buf.laneName = this.lanes[i].label;
+  				}
+  			}
+  			for (let i = 0; i < this.tableData.length; i++) {
+  				if (this.tableData[i].key == buf.id) {
+  					this.tableData[i].laneName = buf.laneName;
+  					this.tableData[i].laneId = buf.laneId;
+  					this.tableData[i].jianJieId = buf.jianJieId;
+  				}
+  			}
+  			this.editBuf.push(buf);
+	    	// masterApi({
+	   		// 	action: 'route_edit',
+	   		// 	version: '1.0',
+	   		// 	crudType: 4,
+	   		// 	key: this.editedId,
+	   		// 	lane: this.formEdit.laneId,
+	   		// 	jianJieId: this.formEdit.jianJieId
+	   		// },window.localStorage.getItem('tokenPlate')).then((res)=> {
+	   		// 	if (res.code == 0) {
+	   		// 		this.getRouterInfo();
+      //  			}
+	   		// })
 	    	this.editedId = null;
+	  		this.showPage();
 	    },
 
 	    quitEdit() {
@@ -498,30 +572,85 @@ import { masterApi } from '@/ajax/post.js'
 	          cancelButtonText: '取消',
 	          type: 'warning'
 	        }).then(() => {
-	    		masterApi({
-		   			action: 'route_edit',
-		   			version: '1.0',
-		   			crudType: 8,
-		   			key: row.key,
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getRouterInfo();
-	       			}
-		   		})
+	        	for (var i = 0; i < this.tableData.length; i++) {
+	        		if (this.tableData[i].key == row.key) {
+	        			this.tableData[i] = {}
+	        		}
+	        	}
+	        	this.deleteBuf.push(row.key);
+	    		// masterApi({
+		   		// 	action: 'route_edit',
+		   		// 	version: '1.0',
+		   		// 	crudType: 8,
+		   		// 	key: row.key,
+		   		// },window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   		// 	if (res.code == 0) {
+		   		// 		this.getRouterInfo();
+	      //  			}
+		   		// })
+	  			this.showPage();
 	        }).catch(() => {
 	          this.$message({
 	            type: 'info',
 	            message: '已取消删除'
 	          });          
 	        }); 
+	    },
+
+	    saveAll() {
+	    	var payload = {
+	    		tid: this.tid,
+	    		jianJieId: this.tenantData.jianJieId,
+	    		biHuKey: this.formBiHu.key,
+	    		biHuAgent: this.formBiHu.agent,
+	    		insurersDelete: [],		//删除
+	    		insurersUpdate:{},		//修改
+	    		insurersInsert:{}		//新增
+	    	};
+	    	for (var i = 0; i < this.addBuf.length; i++) {
+	    		let buf = {
+    				tid: this.tid,
+    				insurerId: this.addBuf[i].insurerId,
+                    lane: this.addBuf[i].laneId,
+                    jianJieId: this.addBuf[i].jianJieId,
+	            };
+	    		payload.insurersInsert[this.tid + "_" + this.addBuf[i].insurerId] = buf;
+	    	}
+	    	for (var i = 0; i < this.editBuf.length; i++) {
+	    		let buf = {
+                    lane: this.editBuf[i].laneId,
+                    jianJieId: this.editBuf[i].jianJieId,
+	    		};
+	    		payload.insurersUpdate[this.editBuf[i].id] = buf;
+	    	}
+	    	payload.insurersDelete = this.deleteBuf;
+
+	    	payload = JSON.stringify(payload);
+	    	masterApi({
+	   			action: 'tenant_set',
+	   			version: '1.0',
+	   			payload: payload,
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	   			if (res.code == 0) {
+	   				this.$message({
+			            type: 'success',
+			            message: '修改已保存'
+			        }); 
+			        this.getInfo();
+			        this.addBuf = [];
+			        this.editBuf = [];
+			        this.deleteBuf = [];
+       			}
+	   		})
 	    }
 	  },
 	mounted() {
 	  	if (this.$route.query.tid) {
 	        this.tid = this.$route.query.tid;
-	  		this.getRouterInfo();
-	  		this.getTenantInfo();
-	  		this.getBiHuInfo();
+	  		// this.getRouterInfo();
+	  		// this.getTenantInfo();
+	  		// this.getBiHuInfo();
+	  		this.getInfo();
         }
 	}
 }

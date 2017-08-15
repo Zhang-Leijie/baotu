@@ -17,21 +17,30 @@
 		                	<el-select v-model="scope.row.choosed" placeholder="请选择" @change="chooseOneCoefficient(scope.row)" v-if="scope.row.coefficients && !(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">
 							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id"></el-option>
 							</el-select>
-							<el-input v-model="scope.row.name" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
+							<el-input v-model="scope.row.name" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && (!editMode || editMode == 'chepai')"></el-input>
+							<el-select v-model="scope.row.name" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && editMode == 'xubao'">
+							    <el-option v-for="item in xubao" :label="item.name" :value="item.id"></el-option>
+							</el-select>
+							<el-select v-model="scope.row.name" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && editMode == 'xingbie'">
+							    <el-option v-for="item in xingbie" :label="item.name" :value="item.id"></el-option>
+							</el-select>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="比较器类型">
 		             	<template scope="scope">
 		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{reComparisonName(scope.row.comparisonType)}}</span>
-		             		<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)">
+		             		<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && !(editMode == 'chepai')">
     							<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+  							</el-select>
+  							<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && editMode == 'chepai'">
+    							<el-option v-for="item in chepaiComparisons" :label="item.label" :value="item.value"></el-option>
   							</el-select>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="比较器数值">
 		             	<template scope="scope">
 		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{comparisonValueShow(scope.row)}}</span>
-		             		<el-input v-model="scope.row.comparisonValue" placeholder="区间数值请用下划线 _ 隔开" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
+		             		<el-input v-model="scope.row.comparisonValue" :placeholder="editMode == 'chepai'?'浙A':'区间数值请用下划线 _ 隔开'" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="操作">
@@ -106,7 +115,32 @@ import { masterApi } from '@/ajax/post.js'
 	      	// 	value: 11,
 	      	// 	label: "不在 ... 之中"
 	      	// }
-	      ]
+	      ],
+	      chepaiComparisons: [{
+      		  value: 'eq',
+      		  label: "等于"
+      	  }],
+	      xubao: [{
+	      	id: 1,
+	      	name: '新车'
+	      },
+	      {
+	      	id: 2,
+	      	name: '转保'
+	      },
+	      {
+	      	id: 3,
+	      	name: '续保'
+	      }],
+	      xingbie: [{
+	      	id: 0,
+	      	name: '男'
+	      },
+	      {
+	      	id: 1,
+	      	name: '女'
+	      }],
+	      editMode: null		//'xubao':转续保,'chepai':车牌,'xingbie':性别
 		}
 	  },
 	  methods: {
@@ -142,6 +176,29 @@ import { masterApi } from '@/ajax/post.js'
 			   						}
 			   					}
 		   					}
+		   					if (res.attach.typeId == 3) {
+		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+			   						if (res.attach[j].coefficients.name == '0') {
+			   							res.attach[j].coefficients.name = '男';
+			   						}
+			   						if (res.attach[j].coefficients.name == '1') {
+			   							res.attach[j].coefficients.name = '女';
+			   						}
+			   					}
+		   					}
+		   					if (res.attach.typeId == 4) {
+			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+				   						if (res.attach[j].coefficients.name == '1') {
+				   							res.attach[j].coefficients.name = '新车';
+				   						}
+				   						if (res.attach[j].coefficients.name == '2') {
+				   							res.attach[j].coefficients.name = '转保';
+				   						}
+				   						if (res.attach[j].coefficients.name == '4') {
+				   							res.attach[j].coefficients.name = '侯保';
+				   						}
+				   					}
+			   					}
 		   				}
 	   				}
 
@@ -157,6 +214,20 @@ import { masterApi } from '@/ajax/post.js'
 	    	this.getSetting();
 	    },
 	    editThisOne(row) {
+	    	switch(row.typeId) {
+	    		case 4: 
+	    		this.editMode = 'xubao';
+	    		break;
+	    		case 6: 
+	    		this.editMode = 'chepai';
+	    		break;
+	    		case 3: 
+	    		this.editMode = 'xingbie';
+	    		break;
+	    		default: 
+	    		this.editMode = false;
+	    		break;
+	    	}
 	    	this.isEdited = row.choosed;
 	    	for (var i = 0; i < row.coefficients.length; i++) {
 	    		if (row.coefficients[i].id === row.choosed) {
@@ -228,6 +299,7 @@ import { masterApi } from '@/ajax/post.js'
 			   		})
 		    	}
 	    	}
+		    this.editMode = false;	
 	    },
 	    cancelEdit(row) {
 	    	this.isEdited = null;
@@ -238,6 +310,7 @@ import { masterApi } from '@/ajax/post.js'
 	    			row.comparisonValue = row.coefficients[i].comparableValue;
 	    		}
 	    	}
+		    this.editMode = false;	
 	    },
 	    deleteThisOne(row) {
 	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
@@ -278,6 +351,20 @@ import { masterApi } from '@/ajax/post.js'
 	        });   	
 	    },
 	    addOne(row) {
+	    	switch(row.typeId) {
+	    		case 4: 
+	    		this.editMode = 'xubao';
+	    		break;
+	    		case 6: 
+	    		this.editMode = 'chepai';
+	    		break;
+	    		case 3: 
+	    		this.editMode = 'xingbie';
+	    		break;
+	    		default: 
+	    		this.editMode = false;
+	    		break;
+	    	}
 	    	this.isAdded = row.typeId;
 	    	row.name = null;
 	    	row.comparisonType = null;
@@ -326,7 +413,7 @@ import { masterApi } from '@/ajax/post.js'
 	       			}
 		   		})
 	    	}
-		    		
+		    this.editMode = false;		
 	    },
 	    cancelAdd(row) {
 	    	this.isAdded = null;
@@ -345,10 +432,11 @@ import { masterApi } from '@/ajax/post.js'
 	    		row.comparisonType = null;
 	    		row.comparisonValue = null;
 	    	}
+		    this.editMode = false;		
 	    },
 	    //判断系数数量是否达到了最大值
 	    isFull(row) {
-	    	if (row.coefficients) {
+	    	if (row.coefficients && row.maxCustomNum) {// 0 表示无限制
 	    		if (row.maxCustomNum <= row.coefficients.length) {
 	    			return true;
 	    		}

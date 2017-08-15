@@ -1,12 +1,23 @@
 <template>
-	<div style="padding: 40px;">
-		<el-button @click="goPingtai">平台端</el-button>
-		
-		<el-button @click="chooseShangjia">商家端</el-button>
+	<div class="signInBody">
+		<div class="bg"></div>
+		<div class="auto-main">
+		    <div class="centerBox">
+		        <h1>入口选择</h1>
+		        <div class="inputBox">
+		        	<el-button @click="goPingtai" style="width:100px; height:60px; margin-right:50px;">平台端</el-button>
 			
-		<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia">
-		    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
-		</el-select>
+					<el-button @click="chooseShangjia" style="width:100px; height:60px; margin-right:50px;">商家端</el-button>
+					
+					<el-button @click="" style="width:100px; height:60px;" :disabled="true">PC端</el-button>
+
+					<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia" style="width:200px; margin-top:20px;">
+					    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+		        </div>
+		    </div>
+		</div>
+			
 
 		<el-button :disabled="true">PC端</el-button>
 		
@@ -101,3 +112,48 @@ export default {
 	  }
 	}
 </script>
+
+
+<style lang="less">
+.signInBody {
+    height: 100%;
+    overflow: hidden;
+    text-align: center;
+    .bg {
+    	background: url("../assets/ales-krivec-337355.png") no-repeat;
+	    background-size: cover;
+	    position: fixed;
+	    left: 0;
+	    top: 0;
+	    width: 100%;
+	    height: 100%;
+	    z-index: -1
+    }
+	.auto-main {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+    .el-button {
+        background: transparent;
+        color: #fff;
+    }
+    .centerBox {
+        width: 540px;
+        margin: 0 auto;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, .55);
+        color: #fff;
+        padding: 20px;
+        h1 {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .inputBox {
+            width: 500px;
+            margin: 30px auto;
+        }
+    }
+}
+</style>

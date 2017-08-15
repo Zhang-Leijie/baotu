@@ -5,11 +5,11 @@
 		</el-breadcrumb>
 
 		<div class="toolBar">
-			<div class="btnBox">
+			<!-- <div class="btnBox">
 				<router-link :to="{name:'shop-staff-add'}">
 					<el-button type="primary" class="marginBtn">新增</el-button>
 				</router-link>
-			</div>
+			</div> -->
 			<div class="searchBox">
 				<el-input icon="search" v-model="searchID" placeholder="请输入ID" :on-icon-click="search" style="width:240px"></el-input>
 			</div>
@@ -21,7 +21,7 @@
 				<el-table-column prop="uid" label="用户ID"></el-table-column>
 				<el-table-column prop="name" label="姓名"></el-table-column>
 				<el-table-column prop="mobile" label="账号"></el-table-column>
-			    <el-table-column prop="role" label="角色"></el-table-column>
+			    <!-- <el-table-column prop="role" label="角色"></el-table-column> -->
 			    <el-table-column label="加入时间">
 			    	<template scope="scope">
 			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>

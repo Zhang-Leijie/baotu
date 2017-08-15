@@ -5,11 +5,11 @@
 		</el-breadcrumb>
 		
 		<div class="toolBar">
-			<div class="btnBox">
+			<!-- <div class="btnBox">
 				<router-link :to="{name:'shop-staff-add'}">
 					<el-button type="primary" class="marginBtn">新增</el-button>
 				</router-link>
-			</div>
+			</div> -->
 			<div class="searchBox">
 				<el-input icon="search" v-model="searchName" placeholder="请输入ID" :on-icon-click="search" style="width:240px"></el-input>
 			</div>

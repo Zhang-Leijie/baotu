@@ -158,7 +158,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		    	let payload = {
 		   			tname: this.form.name,
 		   			licenseImage: this.form.imageUrl,
-		   			expire: this.getFormTime(Date.parse(this.form.time)),
+		   			expire: Date.parse(this.form.time) / 1000,
 		   			license: this.form.num,
 		   			tid: this.form.tid,
 		   			contacts: this.form.people,

@@ -66,7 +66,7 @@ export default {
        			id: this.form.account,
        			pwd: this.form.password,
        		}).then((res)=> {
-       			if (res.code == 0) {
+       			if (res.code == 0) {debugger
               localStorage.setItem('tokenPlate',res.attach.token);
               // localStorage.setItem('userId',res.attach.user.uid);
               localStorage.setItem('uid',res.attach.uid);
@@ -88,7 +88,7 @@ export default {
        }
     },
     mounted:function(){
-        this.ipAddr = '192.168.0.128';
+        this.ipAddr = '192.168.191.1';
         localStorage.setItem('ipAddr',this.ipAddr);
     }
 }

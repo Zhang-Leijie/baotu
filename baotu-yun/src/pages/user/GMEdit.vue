@@ -56,7 +56,7 @@ import { masterApi } from '@/ajax/post.js'
 						version: '1.0',
 						crudType: 1,
 						payload: payload
-					},window.localStorage.getItem('token')).then((res)=> {
+					},window.localStorage.getItem('tokenPlate')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
 					            type: 'success',

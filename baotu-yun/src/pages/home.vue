@@ -2,6 +2,7 @@
   <div class="content">
     <div class="left-box">
       <div class="logo" style="text-align:center;">
+        <img src="../assets/topLogo.png" style="height:70px;">
       </div>
       <el-col :span="8" style="width:100%">
         <el-menu style="background-color:#32323a" unique-opened :default-active="activeRoute" :default-openeds="openedRouteList">

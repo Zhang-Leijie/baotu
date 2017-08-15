@@ -63,13 +63,13 @@
 						<span class="titleNext">商业险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="selfCommission.shangye" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+						<el-input-number v-model="selfCommission.shangye" :min="-20" :max="20" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
 					</el-col>
 					<el-col :span="4">
 						<span class="titleNext">交强险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="selfCommission.jiaoqiang" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+						<el-input-number v-model="selfCommission.jiaoqiang" :min="-20" :max="20" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
 					</el-col>
 				</el-row>
 			</el-col>
@@ -594,8 +594,33 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
 				   						if (res.attach[j].coefficients[i].rate) {
 				   							res.attach[j].choosed = res.attach[j].coefficients[i].id;
-				   							res.attach[j].rate = res.attach[j].coefficients[i].rate / 10;
+				   							res.attach[j].rate = Math.abs(res.attach[j].coefficients[i].rate / 10);
 				   							res.attach[j].addORdec = res.attach[j].coefficients[i].rate?(res.attach[j].coefficients[i].rate > 0?1:2):0;
+				   						}
+				   					}
+			   					}
+
+			   					if (res.attach.typeId == 3) {
+			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+				   						if (res.attach[j].coefficients.name == '0') {
+				   							res.attach[j].coefficients.name = '男';
+				   						}
+				   						if (res.attach[j].coefficients.name == '1') {
+				   							res.attach[j].coefficients.name = '女';
+				   						}
+				   					}
+			   					}
+
+			   					if (res.attach.typeId == 4) {
+			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+				   						if (res.attach[j].coefficients.name == '1') {
+				   							res.attach[j].coefficients.name = '新车';
+				   						}
+				   						if (res.attach[j].coefficients.name == '2') {
+				   							res.attach[j].coefficients.name = '转保';
+				   						}
+				   						if (res.attach[j].coefficients.name == '4') {
+				   							res.attach[j].coefficients.name = '侯保';
 				   						}
 				   					}
 			   					}
@@ -754,8 +779,19 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
 			   						if (res.attach[j].coefficients[i].rate) {
 			   							res.attach[j].choosed = res.attach[j].coefficients[i].id;
-			   							res.attach[j].rate = res.attach[j].coefficients[i].rate / 10;
+			   							res.attach[j].rate = Math.abs(res.attach[j].coefficients[i].rate / 10);
 			   							res.attach[j].addORdec = res.attach[j].coefficients[i].rate?(res.attach[j].coefficients[i].rate > 0?1:2):0;
+			   						}
+			   					}
+		   					}
+		
+		   					if (res.attach.typeId == 3) {
+		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+			   						if (res.attach[j].coefficients.name == '0') {
+			   							res.attach[j].coefficients.name = '男';
+			   						}
+			   						if (res.attach[j].coefficients.name == '1') {
+			   							res.attach[j].coefficients.name = '女';
 			   						}
 			   					}
 		   					}
@@ -968,7 +1004,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 	    //判断系数数量是否达到了最大值
 	    isFull(row) {
-	    	if (row.coefficients) {
+	    	if (row.coefficients && row.maxCustomNum) {//最大值为0表示无上限
 	    		if (row.maxCustomNum <= row.coefficients.length) {
 	    			return true;
 	    		}

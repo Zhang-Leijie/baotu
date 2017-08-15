@@ -28,14 +28,14 @@
 			    <el-table-column prop="license" label="营业执照号"></el-table-column>
 			    <el-table-column prop="contacts" label="联系人"></el-table-column>
 			    <el-table-column prop="contractsMobile" label="联系人电话"></el-table-column>
-			    <el-table-column prop="licenseImage" label="营业执照">
+			    <!-- <el-table-column prop="licenseImage" label="营业执照">
 			    	<template scope="scope">
 		            	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
 		            	    <img :src="scope.row.licenseImage" class="bre"  slot="reference" style="width: 80px;">
 	                    	<img :src='scope.row.licenseImage' style="width: 475px;">
 	                	</el-popover>
 			    	</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column label="过期时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.expire)}}</span>
@@ -46,11 +46,11 @@
 			    		<span>{{formatDate(scope.row.created)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column prop="timeLastChange" label="最近修改时间">
+			    <!-- <el-table-column prop="timeLastChange" label="最近修改时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.updated)}}</span>
 			    	</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column label="操作">
 			      <template scope="scope">
 		      		<el-button type="text" size="small">
