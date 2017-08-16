@@ -31,15 +31,15 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small" @click="editBrands(scope.row)" v-if="!isEdit">编辑</el-button>
 			    		<!-- <el-button type="text" size="small" @click="deleteBrands(scope.row)" v-if="!isEdit">删除</el-button> -->
 			    		<el-button type="text" size="small" @click="confirmEdit()" v-if="isEdit && scope.row.id == editForm.id">保存</el-button>
 			    		<el-button type="text" size="small" @click="cancelEdit()" v-if="isEdit && scope.row.id == editForm.id">取消</el-button>
-			    		<el-button type="text" size="small" v-if="!isEdit">
-			    			<router-link :to="{name:'deptsList',query:{id: scope.row.id}}">
-			      			查看车型
-				      		</router-link>
-			    		</el-button>
+			    		<el-button type="text" size="small" @click="editBrands(scope.row)" v-if="!isEdit">编辑</el-button>
+			    		<router-link :to="{name:'deptsList',query:{id: scope.row.id}}" style="margin-left: 20px;">
+			    			<el-button type="text" size="small" v-if="!isEdit">
+			    				查看车型
+			    			</el-button>
+				      	</router-link>
 			    	</template>
 			    </el-table-column>
 			</el-table>
@@ -93,9 +93,12 @@ import { masterApi } from '@/ajax/post.js'
 		},
 
 	  	getInfo() {
+	  		let payload = {}
+	  		payload = JSON.stringify(payload);
 	  		masterApi({
 	   			action: 'vehicle_brands',
-	   			version: '1.0'
+	   			version: '1.0',
+	   			payload: payload,
 	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
@@ -110,12 +113,15 @@ import { masterApi } from '@/ajax/post.js'
 
 	  	confirmAdd() {
 	  		this.dialogFormVisible = false;
-	  		let name = this.addForm.name;
+	  		let payload = {	
+	   			name: this.addForm.name
+	   		}
+	  		payload = JSON.stringify(payload);
 	  		masterApi({
 	   			action: 'vehicle_brand_edit',
 	   			version: '1.0',
 	   			crudType: 1,
-	   			name: name
+	   			payload: payload,
 	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
    					this.$message({
@@ -135,14 +141,16 @@ import { masterApi } from '@/ajax/post.js'
 	  	},
 
 	  	confirmEdit() {
-	  		let name = this.editForm.name;
-	  		let id = this.editForm.id;
+	  		let payload = {
+	  			name: this.editForm.name,
+		  		id: this.editForm.id,
+	  		}
+		  	payload = JSON.stringify(payload);
 	  		masterApi({
 	   			action: 'vehicle_brand_edit',
 	   			version: '1.0',
 	   			crudType: 4,
-	   			name: name,
-	   			id, id
+	   			payload: payload,
 	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
    					this.$message({

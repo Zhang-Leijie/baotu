@@ -26,9 +26,9 @@
               <router-link :to="{name:'shop-role-list'}">
                 <el-menu-item index="2-2" class="sub-title">角色管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-verify'}" v-if="!isAdmin">
+              <!-- <router-link :to="{name:'shop-verify'}" v-if="!isAdmin">
                 <el-menu-item index="2-4" class="sub-title">审核管理</el-menu-item>
-              </router-link>
+              </router-link> -->
             </el-menu-item-group>
           </el-submenu>
 

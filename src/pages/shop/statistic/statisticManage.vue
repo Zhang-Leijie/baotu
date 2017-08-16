@@ -10,11 +10,11 @@
 		  <el-tab-pane>
 		    <span slot="label"><i class="el-icon-picture"></i> 统计图表</span>
 		    <div class="table1">
-				<el-select v-model="option1" placeholder="请选择">
+				<el-select v-model="option1" placeholder="请选择车险">
 				    <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 
-				<el-select v-model="optionMultiple" multiple placeholder="请选择">
+				<el-select v-model="optionMultiple" multiple placeholder="请选择险企">
 				    <el-option v-for="item in optionsMultiple" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 
@@ -110,7 +110,18 @@ require('echarts');
 	    		value: '3',
 	    		label: '整体车险'
 	    	}],
-	    	optionsMultiple: [],
+	    	optionsMultiple: [{
+	    		value: '1',
+	    		label: '太平洋保险'
+	    	},
+	    	{
+	    		value: '2',
+	    		label: '平安保险'
+	    	},
+	    	{
+	    		value: '3',
+	    		label: '阳光保险'
+	    	}],
 	        optionMultiple: [],
 	        pickerOptions1: {
 	          shortcuts: [{

@@ -5,11 +5,12 @@
 		</el-breadcrumb>
 		
 		<div class="toolBar">
-			<!-- <div class="btnBox">
-				<router-link :to="{name:'shop-staff-add'}">
-					<el-button type="primary" class="marginBtn">新增</el-button>
+			<div class="btnBox">
+				<el-button class="marginBtn">审核员工</el-button>
+				<router-link :to="{name:'shop-staff-list'}">
+					<el-button type="primary" class="marginBtn">员工管理</el-button>
 				</router-link>
-			</div> -->
+			</div>
 			<div class="searchBox">
 				<el-input icon="search" v-model="searchName" placeholder="请输入ID" :on-icon-click="search" style="width:240px"></el-input>
 			</div>
@@ -143,7 +144,11 @@ export default {
 	.toolBar {
 		width: 100%;
 		overflow: hidden;
-		.searchBox, .btnBox {
+		.btnBox {
+			float: left;
+			margin-top: 10px;
+		}
+		.searchBox {
 			float: right;
 		}
 	}

@@ -177,7 +177,7 @@ export default {
     mounted(){
         this.ipAddrPlate = '101.37.34.55';
         localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
-        if (window.localStorage.getItem('userName') && window.localStorage.getItem('userPsd')) {debugger
+        if (window.localStorage.getItem('userName') && window.localStorage.getItem('userPsd')) {
           this.form.account = window.localStorage.getItem('userName');
           this.form.password = window.localStorage.getItem('userPsd');
         }

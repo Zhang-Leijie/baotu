@@ -10,7 +10,7 @@
 			</el-select>
 		</div>
 
-		<div class="dataBox" v-if="formData1[0] && !editing">
+		<div class="dataBox" v-if="!editing">
 			<div class="dataBoxCol" key="box1">
 				<ul>
 					<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
@@ -38,7 +38,7 @@
 			</div>
 		</div>
 
-		<el-row class="commonSet" v-if="insurerId && tenantId.employeeId && choosed && !editing">
+		<el-row class="commonSet" v-if="!editing">
 			<el-col :span="11">
 				<label class="titleLabel">基础佣金设置</label>
 				<el-row>
@@ -77,8 +77,8 @@
 				<el-button @click="confirmSet" size="small">确认设置</el-button>
 			</el-col>	 -->
 		</el-row>
-
-		<el-row class="tableBox" v-if="insurerId && tenantId.employeeId && choosed && !editing">
+		<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
+		<el-row class="tableBox" v-if="!editing">
 		    <el-col :span="24">
 		        <el-table :data="tableData" border style="width: 100%">
 		          	<el-table-column label="系数类型名">
@@ -286,7 +286,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	  				row.comparisonType = row.coefficients[i].comparison;
 	  				row.comparisonValue = row.coefficients[i].comparableValue;
 	  				if (row.coefficients[i].rate) {
-	  					row.rate = row.coefficients[i].rate / 10;
+	  					row.rate = Math.abs(row.coefficients[i].rate / 10);
 	  					if (row.coefficients[i].rate > 0) {
 	  						row.addORdec = 1;
 	  					}
@@ -578,56 +578,61 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				if (res.attach) {
-		   					for (var i = 0; i < res.attach.length; i++) {
-			   					res.attach[i]['choosed'] = null;			//当前选择的系数id
-			   					res.attach[i]['comparisonValue'] = null;
-			   					res.attach[i]['comparisonType'] = null;
-			   					res.attach[i]['addORdec'] = null;
-			   					res.attach[i]['rate'] = null;
+			            this.baseCommission.shangye = res.attach.commercialRate / 10;           	//基础 - 商业  
+			            this.baseCommission.jiaoqiang = res.attach.compulsoryRate / 10;            //基础 - 交强
+			            this.selfCommission.shangye = res.attach.commercialRetainRate / 10;       //自留 - 商业
+			            this.selfCommission.jiaoqiang = res.attach.compulsoryRetainRate / 10;       //自留 - 交强
+		   				
+		   				if (res.attach.coefficientTypes) {
+		   					for (var i = 0; i < res.attach.coefficientTypes.length; i++) {
+			   					res.attach.coefficientTypes[i]['choosed'] = null;			//当前选择的系数id
+			   					res.attach.coefficientTypes[i]['comparisonValue'] = null;
+			   					res.attach.coefficientTypes[i]['comparisonType'] = null;
+			   					res.attach.coefficientTypes[i]['addORdec'] = null;
+			   					res.attach.coefficientTypes[i]['rate'] = null;
 			   				}
 		   				}
 
-		   				if (res.attach) {
-		   					for (var j = 0; j < res.attach.length; j++) {
-			   					if (res.attach[j].coefficients) {
-			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-				   						if (res.attach[j].coefficients[i].rate) {
-				   							res.attach[j].choosed = res.attach[j].coefficients[i].id;
-				   							res.attach[j].rate = Math.abs(res.attach[j].coefficients[i].rate / 10);
-				   							res.attach[j].addORdec = res.attach[j].coefficients[i].rate?(res.attach[j].coefficients[i].rate > 0?1:2):0;
+		   				if (res.attach.coefficientTypes) {
+		   					for (var j = 0; j < res.attach.coefficientTypes.length; j++) {
+			   					if (res.attach.coefficientTypes[j].coefficients) {
+			   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
+				   						if (res.attach.coefficientTypes[j].coefficients[i].rate) {
+				   							res.attach.coefficientTypes[j].choosed = res.attach.coefficientTypes[j].coefficients[i].id;
+				   							res.attach.coefficientTypes[j].rate = Math.abs(res.attach.coefficientTypes[j].coefficients[i].rate / 10);
+				   							res.attach.coefficientTypes[j].addORdec = res.attach.coefficientTypes[j].coefficients[i].rate?(res.attach.coefficientTypes[j].coefficients[i].rate > 0?1:2):0;
 				   						}
 				   					}
 			   					}
 
-			   					if (res.attach.typeId == 3) {
-			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-				   						if (res.attach[j].coefficients.name == '0') {
-				   							res.attach[j].coefficients.name = '男';
+			   					if (res.attach.coefficientTypes.typeId == 3) {
+			   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
+				   						if (res.attach.coefficientTypes[j].coefficients.name == '0') {
+				   							res.attach.coefficientTypes[j].coefficients.name = '男';
 				   						}
-				   						if (res.attach[j].coefficients.name == '1') {
-				   							res.attach[j].coefficients.name = '女';
+				   						if (res.attach.coefficientTypes[j].coefficients.name == '1') {
+				   							res.attach.coefficientTypes[j].coefficients.name = '女';
 				   						}
 				   					}
 			   					}
 
-			   					if (res.attach.typeId == 4) {
-			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-				   						if (res.attach[j].coefficients.name == '1') {
-				   							res.attach[j].coefficients.name = '新车';
+			   					if (res.attach.coefficientTypes.typeId == 4) {
+			   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
+				   						if (res.attach.coefficientTypes[j].coefficients.name == '1') {
+				   							res.attach.coefficientTypes[j].coefficients.name = '新车';
 				   						}
-				   						if (res.attach[j].coefficients.name == '2') {
-				   							res.attach[j].coefficients.name = '转保';
+				   						if (res.attach.coefficientTypes[j].coefficients.name == '2') {
+				   							res.attach.coefficientTypes[j].coefficients.name = '转保';
 				   						}
-				   						if (res.attach[j].coefficients.name == '4') {
-				   							res.attach[j].coefficients.name = '侯保';
+				   						if (res.attach.coefficientTypes[j].coefficients.name == '4') {
+				   							res.attach.coefficientTypes[j].coefficients.name = '侯保';
 				   						}
 				   					}
 			   					}
 			   				}
 		   				}
 
-		   				this.tableData = res.attach;
+		   				this.tableData = res.attach.coefficientTypes;
 	       			}
 		   		})
 	    	}
@@ -676,6 +681,11 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			for (var i = 0; i < this.tableData.length; i++) {
 				if (this.tableData[i].choosed) {
 					payload.routeBody.commercialCommisionSpinner[this.tableData[i].choosed] = this.tableData[i].addORdec?(this.tableData[i].addORdec === 1?parseInt(this.tableData[i].rate * 10):-parseInt(this.tableData[i].rate * 10)):0;
+					for (let j = 0; j < this.tableData[i].coefficients.length; j++) {
+						if (this.tableData[i].coefficients[j].rate) {
+							payload.routeBody.commercialCommisionSpinner[this.tableData[i].coefficients[j].id] = this.tableData[i].coefficients[j].rate
+						}
+					}
 				}
 			}
 			
@@ -690,6 +700,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
+	   				this.getSetting();
 	   				this.$message({
 			            message: '修改的设置已保存',
 			            type: 'success'
@@ -1211,10 +1222,6 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		.countTool {
 			width: 80% !important;
 		}
-	}
-
-	.tableBox {
-		margin-top: 20px;
 	}
 
 	.confirmBoxL {

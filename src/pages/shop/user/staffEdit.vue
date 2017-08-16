@@ -63,6 +63,11 @@
 			    <el-checkbox value='2' label="2">管理佣金</el-checkbox>
 			</el-checkbox-group>
 		  </el-form-item>
+		  <el-form-item label="">
+		    <el-checkbox-group v-model="form.teammoney">
+			    <div style="height:20px"></div>
+			</el-checkbox-group>
+		  </el-form-item>
 		  <el-form-item label="普通佣金:">
 		    <el-checkbox-group v-model="form.commonmoney">
 			    <el-checkbox value='4' label="4">非营业客车</el-checkbox>
@@ -73,14 +78,10 @@
 			</el-checkbox-group>
 		  </el-form-item>
 		  <el-row style="margin-left: 70px;">
-		  	<el-col :span="12">
 		  		<span style="font-size: 14px;">商业险佣金比例(%): </span>
 		  		<el-input-number size="small" v-model="CMRate" :step="0.1" :max="10" :min="-10"></el-input-number>
-		  	</el-col>
-		  	<el-col :span="12">
-		  		<span style="font-size: 14px;">交强险佣金比例(%): </span>
+		  		<span style="font-size: 14px; margin-left: 20px;">交强险佣金比例(%): </span>
 			    <el-input-number size="small" v-model="CPRate" :step="0.1" :max="10" :min="-10"></el-input-number>
-		  	</el-col>
 		  </el-row>
 		  <!-- el-form-item label="角色配置:">
 		    <el-checkbox-group v-model="form.role">

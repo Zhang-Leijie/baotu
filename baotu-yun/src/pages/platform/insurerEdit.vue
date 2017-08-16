@@ -17,7 +17,7 @@
 	    		 <el-input type="text" style="width:300px;" v-model="form.leBaoBaId" placeholder="请输入ID"></el-input>
 		  	</el-form-item>
 		  	<el-form-item class="appblock" label="绑定壁虎险企:">
-		    	<el-switch v-model="form.agree" on-text="绑定" off-text="不绑"></el-switch>
+		  		<el-input type="text" style="width:300px;" v-model="form.agree" placeholder="请输入"></el-input>
 		  	</el-form-item>
 		  	<el-form-item class="appblock" label="险企图标:">
 			    <el-upload
@@ -70,15 +70,18 @@ import { masterApi } from '@/ajax/post.js'
 		    },
 			comfirmAdd() {
 				if (this.form.name && this.form.iconUrl) {
+					let payload = {
+						id: Math.pow(2,this.form.id),
+						name: this.form.name,
+						icon: this.form.iconUrl,
+						biHuId: this.form.agree,		//壁虎id
+						leBaoBaId: this.form.leBaoBaId
+					}
+					payload = JSON.stringify(payload);
 					masterApi({
 						action: 'insurer_edit',
 						version: '1.0',
 						crudType: 1,
-						id: Math.pow(2,this.form.id),
-						name: this.form.name,
-						icon: this.form.iconUrl,
-						agree: this.form.agree,
-						key: this.form.leBaoBaId
 					},window.localStorage.getItem('tokenPlate')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
@@ -102,15 +105,19 @@ import { masterApi } from '@/ajax/post.js'
 
 			comfirmSave() {
 				if (this.form.name && this.form.iconUrl) {
+					let payload = {
+						id: Math.pow(2,this.form.id),
+						name: this.form.name,
+						icon: this.form.iconUrl,
+						biHuId: this.form.agree,		//壁虎id
+						leBaoBaId: this.form.leBaoBaId
+					}
+					payload = JSON.stringify(payload);
 					masterApi({
 						action: 'insurer_edit',
 						version: '1.0',
 						crudType: 4,
-						id: Math.pow(2,this.form.id),
-						name: this.form.name,
-						icon: this.form.iconUrl,
-						agree: this.form.agree,
-						key: this.form.leBaoBaId
+						payload, payload,
 					},window.localStorage.getItem('tokenPlate')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
@@ -144,7 +151,7 @@ import { masterApi } from '@/ajax/post.js'
 	        	this.form.id = Math.log(this.$route.query.id) / Math.log(2);
 		        this.form.name = this.$route.query.name;
 		        this.form.iconUrl = this.$route.query.icon;
-		        this.form.agree = this.$route.query.biHuId?true:false;
+		        this.form.agree = this.$route.query.biHuId;
 		        this.form.leBaoBaId = this.$route.query.leBaoBaId;
 	        }
 	        else

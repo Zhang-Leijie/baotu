@@ -15,17 +15,17 @@
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="uid" label="用户id"></el-table-column>
-			    <el-table-column prop="employeeId" label="雇员工号"></el-table-column>
-			    <el-table-column prop="userName" label="用户姓名"></el-table-column>
-			    <el-table-column prop="userMobile" label="用户手机"></el-table-column>
 			    <el-table-column prop="id" label="保单id"></el-table-column>
+			    <!-- <el-table-column prop="uid" label="用户id"></el-table-column> -->
+			    <!-- <el-table-column prop="employeeId" label="雇员工号"></el-table-column> -->
+			    <!-- <el-table-column prop="userMobile" label="用户手机"></el-table-column> -->
 			    <el-table-column label="订单时间">
 			    	<template scope="scope">
-			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>
+			    		<span>{{formatDate(scope.row.created)}}</span>
 			    	</template>
 			    </el-table-column>
 			    <el-table-column prop="price" label="订单金额"></el-table-column>
+			    <el-table-column prop="userName" label="业务员"></el-table-column>
 			    <el-table-column label="订单状态">
 			    	<template scope="scope">
 			    		<span>{{ showState(scope.row.state) }}</span>

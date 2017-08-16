@@ -14,33 +14,33 @@
 		            </el-table-column>
 		            <el-table-column label="系数名称">
 		             	<template scope="scope">
-		                	<el-select v-model="scope.row.choosed" placeholder="请选择" @change="chooseOneCoefficient(scope.row)" v-if="scope.row.coefficients && !(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">
+		                	<el-select v-model="scope.row.choosed" placeholder="点击查看已有系数" @change="chooseOneCoefficient(scope.row)" v-if="scope.row.coefficients && !(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">
 							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id"></el-option>
 							</el-select>
-							<el-input v-model="scope.row.name" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && (!editMode || editMode == 'chepai')"></el-input>
-							<el-select v-model="scope.row.name" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && editMode == 'xubao'">
-							    <el-option v-for="item in xubao" :label="item.name" :value="item.id"></el-option>
-							</el-select>
-							<el-select v-model="scope.row.name" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && editMode == 'xingbie'">
-							    <el-option v-for="item in xingbie" :label="item.name" :value="item.id"></el-option>
-							</el-select>
+							<el-input v-model="scope.row.name" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="比较器类型">
 		             	<template scope="scope">
 		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{reComparisonName(scope.row.comparisonType)}}</span>
-		             		<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && !(editMode == 'chepai')">
+		             		<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && !(editMode == 'chepai' || editMode == 'xubao' || editMode == 'xingbie')">
     							<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
   							</el-select>
-  							<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId) && editMode == 'chepai'">
-    							<el-option v-for="item in chepaiComparisons" :label="item.label" :value="item.value"></el-option>
+  							<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && (editMode == 'chepai' || editMode == 'xubao' || editMode == 'xingbie')">
+    							<el-option v-for="item in equalComparison" :label="item.label" :value="item.value"></el-option>
   							</el-select>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="比较器数值">
 		             	<template scope="scope">
 		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{comparisonValueShow(scope.row)}}</span>
-		             		<el-input v-model="scope.row.comparisonValue" :placeholder="editMode == 'chepai'?'浙A':'区间数值请用下划线 _ 隔开'" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
+		             		<el-input v-model="scope.row.comparisonValue" :placeholder="editMode == 'chepai'?'浙A':'区间数值请用下划线 _ 隔开'" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && !(editMode == 'xubao' || editMode == 'xingbie')"></el-input>
+		             		<el-select v-model="scope.row.comparisonValue" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && editMode == 'xubao'">
+							    <el-option v-for="item in xubao" :label="item.name" :value="item.id"></el-option>
+							</el-select>
+							<el-select v-model="scope.row.comparisonValue" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && editMode == 'xingbie'">
+							    <el-option v-for="item in xingbie" :label="item.name" :value="item.id"></el-option>
+							</el-select>
 		             	</template>
 		            </el-table-column>
 		            <el-table-column label="操作">
@@ -66,7 +66,6 @@ import { masterApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
-	      editing: false,	//系数编辑模式
 	      editData: [],
 	      isEdited: null,	//被编辑的系数id
 	      isAdded: null,	//被添加的系数
@@ -116,7 +115,7 @@ import { masterApi } from '@/ajax/post.js'
 	      	// 	label: "不在 ... 之中"
 	      	// }
 	      ],
-	      chepaiComparisons: [{
+	      equalComparison: [{
       		  value: 'eq',
       		  label: "等于"
       	  }],
@@ -206,14 +205,8 @@ import { masterApi } from '@/ajax/post.js'
        			}
 	   		})
 	    },
-	    editMode() {
-	    	this.editing = true;
-	    },
-	    endEditMode() {
-	    	this.editing = false;
-	    	this.getSetting();
-	    },
 	    editThisOne(row) {
+	    	row.comparisonType = this.reComparisonName(row.comparisonType);
 	    	switch(row.typeId) {
 	    		case 4: 
 	    		this.editMode = 'xubao';
@@ -236,6 +229,7 @@ import { masterApi } from '@/ajax/post.js'
 	    	}
 	    },
 	    confirmEdit(row) {
+	    	row.comparisonType = this.reComparisonName(row.comparisonType);
 	    	let checkChange = false;
 	    	for (var i = 0; i < row.coefficients.length; i++) {
 	    		if (row.coefficients[i].id === row.choosed) {
@@ -302,6 +296,7 @@ import { masterApi } from '@/ajax/post.js'
 		    this.editMode = false;	
 	    },
 	    cancelEdit(row) {
+	    	row.comparisonType = this.reComparisonName(row.comparisonType);
 	    	this.isEdited = null;
 	    	// 重新填写选择的系数信息,因为只有在choosed的情况下才会编辑,所以不用对choosed做判断,coefficients也是一样,只有coefficients不为空时才可以choose
 	    	for (var i = 0; i < row.coefficients.length; i++) {
@@ -374,7 +369,7 @@ import { masterApi } from '@/ajax/post.js'
 	    	let coefficientType = this.reCoefficientType(this.isAdded);
 	    	let comparison = row.comparisonType;
 	    	let name = row.name;
-	    	let array = row.comparisonValue.split("_");
+	    	let array = row.comparisonValue.toString().split("_");
 	    	if (array[0] >= array[1]) {
 	    		this.$message({
 		            message: "区间数值应当从小到大排列,请检查输入",
@@ -490,6 +485,39 @@ import { masterApi } from '@/ajax/post.js'
 				// case 11:
 				// 	return "不在 ... 之中"
 				// 	break;
+				case '大于':
+					return 1
+					break;
+				case '大于等于':
+					return 2
+					break;
+				case '小于':
+					return 3
+					break;
+				case '小于等于':
+					return 4
+					break;
+				case '等于':
+					return 5
+					break;
+				// case 6:
+				// 	return "不等于"
+				// 	break;
+				case '开区间':
+					return 7
+					break;
+				case '前闭后开区间':
+					return 8
+					break;
+				case '前开后闭区间':
+					return 9
+					break;
+				// case 10:
+				// 	return "在 ... 之中"
+				// 	break;
+				// case 11:
+				// 	return "不在 ... 之中"
+				// 	break;
 				case 'gt':
 					return "大于"
 					break;
@@ -564,13 +592,62 @@ import { masterApi } from '@/ajax/post.js'
 				default:
 					return val
 					break;
+	    	} 	
+	    },
+	    reXubao(val) {
+	    	switch(val) {
+	    		case 1:
+	    		return '新车';
+	    		break;
+	    		case 2:
+	    		return '转保';
+	    		break;
+	    		case 4:
+	    		return '续保';
+	    		break;
+	    		case '1':
+	    		return '新车';
+	    		break;
+	    		case '2':
+	    		return '转保';
+	    		break;
+	    		case '4':
+	    		return '续保';
+	    		break;
+	    		default:
+	    		return val;
+	    		break;
 	    	}
-	    	
+	    },
+	    reSex(val) {
+	    	switch(val) {
+	    		case 1:
+	    		return '女';
+	    		break;
+	    		case 0:
+	    		return '男';
+	    		break;
+	    		case '1':
+	    		return '女';
+	    		break;
+	    		case '0':
+	    		return '男';
+	    		break;
+	    		default:
+	    		return val;
+	    		break;
+	    	}
 	    },
 	    comparisonValueShow(row) {
+	    	if (row.typeId == 4) {//转续保
+	    		row.comparisonValue = this.reXubao(row.comparisonValue);
+	    	}
+	    	if (row.typeId == 3) {//性别
+	    		row.comparisonValue = this.reSex(row.comparisonValue);
+	    	}		
 	    	if(row.comparisonValue)
 	    	{
-	    		let value = row.comparisonValue.split("_");
+	    		let value = row.comparisonValue.toString().split("_");
 		    	if (value[1]) {
 		    		switch(row.comparisonType)
 		    		{
