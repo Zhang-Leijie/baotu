@@ -589,7 +589,9 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-        				this.formSetting.teamDepth = res.attach.teamDepth.toString();
+		   				if (res.attach.teamDepth) {
+		   					this.formSetting.teamDepth = res.attach.teamDepth.toString();
+		   				}
         				this.reModCount(res.attach.mod);
 	       			}
 		   		})
@@ -727,7 +729,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       	cancelGuimoEdit() {
 	       		this.isGuimoEdited = false;
 	       	},
-	       	guimoConfirmEdit() {
+	       	guimoConfirmEdit() {debugger
 	       		let payload = {
 	       			employeeId: window.localStorage.getItem('employeeId'),
 	       			id: this.guimoEdit.id,
@@ -735,12 +737,12 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			symbol: this.reComparisonName(this.guimoEdit.comparison),
 	       			val: [],
 	       		}
-	       		if (this.guimoEdit.comparableValueA) {
+	       		if (this.guimoEdit.symbol == 'gte') {
 	       			payload.val[0] = this.guimoEdit.comparableValueA;
 	       			payload.val[1] = this.guimoEdit.comparableValueB;
 	       		}
 	       		else {
-	       			payload.val = this.guimoAdd.comparableValue.split("_");
+	       			payload.val = this.guimoEdit.comparableValue.split("_");
 	       		}
 	       		payload = JSON.stringify(payload);
 
