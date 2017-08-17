@@ -26,7 +26,7 @@
 			    </el-table-column>
 			    <el-table-column prop="name" label="配送方式"></el-table-column>
 			    <el-table-column prop="name" label="礼品"></el-table-column>
-			    <el-table-column prop="name" label="单证状态"></el-table-column>    
+			    <el-table-column prop="name" label="单证状态"></el-table-column>
 			    
 			    <el-table-column label="操作">
 			      <template scope="scope">
@@ -41,6 +41,7 @@
 
 			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 
+			<el-button @click="sync" type="primary" style="margin:20px auto;text-align:left;">同步保单</el-button>
 		</div>
 	</div>
 </template>
@@ -127,6 +128,25 @@ export default {
 	            message: '已取消删除'
 	          });          
 	        });   	
+	    },
+
+	    sync() {
+	    	let payload = {
+	    		employeeId: window.localStorage.getItem('employeeId')
+	    	}
+	    	payload = JSON.stringify(payload);
+	    	autoApi({
+	   			action: 'jian_jie_fetch',
+	   			version: '1.0',
+	   			payload: payload,
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				this.$message({
+	   					message: '保单已同步',
+	   					type: 'success'
+	   				});
+       			}
+	   		})
 	    }
 	  },
 	  mounted() {

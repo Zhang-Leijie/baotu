@@ -41,6 +41,9 @@
               <router-link :to="{name:'insurerList'}">
                 <!-- <el-menu-item index="3-5" class="sub-title">意见反馈管理*</el-menu-item> -->
               </router-link>
+              <router-link :to="{name:'permissionEdit'}">
+                <el-menu-item index="3-6" class="sub-title">模块权限设置</el-menu-item>
+              </router-link>
             </el-menu-item-group>
           </el-submenu>
          <!--  <el-submenu index="4">
@@ -122,6 +125,10 @@ export default {
     }
     else if (this.$route.name == 'brandsList') {
       this.activeRoute = '3-3';
+      this.openedRouteList = ['3'];
+    }
+    else if (this.$route.name == 'permissionEdit') {
+      this.activeRoute = '3-6';
       this.openedRouteList = ['3'];
     }
     else if (this.$route.name == 'nonAutoCategoryList') {

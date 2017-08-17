@@ -6,34 +6,37 @@
 	      			规模奖励审核
 	      		</router-link>
 			</el-breadcrumb-item>
-		  	<el-breadcrumb-item>规模奖励审核流水</el-breadcrumb-item>
+		  	<el-breadcrumb-item>业务流水</el-breadcrumb-item>
 		</el-breadcrumb>
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-	    		<el-table-column prop="name" label="姓名"></el-table-column>
-	    		<el-table-column prop="employeeId" label="雇员号"></el-table-column>
-	    		<el-table-column label="时间">
+	    		<el-table-column prop="employeeId" label="序号"></el-table-column>
+	    		<el-table-column prop="name" label="队员姓名"></el-table-column>
+	    		<el-table-column label="成交时间">
 	    			<template scope="scope">
 	    				<span>{{ getFormTime(scope.row.time) }}</span>
 	    			</template>
 	    		</el-table-column>
-	    		<el-table-column label="类型">
-	    			<template scope="scope">
-	    				<span>{{ showType(scope.row.bonusType) }}</span>
-	    			</template>
-	    		</el-table-column>
-	    		<el-table-column label="额度">
+	    		<el-table-column label="成交金额">
 	    			<template scope="scope">
 	    				<span>{{ scope.row.quota }}元</span>
 	    			</template>
 	    		</el-table-column>
-	    		<el-table-column prop="insurerName" label="保险公司"></el-table-column>
-	    		<el-table-column prop="license" label="车牌"></el-table-column>
-	    		<el-table-column label="操作">
-	    			<template scope="scope">		
-			      		<el-button type="text" size="small" @click="checkThisOne(scope.row)">审核</el-button>
-				    </template>
+	    		<!-- <el-table-column label="订单状态">
+	    			<template scope="scope">
+	    				<span>{{ showType(scope.row.bonusType) }}</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="车险类型">
+	    			<template scope="scope">
+	    				<span>{{ showType(scope.row.bonusType) }}</span>
+	    			</template>
+	    		</el-table-column> -->
+	    		<el-table-column label="车辆种类">
+	    			<template scope="scope">
+	    				<span>{{ showType(scope.row.bonusType) }}</span>
+	    			</template>
 	    		</el-table-column>
 	    	</el-table>
 
@@ -50,29 +53,7 @@ export default {
 	      pageCount: null,
           pageSize: 10,
           currentPage: 1,
-          length: 0,
-          bonusTypeList: [//PC-营利客车，PT-营利货车，NPC-非营利客车，NPT-非营利货车，OTHER-其他
-          	  {
-	          	value: "PC",
-	          	label: "营利客车",
-	          },
-	          {
-	          	value: "PT",
-	          	label: "营利货车",
-	          },
-	          {
-	          	value: "NPC",
-	          	label: "非营利客车",
-	          },
-	          {
-	          	value: "NPT",
-	          	label: "非营利货车",
-	          },
-	          {
-	          	value: "OTHER",
-	          	label: "其他",
-	          },
-          ]
+          length: 0
 		}
 	  },
 	  methods: {
@@ -110,22 +91,6 @@ export default {
        			}
 	   		})
 	    },
-	    checkThisOne(row) {
-	    	let payload = {
-	    		 	key: row.employeeId,
-				    agree: true
-	    	}
-	    	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'bonus_scale_audit',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.getInfo();
-       			}
-	   		})
-	    },
 
 		showPage() {
 	  		this.tableData = [];
@@ -154,9 +119,31 @@ export default {
 	    },
 
 	    showType(value) {
-	    	for (var i = 0; i < this.bonusTypeList.length; i++) {
-	    		if (this.bonusTypeList[i].value == value) {
-	    			return this.bonusTypeList[i].label;
+	    	var  bonusTypeList = [//PC-营利客车，PT-营利货车，NPC-非营利客车，NPT-非营利货车，OTHER-其他
+          	  {
+	          	value: "PC",
+	          	label: "营利客车",
+	          },
+	          {
+	          	value: "PT",
+	          	label: "营利货车",
+	          },
+	          {
+	          	value: "NPC",
+	          	label: "非营利客车",
+	          },
+	          {
+	          	value: "NPT",
+	          	label: "非营利货车",
+	          },
+	          {
+	          	value: "OTHER",
+	          	label: "其他",
+	          },
+          	]
+	    	for (var i = 0; i < bonusTypeList.length; i++) {
+	    		if (bonusTypeList[i].value == value) {
+	    			return bonusTypeList[i].label;
 	    		}
 	    	}
 	    }

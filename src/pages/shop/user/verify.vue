@@ -6,9 +6,9 @@
 		
 		<div class="toolBar">
 			<div class="btnBox">
-				<el-button class="marginBtn">审核员工</el-button>
+				<el-button type="primary" class="marginBtn">审核员工</el-button>
 				<router-link :to="{name:'shop-staff-list'}">
-					<el-button type="primary" class="marginBtn">员工管理</el-button>
+					<el-button class="marginBtn">员工管理</el-button>
 				</router-link>
 			</div>
 			<div class="searchBox">

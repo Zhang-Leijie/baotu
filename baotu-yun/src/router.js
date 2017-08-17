@@ -129,6 +129,13 @@ const routes = [
                     require(['./pages/poundageCoefficient.vue'],resolve)
                 }
             },
+             {
+                path: "/permissionEdit",
+                name: "permissionEdit",
+                component(resolve) {
+                    require(['./pages/permissionEdit.vue'],resolve)
+                }
+            },
         ]
     },{
         path: "/",

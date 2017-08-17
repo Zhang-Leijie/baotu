@@ -7,9 +7,9 @@
 		<div class="toolBar">
 			<div class="btnBox">
 				<router-link :to="{name:'shop-verify'}">
-					<el-button type="primary" class="marginBtn">审核员工</el-button>
+					<el-button class="marginBtn">审核员工</el-button>
 				</router-link>
-				<el-button class="marginBtn">员工管理</el-button>
+				<el-button type="primary" class="marginBtn">员工管理</el-button>
 			</div>
 			<div class="searchBox">
 				<el-input icon="search" v-model="searchID" placeholder="请输入ID" :on-icon-click="search" style="width:240px"></el-input>

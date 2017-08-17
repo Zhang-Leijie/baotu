@@ -9,7 +9,7 @@
 			
 					<el-button @click="chooseShangjia" style="width:100px; height:60px; margin-right:50px;">商家端</el-button>
 					
-					<el-button @click="" style="width:100px; height:60px;" :disabled="true">PC端</el-button>
+					<el-button @click="" style="width:100px; height:60px;" @click="gotoPC">展页</el-button>
 
 					<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia" style="width:200px; margin-top:20px;">
 					    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
@@ -104,6 +104,10 @@ export default {
 	    		message: '请选择商家',
 	    		type: 'info'
 	    	});
+	    },
+
+	    gotoPC() {
+	    	window.open('http://101.37.34.55/pc/#/index.html');
 	    }
 
 	  },

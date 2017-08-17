@@ -10,6 +10,10 @@
 			<el-button size="large" v-if="viewMode == 2" @click="guimoShow">规模奖励</el-button>
 			<el-button size="large" type="primary" v-if="viewMode == 2">管理奖励</el-button>
 			<el-button size="large" v-if="viewMode == 1" @click="guanliShow">管理奖励</el-button>
+			<div class="topBarR">
+				<el-button type="primary" v-if="viewMode == 1" @click="guimoAccount">统计规模结算</el-button>
+				<el-button type="primary" v-if="viewMode == 2" @click="guanliAccount">管理奖励结算</el-button>
+			</div>
 		</div>
 
 		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox" v-if="viewMode == 1">
@@ -966,6 +970,42 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		    	if (mod & 8192) {//交强险 - 奖励
 		    		this.formSetting.bonusScaleRewardMod.push('8192');
 		    	}
+		    },
+		    guimoAccount() {
+		    	let payload = {
+		    		employeeId: window.localStorage.getItem('employeeId')
+		    	}
+		    	payload = JSON.stringify(payload);
+		    	autoApi({
+		   			action: 'vehicle_reward_scale',
+		   			version: '1.0',
+		   			payload: payload,
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.$message({
+		   					message: '规模奖励已统计',
+		   					type: 'success'
+		   				});
+	       			}
+		   		})
+		    },
+		    guanliAccount() {
+		    	let payload = {
+		    		employeeId: window.localStorage.getItem('employeeId')
+		    	}
+		    	payload = JSON.stringify(payload);
+		    	autoApi({
+		   			action: 'vehicle_reward',
+		   			version: '1.0',
+		   			payload: payload,
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.$message({
+		   					message: '管理奖励已结算',
+		   					type: 'success'
+		   				});
+	       			}
+		   		})
 		    }
 	    },
 	    mounted(){
@@ -981,6 +1021,9 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	.topBar {
 		margin-top: 10px;
 		margin-bottom: 20px;
+		.topBarR {
+			float: right;
+		}
 	}
 	.appbox{
 		.appblock{
