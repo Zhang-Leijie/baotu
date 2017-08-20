@@ -41,6 +41,15 @@
 		  	<el-form-item class="appblock" label="key:">
 		    	<el-input type="text" style="width:150px;" v-model="formBiHu.key" placeholder="未绑定壁虎"></el-input>
 		  	</el-form-item>
+		  	<!-- <el-form-item class="appblock" label="乐保吧key:">
+		    	<el-input type="text" style="width:150px;" v-model="formLeBaoBa.leBaoBaKey" placeholder="未开通乐保吧"></el-input>
+		  	</el-form-item> -->
+		  	<el-form-item class="appblock" label="乐保吧用户名:">
+		    	<el-input type="text" style="width:150px;" v-model="formLeBaoBa.leBaoBaUsername" placeholder="未开通"></el-input>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="乐保吧密码:">
+		    	<el-input type="text" style="width:150px;" v-model="formLeBaoBa.leBaoBaPassword" placeholder="未开通"></el-input>
+		  	</el-form-item>
 		  	<el-form-item class="appblock" label="简捷ID:">
 		    	<el-input type="text" style="width:150px;" v-model="tenantData.jianJieId" placeholder="暂无简捷ID"></el-input>
 		  	</el-form-item>
@@ -193,6 +202,11 @@ import { masterApi } from '@/ajax/post.js'
 	        	agent: null,
 	        	key: null
 		    },
+		    formLeBaoBa: {
+		    	leBaoBaKey: null,
+		    	leBaoBaUsername: null,
+		    	leBaoBaPassword: null,
+		    },
 		    // addBiHuData: {
 	     //    	agent: null,
 	     //    	key: null
@@ -270,6 +284,8 @@ import { masterApi } from '@/ajax/post.js'
    					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
    					this.showPage();
   					this.getInsurerList();
+  					this.formLeBaoBa.leBaoBaUsername = res.attach.leBaoBaUsername;
+  					this.formLeBaoBa.leBaoBaPassword = res.attach.leBaoBaPassword;
   					this.formBiHu.agent = res.attach.biHuAgent;
 	   				this.formBiHu.key = res.attach.biHuKey;
        			}
@@ -603,6 +619,9 @@ import { masterApi } from '@/ajax/post.js'
 	    		jianJieId: this.tenantData.jianJieId,
 	    		biHuKey: this.formBiHu.key,
 	    		biHuAgent: this.formBiHu.agent,
+	    		// leBaoBaKey: this.formLeBaoBa.leBaoBaKey,
+	    		leBaoBaUsername: this.formLeBaoBa.leBaoBaUsername,
+	    		leBaoBaPassword: this.formLeBaoBa.leBaoBaPassword,
 	    		insurersDelete: [],		//删除
 	    		insurersUpdate:{},		//修改
 	    		insurersInsert:{}		//新增

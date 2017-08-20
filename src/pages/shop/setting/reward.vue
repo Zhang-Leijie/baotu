@@ -88,14 +88,10 @@
 		<div v-if="viewMode == 1" class="guimoDataBox">
 			<el-row v-for="item in guimoData" style="margin-bottom: 20px;">
 	  			<el-col :span="2">
-	  				<el-button v-if="!isGuimoEdited" @click="guimoDelete(item)"><i class="el-icon-minus"></i></el-button>
+	  				<el-button @click="guimoDelete(item)"><i class="el-icon-minus"></i></el-button>
 	  			</el-col>
 	  			<el-col :span="6">
-	  				<span class="dataFont">比较类型: </span>
-	  				<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{reComparisonName(reComparisonName(item.comparison))}}</span>
-	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择" v-if="isGuimoEdited && item.id == guimoEdit.id" style="width:150px;">
-						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
-					</el-select>
+	  				<span class="dataFont">比较类型: {{reComparisonName(reComparisonName(item.comparison))}}</span>
 	  			</el-col>
 	  			<el-col :span="7">
 	  				<el-row>
@@ -103,35 +99,21 @@
 	  						<span class="dataFont">区间数值: </span>
 	  					</el-col>
 	  					<el-col :span="16">
-	  						<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{item.comparableValue}}</span>
-	  						<el-input v-model="guimoEdit.comparableValue" style="width: 100%" class="inputPercent" v-if="isGuimoEdited && (item.id == guimoEdit.id) && guimoEdit.comparison == 2"></el-input>
-			  				<el-row v-if="isGuimoEdited && (item.id == guimoEdit.id) && guimoEdit.comparison == 8">
-			  					<el-col :span="10">
-			  						<el-input v-model="guimoEdit.comparableValueA" style="width: 100%"></el-input>
-			  					</el-col>
-			  					<el-col :span="4" style="display: flex; justify-content:center;">
-			  						<span style="line-height: 36px;">--</span>
-			  					</el-col>
-			  					<el-col :span="10">
-			  						<el-input v-model="guimoEdit.comparableValueB" style="width: 100%"></el-input>
-			  					</el-col>
-			  				</el-row>
+	  						<span class="dataFont" v-if="item.comparison == 2">{{item.comparableValue}}</span>
+	  						<span class="dataFont" v-if="item.comparison == 8">
+			  						<span>{{item.comparableValue.split("_")[0]}} -- {{item.comparableValue.split("_")[1]}}</span>
+	  						</span>
 	  					</el-col>
 	  				</el-row>
 	  			</el-col>
 	  			<el-col :span="5">
-	  				<span class="dataFont">奖励比例: </span>
-	  				<span class="dataFont" v-if="!isGuimoEdited || !(item.id == guimoEdit.id)">{{item.rate?item.rate:0}}</span>
-	  				<el-input-number v-model="guimoEdit.num" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="inputPercent" v-if="isGuimoEdited && item.id == guimoEdit.id"></el-input-number> 
-	  				<span class="dataFont">%</span>
+	  				<span class="dataFont">奖励比例: {{item.rate?item.rate:0}} %</span>
 	  			</el-col>
 	  			<el-col :span="4">
-	  				<el-button @click="guimoEditMode(item)" v-if="!isGuimoEdited">编辑</el-button>
-	  				<el-button type="primary" @click="guimoConfirmEdit" v-if="isGuimoEdited && item.id == guimoEdit.id">确认</el-button>
-	  				<el-button @click="cancelGuimoEdit" v-if="isGuimoEdited && item.id == guimoEdit.id">取消</el-button>
+	  				<el-button @click="guimoEditMode(item)">编辑</el-button>
 	  			</el-col>
 	  		</el-row>
-			<el-button @click="showAddGuimo = !showAddGuimo"><i class="el-icon-plus"></i></el-button>
+	  		<el-button @click="showAddGuimo = !showAddGuimo"><i class="el-icon-plus"></i></el-button>
 			<div style="margin-top: 20px">
 			  <el-collapse-transition>
 			    <div v-show="showAddGuimo">
@@ -164,9 +146,9 @@
 				  					</el-col>
 				  				</el-row>
 			      			</el-col>
-			      			<el-col :span="5">
+			      			<el-col :span="7">
 	  							<span class="dataFont">奖励比例: </span>
-			      				<el-input-number v-model="guimoAdd.num" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="inputPercent"></el-input-number> %
+			      				<el-input-number v-model="guimoAdd.num" :min="0" :max="50" :step="0.1"  size="" style="width: 150px;"></el-input-number> %
 			      			</el-col>
 			      			<el-col :span="4">
 			      				<el-button type="primary" @click="guimoConfirmAdd">确定</el-button>
@@ -178,6 +160,46 @@
 			  </el-collapse-transition>
 			</div>
 		</div>
+
+		<el-dialog title="编辑" :visible.sync="dialogEditVisible" size="small" :before-close="handleEditClose">
+			<el-row>
+				<el-col :span="8">
+	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择">
+						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+	  			</el-col>
+	  			<el-col :span="9">
+	  				<el-row>
+	  					<el-col :span="6">
+	  						<span style="line-height: 30px;">区间数值: </span>
+	  					</el-col>
+	  					<el-col :span="16">
+	  						<el-input v-model="guimoEdit.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoEdit.comparison == 2"></el-input>
+			  				<el-row v-if="guimoEdit.comparison == 8">
+			  					<el-col :span="10">
+			  						<el-input v-model="guimoEdit.comparableValueA" style="width: 100%"></el-input>
+			  					</el-col>
+			  					<el-col :span="4" style="display: flex; justify-content:center;">
+			  						<span style="line-height: 36px;">--</span>
+			  					</el-col>
+			  					<el-col :span="10">
+			  						<el-input v-model="guimoEdit.comparableValueB" style="width: 100%"></el-input>
+			  					</el-col>
+			  				</el-row>
+	  					</el-col>
+	  				</el-row>
+	  			</el-col>
+	  			<el-col :span="7">
+	  				<span class="dataFont">奖励比例: </span>
+	  				<el-input-number v-model="guimoEdit.num" :min="-50" :max="50" :step="0.1"  size="small" class="inputPercent"></el-input-number> 
+	  				<span class="dataFont">%</span>
+	  			</el-col>
+			</el-row>
+		    <div slot="footer" class="dialog-footer">
+		        <el-button @click="handleEditClose">取 消</el-button>
+		        <el-button type="primary" @click="guimoConfirmEdit">确 定</el-button>
+		    </div>
+		</el-dialog>
 			
 
 		<div v-if="viewMode == 2">
@@ -192,36 +214,36 @@
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-二级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.N2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.shangyeData.N2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.N2.key,guanli.shangyeData.N2.value,guanli.shangyeData.N2.origin,2,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N2.value == guanli.shangyeData.N2.origin)">确定</el-button> -->
 				</el-col>	
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-二级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.N2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.jiaoqiangData.N2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N2.key,guanli.jiaoqiangData.N2.value,guanli.jiaoqiangData.N2.origin,2,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N2.value == guanli.jiaoqiangData.N2.origin)">确定</el-button> -->
 				</el-col>	
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
 				<el-col :span="12">
 					<label class="titleLabel">营业车-二级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.Y2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.shangyeData.Y2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.Y2.key,guanli.shangyeData.Y2.value,guanli.shangyeData.Y2.origin,2,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y2.value == guanli.shangyeData.Y2.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">营业车-二级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.Y2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.jiaoqiangData.Y2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y2.key,guanli.jiaoqiangData.Y2.value,guanli.jiaoqiangData.Y2.origin,2,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y2.value == guanli.jiaoqiangData.Y2.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
 				<el-col :span="12">
 					<label class="titleLabel">其他车-二级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.other2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.shangyeData.other2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.other2.key,guanli.shangyeData.other2.value,guanli.shangyeData.other2.origin,2,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other2.value == guanli.shangyeData.other2.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">其他车-二级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.other2.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.jiaoqiangData.other2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other2.key,guanli.jiaoqiangData.other2.value,guanli.jiaoqiangData.other2.origin,2,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other2.value == guanli.jiaoqiangData.other2.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
@@ -229,36 +251,36 @@
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-三级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.N3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.shangyeData.N3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.N3.key,guanli.shangyeData.N3.value,guanli.shangyeData.N3.origin,3,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N3.value == guanli.shangyeData.N3.origin)">确定</el-button> -->
 				</el-col>	
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-三级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.N3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.jiaoqiangData.N3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N3.key,guanli.jiaoqiangData.N3.value,guanli.jiaoqiangData.N3.origin,3,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N3.value == guanli.jiaoqiangData.N3.origin)">确定</el-button> -->
 				</el-col>	
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
 				<el-col :span="12">
 					<label class="titleLabel">营业车-三级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.Y3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.shangyeData.Y3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.Y3.key,guanli.shangyeData.Y3.value,guanli.shangyeData.Y3.origin,3,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y3.value == guanli.shangyeData.Y3.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">营业车-三级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.Y3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.jiaoqiangData.Y3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y3.key,guanli.jiaoqiangData.Y3.value,guanli.jiaoqiangData.Y3.origin,3,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y3.value == guanli.jiaoqiangData.Y3.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
 				<el-col :span="12">
 					<label class="titleLabel">其他车-三级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.other3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.shangyeData.other3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.other3.key,guanli.shangyeData.other3.value,guanli.shangyeData.other3.origin,3,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other3.value == guanli.shangyeData.other3.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">其他车-三级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.other3.value" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+					<el-input-number v-model="guanli.jiaoqiangData.other3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other3.key,guanli.jiaoqiangData.other3.value,guanli.jiaoqiangData.other3.origin,3,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other3.value == guanli.jiaoqiangData.other3.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
@@ -308,7 +330,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	        	comparableValueA: null,
 	        	comparableValueB: null,
 	        },
-	        isGuimoEdited: false,		//控制规模列表编辑模式的状态
+	        dialogEditVisible: false,
 	        comparisons: [
 		      	// {
 		      	// 	value: 1,
@@ -635,6 +657,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 			   					message: '设置已保存',
 			   					type: 'success'
 			   				});
+			   				this.getInfo();
 		       			}
 			   		})
 				}      		
@@ -716,24 +739,24 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       		}
 	       	},
 	       	guimoEditMode(row) {
-	       		this.isGuimoEdited = true;
+	       		this.dialogEditVisible = true;
 	       		this.guimoEdit.id = row.id;
 	       		this.guimoEdit.num = row.rate;
 	       		this.guimoEdit.comparison = row.comparison;
-	       		let buf = row.comparableValue.split("_");
-	       		if (buf[1]) {
-	       			this.guimoEdit.comparableValueA = buf[0];
-	       			this.guimoEdit.comparableValueB = buf[1];
+	       		if (row.comparison == 8) {
+	       			this.guimoEdit.comparableValueA = row.comparableValue.split("_")[0];
+	       			this.guimoEdit.comparableValueB = row.comparableValue.split("_")[1];
 	       		}
 	       		else
 	       		{
 	       			this.guimoEdit.comparableValue = row.comparableValue; 
 	       		}
 	       	},
-	       	cancelGuimoEdit() {
-	       		this.isGuimoEdited = false;
+	       	handleEditClose() {
+	       		this.dialogEditVisible = false;
 	       	},
-	       	guimoConfirmEdit() {debugger
+	       	guimoConfirmEdit() {
+	       		this.dialogEditVisible = false;
 	       		let payload = {
 	       			employeeId: window.localStorage.getItem('employeeId'),
 	       			id: this.guimoEdit.id,
@@ -741,7 +764,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			symbol: this.reComparisonName(this.guimoEdit.comparison),
 	       			val: [],
 	       		}
-	       		if (this.guimoEdit.symbol == 'gte') {
+	       		if (this.guimoEdit.comparison == 8) {
 	       			payload.val[0] = this.guimoEdit.comparableValueA;
 	       			payload.val[1] = this.guimoEdit.comparableValueB;
 	       		}
@@ -757,7 +780,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-	       				this.isGuimoEdited = false;
         				this.getGuimo();
         				this.showAddGuimo = false;
         				this.guimoAdd = {
@@ -775,7 +797,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			symbol: this.reComparisonName(this.guimoAdd.comparison),
 	       			val: [],
 	       		}
-	       		if (this.guimoAdd.comparableValueA) {
+	       		if (this.guimoAdd.comparison == 8) {
 	       			payload.val[0] = this.guimoAdd.comparableValueA;
 	       			payload.val[1] = this.guimoAdd.comparableValueB;
 	       		}
@@ -915,6 +937,10 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		    	}
 		    },
 		    reModCount(mod) {
+		    	this.formSetting.bonusScaleCountMod = [];
+		    	this.formSetting.bonusScaleCountInsuranceMod = [];
+		    	this.formSetting.bonusScaleRewardMod = [];
+		    	this.formSetting.bonusScaleRewardInsuranceMod = [];
 		    	if (mod & 1) {//非营业客车 - 统计口径
 		    		this.formSetting.bonusScaleCountMod.push('1');
 		    	}
@@ -964,11 +990,11 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		    	}
 
 		    	if (mod & 4096) {//商业险 - 奖励
-		    		this.formSetting.bonusScaleRewardMod.push('4096');
+		    		this.formSetting.bonusScaleRewardInsuranceMod.push('4096');
 		    	}
 
 		    	if (mod & 8192) {//交强险 - 奖励
-		    		this.formSetting.bonusScaleRewardMod.push('8192');
+		    		this.formSetting.bonusScaleRewardInsuranceMod.push('8192');
 		    	}
 		    },
 		    guimoAccount() {
@@ -1035,6 +1061,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		padding: 20px 20px 10px 20px;
 		margin: 20px 0;
 		background-color: white;
+		min-width: 1050px;
 		.inputPercent {
 			width: 150px !important;
 		}

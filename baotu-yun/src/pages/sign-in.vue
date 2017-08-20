@@ -66,7 +66,7 @@ export default {
        			id: this.form.account,
        			pwd: this.form.password,
        		}).then((res)=> {
-       			if (res.code == 0) {debugger
+       			if (res.code == 0) {
               localStorage.setItem('tokenPlate',res.attach.token);
               // localStorage.setItem('userId',res.attach.user.uid);
               localStorage.setItem('uid',res.attach.uid);

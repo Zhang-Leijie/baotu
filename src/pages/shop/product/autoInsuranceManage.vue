@@ -46,13 +46,13 @@
 						<span class="titleNext">商业险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="baseCommission.shangye" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+						<el-input-number v-model="baseCommission.shangye" :min="0" :max="100" :step="0.1" size="small" class="countTool"></el-input-number> %
 					</el-col>
 					<el-col :span="4">
 						<span class="titleNext">交强险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="baseCommission.jiaoqiang" :min="0" :max="100" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+						<el-input-number v-model="baseCommission.jiaoqiang" :min="0" :max="100" :step="0.1" size="small" class="countTool"></el-input-number> %
 					</el-col>
 				</el-row>
 			</el-col>	
@@ -63,13 +63,13 @@
 						<span class="titleNext">商业险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="selfCommission.shangye" :min="-20" :max="20" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+						<el-input-number v-model="selfCommission.shangye" :min="-20" :max="20" :step="0.1" size="small" class="countTool"></el-input-number> %
 					</el-col>
 					<el-col :span="4">
 						<span class="titleNext">交强险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="selfCommission.jiaoqiang" :min="-20" :max="20" :step="0.1" :debounce="100" size="small" class="countTool"></el-input-number> %
+						<el-input-number v-model="selfCommission.jiaoqiang" :min="-20" :max="20" :step="0.1" size="small" class="countTool"></el-input-number> %
 					</el-col>
 				</el-row>
 			</el-col>
@@ -629,10 +629,9 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				   						}
 				   					}
 			   					}
-			   				}
+		   					this.tableData = res.attach.coefficientTypes;			   				}
 		   				}
 
-		   				this.tableData = res.attach.coefficientTypes;
 	       			}
 		   		})
 	    	}
@@ -676,7 +675,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			//自留 - 商业
 			payload.routeBody.commercialRetainRate = parseInt(this.selfCommission.shangye * 10);
 			//自留 - 交强
-			payload.routeBody.compulsoryRetainRate = parseInt(this.selfCommission.shangye * 10);
+			payload.routeBody.compulsoryRetainRate = parseInt(this.selfCommission.jiaoqiang * 10);
 			//商业险系数绑定
 			for (var i = 0; i < this.tableData.length; i++) {
 				if (this.tableData[i].choosed) {
