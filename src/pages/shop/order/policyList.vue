@@ -41,7 +41,7 @@
 
 			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 
-			<el-button @click="sync" type="primary" style="margin:20px auto;text-align:left;">同步保单</el-button>
+			<el-button @click="sync" type="primary" style="margin:20px auto;text-align:left;" :disabled="true">同步保单</el-button>
 		</div>
 	</div>
 </template>

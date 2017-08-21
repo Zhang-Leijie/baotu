@@ -46,13 +46,13 @@
 						<span class="titleNext">商业险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="baseCommission.shangye" :min="0" :max="100" :step="0.1" size="small" class="countTool"></el-input-number> %
+						<el-input v-model="baseCommission.shangye" class="countTool"></el-input> %
 					</el-col>
 					<el-col :span="4">
 						<span class="titleNext">交强险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="baseCommission.jiaoqiang" :min="0" :max="100" :step="0.1" size="small" class="countTool"></el-input-number> %
+						<el-input v-model="baseCommission.jiaoqiang" class="countTool"></el-input> %
 					</el-col>
 				</el-row>
 			</el-col>	
@@ -63,21 +63,20 @@
 						<span class="titleNext">商业险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="selfCommission.shangye" :min="-20" :max="20" :step="0.1" size="small" class="countTool"></el-input-number> %
+						<el-input v-model="selfCommission.shangye" class="countTool"></el-input> %
 					</el-col>
 					<el-col :span="4">
 						<span class="titleNext">交强险佣金比例</span>
 					</el-col>
 					<el-col :span="8">
-						<el-input-number v-model="selfCommission.jiaoqiang" :min="-20" :max="20" :step="0.1" size="small" class="countTool"></el-input-number> %
+						<el-input v-model="selfCommission.jiaoqiang" class="countTool"></el-input> %
 					</el-col>
 				</el-row>
 			</el-col>
-			<!-- <el-col :span="2" style="padding-top:40px">
-				<el-button @click="confirmSet" size="small">确认设置</el-button>
-			</el-col>	 -->
 		</el-row>
-		<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
+
+		<span style="font-size: 20px; margin-top:20px; display: inline-block" v-if="!editing">佣金调整系数</span>
+
 		<el-row class="tableBox" v-if="!editing">
 		    <el-col :span="24">
 		        <el-table :data="tableData" border style="width: 100%">
@@ -168,7 +167,7 @@
 			<el-button size="large" @click="endEditMode" v-if="editing">完成编辑</el-button>
 		</div>
 
-		<div class="confirmBoxR" v-if="insurerId && tenantId.employeeId && choosed && !editing">
+		<div class="confirmBoxR" v-if="insurerId && choosed && !editing">
 			<el-button type="danger" size="large" @click="confirmSetDelete">删除</el-button>
 			<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
 		</div>
@@ -591,9 +590,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			   					res.attach.coefficientTypes[i]['addORdec'] = null;
 			   					res.attach.coefficientTypes[i]['rate'] = null;
 			   				}
-		   				}
 
-		   				if (res.attach.coefficientTypes) {
 		   					for (var j = 0; j < res.attach.coefficientTypes.length; j++) {
 			   					if (res.attach.coefficientTypes[j].coefficients) {
 			   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
@@ -631,81 +628,102 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			   					}
 		   					this.tableData = res.attach.coefficientTypes;			   				}
 		   				}
+		   				else
+		   				{
+		   					this.tableData = [];
+		   				}
 
 	       			}
 		   		})
 	    	}
 	    },
 
-	    isStr(val) {
-	    	return isNaN(val);
+	    isLegalNumber(val) {
+	    	return (-100 <= val && val <= 100)?true:false;
 	    },
 
 	    confirmSetSave() {
-	    	let payload = 
-				{
-				    path: '',       					//页面节点路径 
-	   				employeeId: this.tenantId.employeeId,                
-				    insurerId: null,                       //险企ID         
-				    routeBody: {
-			            commercialRate: null,           	//基础 - 商业  
-			            compulsoryRate: null,            //基础 - 交强
-			            commercialRetainRate: null,       //自留 - 商业
-			            compulsoryRetainRate: null,       //自留 - 交强
-			            commercialCommisionSpinner: {}
-			        },
-			        delete: false
+		    if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang)) {
+		    	let payload = 
+					{
+					    path: '',								//页面节点路径 
+		   				employeeId: this.tenantId.employeeId,                
+					    insurerId: null, 						//险企ID         
+					    routeBody: {
+				            commercialRate: null,           	//基础 - 商业  
+				            compulsoryRate: null, 				//基础 - 交强
+				            commercialRetainRate: null,			//自留 - 商业
+				            compulsoryRetainRate: null,			//自留 - 交强
+				            commercialCommisionSpinner: {}
+				        },
+				        delete: false
+					}
+				//页面节点路径    	
+				for (var i = 0; i < this.chooseds.length; i++) {
+					if(this.chooseds[i] === this.choosed) {
+						payload.path = payload.path + this.chooseds[i];
+						break;
+					}
+					else
+					{
+						payload.path = payload.path + this.chooseds[i] + "_";
+					}
 				}
-			//页面节点路径    	
-			for (var i = 0; i < this.chooseds.length; i++) {
-				if(this.chooseds[i] === this.choosed) {
-					payload.path = payload.path + this.chooseds[i];
-					break;
-				}
-				else
-				{
-					payload.path = payload.path + this.chooseds[i] + "_";
-				}
-			}
-			
-			//基础 - 商业
-			payload.routeBody.commercialRate = parseInt(this.baseCommission.shangye * 10);
-			//基础 - 交强
-			payload.routeBody.compulsoryRate = parseInt(this.baseCommission.jiaoqiang * 10);
-			//自留 - 商业
-			payload.routeBody.commercialRetainRate = parseInt(this.selfCommission.shangye * 10);
-			//自留 - 交强
-			payload.routeBody.compulsoryRetainRate = parseInt(this.selfCommission.jiaoqiang * 10);
-			//商业险系数绑定
-			for (var i = 0; i < this.tableData.length; i++) {
-				if (this.tableData[i].choosed) {
-					payload.routeBody.commercialCommisionSpinner[this.tableData[i].choosed] = this.tableData[i].addORdec?(this.tableData[i].addORdec === 1?parseInt(this.tableData[i].rate * 10):-parseInt(this.tableData[i].rate * 10)):0;
-					for (let j = 0; j < this.tableData[i].coefficients.length; j++) {
-						if (this.tableData[i].coefficients[j].rate) {
-							payload.routeBody.commercialCommisionSpinner[this.tableData[i].coefficients[j].id] = this.tableData[i].coefficients[j].rate
+				
+				//基础 - 商业
+				payload.routeBody.commercialRate = parseInt(this.baseCommission.shangye * 10);
+				//基础 - 交强
+				payload.routeBody.compulsoryRate = parseInt(this.baseCommission.jiaoqiang * 10);
+				//自留 - 商业
+				payload.routeBody.commercialRetainRate = parseInt(this.selfCommission.shangye * 10);
+				//自留 - 交强
+				payload.routeBody.compulsoryRetainRate = parseInt(this.selfCommission.jiaoqiang * 10);
+				//商业险系数绑定
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (this.tableData[i].choosed) {
+						payload.routeBody.commercialCommisionSpinner[this.tableData[i].choosed] = this.tableData[i].addORdec?(this.tableData[i].addORdec === 1?parseInt(this.tableData[i].rate * 10):-parseInt(this.tableData[i].rate * 10)):0;
+						for (let j = 0; j < this.tableData[i].coefficients.length; j++) {
+							if (this.tableData[i].coefficients[j].rate) {
+								let ifHasBeenChanged = false;
+								for (let id in payload.routeBody.commercialCommisionSpinner) {
+									if (id == this.tableData[i].coefficients[j].id)
+									{
+										ifHasBeenChanged = true;
+									}
+								}
+								if(!ifHasBeenChanged) {
+									payload.routeBody.commercialCommisionSpinner[this.tableData[i].coefficients[j].id] = this.tableData[i].coefficients[j].rate
+								}
+							}
 						}
 					}
 				}
-			}
-			
-			//险企ID
-			payload.insurerId = this.insurerId;
+				
+				//险企ID
+				payload.insurerId = this.insurerId;
+				payload = JSON.stringify(payload);
 
-			payload = JSON.stringify(payload);
-
-			autoApi({
-	   			action: 'bonus_poundage_config_edit',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.getSetting();
-	   				this.$message({
-			            message: '修改的设置已保存',
-			            type: 'success'
-			        });
-       			}
-	   		})
+				autoApi({
+		   			action: 'bonus_poundage_config_edit',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.getSetting();
+		   				this.$message({
+				            message: '修改的设置已保存',
+				            type: 'success'
+				        });
+	       			}
+		   		})
+		    }
+		    else
+		    {
+		    	this.$message({
+		            message: '数值输入有误,请在-100到100的范围内输入',
+		            type: 'error'
+		        });
+		    }
 	    },
 
 	    confirmSetDelete () {

@@ -24,15 +24,15 @@
 			    		<span>{{formatDate(scope.row.updated)}}</span>
 			    	</template>
 			    </el-table-column>
-			   <!--  <el-table-column label="操作">
+			    <el-table-column label="操作">
 			    	<template scope="scope">
 			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'GM-edit',query:{id:scope.row.id}}">
-			      			编辑
+			    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id}}">
+			      			授权
 				      		</router-link>
 			    		</el-button>
 			    	</template>
-			    </el-table-column> -->
+			    </el-table-column>
 			</el-table>
 			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>

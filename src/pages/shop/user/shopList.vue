@@ -54,7 +54,7 @@
 			    <el-table-column label="操作">
 			      <template scope="scope">
 		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-shop-edit',query:{tid:scope.row.tid,name:scope.row.name,licenseImage:scope.row.licenseImage,license:scope.row.license,contacts:scope.row.contacts,contractsMobile:scope.row.contractsMobile,expire:scope.row.expire}}">
+						<router-link :to="{name:'shop-shop-edit',query:{tid:scope.row.tid,contacts:scope.row.contacts,contractsMobile:scope.row.contractsMobile,expire:scope.row.expire}}">
 			      			编辑
 			      		</router-link>
 		      		</el-button>

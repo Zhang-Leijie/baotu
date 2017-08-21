@@ -79,9 +79,9 @@
 		  </el-form-item>
 		  <el-row style="margin-left: 70px;">
 		  		<span style="font-size: 14px;">商业险佣金比例(%): </span>
-		  		<el-input-number size="small" v-model="CMRate" :step="0.1" :max="10" :min="-10"></el-input-number>
-		  		<span style="font-size: 14px; margin-left: 20px;">交强险佣金比例(%): </span>
-			    <el-input-number size="small" v-model="CPRate" :step="0.1" :max="10" :min="-10"></el-input-number>
+		  		<el-input style="width:120px;" v-model="CMRate"></el-input>
+		  		<span style="font-size: 14px; margin-left: 100px;">交强险佣金比例(%): </span>
+			    <el-input style="width:120px;" v-model="CPRate"></el-input>
 		  </el-row>
 		  <!-- el-form-item label="角色配置:">
 		    <el-checkbox-group v-model="form.role">
@@ -143,38 +143,54 @@ import { autoApi } from '@/ajax/post.js'
 			handleAvatarScucess(res, file) {
 		        this.imageUrl = URL.createObjectURL(file.raw);
 		    },
+		    isLegalNumber(val) {
+		    	return (-100 <= val && val <= 100)?true:false;
+		    },
 		    confirmEdit() {
-		    	let payload = {
-		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		mod: 0,
-		    		targetId: this.id,
-		    		CMRate: 0,
-		    		CPRate: 0
-		    	}
-		  		for (var i = 0; i < this.form.commonmoney.length; i++) {
-		  			payload.mod = payload.mod + parseInt(this.form.commonmoney[i]);
-		  		}
-		  		for (var i = 0; i < this.form.teammoney.length; i++) {
-		  			payload.mod = payload.mod + parseInt(this.form.teammoney[i]);
-		  		}
+		    	if (this.isLegalNumber(this.CMRate) && this.isLegalNumber(this.CPRate)) {
+		    		let payload = {
+			    		employeeId: window.localStorage.getItem('employeeId'),
+			    		mod: 0,
+			    		targetId: this.id,
+			    		CMRate: 0,
+			    		CPRate: 0
+			    	}
+			  		for (var i = 0; i < this.form.commonmoney.length; i++) {
+			  			payload.mod = payload.mod + parseInt(this.form.commonmoney[i]);
+			  		}
+			  		for (var i = 0; i < this.form.teammoney.length; i++) {
+			  			payload.mod = payload.mod + parseInt(this.form.teammoney[i]);
+			  		}
 
-		    	payload.mod = payload.mod + parseInt(this.form.payway);
-		    	
-		    	payload.CMRate = this.CMRate * 10;
-		    	payload.CPRate = this.CPRate * 10;
-		    	
-		    	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'employee_edit',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				router.push({
-					        path: '/shop/staff-list'
-					    })
-		   			}
-		   		});
+			    	payload.mod = payload.mod + parseInt(this.form.payway);
+			    	
+			    	payload.CMRate = parseInt(this.CMRate * 10);
+			    	payload.CPRate = parseInt(this.CPRate * 10);
+			    	
+			    	payload = JSON.stringify(payload);
+			    	autoApi({
+			   			action: 'employee_edit',
+			   			version: '1.0',
+			   			payload: payload
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+			   				this.$message({
+				    			message: '设置已保存',
+				    			type: 'success',
+				    		});
+			   				router.push({
+						        path: '/shop/staff-list'
+						    })
+			   			}
+			   		});
+		    	}
+		    	else
+		    	{
+		    		this.$message({
+		    			message: '输入数据有误,请在-100到100的范围内输入',
+		    			type: 'error',
+		    		});
+		    	}
 		    },
 		    getInfo(id) {
 		    	let payload = {

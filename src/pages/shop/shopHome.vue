@@ -80,7 +80,7 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="4" v-if="!isAdmin">
+          <!-- <el-submenu index="4" v-if="!isAdmin">
             <template slot="title">产品管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-set-insuranceN'}">
@@ -97,12 +97,7 @@
                 <el-menu-item index="4-3" class="sub-title">我的共享车险*</el-menu-item>
               </router-link>
             </el-menu-item-group>
-            <!-- <el-menu-item-group>
-              <router-link :to="{name:'shop-autoinsurance-ratio'}">
-                <el-menu-item index="4-2" class="sub-title">车险自定义系数管理</el-menu-item>
-              </router-link>
-            </el-menu-item-group> -->
-          </el-submenu>
+          </el-submenu> -->
 
           <el-submenu index="7"  v-if="!isAdmin">
             <template slot="title">订单管理</template>
@@ -116,14 +111,14 @@
                 <el-menu-item index="7-2" class="sub-title">车险已出单</el-menu-item>
               </router-link>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <!-- <el-menu-item-group>
               <router-link :to="{name:'shop-order-policyList'}">
                 <el-menu-item index="7-3" class="sub-title">共享车险订单*</el-menu-item>
               </router-link>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
           </el-submenu>
 
-          <el-submenu index="5" v-if="!isAdmin">
+          <!-- <el-submenu index="5" v-if="!isAdmin">
             <template slot="title">消息体系</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-msg-business'}">
@@ -140,7 +135,7 @@
                 <el-menu-item index="5-3" class="sub-title">系统日志</el-menu-item>
               </router-link>
             </el-menu-item-group>
-          </el-submenu>
+          </el-submenu> -->
 
           <el-submenu index="8">
             <template slot="title">统计管理</template>

@@ -6,7 +6,8 @@
 		</el-breadcrumb>
 		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="商家名称:">
-		    <el-input type="text" style="width:300px;" v-model="form.name" auto-complete="off" placeholder="请输入商家名称"></el-input>
+		    <!-- <el-input type="text" style="width:300px;" v-model="form.name" auto-complete="off" placeholder="请输入商家名称"></el-input> -->
+		    <span>{{form.name}}</span>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="营业执照号:">
 		    <el-input type="text" style="width:300px;" v-model="form.num" auto-complete="off" placeholder="请输入营业执照号"></el-input>
@@ -23,7 +24,7 @@
 		  <el-form-item class="appblock" label="过期时间:">
 		     <el-date-picker v-model="form.time" type="date" placeholder="选择日期" v-if="endTimeEdited"></el-date-picker>
 		     <span v-if="!endTimeEdited">{{form.time}}</span>
-		     <el-button @click="editEndTime" v-if="!endTimeEdited">修改</el-button>
+		     <!-- <el-button @click="editEndTime" v-if="!endTimeEdited">修改</el-button> -->
 		  </el-form-item>
 		  <!-- <el-form-item class="appblock" label="开通商家量:">
 		    <el-select v-model="form.shopNum" placeholder="请选择" style="width:300px;">
@@ -114,6 +115,7 @@
 		</el-form>
 		<div style="clear:both"></div>
 		<div style="text-align:center;margin-top:20px;">
+			<el-button @click="goback">返回</el-button>
 			<el-button type="primary" @click="confirmEdit">确定</el-button>
 		</div>
 	</div>
@@ -154,6 +156,32 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			handleAvatarScucess(res, file) {
 		        this.form.imageUrl = URL.createObjectURL(file.raw);
 		    },
+		    getInfo(id) {
+		    	let payload = {
+		    		employeeId: id
+		    	}
+		    	payload = JSON.stringify(payload);
+		    	autoApi({
+		   			action: 'tenant_info',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				   	this.form.tid = res.attach.tid;
+				        	this.form.name = res.attach.name;
+				        	this.form.imageUrl = res.attach.licenseImage;
+				        	this.form.num = res.attach.license;
+				        	if (this.$route.query.expire) {
+				        		this.form.time = this.getFormTime(this.$route.query.expire * 1000);
+				        	}
+				        	this.form.people = this.$route.query.contacts;
+				        	this.form.phone = this.$route.query.contractsMobile;
+	       			}
+		   		})
+		    	// if (this.$route.query.tid) {
+		     
+		     //    }
+		    },
 		    confirmEdit() {
 		    	let payload = {
 		   			tname: this.form.name,
@@ -183,22 +211,17 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	       			}
 		   		})
 		    },
+		    goback() {
+		    	router.push({
+			        path: '/shop/shop-list'
+			    });
+		    },
 		    editEndTime() {
 		    	this.endTimeEdited = true;
 		    }
 	    },
-	    mounted:function(){
-	        if (this.$route.query.tid) {
-	        	this.form.tid = this.$route.query.tid;
-	        	this.form.name = this.$route.query.name;
-	        	this.form.imageUrl = this.$route.query.licenseImage;
-	        	this.form.num = this.$route.query.license;
-	        	if (this.$route.query.expire) {
-	        		this.form.time = this.getFormTime(this.$route.query.expire * 1000);
-	        	}
-	        	this.form.people = this.$route.query.contacts;
-	        	this.form.phone = this.$route.query.contractsMobile;
-	        }
+	    mounted(){
+	    	this.getInfo(this.$route.query.tid);
 	    }
 	}
 </script>

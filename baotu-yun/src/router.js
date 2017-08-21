@@ -129,11 +129,25 @@ const routes = [
                     require(['./pages/poundageCoefficient.vue'],resolve)
                 }
             },
-             {
+            {
                 path: "/permissionEdit",
                 name: "permissionEdit",
                 component(resolve) {
                     require(['./pages/permissionEdit.vue'],resolve)
+                }
+            },
+            {
+                path: "/GMPermission",
+                name: "GMPermission",
+                component(resolve) {
+                    require(['./pages/user/GMPermission.vue'],resolve)
+                }
+            },
+            {
+                path: "/APPPermission",
+                name: "APPPermission",
+                component(resolve) {
+                    require(['./pages/user/APPPermission.vue'],resolve)
                 }
             },
         ]

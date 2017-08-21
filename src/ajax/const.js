@@ -77,6 +77,8 @@ export default function request(url, options) {
             Salert('雇员不存在')
         } else if(data.code == 510){
             Salert('用户资料缺少')
+        } else if(data.code == 556){
+            Salert('规模奖励配置已达到最大条数')
         }else if(data.desc) {//测试版本错误提示代码
             data.desc == 'success'?'':alert('接口错误提示:' + data.desc);
         }

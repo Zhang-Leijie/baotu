@@ -57,7 +57,7 @@
 			<el-button @click="dialogAddVisible = true" type="primary" :disabled="(dataAPP[0] && !choosed[0])" v-show="modularType == 'APP'">新增模块</el-button>
 			<el-button @click="dialogAddVisible = true" type="primary" :disabled="(dataTENANT[0] && !choosed[0])" v-show="modularType == 'TENANT'">新增模块</el-button>
 			<el-button @click="editThisModular" type="primary" :disabled="!choosed[0]">编辑模块</el-button>
-			<el-button @click="deleteModular" type="primary" :disabled="!choosed[0]">删除模块</el-button>
+			<el-button @click="deleteModular" type="primary" :disabled="!choosed[0] || this.apiData[0]">删除模块</el-button>
 		</div>
 
 		<el-dialog title="新增模块" :visible.sync="dialogAddVisible" :before-close="handleAddClose">
@@ -78,26 +78,39 @@
 		    </div>
 		</el-dialog>
 
-		<el-table :data="apiData" border style="width: 100%;margin-top: 20px;">
+		<el-table :data="apiData" border class="tableBox">
     		<el-table-column prop="pkg" label="类全名"></el-table-column>
     		<el-table-column prop="name" label="接口名"></el-table-column>
     		<el-table-column label="操作">
     			<template scope="scope">
-    				<el-button type="text" size="small" @click="editAPI(scope.row)" v-if="!edited.id">编辑</el-button>
+    				<el-button type="text" size="small" @click="editAPI(scope.row)">编辑</el-button>
+    				<el-button type="text" size="small" @click="deleteAPI(scope.row)">删除</el-button>
 			    </template>
     		</el-table-column>
     	</el-table>
 
     	<div class="toolBar">
     		<el-button type="primary" @click
-    		="dialogAPIVisible = true">添加接口</el-button>
+    		="dialogAPIAddVisible = true" :disabled="!this.choosed[0]">添加接口</el-button>
     	</div>
 
-    	<el-dialog title="添加接口" :visible.sync="dialogAPIVisible" size="small" :before-close="handleAPIClose">
+    	<el-dialog title="添加接口" :visible.sync="dialogAPIAddVisible" size="small" :before-close="handleAPIAddClose">
+			<span>类全名: </span>
+			<el-input v-model="apiUpdate.addPkg"></el-input>
+			<span>接口名: </span>
 			<el-input v-model="apiUpdate.addName"></el-input>
 		    <div slot="footer" class="dialog-footer">
-		        <el-button @click="handleAPIClose">取 消</el-button>
+		        <el-button @click="handleAPIAddClose">取 消</el-button>
 		        <el-button type="primary" @click="addAPI">确 定</el-button>
+		    </div>
+		</el-dialog>
+
+		<el-dialog title="编辑接口" :visible.sync="dialogAPIEditVisible" size="small" :before-close="handleAPIEditClose">
+			<span>接口名: </span>
+			<el-input v-model="editedAPI.name"></el-input>
+		    <div slot="footer" class="dialog-footer">
+		        <el-button @click="handleAPIEditClose">取 消</el-button>
+		        <el-button type="primary" @click="confirmEditAPI">确 定</el-button>
 		    </div>
 		</el-dialog>
 
@@ -112,12 +125,10 @@ import { masterApi } from '@/ajax/post.js'
 	        modularType: 'BT',
 	        dialogAddVisible: false,
 	        addModular: {			//新增模块
-	        	parentId: null,
 	        	name: null,
 	        },
 	        dialogEditVisible: false,
 	        editModular: {			//编辑模块
-	        	parentId: null,
 	        	name: null,
 	        },
 	        modulars: [{
@@ -144,15 +155,22 @@ import { masterApi } from '@/ajax/post.js'
 	        //接口部分数据
 	        apiData: [],
 	        apiUpdate: {
-	        	editName: null,
+	        	addPkg: null,
 	        	addName: null,
 	        },
-	        dialogAPIVisible: false,
+	        editedAPI: {
+	        	id: null,
+	        	pkg: null,
+	        	name: null,
+	        },
+	        dialogAPIAddVisible: false,
+	        dialogAPIEditVisible: false,
 	      };
 	    },
 	    watch: {
 	    	modularType(new1,old) {
 				this.choosed[0] = null;
+				this.apiData = [];
 	    	}
 	    },
 	    methods: {
@@ -170,59 +188,59 @@ import { masterApi } from '@/ajax/post.js'
 
 			getModulars() {
 				if (this.modularType == "BT") {
-				// 	masterApi({
-				// 		action: 'modulars_bt',
-				// 		version: '1.0',
-				// 	},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					let res = {
-						"code": 0,
-						"attach": {
-							"13": {
-								"node": {
-									"name": "平台",
-									"type": 2,
-									"created": 1503126180,
-									"updated": 1503126180,
-									"left": 0,
-									"right": 1,
-									"id": 13,
-									"layer": 1
-								},
-								"children": {
-									"15": {
-										"node": {
-											"name": "账号管理A",
-											"type": 2,
-											"created": 1503128041,
-											"updated": 1503128041,
-											"left": 1,
-											"right": 2,
-											"id": 15,
-											"layer": 2,
-											"parentId": 13
-										}
-									},
-									"16": {
-										"node": {
-											"name": "账号管理B",
-											"type": 2,
-											"created": 1503128041,
-											"updated": 1503128041,
-											"left": 1,
-											"right": 2,
-											"id": 16,
-											"layer": 2,
-											"parentId": 13
-										}
-									}
-								},
-							}
-						},
-						"createTime": 1503129000515,
-						"messageType": 2
-					}
+					masterApi({
+						action: 'modulars_bt',
+						version: '1.0',
+					},window.localStorage.getItem('tokenPlate')).then((res)=> {
+					// let res = {
+					// 	"code": 0,
+					// 	"attach": {
+					// 		"13": {
+					// 			"node": {
+					// 				"name": "平台",
+					// 				"type": 2,
+					// 				"created": 1503126180,
+					// 				"updated": 1503126180,
+					// 				"left": 0,
+					// 				"right": 1,
+					// 				"id": 13,
+					// 				"layer": 1
+					// 			},
+					// 			"children": {
+					// 				"15": {
+					// 					"node": {
+					// 						"name": "账号管理A",
+					// 						"type": 2,
+					// 						"created": 1503128041,
+					// 						"updated": 1503128041,
+					// 						"left": 1,
+					// 						"right": 2,
+					// 						"id": 15,
+					// 						"layer": 2,
+					// 						"parentId": 13
+					// 					}
+					// 				},
+					// 				"16": {
+					// 					"node": {
+					// 						"name": "账号管理B",
+					// 						"type": 2,
+					// 						"created": 1503128041,
+					// 						"updated": 1503128041,
+					// 						"left": 1,
+					// 						"right": 2,
+					// 						"id": 16,
+					// 						"layer": 2,
+					// 						"parentId": 13
+					// 					}
+					// 				}
+					// 			},
+					// 		}
+					// 	},
+					// 	"createTime": 1503129000515,
+					// 	"messageType": 2
+					// }
 						this.drawTree(res.attach);
-					// })
+					})
 				}
 				else if (this.modularType == "APP") {
 					masterApi({
@@ -299,8 +317,12 @@ import { masterApi } from '@/ajax/post.js'
 				this.dialogEditVisible = false;
 			},
 
-			handleAPIClose() {
-				this.dialogAPIVisible = false;
+			handleAPIAddClose() {
+				this.dialogAPIAddVisible = false;
+			},
+
+			handleAPIEditClose() {
+				this.dialogAPIEditVisible = false;
 			},
 
 			reModularType(val) {
@@ -336,6 +358,7 @@ import { masterApi } from '@/ajax/post.js'
 						payload: payload,
 					},window.localStorage.getItem('tokenPlate')).then((res)=> {
 						this.getModulars();
+						this.addModular.name = null;
 					})
 				}
 			},
@@ -354,13 +377,28 @@ import { masterApi } from '@/ajax/post.js'
 					let traversalData = [];
 					traversal(this.dataBT,traversalData);
 					for (let i = 0; i < traversalData.length; i++) {
-						if(traversalData[i].id = this.choosed[0]) {
+						if(traversalData[i].id == this.choosed[0]) {
 							this.editModular.name = traversalData[i].label;
 						}
 					}
 				}
 				else if(this.modularType == "APP") {
-					this.editModular.name = traversal(this.dataAPP,this.choosed[0]);
+					let traversalData = [];
+					traversal(this.dataAPP,traversalData);
+					for (let i = 0; i < traversalData.length; i++) {
+						if(traversalData[i].id == this.choosed[0]) {
+							this.editModular.name = traversalData[i].label;
+						}
+					}
+				}
+				else if(this.modularType == "TENANT") {
+					let traversalData = [];
+					traversal(this.dataTENANT,traversalData);
+					for (let i = 0; i < traversalData.length; i++) {
+						if(traversalData[i].id == this.choosed[0]) {
+							this.editModular.name = traversalData[i].label;
+						}
+					}
 				}
 			},
 
@@ -370,7 +408,6 @@ import { masterApi } from '@/ajax/post.js'
 					id: this.choosed[0],
 					name: this.editModular.name,
 					modularType: this.modularType,
-					// parentId: this.editModular.parentId,
 				}
 				payload = JSON.stringify(payload);
 				if (this.editModular.name) {
@@ -411,13 +448,16 @@ import { masterApi } from '@/ajax/post.js'
 					version: '1.0',
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.apiData = res.attach;
+					if (res.attach) {
+						this.apiData = res.attach;
+					}
 				})
 			},
 
 			addAPI() {
+				this.dialogAPIAddVisible = false;
 				let payload = {
-					pkg: "something",
+					pkg: this.apiUpdate.addPkg,
 					name: this.apiUpdate.addName,
 					modularId: this.choosed[0],
 				}
@@ -433,9 +473,18 @@ import { masterApi } from '@/ajax/post.js'
 			},
 
 			editAPI(row) {
+				this.dialogAPIEditVisible = true;
+				this.editAPI.id = row.id;
+				this.editedAPI.pkg = row.pkg;
+				this.editedAPI.name = row.name;
+			},
+
+			confirmEditAPI() {
+				this.dialogAPIEditVisible = false;
 				let payload = {
-					pkg: "something",
-					name: this.apiUpdate.editName,
+					id: this.editedAPI.id,
+					pkg: this.editedAPI.pkg,
+					name: this.editedAPI.name,
 					modularId: this.choosed[0],
 				}
 				payload = JSON.stringify(payload);
@@ -451,7 +500,8 @@ import { masterApi } from '@/ajax/post.js'
 
 			deleteAPI(row) {
 				let payload = {
-					pkg: "something",
+					id: row.id,
+					pkg: row.pkg,
 					modularId: this.choosed[0],
 				}
 				payload = JSON.stringify(payload);

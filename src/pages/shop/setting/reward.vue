@@ -11,8 +11,8 @@
 			<el-button size="large" type="primary" v-if="viewMode == 2">管理奖励</el-button>
 			<el-button size="large" v-if="viewMode == 1" @click="guanliShow">管理奖励</el-button>
 			<div class="topBarR">
-				<el-button type="primary" v-if="viewMode == 1" @click="guimoAccount">统计规模结算</el-button>
-				<el-button type="primary" v-if="viewMode == 2" @click="guanliAccount">管理奖励结算</el-button>
+				<el-button type="primary" v-if="viewMode == 1" @click="guimoAccount" :disabled="true">统计规模结算</el-button>
+				<el-button type="primary" v-if="viewMode == 2" @click="guanliAccount" :disabled="true">管理奖励结算</el-button>
 			</div>
 		</div>
 
@@ -24,23 +24,6 @@
 		  </el-form-item>
 		</el-form>
 
-		<!-- <el-form :label-position="labelPosition" label-width="120px" class="appbox" v-if="viewMode == 1">
-		  <el-form-item class="Btitle" label="规模奖励:" style="margin-bottom:0px;"></el-form-item>
-		  <el-form-item class="appblock" label="团队层级:">
-		  	<el-radio class="radio" v-model="radio" label="1">月度</el-radio>
-  			<el-radio class="radio" v-model="radio" label="2">季度</el-radio>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="统计类型:">
-		  	<el-radio class="radio" v-model="radio" label="1">签单成功</el-radio>
-  			<el-radio class="radio" v-model="radio" label="2">保单生效</el-radio>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="险种:">
-			<el-checkbox-group v-model="form.insurance">
-			    <el-checkbox value='1' label="险种1"></el-checkbox>
-				<el-checkbox value='2' label="险种2"></el-checkbox>	
-			</el-checkbox-group>
-		  </el-form-item>
-		</el-form> -->
 		<div style="clear:both"></div>
 
 		<el-form :label-position="labelPosition" label-width="120px" class="appbox" v-if="viewMode == 1">
@@ -148,7 +131,7 @@
 			      			</el-col>
 			      			<el-col :span="7">
 	  							<span class="dataFont">奖励比例: </span>
-			      				<el-input-number v-model="guimoAdd.num" :min="0" :max="50" :step="0.1"  size="" style="width: 150px;"></el-input-number> %
+			      				<el-input v-model="guimoAdd.num" style="width: 150px;"></el-input> %
 			      			</el-col>
 			      			<el-col :span="4">
 			      				<el-button type="primary" @click="guimoConfirmAdd">确定</el-button>
@@ -191,7 +174,7 @@
 	  			</el-col>
 	  			<el-col :span="7">
 	  				<span class="dataFont">奖励比例: </span>
-	  				<el-input-number v-model="guimoEdit.num" :min="-50" :max="50" :step="0.1"  size="small" class="inputPercent"></el-input-number> 
+	  				<el-input v-model="guimoEdit.num" style="width: 120px;"></el-input> 
 	  				<span class="dataFont">%</span>
 	  			</el-col>
 			</el-row>
@@ -214,36 +197,36 @@
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-二级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.N2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.shangyeData.N2.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.N2.key,guanli.shangyeData.N2.value,guanli.shangyeData.N2.origin,2,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N2.value == guanli.shangyeData.N2.origin)">确定</el-button> -->
 				</el-col>	
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-二级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.N2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.jiaoqiangData.N2.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N2.key,guanli.jiaoqiangData.N2.value,guanli.jiaoqiangData.N2.origin,2,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N2.value == guanli.jiaoqiangData.N2.origin)">确定</el-button> -->
 				</el-col>	
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
 				<el-col :span="12">
 					<label class="titleLabel">营业车-二级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.Y2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.shangyeData.Y2.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.Y2.key,guanli.shangyeData.Y2.value,guanli.shangyeData.Y2.origin,2,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y2.value == guanli.shangyeData.Y2.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">营业车-二级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.Y2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.jiaoqiangData.Y2.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y2.key,guanli.jiaoqiangData.Y2.value,guanli.jiaoqiangData.Y2.origin,2,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y2.value == guanli.jiaoqiangData.Y2.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
 				<el-col :span="12">
 					<label class="titleLabel">其他车-二级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.other2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.shangyeData.other2.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.other2.key,guanli.shangyeData.other2.value,guanli.shangyeData.other2.origin,2,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other2.value == guanli.shangyeData.other2.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">其他车-二级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.other2.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.jiaoqiangData.other2.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other2.key,guanli.jiaoqiangData.other2.value,guanli.jiaoqiangData.other2.origin,2,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other2.value == guanli.jiaoqiangData.other2.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
@@ -251,36 +234,36 @@
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-三级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.N3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.shangyeData.N3.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.N3.key,guanli.shangyeData.N3.value,guanli.shangyeData.N3.origin,3,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N3.value == guanli.shangyeData.N3.origin)">确定</el-button> -->
 				</el-col>	
 				<el-col :span="12">
 					<label class="titleLabel">非营业车-三级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.N3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.jiaoqiangData.N3.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N3.key,guanli.jiaoqiangData.N3.value,guanli.jiaoqiangData.N3.origin,3,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N3.value == guanli.jiaoqiangData.N3.origin)">确定</el-button> -->
 				</el-col>	
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
 				<el-col :span="12">
 					<label class="titleLabel">营业车-三级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.Y3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.shangyeData.Y3.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.Y3.key,guanli.shangyeData.Y3.value,guanli.shangyeData.Y3.origin,3,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y3.value == guanli.shangyeData.Y3.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">营业车-三级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.Y3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.jiaoqiangData.Y3.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y3.key,guanli.jiaoqiangData.Y3.value,guanli.jiaoqiangData.Y3.origin,3,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y3.value == guanli.jiaoqiangData.Y3.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
 			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
 				<el-col :span="12">
 					<label class="titleLabel">其他车-三级比例：</label>
-					<el-input-number v-model="guanli.shangyeData.other3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.shangyeData.other3.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.other3.key,guanli.shangyeData.other3.value,guanli.shangyeData.other3.origin,3,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other3.value == guanli.shangyeData.other3.origin)">确定</el-button> -->
 				</el-col>
 				<el-col :span="12">
 					<label class="titleLabel">其他车-三级比例：</label>
-					<el-input-number v-model="guanli.jiaoqiangData.other3.value" :min="0" :max="50" :step="0.1"  size="small" class="countTool"></el-input-number> %
+					<el-input v-model="guanli.jiaoqiangData.other3.value" class="countTool"></el-input> %
 					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other3.key,guanli.jiaoqiangData.other3.value,guanli.jiaoqiangData.other3.origin,3,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other3.value == guanli.jiaoqiangData.other3.origin)">确定</el-button> -->
 				</el-col>
 			</el-row>
@@ -389,9 +372,12 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       	},
 	       	guanliShow() {
 	       		this.viewMode = 2;
+	       		this.getGuanli();
 	       	},
 	       	guimoShow() {
 	       		this.viewMode = 1;
+	       		this.getInfo();
+	       		this.getGuimo();
 	       	},
 	       	initGuanli() {
 	       		this.guanli = {
@@ -596,7 +582,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
 		   				if(res.attach) {
-		   					for (var i = 0; i < res.attach.length; i++) {
+		   					for (let i = 0; i < res.attach.length; i++) {
 		   						res.attach[i].rate = res.attach[i].rate / 10;
 		   					}
 		   					this.guimoData = res.attach;
@@ -622,6 +608,11 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			}
 		   		})
 	       	},
+
+		    isLegalNumber(val) {
+		    	return (-100 <= val && val <= 100)?true:false;
+		    },
+
 	       	comfirmSetting() {
 	       		let payload = {
 				    // name : xxx,                                                // 商户名字
@@ -664,79 +655,85 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       	},
 	       	saveGuanli() {
 	       		for(let item in this.guanli.shangyeData) {
-	       			if (!(this.guanli.shangyeData[item].value == this.guanli.shangyeData[item].origin && this.formSetting.teamDepth >= this.guanli.shangyeData[item].depth)) {
+	       			if (!(this.guanli.shangyeData[item].value == this.guanli.shangyeData[item].origin) && this.formSetting.teamDepth >= this.guanli.shangyeData[item].depth) {
 	       				this.guanliConfirmEdit(this.guanli.shangyeData[item].key,this.guanli.shangyeData[item].value,this.guanli.shangyeData[item].origin,this.guanli.shangyeData[item].depth,this.guanli.shangyeData[item].type);
 	       			}
 	       		}
 	       		for(let item in this.guanli.jiaoqiangData) {
-	       			if (!(this.guanli.jiaoqiangData[item].value == this.guanli.jiaoqiangData[item].origin && this.formSetting.teamDepth >= this.guanli.jiaoqiangData[item].depth)) {
+	       			if (!(this.guanli.jiaoqiangData[item].value == this.guanli.jiaoqiangData[item].origin) && this.formSetting.teamDepth >= this.guanli.jiaoqiangData[item].depth) {
 	       				this.guanliConfirmEdit(this.guanli.jiaoqiangData[item].key,this.guanli.jiaoqiangData[item].value,this.guanli.jiaoqiangData[item].origin,this.guanli.jiaoqiangData[item].depth,this.guanli.jiaoqiangData[item].type);
 	       			}
 	       		}
-	       		this.$message({
-	       			message: '设置已保存',
-	       			type: 'success'
-	       		});
 	       	},
 	       	guanliConfirmEdit(id,val,origin,depth,type) {
-	       		if (val && origin) {//value/origin值不为零,操作为修改
-	       			let payload = {
-			   			employeeId: window.localStorage.getItem('employeeId'),
-	       				id: id,
-			   			rate: val * 10,
-			   			teamDepth: depth,
-			   			// configType: this.reConfigType(type)
-			   			configType: type
-	       			}
-	       			payload = JSON.stringify(payload);
-	       			autoApi({
-			   			action: 'bonus_manage_config_edit',
-			   			version: '1.0',
-			   			crudType: 4,
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-	        				this.getGuanli();
+	       		if(this.isLegalNumber(val)){
+	       			if (val && origin) {//value/origin值不为零,操作为修改
+		       			let payload = {
+				   			employeeId: window.localStorage.getItem('employeeId'),
+		       				id: id,
+				   			rate: parseInt(val * 10),
+				   			teamDepth: depth,
+				   			// configType: this.reConfigType(type)
+				   			configType: type
 		       			}
-			   		})
-	       		}
-	       		else if (!val) {//value为零,操作为删除
-	       			let payload = {
-			   			employeeId: window.localStorage.getItem('employeeId'),
-	       				id: id
-	       			}
-	       			payload = JSON.stringify(payload);
-	       			autoApi({
-			   			action: 'bonus_manage_config_edit',
-			   			version: '1.0',
-			   			crudType: 8,
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-	        				this.getGuanli();
+		       			payload = JSON.stringify(payload);
+		       			autoApi({
+				   			action: 'bonus_manage_config_edit',
+				   			version: '1.0',
+				   			crudType: 4,
+				   			payload: payload
+				   		},window.localStorage.getItem('token')).then((res)=> {
+				   			if (res.code == 0) {
+		        				this.getGuanli();
+			       			}
+				   		})
+		       		}
+		       		else if (!val) {//value为零,操作为删除
+		       			let payload = {
+				   			employeeId: window.localStorage.getItem('employeeId'),
+		       				id: id
 		       			}
-			   		})
-	       		}
-	       		else if (!origin) {//origin为零,操作为新增
-	       			let payload = {
-			   			employeeId: window.localStorage.getItem('employeeId'),
-			   			rate: val * 10,
-			   			teamDepth: depth,
-			   			// configType: this.reConfigType(type)
-			   			configType: type,
-	       			}
-	       			payload = JSON.stringify(payload);
-	       			autoApi({
-			   			action: 'bonus_manage_config_edit',
-			   			version: '1.0',
-			   			crudType: 1,
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-	        				this.getGuanli();
+		       			payload = JSON.stringify(payload);
+		       			autoApi({
+				   			action: 'bonus_manage_config_edit',
+				   			version: '1.0',
+				   			crudType: 8,
+				   			payload: payload
+				   		},window.localStorage.getItem('token')).then((res)=> {
+				   			if (res.code == 0) {
+		        				this.getGuanli();
+			       			}
+				   		})
+		       		}
+		       		else if (!origin) {//origin为零,操作为新增
+		       			let payload = {
+				   			employeeId: window.localStorage.getItem('employeeId'),
+				   			rate: parseInt(val * 10),
+				   			teamDepth: depth,
+				   			// configType: this.reConfigType(type)
+				   			configType: type,
 		       			}
-			   		})
+		       			payload = JSON.stringify(payload);
+		       			autoApi({
+				   			action: 'bonus_manage_config_edit',
+				   			version: '1.0',
+				   			crudType: 1,
+				   			payload: payload
+				   		},window.localStorage.getItem('token')).then((res)=> {
+				   			if (res.code == 0) {
+		        				this.getGuanli();
+			       			}
+				   		})
+		       		}
 	       		}
+	       		else
+	       		{
+	       			this.$message({
+	       				message: '提交的数据中有非法参数,合法输入为-100到100,其他合法参数已保存修改',
+	       				type: 'error',
+	       			});
+	       		}
+		       		
 	       	},
 	       	guimoEditMode(row) {
 	       		this.dialogEditVisible = true;
@@ -757,72 +754,90 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       	},
 	       	guimoConfirmEdit() {
 	       		this.dialogEditVisible = false;
-	       		let payload = {
-	       			employeeId: window.localStorage.getItem('employeeId'),
-	       			id: this.guimoEdit.id,
-	       			rate: this.guimoEdit.num * 10,
-	       			symbol: this.reComparisonName(this.guimoEdit.comparison),
-	       			val: [],
-	       		}
-	       		if (this.guimoEdit.comparison == 8) {
-	       			payload.val[0] = this.guimoEdit.comparableValueA;
-	       			payload.val[1] = this.guimoEdit.comparableValueB;
-	       		}
-	       		else {
-	       			payload.val = this.guimoEdit.comparableValue.split("_");
-	       		}
-	       		payload = JSON.stringify(payload);
+	       		if (this.isLegalNumber(this.guimoEdit.num)) {
+	       			let payload = {
+		       			employeeId: window.localStorage.getItem('employeeId'),
+		       			id: this.guimoEdit.id,
+		       			rate: parseInt(this.guimoEdit.num * 10),
+		       			symbol: this.reComparisonName(this.guimoEdit.comparison),
+		       			val: [],
+		       		}
+		       		if (this.guimoEdit.comparison == 8) {
+		       			payload.val[0] = this.guimoEdit.comparableValueA;
+		       			payload.val[1] = this.guimoEdit.comparableValueB;
+		       		}
+		       		else {
+		       			payload.val = this.guimoEdit.comparableValue.split("_");
+		       		}
+		       		payload = JSON.stringify(payload);
 
-	       		autoApi({
-		   			action: 'bonus_scale_config_edit',
-		   			version: '1.0',
-		   			crudType: 4,
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-        				this.getGuimo();
-        				this.showAddGuimo = false;
-        				this.guimoAdd = {
-				        	num: null,
-				        	comparison: null,
-				        	comparableValue: null
-				        };
-	       			}
-		   		})
+		       		autoApi({
+			   			action: 'bonus_scale_config_edit',
+			   			version: '1.0',
+			   			crudType: 4,
+			   			payload: payload
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+	        				this.getGuimo();
+	        				this.showAddGuimo = false;
+	        				this.guimoAdd = {
+					        	num: null,
+					        	comparison: null,
+					        	comparableValue: null
+					        };
+		       			}
+			   		})
+	       		}
+	       		else
+	       		{
+	       			this.$message({
+	       				message: '输入数值非法,请在-100到100的范围内输入',
+	       				type: 'error',
+	       			});
+	       		}
 	       	},
 	       	guimoConfirmAdd() {
-	       		let payload = {
-	       			employeeId: window.localStorage.getItem('employeeId'),
-	       			rate: this.guimoAdd.num * 10,
-	       			symbol: this.reComparisonName(this.guimoAdd.comparison),
-	       			val: [],
-	       		}
-	       		if (this.guimoAdd.comparison == 8) {
-	       			payload.val[0] = this.guimoAdd.comparableValueA;
-	       			payload.val[1] = this.guimoAdd.comparableValueB;
-	       		}
-	       		else {
-	       			payload.val = this.guimoAdd.comparableValue.split("_");
-	       		}
-	       		payload = JSON.stringify(payload);
-	       		
-	       		autoApi({
-		   			action: 'bonus_scale_config_edit',
-		   			version: '1.0',
-		   			// employeeId: window.localStorage.getItem('employeeId'),
-		   			crudType: 1,
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-        				this.getGuimo();
-        				this.showAddGuimo = false;
-        				this.guimoAdd = {
-				        	num: null,
-				        	comparison: null,
-				        	comparableValue: null
-				        };
-	       			}
-		   		})
+		       	if (this.isLegalNumber(this.guimoAdd.num)) {
+		       		let payload = {
+		       			employeeId: window.localStorage.getItem('employeeId'),
+		       			rate: parseInt(this.guimoAdd.num * 10),
+		       			symbol: this.reComparisonName(this.guimoAdd.comparison),
+		       			val: [],
+		       		}
+		       		if (this.guimoAdd.comparison == 8) {
+		       			payload.val[0] = this.guimoAdd.comparableValueA;
+		       			payload.val[1] = this.guimoAdd.comparableValueB;
+		       		}
+		       		else {
+		       			payload.val = this.guimoAdd.comparableValue.split("_");
+		       		}
+		       		payload = JSON.stringify(payload);
+		       		
+		       		autoApi({
+			   			action: 'bonus_scale_config_edit',
+			   			version: '1.0',
+			   			// employeeId: window.localStorage.getItem('employeeId'),
+			   			crudType: 1,
+			   			payload: payload
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+	        				this.getGuimo();
+	        				this.showAddGuimo = false;
+	        				this.guimoAdd = {
+					        	num: null,
+					        	comparison: null,
+					        	comparableValue: null
+					        };
+		       			}
+			   		})
+		       	}	
+		       	else
+		       	{
+		       		this.$message({
+	       				message: '输入数值非法,请在-100到100的范围内输入',
+	       				type: 'error',
+	       			});
+		       	}
 	       	},
 	       	guimoDelete(row) {
 	       		let payload = {
@@ -1035,7 +1050,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		    }
 	    },
 	    mounted(){
-	    	// this.getInfo();
 	        this.getGuanli();
 	        this.getGuimo();
 	        this.getInfo();
@@ -1078,6 +1092,9 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	}
 	.optionCol {
 		margin: 20px;
+		.countTool {
+			width: 150px !important;
+		}
 	}
 }	
 </style>
