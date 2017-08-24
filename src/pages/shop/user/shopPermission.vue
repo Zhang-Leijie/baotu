@@ -1,8 +1,8 @@
 <template>
 	<div class="GMPermissionBody">
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'GMList'}">管理员列表</el-breadcrumb-item>
-		  	<el-breadcrumb-item>管理员授权-{{$route.query.name}}</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'shop-shop-list'}">商家列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item>商家授权-{{$route.query.name}}</el-breadcrumb-item>
 		</el-breadcrumb>
 
 		<div class="contentBox">
@@ -28,7 +28,7 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 	export default {
 	    data() {
@@ -57,14 +57,10 @@ import { masterApi } from '@/ajax/post.js'
 			},
 
 			getInfo() {
-				// let res = {"code": 0,"attach": {"13": {"node": {"name": "平台","type": 2,"created": 1503126180,"updated": 1503126180,"left": 0,"right": 1,"id": 13,"layer": 1},"children": {"15": {"node": {"name": "账号管理A","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 15,"layer": 2,"parentId": 13}},"16": {"node": {"name": "账号管理B","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 16,"layer": 2,"parentId": 13},"children": {"25": {"node": {"name": "账号管理BA","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 25,"layer": 2,"parentId": 13}},"26": {"node": {"name": "账号管理BB","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 26,"layer": 2,"parentId": 13}}},}},}},
-				// 		"createTime": 1503129000515,
-				// 		"messageType": 2
-				// 	}
-				masterApi({
-					action: 'modulars_bt',
+				autoApi({
+					action: 'modulars_tenant',
 					version: '1.0',
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
+				},window.localStorage.getItem('token')).then((res)=> {
 					this.sourceData = res.attach;
 					this.drawTree(res.attach);
 				})
@@ -190,18 +186,17 @@ import { masterApi } from '@/ajax/post.js'
 					modulars: this.choosed,
 				}
 				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'authorize_admin',
+				autoApi({
+					action: 'authorize_tenant',
 					version: '1.0',
 					payload: payload
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
+				},window.localStorage.getItem('token')).then((res)=> {
 					this.$message({
 						message: '授予模块成功',
 						type: 'success',
 					});
-
 					router.push({
-				  	  name: "GMList"
+				  	  name: "shop-shop-list"
 				    });
 
 				})
@@ -209,7 +204,7 @@ import { masterApi } from '@/ajax/post.js'
 
 			goback() {
 				router.push({
-			  	  name: "GMList"
+			  	  name: "shop-shop-list"
 			    })
 			}
 	    },

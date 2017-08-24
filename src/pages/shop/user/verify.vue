@@ -18,22 +18,21 @@
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="uid" label="ID"></el-table-column>
+			    <el-table-column prop="uid" label="序号"></el-table-column>
 			    <el-table-column prop="name" label="姓名"></el-table-column>
-			    <el-table-column prop="mobile" label="手机号"></el-table-column>
-			    <el-table-column prop="identity" label="身份证"></el-table-column>
-			    <el-table-column prop="parentName" label="邀请人姓名"></el-table-column>
-			    <el-table-column prop="parentId" label="邀请人工号"></el-table-column>
-			    <el-table-column prop="parentUid" label="邀请人ID"></el-table-column>
+			    <el-table-column prop="mobile" label="账号"></el-table-column>
+			    <el-table-column prop="identity" label="证件号"></el-table-column>
+			    <el-table-column label="申请时间">
+			    	<template scope="scope">
+			        	<span>{{scope.row.time?formatDate(scope.row.time):''}}</span>
+			      	</template>
+			    </el-table-column>
+			    <el-table-column prop="parentName" label="邀请人"></el-table-column>
+			    <el-table-column prop="parentMobile" label="邀请人手机号"></el-table-column>
 			    <el-table-column label="证件照片">
 			    	<template scope="scope">
 			        	<img :src="scope.row.identityFace">
 			        	<img :src="scope.row.identityBack">
-			      	</template>
-			    </el-table-column>
-			    <el-table-column label="申请时间">
-			    	<template scope="scope">
-			        	<span>{{scope.row.time?formatDate(scope.row.time):''}}</span>
 			      	</template>
 			    </el-table-column>
 			    <el-table-column label="操作">

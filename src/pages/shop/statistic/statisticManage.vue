@@ -42,7 +42,7 @@
 				<el-pagination v-if="pageCount2" @current-change="pageChange2" :current-page="currentPage2" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount2' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
 		  </el-tab-pane>
-		  <el-tab-pane label="业务员报表">
+		  <!-- <el-tab-pane label="业务员报表">
 		  	<div class="table3">
 				<label class="title">业务员报表</label>
 				<el-select v-model="option3" placeholder="请选择">
@@ -84,7 +84,7 @@
 
 				<el-pagination v-if="pageCount4" @current-change="pageChange4" :current-page="currentPage4" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount4' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
-		  </el-tab-pane>
+		  </el-tab-pane> -->
 		</el-tabs>
 	</div>
 </template>

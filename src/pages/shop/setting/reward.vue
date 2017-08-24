@@ -6,8 +6,8 @@
 		</el-breadcrumb>
 
 		<div class="topBar">
-			<el-button size="large" type="primary" v-if="viewMode == 1">规模奖励</el-button>
-			<el-button size="large" v-if="viewMode == 2" @click="guimoShow">规模奖励</el-button>
+			<el-button size="large" type="primary" v-if="viewMode == 1">月度规模奖励</el-button>
+			<el-button size="large" v-if="viewMode == 2" @click="guimoShow">月度规模奖励</el-button>
 			<el-button size="large" type="primary" v-if="viewMode == 2">管理奖励</el-button>
 			<el-button size="large" v-if="viewMode == 1" @click="guanliShow">管理奖励</el-button>
 			<div class="topBarR">
@@ -19,8 +19,8 @@
 		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox" v-if="viewMode == 1">
 		  <el-form-item class="appblock" label="团队层级:">
 		  	<el-radio class="radio" v-model="formSetting.teamDepth" label="1" value="1">一级</el-radio>
-  			<el-radio class="radio" v-model="formSetting.teamDepth" label="2" value="2">二级</el-radio>
-  			<el-radio class="radio" v-model="formSetting.teamDepth" label="3" value="3">三级</el-radio>
+  			<el-radio class="radio" v-model="formSetting.teamDepth" label="2" value="2">二级（含一级）</el-radio>
+  			<el-radio class="radio" v-model="formSetting.teamDepth" label="3" value="3">三级（含一、二级）</el-radio>
 		  </el-form-item>
 		</el-form>
 
@@ -34,7 +34,7 @@
 					<el-checkbox label="2" value="2">非营业货车</el-checkbox>
 					<el-checkbox label="4" value="4">营业客车</el-checkbox>
 					<el-checkbox label="8" value="8">营业货车</el-checkbox>
-					<el-checkbox label="16" value="16">其他</el-checkbox>
+					<el-checkbox label="16" value="16">特种车</el-checkbox>
 			  	</el-checkbox-group>
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
@@ -53,7 +53,7 @@
 					<el-checkbox label="256">非营业货车</el-checkbox>
 					<el-checkbox label="512">营业客车</el-checkbox>
 					<el-checkbox label="1024">营业货车</el-checkbox>
-					<el-checkbox label="2048">其他</el-checkbox>
+					<el-checkbox label="2048">特种车</el-checkbox>
 			  	</el-checkbox-group>
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
@@ -1067,8 +1067,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	}
 	.appbox{
 		.appblock{
-			width: 50%;
-			float: left;
+			width: 100%;
 		}
 	}
 	.guimoDataBox {

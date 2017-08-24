@@ -4,15 +4,21 @@
 		  	<el-breadcrumb-item>规模奖励审核</el-breadcrumb-item>
 		</el-breadcrumb>
 
+		<div class="toptool">
+			<span>统计间隔: </span>
+			<el-radio class="radio" v-model="radio" label="1">月度</el-radio>
+	  		<el-radio class="radio" v-model="radio" label="2">季度</el-radio>
+
+	  		<span class="labelSpan">月度/季度</span>
+	  		<el-select v-model="demo" placeholder="请选择">
+		    <el-option v-for="item in options" :label="item.label" :value="item.value"> </el-option>
+		</el-select>
+		</div>
+
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-	    		<el-table-column prop="employeeId" label="雇员号"></el-table-column>
-	    		<el-table-column prop="name" label="名字"></el-table-column>
-	    		<el-table-column label="总保费">
-	    			<template scope="scope">
-	    				<span>{{ scope.row.quota }}元</span>
-	    			</template>
-	    		</el-table-column>
+	    		<!-- <el-table-column prop="employeeId" label="雇员号"></el-table-column> -->
+	    		<el-table-column prop="name" label="团长"></el-table-column>
 	    		<el-table-column label="统计总保费">
 	    			<template scope="scope">
 	    				<span>{{ scope.row.SCQuota }}元</span>
@@ -23,29 +29,35 @@
 	    				<span>{{ scope.row.RCQuota }}元</span>
 	    			</template>
 	    		</el-table-column>
-	    		<el-table-column label="商业险比例">
+	    		<el-table-column label="商业险奖励比例">
 	    			<template scope="scope">
 	    				<span>{{ scope.row.CMRate / 10}}%</span>
 	    			</template>
 	    		</el-table-column>
-	    		<el-table-column label="交强险比例">
+	    		<el-table-column label="交强险奖励比例">
 	    			<template scope="scope">
 	    				<span>{{ scope.row.CORate / 10}}%</span>
 	    			</template>
 	    		</el-table-column>
-	    		<el-table-column label="审核状态">
+	    		<el-table-column label="团队成员量"></el-table-column>
+	    		<el-table-column label="团队保费总额">
+	    			<template scope="scope">
+	    				<span>{{ scope.row.quota }}元</span>
+	    			</template>
+	    		</el-table-column>
+	    		<el-table-column label="处理状态">
 	    			<template scope="scope">
 	    				<span>{{ scope.row.state == 'AUDIT'?'待审核':(scope.row.state == 'AGREE'?'同意':(scope.row.state == 'REJECT'?'拒绝':''))}}</span>
 	    			</template>
 	    		</el-table-column>
 	    		<el-table-column label="操作">
 	    			<template scope="scope">
-			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,true)">同意</el-button>
-			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,false)">拒绝</el-button>
-			      		<el-button type="text" size="small">
 						<router-link :to="{name:'shop-set-rewardVerifyDetail',query:{id:scope.row.employeeId}}">
 			      			查看流水
 			      		</router-link>
+			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,true)">同意</el-button>
+			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,false)">拒绝</el-button>
+			      		<el-button type="text" size="small">
 		      		</el-button>
 				    </template>
 	    		</el-table-column>
@@ -64,6 +76,9 @@ export default {
 	      currentPage: 1,
  		  pageSize: 10,
  		  total: null,
+ 		  radio: '1',
+ 		  demo: null,
+ 		  options: [],
 		}
 	  },
 	  methods: {
@@ -127,3 +142,13 @@ export default {
 	  }
 }
 </script>
+<style lang="less">
+	.toptool {
+		margin: 20px 0;
+		float: right;	
+		.labelSpan {
+			display: inline-block;
+			margin-left: 20px;
+		}
+	}
+</style>

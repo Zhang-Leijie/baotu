@@ -27,7 +27,7 @@
 			    <el-table-column label="操作">
 			    	<template scope="scope">
 			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id}}">
+			    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id, name:scope.row.name}}">
 			      			授权
 				      		</router-link>
 			    		</el-button>

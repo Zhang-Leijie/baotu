@@ -17,21 +17,32 @@
 			        	<img :src="scope.row.avatar">
 			      	</template>
 			    </el-table-column> -->
-			    <el-table-column prop="mobile" label="账号"></el-table-column>
-			    <el-table-column label="登录时间">
-			    	<template scope="scope">
-			    		<span>{{formatDate(scope.row.pcLoginTime)}}</span>
-			    	</template>
-			    </el-table-column>
-			     <el-table-column label="注册时间">
+			    <el-table-column prop="mobile" label="ID"></el-table-column>
+			    <el-table-column label="申请代理商数量"></el-table-column>
+			    <el-table-column label="注册时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.created)}}</span>
+			    	</template>
+			    </el-table-column>
+			    <el-table-column label="最后登录时间">
+			    	<template scope="scope">
+			    		<span>{{formatDate(scope.row.pcLoginTime)}}</span>
 			    	</template>
 			    </el-table-column>
 			    <!-- <el-table-column label="最近修改时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.updated)}}</span>
 			    	</template>
+			    </el-table-column> -->
+			    <el-table-column label="状态"></el-table-column>
+				<!-- <el-table-column label="操作">
+					<template scope="scope">
+						<el-button type="text" size="small">
+				    		<router-link :to="{name:'shop-user-permission',query:{id:scope.row.uid,name:scope.row.name}}">
+				      			授权
+				      		</router-link>
+			    		</el-button>
+				    </template>
 			    </el-table-column> -->
 			</el-table>
 			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>

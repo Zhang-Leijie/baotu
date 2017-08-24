@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="left-box">
-      <div class="logo" style="text-align:center;">
+      <div class="logo" style="text-align:center;" @click="gohome">
       	<!-- <router-link :to="{name:'product-menu'}"> -->
           <img src="../../assets/topLogo.png" style="height:70px;">
         <!-- </router-link> -->
@@ -12,7 +12,7 @@
             <el-menu-item index="1">账号管理</el-menu-item>
           </router-link> -->
           <el-submenu index="2">
-            <template slot="title">账号管理*</template>
+            <template slot="title">账号管理</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-shop-list'}" v-if="isAdmin">
                 <el-menu-item index="2-1" class="sub-title">商家管理</el-menu-item>
@@ -198,6 +198,9 @@ export default {
       // logout().then((res) => {
       //   router.push({name:"sign-in"})
       // })
+    },
+    gohome() {
+      router.push({name:"home"});
     }
   },
   mounted:function() {
@@ -315,6 +318,7 @@ export default {
         width: 100%;
         height: 80px;
         background-color: #2c4c6d;
+        cursor: pointer;
       }
       .el-menu-item, .el-submenu__title{
         color: #fff;

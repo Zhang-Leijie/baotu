@@ -18,8 +18,8 @@
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-				<el-table-column prop="id" label="ID"></el-table-column>
-				<el-table-column prop="uid" label="用户ID"></el-table-column>
+				<!-- <el-table-column prop="id" label="ID"></el-table-column> -->
+				<!-- <el-table-column prop="uid" label="用户ID"></el-table-column> -->
 				<el-table-column prop="name" label="姓名"></el-table-column>
 				<el-table-column prop="mobile" label="账号"></el-table-column>
 			    <!-- <el-table-column prop="role" label="角色"></el-table-column> -->
@@ -33,15 +33,18 @@
 			    		<span>{{payType(scope.row.mod)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column prop="parentId" label="上级工号"></el-table-column>
-			    <el-table-column prop="parentName" label="上级名字"></el-table-column>
-			    <el-table-column prop="parentUid" label="上级用户ID"></el-table-column>
-			    <el-table-column prop="parentMobile" label="上级手机号"></el-table-column>
+			    <!-- <el-table-column prop="parentId" label="上级工号"></el-table-column> -->
+			    <el-table-column prop="parentName" label="邀请人"></el-table-column>
+			    <!-- <el-table-column prop="parentUid" label="上级用户ID"></el-table-column> -->
+			    <!-- <el-table-column prop="parentMobile" label="上级手机号"></el-table-column> -->
 			    <el-table-column label="操作"> 
 			    	<template scope="scope">
 			      		<el-button type="text" size="small">
 							<router-link :to="{name:'shop-staff-edit',query:{id:scope.row.id}}">编辑</router-link>
 			      		</el-button>
+			      		<!-- <el-button type="text" size="small">
+							<router-link :to="{name:'shop-staff-permission',query:{id:scope.row.id,name:scope.row.name}}">授权</router-link>
+			      		</el-button> -->
 				        <!-- <el-button type="text" size="small">禁用</el-button>
 				        <el-button type="text" size="small">启用</el-button> -->
 			      	</template>

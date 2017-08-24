@@ -43,7 +43,7 @@
 				      		</router-link>
 			    		</el-button>
 			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'APPPermission',query:{id:scope.row.id}}">
+			    			<router-link :to="{name:'APPPermission',query:{id:scope.row.id, name:scope.row.name}}">
 			      			授权
 				      		</router-link>
 			    		</el-button>

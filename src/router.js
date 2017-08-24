@@ -162,6 +162,12 @@ const routes = [
                 require(['./pages/shop/user/userList.vue'],resolve)
             }
         },{
+            path: "/shop/user-permission",
+            name: 'shop-user-permission',
+            component(resolve) {
+                require(['./pages/shop/user/userPermission.vue'],resolve)
+            }
+        },{
             path: "/shop/verify",
             name: 'shop-verify',
             component(resolve) {
@@ -184,6 +190,12 @@ const routes = [
             name: 'shop-staff-edit',
             component(resolve) {
                 require(['./pages/shop/user/staffEdit.vue'],resolve)
+            }
+        },{
+            path: "/shop/staff-permission",
+            name: 'shop-staff-permission',
+            component(resolve) {
+                require(['./pages/shop/user/staffPermission.vue'],resolve)
             }
         },{
             path: "/shop/role-list",
@@ -220,6 +232,12 @@ const routes = [
             name: 'shop-shop-edit',
             component(resolve) {
                 require(['./pages/shop/user/shopEdit.vue'],resolve)
+            }
+        },{
+            path: "/shop/shop-permission",
+            name: 'shop-shop-permission',
+            component(resolve) {
+                require(['./pages/shop/user/shopPermission.vue'],resolve)
             }
         },{
             path: "/shop/order-autoinsurance",

@@ -1,14 +1,29 @@
 <template>
-	<div>
+	<div class="APPPermissionBody">
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'GMList'}">平台列表</el-breadcrumb-item>
-		  	<el-breadcrumb-item>平台授权</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'appList'}">平台列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item>平台授权-{{$route.query.name}}</el-breadcrumb-item>
 		</el-breadcrumb>
+
+		<div class="contentBox">
+			<el-tree
+			  :data="dataTree"
+			  show-checkbox
+			  default-expand-all
+			  node-key="id"
+			  ref="tree"
+			  highlight-current
+			  :props="defaultProps"
+			  :expand-on-click-node="false"
+			  :check-strictly="true"
+			  :default-checked-keys="choosed"
+			  @check-change="handleCheckChange">
+			</el-tree>
+		</div>
 		
 		<div style="margin-left: 120px;margin-top: 20px;">
 			<el-button @click="goback">取消</el-button>
-			<el-button type="primary" @click="comfirmAdd" v-if="!id">添加账号</el-button>
-			<el-button type="primary" @click="comfirmSave" v-if="id">保存修改</el-button>
+			<el-button type="primary" @click="comfirmSave">保存授权</el-button>
 		</div>
 	</div>
 </template>
@@ -19,8 +34,15 @@ import { masterApi } from '@/ajax/post.js'
 	    data() {
 	      return {
 	      	id: null,
-        	name: '',
-        	password: ''
+        	dataTree: [],
+        	dataTreeApp: {},
+        	dataTreeTenant: {},
+        	choosed: [],
+        	sourceData: {},	//数据缓存
+	        defaultProps: {
+	          children: 'children',
+	          label: 'label',
+	        },
 	      };
 	    },
 	    methods: {
@@ -36,46 +58,165 @@ import { masterApi } from '@/ajax/post.js'
 			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
 			},
 
-			comfirmAdd() {
-				if (this.name && this.password) {
-					let payload = {
-						name: this.name,
-						pwd: this.password,
-					}
-					payload = JSON.stringify(payload);
+			getInfo() {
+				masterApi({
+					action: 'modulars_app',
+					version: '1.0',
+				},window.localStorage.getItem('tokenPlate')).then((res)=> {
+					this.dataTreeApp = res.attach;
 					masterApi({
-						action: 'admin_edit',
+						action: 'modulars_tenant',
 						version: '1.0',
-						crudType: 1,
-						payload: payload
 					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						if (res.code == 0) {
-							this.$message({
-					            type: 'success',
-					            message: '添加管理员账号成功'
-					        });
-						    router.push({
-						  	  name: "GMList"
-						    })
+						this.dataTreeTenant = res.attach;
+						for (let item in this.dataTreeApp) {
+							res.attach[item] = this.dataTreeApp[item];
 						}
+						this.sourceData = res.attach;
+						this.drawTree(res.attach);
 					})
+				})
+			},
+
+			reload() {	//为了减少api请求次数使用的reload方法
+				this.drawTree(this.sourceData);
+			},
+
+			drawTree(nodeData) {
+				function deep(data,formData) {//递归处理数据,将对象转化成对象数组并精简数据
+					for (let children in data) {
+						let buf = {
+							id: data[children].node.id,
+							label: data[children].node.name,
+							children: []
+						}
+						formData.push(buf);
+						for (let i = 0; i < formData.length; i++) {
+							if (formData[i].id == children) {//判断子节点的归属
+								deep(data[children].children,formData[i].children,checkRepeat);
+							}
+						}
+					}
+				}
+				
+				let formData = [];
+				let checkRepeat = [];
+				deep(nodeData,formData);
+				this.dataTree = formData;
+				console.log(formData);
+			},
+
+			handleCheckChange(data, checked, indeterminate) {
+				//data:传递给 data 属性的数组中该节点所对应的对象、
+				//checked:节点本身是否被选中、
+				//indeterminate:节点的子树中是否有被选中的节点
+				if (checked) {
+					for (let i = 0; i < this.choosed.length; i++) {//基于树形控件的事件返回机制作出的补充,防止同一个id被push多次
+						if (this.choosed[i] == data.id) {
+							return
+						}
+					}
+					this.choosed.push(data.id);
+					//如果子节点被选中,父节点也被选中
+					function traversal(data,formData) {//遍历树的数据,展开并保留父子关系的记录
+						for (let i in data) {
+							formData.push(data[i]);
+							if (data[i].children) {
+							    traversal(data[i].children,formData);
+							}
+						}
+					}
+					let formData = [];
+					let parent = [];
+					traversal(this.dataTree,formData);
+					function findParent(data,id,parent) {//data为travelsal展开后的二维数据,id为子节点id,parent为寻找到的父节点id数组
+						for (let i = 0; i < data.length; i++) {
+							if (data[i].children) {
+								for (let j = 0; j < data[i].children.length; j++) {
+									if (data[i].children[j].id == id) {
+										parent.push(data[i].id);
+										findParent(data,data[i].id,parent);//找到父节点后,继续寻找父节点的父节点
+									}
+								}
+							}
+						}
+					}
+					findParent(formData,data.id,parent);
+					//parent 数组与 this.choosed数组去重合并
+					for (let i = 0; i < parent.length; i++) {
+						var isParentChoosed = false;
+						for (let j = 0; j < this.choosed.length; j++) {
+							if(this.choosed[j] == parent[i]) {
+								isParentChoosed = true;
+							}
+						}
+						if (!isParentChoosed) {
+							this.choosed.push(parent[i]);
+						}
+					}
 				}
 				else
 				{
-					this.$message({
-			            type: 'error',
-			            message: '信息填写不完整'
-			        });
+					for (let i = 0; i < this.choosed.length; i++) {
+						if (this.choosed[i] == data.id) {
+							this.choosed.splice(i,1)
+						}
+					}
+					//如果父节点被取消,子节点也被取消
+					function findChildren(data,children) {//data为以父节点所在的节点为根节点的树,children为父节点所有的子节点id数组
+						for (let i = 0; i < data.length; i++) {
+							children.push(data[i].id);
+							if (data[i].children) {
+								findChildren(data[i].children,children)
+							}
+						}
+					}
+					let children = [];
+					if (data.children) { //若父节点有子节点,则找出所有子节点
+						findChildren(data.children,children);
+					}
+					//去除子节点的选中状态(如果子节点id在choosed数组里的话)
+					for (let i = 0; i < children.length; i++) {
+						for (let j = 0; j < this.choosed.length; j++) {
+							if (this.choosed[j] == children[i]) {
+								this.choosed.splice(j,1);
+							}
+						}
+					}
 				}
+
+				this.reload();
+
+				//element的树形控件似乎无法像普通v-model值一样给出当前选择项,因此采用返回值统计,并通过每次选择后重新加载树形控件的方法,利用defaultChoosed属性同步数据与表现
+				//如果可以,希望使用控件自身提供的属性监听当前所选项
 			},
 
 			comfirmSave() {
+				let payload = {
+					tarId: this.id,
+					modulars: this.choosed,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'authorize_app',
+					version: '1.0',
+					payload: payload
+				},window.localStorage.getItem('tokenPlate')).then((res)=> {
+					this.$message({
+						message: '授予模块成功',
+						type: 'success',
+					});
 
+					router.push({
+				  	  name: "appList"
+				    });
+
+				})
 			},
 
 			goback() {
 				router.push({
-			  	  name: "GMList"
+			  	  name: "appList"
 			    })
 			}
 	    },
@@ -83,14 +224,15 @@ import { masterApi } from '@/ajax/post.js'
 	        if (this.$route.query.id) {
 	        	this.id = this.$route.query.id;
 	        }
+	        this.getInfo();
 	    }
 	}
 </script>
 <style lang="less">
-	.appbox{
-		.appblock{
-			width: 100%;
+	.APPPermissionBody{
+		.contentBox{
 			margin-top: 20px;
+			margin-left: 10px;
 		}
 	}
 </style>

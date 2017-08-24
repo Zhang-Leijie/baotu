@@ -58,6 +58,11 @@
 			      			编辑
 			      		</router-link>
 		      		</el-button>
+		      		<!-- <el-button type="text" size="small">
+						<router-link :to="{name:'shop-shop-permission',query:{id:scope.row.tid,name:scope.row.name}}">
+			      			授权
+			      		</router-link>
+		      		</el-button> -->
 			        <!-- <el-button type="text" size="small">禁用</el-button>
 			        <el-button type="text" size="small">启用</el-button>
 			        <el-button type="text" size="small">轮播图</el-button> -->
