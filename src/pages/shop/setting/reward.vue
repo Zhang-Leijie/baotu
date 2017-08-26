@@ -9,7 +9,7 @@
 			<el-button size="large" type="primary" v-if="viewMode == 1">月度规模奖励</el-button>
 			<el-button size="large" v-if="viewMode == 2" @click="guimoShow">月度规模奖励</el-button>
 			<el-button size="large" type="primary" v-if="viewMode == 2">管理奖励</el-button>
-			<el-button size="large" v-if="viewMode == 1" @click="guanliShow">管理奖励</el-button>
+			<el-button size="large" v-if="viewMode == 1" @click="guanliShow" :disabled="!formSetting.teamDepth">管理奖励</el-button>
 			<div class="topBarR">
 				<el-button type="primary" v-if="viewMode == 1" @click="guimoAccount" :disabled="true">统计规模结算</el-button>
 				<el-button type="primary" v-if="viewMode == 2" @click="guanliAccount" :disabled="true">管理奖励结算</el-button>
@@ -194,79 +194,38 @@
 					<span class="titleLabel">交强险</span>
 				</el-col>
 			</el-row>
-			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
-				<el-col :span="12">
-					<label class="titleLabel">非营业车-二级比例：</label>
-					<el-input v-model="guanli.shangyeData.N2.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.N2.key,guanli.shangyeData.N2.value,guanli.shangyeData.N2.origin,2,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N2.value == guanli.shangyeData.N2.origin)">确定</el-button> -->
-				</el-col>	
-				<el-col :span="12">
-					<label class="titleLabel">非营业车-二级比例：</label>
-					<el-input v-model="guanli.jiaoqiangData.N2.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N2.key,guanli.jiaoqiangData.N2.value,guanli.jiaoqiangData.N2.origin,2,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N2.value == guanli.jiaoqiangData.N2.origin)">确定</el-button> -->
-				</el-col>	
-			</el-row>
-			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
-				<el-col :span="12">
-					<label class="titleLabel">营业车-二级比例：</label>
-					<el-input v-model="guanli.shangyeData.Y2.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.Y2.key,guanli.shangyeData.Y2.value,guanli.shangyeData.Y2.origin,2,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y2.value == guanli.shangyeData.Y2.origin)">确定</el-button> -->
-				</el-col>
-				<el-col :span="12">
-					<label class="titleLabel">营业车-二级比例：</label>
-					<el-input v-model="guanli.jiaoqiangData.Y2.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y2.key,guanli.jiaoqiangData.Y2.value,guanli.jiaoqiangData.Y2.origin,2,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y2.value == guanli.jiaoqiangData.Y2.origin)">确定</el-button> -->
-				</el-col>
-			</el-row>
-			<el-row class="optionCol" v-if="formSetting.teamDepth >= 2">
-				<el-col :span="12">
-					<label class="titleLabel">其他车-二级比例：</label>
-					<el-input v-model="guanli.shangyeData.other2.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.other2.key,guanli.shangyeData.other2.value,guanli.shangyeData.other2.origin,2,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other2.value == guanli.shangyeData.other2.origin)">确定</el-button> -->
-				</el-col>
-				<el-col :span="12">
-					<label class="titleLabel">其他车-二级比例：</label>
-					<el-input v-model="guanli.jiaoqiangData.other2.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other2.key,guanli.jiaoqiangData.other2.value,guanli.jiaoqiangData.other2.origin,2,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other2.value == guanli.jiaoqiangData.other2.origin)">确定</el-button> -->
-				</el-col>
-			</el-row>
-
-			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
-				<el-col :span="12">
-					<label class="titleLabel">非营业车-三级比例：</label>
-					<el-input v-model="guanli.shangyeData.N3.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.N3.key,guanli.shangyeData.N3.value,guanli.shangyeData.N3.origin,3,'COMMERCIAL_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.N3.value == guanli.shangyeData.N3.origin)">确定</el-button> -->
-				</el-col>	
-				<el-col :span="12">
-					<label class="titleLabel">非营业车-三级比例：</label>
-					<el-input v-model="guanli.jiaoqiangData.N3.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.N3.key,guanli.jiaoqiangData.N3.value,guanli.jiaoqiangData.N3.origin,3,'COMPULSORY_NO_PROFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.N3.value == guanli.jiaoqiangData.N3.origin)">确定</el-button> -->
-				</el-col>	
-			</el-row>
-			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
-				<el-col :span="12">
-					<label class="titleLabel">营业车-三级比例：</label>
-					<el-input v-model="guanli.shangyeData.Y3.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.Y3.key,guanli.shangyeData.Y3.value,guanli.shangyeData.Y3.origin,3,'COMMERCIAL_PROFIT')" style="margin-left: 20px" v-show="!(guanli.shangyeData.Y3.value == guanli.shangyeData.Y3.origin)">确定</el-button> -->
-				</el-col>
-				<el-col :span="12">
-					<label class="titleLabel">营业车-三级比例：</label>
-					<el-input v-model="guanli.jiaoqiangData.Y3.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.Y3.key,guanli.jiaoqiangData.Y3.value,guanli.jiaoqiangData.Y3.origin,3,'COMPULSORY_PROTFIT')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.Y3.value == guanli.jiaoqiangData.Y3.origin)">确定</el-button> -->
-				</el-col>
-			</el-row>
-			<el-row class="optionCol" v-if="formSetting.teamDepth >= 3">
-				<el-col :span="12">
-					<label class="titleLabel">其他车-三级比例：</label>
-					<el-input v-model="guanli.shangyeData.other3.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.shangyeData.other3.key,guanli.shangyeData.other3.value,guanli.shangyeData.other3.origin,3,'COMMERCIAL_OTHER')" style="margin-left: 20px" v-show="!(guanli.shangyeData.other3.value == guanli.shangyeData.other3.origin)">确定</el-button> -->
-				</el-col>
-				<el-col :span="12">
-					<label class="titleLabel">其他车-三级比例：</label>
-					<el-input v-model="guanli.jiaoqiangData.other3.value" class="countTool"></el-input> %
-					<!-- <el-button @click="guanliConfirmEdit(guanli.jiaoqiangData.other3.key,guanli.jiaoqiangData.other3.value,guanli.jiaoqiangData.other3.origin,3,'COMPULSORY_OTHER')" style="margin-left: 20px" v-show="!(guanli.jiaoqiangData.other3.value == guanli.jiaoqiangData.other3.origin)">确定</el-button> -->
-				</el-col>
-			</el-row>
+			<div v-for="guanli in guanliData">
+				<el-row class="optionCol">
+					<el-col :span="12">
+						<label class="titleLabel">非营业车-{{guanli.shangye_N.depth}}级比例：</label>
+						<el-input v-model="guanli.shangye_N.value" class="countTool"></el-input> %
+					</el-col>	
+					<el-col :span="12">
+						<label class="titleLabel">非营业车-{{guanli.jiaoqiang_N.depth}}级比例：</label>
+						<el-input v-model="guanli.jiaoqiang_N.value" class="countTool"></el-input> %
+					</el-col>	
+				</el-row>
+				<el-row class="optionCol">
+					<el-col :span="12">
+						<label class="titleLabel">营业车-{{guanli.shangye_Y.depth}}级比例：</label>
+						<el-input v-model="guanli.shangye_Y.value" class="countTool"></el-input> %
+					</el-col>
+					<el-col :span="12">
+						<label class="titleLabel">营业车-{{guanli.jiaoqiang_Y.depth}}级比例：</label>
+						<el-input v-model="guanli.jiaoqiang_Y.value" class="countTool"></el-input> %
+					</el-col>
+				</el-row>
+				<el-row class="optionCol">
+					<el-col :span="12">
+						<label class="titleLabel">其他车-{{guanli.shangye_other.depth}}级比例：</label>
+						<el-input v-model="guanli.shangye_other.value" class="countTool"></el-input> %
+					</el-col>
+					<el-col :span="12">
+						<label class="titleLabel">其他车-{{guanli.jiaoqiang_other.depth}}级比例：</label>
+						<el-input v-model="guanli.jiaoqiang_other.value" class="countTool"></el-input> %
+					</el-col>
+				</el-row>
+			</div>
 		</div>
 			
 		<div style="clear:both"></div>
@@ -294,9 +253,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	        	bonusScaleCountInsuranceMod: [],		//规模佣金统计口径险种模值
 	        	bonusScaleRewardInsuranceMod: [], 		//规模佣金奖励口径险种模值
 	        },
-	        guanli: {
-	        	
-	        },
+	        guanliData: [],
 	        guimoData: [],
 	        guimoAdd: {
 	        	num: null,
@@ -379,100 +336,62 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       		this.getInfo();
 	       		this.getGuimo();
 	       	},
-	       	initGuanli() {
-	       		this.guanli = {
-		       			shangyeData: {
-		        		N2: {
-		        			key: null,
+	       	initGuanli(depth) {
+		       	this.guanliData = [];
+	       		for (var i = 2; i <= depth; i++) {
+	       			let buf = {
+		       			shangye_N: {
+		       				key: null,
 		        			value: 0,
 		        			origin: 0,
-		        			depth: 2,
+		        			depth: 0,
 		        			type: 'COMMERCIAL_NO_PROFIT'
-		        		},
-		        		Y2: {
-		        			key: null,
+		       			},
+		       			shangye_Y: {
+		       				key: null,
 		        			value: 0,
 		        			origin: 0,
-		        			depth: 2,
+		        			depth: 0,
 		        			type: 'COMMERCIAL_PROFIT'
-		        		},
-		        		N3: {
-		        			key: null,
+		       			},
+		       			shangye_other: {
+		       				key: null,
 		        			value: 0,
 		        			origin: 0,
-		        			depth: 3,
-		        			type: 'COMMERCIAL_NO_PROFIT'
-		        		},
-		        		Y3: {
-		        			key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 3,
-		        			type: 'COMMERCIAL_PROFIT'
-		        		},
-		        		other2: {
-		        			key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 2,
+		        			depth: 0,
 		        			type: 'COMMERCIAL_OTHER'
-		        		},
-		        		other3: {
-		        			key: null,
+		       			},
+		       			jiaoqiang_N: {
+		       				key: null,
 		        			value: 0,
 		        			origin: 0,
-		        			depth: 3,
-		        			type: 'COMMERCIAL_OTHER'
-		        		}
-		        	},
-		        	jiaoqiangData: {
-		        		N2: {
-		        			key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 2,
+		        			depth: 0,
 		        			type: 'COMPULSORY_NO_PROFIT'
-		        		},
-		        		Y2: {
-		        			key: null,
+		       			},
+		       			jiaoqiang_Y: {
+		       				key: null,
 		        			value: 0,
 		        			origin: 0,
-		        			depth: 2,
+		        			depth: 0,
 		        			type: 'COMPULSORY_PROTFIT'
-		        		},
-		        		N3: {
-		        			key: null,
+		       			},
+		       			jiaoqiang_other: {
+		       				key: null,
 		        			value: 0,
 		        			origin: 0,
-		        			depth: 3,
-		        			type: 'COMPULSORY_NO_PROFIT'
-		        		},
-		        		Y3: {
-		        			key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 3,
-		        			type: 'COMPULSORY_PROTFIT'
-		        		},
-		        		other2: {
-		        			key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 2,
+		        			depth: 0,
 		        			type: 'COMPULSORY_OTHER'
-		        		},
-		        		other3: {
-		        			key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 3,
-		        			type: 'COMPULSORY_OTHER'
-		        		}
-		        	}
+		       			}
+		       		}
+	       			for (let item in buf) {
+	       				buf[item].depth = i;
+	       			}
+	       			this.guanliData.push(buf);
 	       		}
+
 	       	},
 	       	getGuanli() {
-	       		this.initGuanli();
+	       		this.initGuanli(parseInt(this.formSetting.teamDepth));
 	       		let payload = {
 	       			employeeId: window.localStorage.getItem('employeeId')
 	       		}
@@ -485,86 +404,46 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		   			if (res.code == 0) {
 		   				if (res.attach) {
 		   					for (var i = 0; i < res.attach.length; i++) {
-		   						if(res.attach[i].depth == 2){
-		   							switch(res.attach[i].type){
+	   							if (res.attach[i].depth <= this.formSetting.teamDepth) {
+	   								switch(res.attach[i].type){
 		   							case 1:
-		   								//营利车商业险2级
-		   								this.guanli.shangyeData.Y2.value = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.Y2.origin = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.Y2.key = res.attach[i].key;
+		   								//营利车商业险
+		   								this.guanliData[res.attach[i].depth - 2].shangye_Y.value = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].shangye_Y.origin = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].shangye_Y.key = res.attach[i].key;
 		   								break;
 		   							case 2:
-		   								//盈利车交强险2级
-		   								this.guanli.jiaoqiangData.Y2.value = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.Y2.origin = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.Y2.key = res.attach[i].key;
+		   								//盈利车交强险
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.value = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.origin = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.key = res.attach[i].key;
 		   								break;
 		   							case 4:
-		   								//非营利车交强险2级
-		   								this.guanli.jiaoqiangData.N2.value = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.N2.origin = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.N2.key = res.attach[i].key;
+		   								//非营利车交强险
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.value = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.origin = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.key = res.attach[i].key;
 		   								break;
 		   							case 8:
-		   								//非营利车商业险2级
-		   								this.guanli.shangyeData.N2.value = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.N2.origin = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.N2.key = res.attach[i].key;
+		   								//非营利车商业险
+		   								this.guanliData[res.attach[i].depth - 2].shangye_N.value = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].shangye_N.origin = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].shangye_N.key = res.attach[i].key;
 		   								break;
 		   							case 16:
-		   								//其他2级
-		   								this.guanli.shangyeData.other2.value = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.other2.origin = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.other2.key = res.attach[i].key;
+		   								//其他商业险
+		   								this.guanliData[res.attach[i].depth - 2].shangye_other.value = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].shangye_other.origin = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].shangye_other.key = res.attach[i].key;
 		   								break;
 		   							case 32:
-		   								//其他2级
-		   								this.guanli.jiaoqiangData.other2.value = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.other2.origin = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.other2.key = res.attach[i].key;
+		   								//其他交强险
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.value = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.origin = res.attach[i].rate / 10;
+		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.key = res.attach[i].key;
 		   								break;
 		   							}
-		   						}
-		   						if(res.attach[i].depth == 3){
-		   							switch(res.attach[i].type){
-	   								case 1:
-	   									//营利车商业险3级
-	   									this.guanli.shangyeData.Y3.value = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.Y3.origin = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.Y3.key = res.attach[i].key;
-	   									break;
-	   								case 2:
-	   									//盈利车交强险3级
-	   									this.guanli.jiaoqiangData.Y3.value = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.Y3.origin = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.Y3.key = res.attach[i].key;
-	   									break;
-	   								case 4:
-	   									//非营利车交强险3级
-	   									this.guanli.jiaoqiangData.N3.value = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.N3.origin = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.N3.key = res.attach[i].key;
-	   									break;
-	   								case 8:
-	   									//非营利车商业险3级
-	   									this.guanli.shangyeData.N3.value = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.N3.origin = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.N3.key = res.attach[i].key;
-	   									break;
-	   								case 16:
-		   								//其他商业险3级
-		   								this.guanli.shangyeData.other3.value = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.other3.origin = res.attach[i].rate / 10;
-		   								this.guanli.shangyeData.other3.key = res.attach[i].key;
-		   								break;
-		   							case 32:
-		   								//其他交强险3级
-		   								this.guanli.jiaoqiangData.other3.value = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.other3.origin = res.attach[i].rate / 10;
-		   								this.guanli.jiaoqiangData.other3.key = res.attach[i].key;
-		   								break;
-		   							}
-		   						}
+	   							}
 		   					}
 		   				}
 		   			}
@@ -654,26 +533,22 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 				}      		
 	       	},
 	       	saveGuanli() {
-	       		for(let item in this.guanli.shangyeData) {
-	       			if (!(this.guanli.shangyeData[item].value == this.guanli.shangyeData[item].origin) && this.formSetting.teamDepth >= this.guanli.shangyeData[item].depth) {
-	       				this.guanliConfirmEdit(this.guanli.shangyeData[item].key,this.guanli.shangyeData[item].value,this.guanli.shangyeData[item].origin,this.guanli.shangyeData[item].depth,this.guanli.shangyeData[item].type);
-	       			}
-	       		}
-	       		for(let item in this.guanli.jiaoqiangData) {
-	       			if (!(this.guanli.jiaoqiangData[item].value == this.guanli.jiaoqiangData[item].origin) && this.formSetting.teamDepth >= this.guanli.jiaoqiangData[item].depth) {
-	       				this.guanliConfirmEdit(this.guanli.jiaoqiangData[item].key,this.guanli.jiaoqiangData[item].value,this.guanli.jiaoqiangData[item].origin,this.guanli.jiaoqiangData[item].depth,this.guanli.jiaoqiangData[item].type);
+	       		for (var i = 0; i < this.guanliData.length; i++) {
+	       			for(let item in this.guanliData[i]) {
+	       				if (!(this.guanliData[i][item].value == this.guanliData[i][item].origin) && this.formSetting.teamDepth >= this.guanliData[i][item].depth) {
+	       					this.guanliConfirmEdit(this.guanliData[i][item].key,this.guanliData[i][item].value,this.guanliData[i][item].origin,this.guanliData[i][item].depth,this.guanliData[i][item].type);
+	       				}
 	       			}
 	       		}
 	       	},
 	       	guanliConfirmEdit(id,val,origin,depth,type) {
 	       		if(this.isLegalNumber(val)){
-	       			if (val && origin) {//value/origin值不为零,操作为修改
+	       			if (parseInt(val * 10) && parseInt(origin * 10)) {//value/origin值不为零,操作为修改
 		       			let payload = {
 				   			employeeId: window.localStorage.getItem('employeeId'),
 		       				id: id,
 				   			rate: parseInt(val * 10),
 				   			teamDepth: depth,
-				   			// configType: this.reConfigType(type)
 				   			configType: type
 		       			}
 		       			payload = JSON.stringify(payload);
@@ -685,10 +560,14 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 				   		},window.localStorage.getItem('token')).then((res)=> {
 				   			if (res.code == 0) {
 		        				this.getGuanli();
+		        				this.$message({
+				       				message: '修改的设置已保存',
+				       				type: 'success',
+				       			});
 			       			}
 				   		})
 		       		}
-		       		else if (!val) {//value为零,操作为删除
+		       		else if (!parseInt(val * 10)) {//value为零,操作为删除
 		       			let payload = {
 				   			employeeId: window.localStorage.getItem('employeeId'),
 		       				id: id
@@ -702,15 +581,18 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 				   		},window.localStorage.getItem('token')).then((res)=> {
 				   			if (res.code == 0) {
 		        				this.getGuanli();
+		        				this.$message({
+				       				message: '修改的设置已保存',
+				       				type: 'success',
+				       			});
 			       			}
 				   		})
 		       		}
-		       		else if (!origin) {//origin为零,操作为新增
+		       		else if (!parseInt(origin * 10)) {//origin为零,操作为新增
 		       			let payload = {
 				   			employeeId: window.localStorage.getItem('employeeId'),
 				   			rate: parseInt(val * 10),
 				   			teamDepth: depth,
-				   			// configType: this.reConfigType(type)
 				   			configType: type,
 		       			}
 		       			payload = JSON.stringify(payload);
@@ -722,6 +604,10 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 				   		},window.localStorage.getItem('token')).then((res)=> {
 				   			if (res.code == 0) {
 		        				this.getGuanli();
+	        					this.$message({
+				       				message: '修改的设置已保存',
+				       				type: 'success',
+				       			});
 			       			}
 				   		})
 		       		}
@@ -928,29 +814,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 					// 	break;
 		    	}
 		    },
-		    reConfigType(val) {
-		    	switch(val)
-		    	{
-					case 1://营利车商业险
-						return "COMMERCIAL_PROFIT"
-						break;
-					case 2://盈利车交强险
-						return "COMPULSORY_PROTFIT"
-						break;
-					case 3://非营利车交强险
-						return "COMPULSORY_NO_PROFIT"
-						break;
-					case 4://非营利车商业险
-						return "COMMERCIAL_NO_PROFIT"
-						break;
-					case 5://其他商业险
-						return "COMMERCIAL_OTHER"
-						break;
-					case 7://其他交强险
-						return "COMPULSORY_OTHER"
-						break;
-		    	}
-		    },
 		    reModCount(mod) {
 		    	this.formSetting.bonusScaleCountMod = [];
 		    	this.formSetting.bonusScaleCountInsuranceMod = [];
@@ -1050,7 +913,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 		    }
 	    },
 	    mounted(){
-	        this.getGuanli();
 	        this.getGuimo();
 	        this.getInfo();
 	    }

@@ -9,6 +9,7 @@
 			<el-select v-model="insurerId" placeholder="请选择" v-if="!editing" @change="insurerChange">
 			    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
 			</el-select>
+			<el-button type="primary" @click="" style="margin-left:20px; float:right" :disabled="true">是否关联佣金调整系数</el-button>
 		</div>
 
 		<span class="labelText" v-if="!editing">请选择车型</span>
@@ -38,23 +39,18 @@
 					<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
-			<el-button type="primary" @click="" style="right:20px; position:absolute" :disabled="true">是否关联佣金调整系数</el-button>
 		</div>
 
 		<el-row class="commonSet" v-if="!editing">
 			<el-col :span="11">
 				<label class="titleLabel">基础佣金设置</label>
 				<el-row>
-					<el-col :span="4">
-						<span class="titleNext">商业险佣金比例</span>
-					</el-col>
-					<el-col :span="8">
+					<el-col :span="12">
+						<span class="titleNext">商业险佣金比例： </span>
 						<el-input v-model="baseCommission.shangye" class="countTool"></el-input> %
 					</el-col>
-					<el-col :span="4">
-						<span class="titleNext">交强险佣金比例</span>
-					</el-col>
-					<el-col :span="8">
+					<el-col :span="12">
+						<span class="titleNext">交强险佣金比例： </span>
 						<el-input v-model="baseCommission.jiaoqiang" class="countTool"></el-input> %
 					</el-col>
 				</el-row>
@@ -62,16 +58,12 @@
 			<el-col :span="11">
 				<label class="titleLabel">自留佣金设置</label>
 				<el-row>
-					<el-col :span="4">
-						<span class="titleNext">商业险佣金比例</span>
-					</el-col>
-					<el-col :span="8">
+					<el-col :span="12">
+						<span class="titleNext">商业险佣金比例： </span>
 						<el-input v-model="selfCommission.shangye" class="countTool"></el-input> %
 					</el-col>
-					<el-col :span="4">
-						<span class="titleNext">交强险佣金比例</span>
-					</el-col>
-					<el-col :span="8">
+					<el-col :span="12">
+						<span class="titleNext">交强险佣金比例： </span>
 						<el-input v-model="selfCommission.jiaoqiang" class="countTool"></el-input> %
 					</el-col>
 				</el-row>
@@ -1244,7 +1236,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			line-height: 30px;
 		}
 		.countTool {
-			width: 80% !important;
+			width: 100px;
+			display: inline-block;
 		}
 	}
 
