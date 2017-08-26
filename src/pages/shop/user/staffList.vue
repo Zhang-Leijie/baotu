@@ -35,7 +35,8 @@
 			    </el-table-column>
 			    <!-- <el-table-column prop="parentId" label="上级工号"></el-table-column> -->
 			    <el-table-column prop="parentName" label="邀请人"></el-table-column>
-			    <!-- <el-table-column prop="parentUid" label="上级用户ID"></el-table-column> -->
+			    <el-table-column prop="id" label="邀请码"></el-table-column>
+			    <!-- <el-table-column prop="parentUid" label="邀请码"></el-table-column> -->
 			    <!-- <el-table-column prop="parentMobile" label="上级手机号"></el-table-column> -->
 			    <el-table-column label="操作"> 
 			    	<template scope="scope">

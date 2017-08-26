@@ -37,8 +37,8 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			      	<template scope="scope">
-			        	<el-button type="text" size="small" @click="confirm(scope.row)">同意</el-button>
-			        	<el-button type="text" size="small" @click="refuse(scope.row)">拒绝</el-button>
+			        	<el-button type="text" size="small" @click="reject(scope.row,false)">同意</el-button>
+			        	<el-button type="text" size="small" @click="reject(scope.row,true)">拒绝</el-button>
 			      	</template>
 			    </el-table-column>
 			</el-table>
@@ -94,29 +94,13 @@ export default {
 	        this.currentPage = val;
 	        this.getInfo();
 	    },
-	    confirm(row) {
+	    reject(row,isReject) {
 	    	let payload = {
 	    		uid: row.uid,
-	    		reject: false,
+	    		reject: isReject,
 	    		employeeId: window.localStorage.getItem('employeeId'),
 	    	}
 	    	payload = JSON.stringify(payload);
-	  		autoApi({
-	   			action: 'apply_audit',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.getInfo();
-       			}
-	   		})
-	    },
-	    refuse(row) {
-	    	let payload = {
-	    		uid: row.uid,
-	    		reject: true,
-	    		employeeId: window.localStorage.getItem('employeeId'),
-	    	}
 	  		autoApi({
 	   			action: 'apply_audit',
 	   			version: '1.0',

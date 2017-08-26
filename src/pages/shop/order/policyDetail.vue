@@ -27,7 +27,7 @@
           </tr>
           <tr>
             <th>注册日期</th>
-            <td>{{ tableData.created }}</td>
+            <td>{{ tableData.enrollDate }}</td>
             <th>品牌型号</th>
             <td>{{ tableData.name }}</td>
             <th>是否过户车</th>
@@ -229,7 +229,7 @@ import { autoApi } from '@/ajax/post.js'
                   tableData.license = data.license;
                   tableData.engine = data.engine;
                   tableData.vin = data.vin;
-                  tableData.created = this.formatDate(res.attach.created);
+                  tableData.enrollDate = data.enrollDate;
                   tableData.name = data.name;
                   tableData.transfer = data.transfer;
                   tableData.price = data.price;

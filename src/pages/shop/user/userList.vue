@@ -17,7 +17,7 @@
 			        	<img :src="scope.row.avatar">
 			      	</template>
 			    </el-table-column> -->
-			    <el-table-column prop="mobile" label="ID"></el-table-column>
+			    <!-- <el-table-column prop="mobile" label="ID"></el-table-column> -->
 			    <el-table-column label="申请代理商数量"></el-table-column>
 			    <el-table-column label="注册时间">
 			    	<template scope="scope">

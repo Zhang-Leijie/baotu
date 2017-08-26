@@ -42,7 +42,7 @@
 				<el-pagination v-if="pageCount2" @current-change="pageChange2" :current-page="currentPage2" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount2' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
 		  </el-tab-pane>
-		  <!-- <el-tab-pane label="业务员报表">
+		  <el-tab-pane label="业务员报表" v-if="!isAdmin">
 		  	<div class="table3">
 				<label class="title">业务员报表</label>
 				<el-select v-model="option3" placeholder="请选择">
@@ -61,7 +61,7 @@
 				<el-pagination v-if="pageCount3" @current-change="pageChange3" :current-page="currentPage3" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount3' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
 		  </el-tab-pane>
-		  <el-tab-pane label="保单列表">
+		  <el-tab-pane label="保单列表" v-if="!isAdmin">
 		  	<div class="table4">
 				<label class="title">保单列表</label>
 				<el-date-picker v-model="date4" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
@@ -84,7 +84,7 @@
 
 				<el-pagination v-if="pageCount4" @current-change="pageChange4" :current-page="currentPage4" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount4' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
-		  </el-tab-pane> -->
+		  </el-tab-pane>
 		</el-tabs>
 	</div>
 </template>
@@ -187,7 +187,8 @@ require('echarts');
 	        pageCount3: null,
 	        pageCount4: null,
 	        sortType: false,
-	        sortCol: null
+	        sortCol: null,
+	        isAdmin: false,
 		}
 	  },
 	  methods: {
@@ -261,6 +262,7 @@ require('echarts');
 	  },
 	  mounted() {
 	  	this.initChart();
+	  	this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
 	  }
 	}
 </script>

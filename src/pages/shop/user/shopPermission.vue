@@ -64,11 +64,6 @@ import { autoApi } from '@/ajax/post.js'
 					this.sourceData = res.attach;
 					this.drawTree(res.attach);
 				})
-				
-			},
-
-			reload() {	//为了减少api请求次数使用的reload方法
-				this.drawTree(this.sourceData);
 			},
 
 			drawTree(nodeData) {
@@ -173,11 +168,10 @@ import { autoApi } from '@/ajax/post.js'
 						}
 					}
 				}
+				
+				this.$refs.tree.setCheckedKeys(this.choosed,false);
 
-				this.reload();
-
-				//element的树形控件似乎无法像普通v-model值一样给出当前选择项,因此采用事件统计,并通过每次选择后重新加载树形控件的方法,利用defaultChoosed属性同步数据与表现
-				//如果可以,希望使用控件自身提供的属性监听当前所选项
+				//因为element选中逻辑和需求不一致,因此重写了逻辑
 			},
 
 			comfirmSave() {

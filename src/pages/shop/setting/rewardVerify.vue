@@ -40,7 +40,7 @@
 	    			</template>
 	    		</el-table-column>
 	    		<el-table-column label="团队成员量"></el-table-column>
-	    		<el-table-column label="团队保费总额">
+	    		<el-table-column label="规模保费总额">
 	    			<template scope="scope">
 	    				<span>{{ scope.row.quota }}元</span>
 	    			</template>

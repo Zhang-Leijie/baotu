@@ -4,12 +4,14 @@
 		  	<el-breadcrumb-item>车险管理</el-breadcrumb-item>
 		</el-breadcrumb>
 
+		<span class="labelText" v-if="!editing">请选择保险公司</span>
 		<div class="topBar">
 			<el-select v-model="insurerId" placeholder="请选择" v-if="!editing" @change="insurerChange">
 			    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 		</div>
 
+		<span class="labelText" v-if="!editing">请选择车型</span>
 		<div class="dataBox" v-if="!editing">
 			<div class="dataBoxCol" key="box1">
 				<ul>
@@ -36,6 +38,7 @@
 					<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
+			<el-button type="primary" @click="" style="right:20px; position:absolute" :disabled="true">是否关联佣金调整系数</el-button>
 		</div>
 
 		<el-row class="commonSet" v-if="!editing">
@@ -1199,6 +1202,10 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 </script>
 <style lang="less">
 .autoInsuranceManage{
+	.labelText {
+		font-size: 16px;
+		font-weight: bold;
+	}
 	.topBar {
 		margin: 10px;
 	}

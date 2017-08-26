@@ -16,7 +16,7 @@
 			</div>
 		</div>
 
-		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox" v-if="viewMode == 1">
+		<el-form :label-position="labelPosition" label-width="180px" style="margin-top:20px;" class="appbox" v-if="viewMode == 1">
 		  <el-form-item class="appblock" label="团队层级:">
 		  	<el-radio class="radio" v-model="formSetting.teamDepth" label="1" value="1">一级</el-radio>
   			<el-radio class="radio" v-model="formSetting.teamDepth" label="2" value="2">二级（含一级）</el-radio>
@@ -26,15 +26,15 @@
 
 		<div style="clear:both"></div>
 
-		<el-form :label-position="labelPosition" label-width="120px" class="appbox" v-if="viewMode == 1">
-		    <el-form-item class="Btitle" label="统计口径:" style="margin-bottom:0px;"></el-form-item>
+		<el-form :label-position="labelPosition" label-width="180px" class="appbox" v-if="viewMode == 1">
+		    <el-form-item class="Btitle" label="规模保费统计口径:" style="margin-bottom:0px;"></el-form-item>
 		  	<el-form-item label="统计车型:">
 		  		<el-checkbox-group v-model="formSetting.bonusScaleCountMod">
 			    	<el-checkbox label="1" value="1">非营业客车</el-checkbox>
 					<el-checkbox label="2" value="2">非营业货车</el-checkbox>
 					<el-checkbox label="4" value="4">营业客车</el-checkbox>
 					<el-checkbox label="8" value="8">营业货车</el-checkbox>
-					<el-checkbox label="16" value="16">特种车</el-checkbox>
+					<el-checkbox label="16" value="16">其他</el-checkbox>
 			  	</el-checkbox-group>
 		  	</el-form-item>
 		  	<el-form-item label="统计险种:">
@@ -45,18 +45,18 @@
 		  	</el-form-item>
 		</el-form>
 		
-		<el-form :label-position="labelPosition" label-width="120px" class="appbox" v-if="viewMode == 1">
-		  	<el-form-item class="Btitle" label="奖励口径:" style="margin-bottom:0px;"></el-form-item>
-		  	<el-form-item label="统计车型:">
+		<el-form :label-position="labelPosition" label-width="180px" class="appbox" v-if="viewMode == 1">
+		  	<el-form-item class="Btitle" label="规模奖励对象:" style="margin-bottom:0px;"></el-form-item>
+		  	<el-form-item label="奖励车型:">
 				<el-checkbox-group v-model="formSetting.bonusScaleRewardMod">
 			    	<el-checkbox label="128">非营业客车</el-checkbox>
 					<el-checkbox label="256">非营业货车</el-checkbox>
 					<el-checkbox label="512">营业客车</el-checkbox>
 					<el-checkbox label="1024">营业货车</el-checkbox>
-					<el-checkbox label="2048">特种车</el-checkbox>
+					<el-checkbox label="2048">其他</el-checkbox>
 			  	</el-checkbox-group>
 		  	</el-form-item>
-		  	<el-form-item label="统计险种:">
+		  	<el-form-item label="奖励险种:">
 				<el-checkbox-group v-model="formSetting.bonusScaleRewardInsuranceMod">
 			    	<el-checkbox label="4096">商业险</el-checkbox>
 					<el-checkbox label="8192">交强险</el-checkbox>
