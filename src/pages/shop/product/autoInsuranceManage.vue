@@ -184,7 +184,6 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	  return   year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
 	}
 
-
 	export default {
 	  data() {
 	    return {

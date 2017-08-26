@@ -6,10 +6,8 @@
 		</el-breadcrumb>
 
 		<div class="topBar">
-			<el-button size="large" type="primary" v-if="viewMode == 1">月度规模奖励</el-button>
-			<el-button size="large" v-if="viewMode == 2" @click="guimoShow">月度规模奖励</el-button>
-			<el-button size="large" type="primary" v-if="viewMode == 2">管理奖励</el-button>
-			<el-button size="large" v-if="viewMode == 1" @click="guanliShow" :disabled="!formSetting.teamDepth">管理奖励</el-button>
+			<el-button size="large" :type="viewMode == 1?'primary':''" @click="guimoShow">月度规模奖励</el-button>
+			<el-button size="large" :type="viewMode == 2?'primary':''" @click="guanliShow" :disabled="!formSetting.teamDepth">管理奖励</el-button>
 			<div class="topBarR">
 				<el-button type="primary" v-if="viewMode == 1" @click="guimoAccount" :disabled="true">统计规模结算</el-button>
 				<el-button type="primary" v-if="viewMode == 2" @click="guanliAccount" :disabled="true">管理奖励结算</el-button>
