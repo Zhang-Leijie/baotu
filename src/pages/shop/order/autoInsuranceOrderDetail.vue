@@ -107,7 +107,7 @@
           </tr>
           <tr>
             <th>保费总金额</th>
-            <td colspan="2">{{ tableData.demo }}</td>
+            <td colspan="2">{{ tableData.schema.commericialTotal + tableData.schema.compulsiveTotal + tableData.schema.vehicleVesselTotal }}</td>
           </tr>
         </table>
 

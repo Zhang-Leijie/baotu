@@ -271,14 +271,13 @@ import { masterApi } from '@/ajax/post.js'
 						formData.push(buf);
 						for (let i = 0; i < formData.length; i++) {
 							if (formData[i].id == children) {//判断子节点的归属
-								deep(data[children].children,formData[i].children,checkRepeat);
+								deep(data[children].children,formData[i].children);
 							}
 						}
 					}
 				}
 
 				let formData = [];
-				let checkRepeat = [];
 				deep(nodeData,formData);
 				if (this.modularType == "BT") {
 					this.dataBT = formData;

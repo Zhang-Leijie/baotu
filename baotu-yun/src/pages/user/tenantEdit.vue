@@ -55,36 +55,9 @@
 		  	</el-form-item>
 		</el-form>
 
-		<!-- <el-breadcrumb separator="/">
-		  	<el-breadcrumb-item>壁虎配置</el-breadcrumb-item>
-		</el-breadcrumb> -->
-
-		<!-- <el-form label-width="120px" class="appbox">
-			<el-form-item class="appblock" label="gent:" v-if="(formBiHu.agent && formBiHu.key)">
-		    	<el-input type="text" style="width:150px;" v-model="formBiHu.agent" placeholder="请输入"></el-input>
-		  	</el-form-item>
-		  	<el-form-item class="appblock" label="gent:" v-if="isAddBiHu">
-		    	<el-input type="text" style="width:150px;" v-model="addBiHuData.agent" placeholder="请输入"></el-input>
-		  	</el-form-item>
-		  	<el-form-item class="appblock" label="key:" v-if="(formBiHu.agent && formBiHu.key)">
-		    	<el-input type="text" style="width:150px;" v-model="formBiHu.key" placeholder="请输入"></el-input>
-		  	</el-form-item>
-		  	<el-form-item class="appblock" label="key:" v-if="isAddBiHu">
-		    	<el-input type="text" style="width:150px;" v-model="addBiHuData.key" placeholder="请输入"></el-input>
-		  	</el-form-item>
-		</el-form> -->
-
 		<div style="clear: both;"></div>
 
 		<div style="margin-bottom: 20px;">
-			<!-- <div class="toolBar">
-				<div class="toolBarR">
-					<el-button type="primary" @click="addBiHu" v-if="!(formBiHu.agent && formBiHu.key)">开通壁虎</el-button>
-					<el-button type="primary" @click="saveBiHu" v-if="formBiHu.agent && formBiHu.key">保存配置</el-button>
-					<el-button type="primary" @click="deleteBiHu" v-if="formBiHu.agent && formBiHu.key">关闭壁虎</el-button>
-				</div>
-			</div> -->
-
 			<el-breadcrumb separator="/">
 			  	<el-breadcrumb-item>险企信息</el-breadcrumb-item>
 			</el-breadcrumb>
@@ -96,6 +69,9 @@
 			</div>
 		</div>
 
+		<el-breadcrumb separator="/">
+		  	<el-breadcrumb-item>报价险企列表</el-breadcrumb-item>
+		</el-breadcrumb>
 		<div class="tableBox">
 			<el-table :data="formData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="key" label="路由ID"></el-table-column>
@@ -110,12 +86,12 @@
 						</el-select>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column label="简捷ID">
+			    <!-- <el-table-column label="简捷ID">
 			    	<template scope="scope">
 			    		<span v-if="!(isEdit && editedId === scope.row.key)">{{scope.row.jianJieId?scope.row.jianJieId:"未绑定"}}</span>
 			    		<el-input v-model="formEdit.jianJieId" v-if="isEdit && editedId === scope.row.key"></el-input>
 			    	</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <!-- <el-table-column label="险企图标地址">
 			    	<template scope="scope">
 		            	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
@@ -144,6 +120,30 @@
 			    </el-table-column>
 			</el-table>
 			<el-pagination v-if="pageCount" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount' style="margin:20px auto;text-align:center"></el-pagination>
+		</div>
+
+		<div class="toolBar">
+			<div class="toolBarR">
+				<el-button type="primary" @click="dialogTableVisibleJianjie = true">新增</el-button>
+			</div>
+		</div>
+
+		<el-breadcrumb separator="/">
+		  	<el-breadcrumb-item>保单险企列表</el-breadcrumb-item>
+		</el-breadcrumb>
+		<div class="tableBox">
+			<el-table :data="formDataJianjie" border style="width: 100%;font-size:12px;">
+			    <el-table-column prop="id" label="ID"></el-table-column>
+			    <el-table-column prop="companyId" label="公司ID"></el-table-column>
+			    <el-table-column prop="insurerId" label="险企ID"></el-table-column>
+			    <el-table-column prop="insurerName" label="险企名称"></el-table-column>
+			    <el-table-column label="操作">
+			    	<template scope="scope">
+			    		<el-button type="text" @click="deleteJianjie(scope.row)">删除</el-button>
+			    	</template>
+			    </el-table-column>
+			</el-table>
+			<el-pagination v-if="pageCountJianjie" @current-change="pageChangeJianjie" :current-page="currentPageJianjie" :page-size="pageSizeJianjie" layout="total , prev, pager, next, jumper" :page-count='pageCountJianjie' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 
 		<div class="toolBar">
@@ -180,6 +180,24 @@
 				<el-button type="primary" @click="comfirmAdd">添加路由</el-button>
 			</div>
 		</el-dialog>
+
+		<el-dialog title="新增" :visible.sync="dialogTableVisibleJianjie">
+			<el-form label-width="120px" class="appbox">
+			  	<el-form-item class="appblock" label="险企ID:">
+			  		<span v-show="!formAddJianjie.insurerId" style="color: red;">*</span>
+			    	<el-input type="text" style="width:150px;" v-model="formAddJianjie.insurerId" placeholder="请输入ID"></el-input>
+			  	</el-form-item>
+			  	<el-form-item class="appblock" label="简捷ID:">
+			  		<span v-show="!formAddJianjie.companyId" style="color: red;">*</span>
+			    	<el-input type="text" style="width:150px;" v-model="formAddJianjie.companyId" placeholder="请输入ID"></el-input>
+			  	</el-form-item>
+			</el-form>
+			<div style="clear:both"></div>
+			<div style="text-align:center;margin-top:20px;">
+				<el-button @click="goback">取消</el-button>
+				<el-button type="primary" @click="comfirmAddJianjie">添加</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 <script>
@@ -198,6 +216,13 @@ import { masterApi } from '@/ajax/post.js'
 		    insurerList: [],			//险企列表数据
 		    formData: [],				//分页路由列表数据
 		    dialogTableVisible: false,
+		    currentPageJianjie: 1,
+		    pageCountJianjie: null,
+		    lengthJianjie: null,
+		    pageSizeJianjie: 10,
+		    tableDataJianjie: [],		//简捷(保单)列表数据
+		    formDataJianjie: [],		//分页简捷列表数据
+		    dialogTableVisibleJianjie: false,
 		    formBiHu: {
 	        	agent: null,
 	        	key: null
@@ -207,15 +232,16 @@ import { masterApi } from '@/ajax/post.js'
 		    	leBaoBaUsername: null,
 		    	leBaoBaPassword: null,
 		    },
-		    // addBiHuData: {
-	     //    	agent: null,
-	     //    	key: null
-		    // },
 		    formAdd: {
 	      		tid: null,
 	        	laneId: null,
 	        	insurerId: null,
 	        	jianJieId: null,
+		    },
+		    formAddJianjie: {
+	      		tid: null,
+	        	insurerId: null,
+	        	companyId: null,
 		    },
 		    addBuf: [],
 	      	formEdit: {
@@ -292,133 +318,24 @@ import { masterApi } from '@/ajax/post.js'
 	   		})
 		},
 
-		// getTenantInfo() {
-		// 	let payload = {
-		// 		id: this.tid
-		// 	};
-		// 	payload = JSON.stringify(payload);
-		// 	masterApi({
-	 //   			action: 'tenant_info',
-	 //   			version: '1.0',
-	 //   			payload: payload
-	 //   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	 //   			if (res.code == 0) {
-	 //   				this.tenantData = res.attach
-  //      			}
-	 //   		})
-		// },
-
-	 //  	getRouterInfo() {
-	 //  		masterApi({
-	 //   			action: 'routes',
-	 //   			version: '1.0',
-	 //   			tid: this.tid
-	 //   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	 //   			if (res.code == 0) {
-	 //   				if (res.attach) {
-	 //   					this.tableData = res.attach;
-	 //   					this.length = res.attach.length;
-	 //   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-	 //   					this.showPage();
-	 //  					this.getInsurerList();
-	 //   				}
-  //      			}
-	 //   		})
-	 //  	},
-
-	 //  	getBiHuInfo() {
-	 //  		let payload = {
-	 //  			id: this.tid
-	 //  		}
-	 //  		payload = JSON.stringify(payload);
-	 //  		masterApi({
-	 //   			action: 'bi_hu_tenant_config',
-	 //   			version: '1.0',
-	 //   			payload: payload
-	 //   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	 //   			if (res.code == 0) {
-	 //   				if (res.attach) {
-	 //   					this.formBiHu.agent = res.attach.agent;
-	 //   					this.formBiHu.key = res.attach.key;
-	 //   				}
-  //      			}
-	 //   		})
-	 //  	},
-
-	  	// saveBiHu() {
-	  	// 	let payload = {
-	  	// 		tid: this.tid,
-	  	// 		key: this.formBiHu.key,
-	  	// 		agent: this.formBiHu.agent
-	  	// 	}
-	  	// 	payload = JSON.stringify(payload);
-	  	// 	masterApi({
-	   // 			action: 'bi_hu_tenant_config_edit',
-	   // 			version: '1.0',
-	   // 			crudType: 4,
-	   // 			payload: payload
-	   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   // 			if (res.code == 0) {
-   	// 				this.getBiHuInfo();
-   	// 				this.$message({
-   	// 					message: '壁虎配置成功',
-   	// 					type: 'success'
-   	// 				});
-    //    			}
-	   // 		})
-	  	// },	
-
-	  	// addBiHu() {
-	  	// 	this.isAddBiHu = true;
-	  	// 	if (this.addBiHuData.agent && this.addBiHuData.key) {
-	  	// 		let payload = {
-		  // 			tid: this.tid,
-		  // 			key: this.addBiHuData.key,
-		  // 			agent: this.addBiHuData.agent
-		  // 		}
-		  // 		payload = JSON.stringify(payload);
-		  // 		masterApi({
-		  //  			action: 'bi_hu_tenant_config_edit',
-		  //  			version: '1.0',
-		  //  			crudType: 1,
-		  //  			payload: payload
-		  //  		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		  //  			if (res.code == 0) {
-		  //  				this.addBiHuData.agent = null;
-		  //  				this.addBiHuData.key = null;
-		  //  				this.isAddBiHu = false;
-	   // 					this.getBiHuInfo();
-	   // 					this.$message({
-	   // 						message: '关联壁虎成功',
-	   // 						type: 'success'
-	   // 					});
-	   //     			}
-		  //  		})
-	  	// 	}
-	  	// },	
-
-	  	// deleteBiHu() {
-	  	// 	let payload = {
-	  	// 		tid: this.tid
-	  	// 	}
-	  	// 	payload = JSON.stringify(payload);
-	  	// 	masterApi({
-	   // 			action: 'bi_hu_tenant_config_edit',
-	   // 			version: '1.0',
-	   // 			crudType: 8,
-	   // 			payload: payload
-	   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   // 			if (res.code == 0) {
-	   // 				this.formBiHu.agent = null;
-	   // 				this.formBiHu.key = null;
-	   // 				this.$message({
-   	// 					message: '壁虎已关闭',
-   	// 					type: 'success'
-   	// 				});
-   	// 				this.getBiHuInfo();
-    //    			}
-	   // 		})
-	  	// },	
+		getInfoJianjie() {
+			let payload = {
+				id: this.tid
+			};
+			payload = JSON.stringify(payload);
+			masterApi({
+	   			action: 'jian_jie_insurers',
+	   			version: '1.0',
+	   			payload: payload
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	   			if (res.code == 0) {
+	   				this.tableDataJianjie = res.attach;
+   					this.lengthJianjie = res.attach.length;
+   					this.pageCountJianjie = parseInt((this.lengthJianjie - 1) / this.pageSizeJianjie) + 1;
+   					this.showPageJianjie();
+       			}
+	   		})
+		},
 
 	  	getInsurerList() {
 	  		let payload = {};
@@ -483,22 +400,37 @@ import { masterApi } from '@/ajax/post.js'
 	  			this.tableData.push(buf);
 	  			this.addBuf.push(buf);
 	  			this.showPage();
-	  			// masterApi({
-		   	// 		action: 'route_edit',
-		   	// 		version: '1.0',
-		   	// 		crudType: 1,
-		   	// 		lane: this.formAdd.laneId,
-		   	// 		tid: this.tid,
-		   	// 		id: this.formAdd.insurerId,
-		   	// 		jianJieId: this.formAdd.jianJieId
-		   	// 	},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   	// 		if (res.code == 0) {
-		   	// 			for(let item in this.formAdd) {
-		   	// 				this.formAdd[item] = null;
-		   	// 			}
-		   	// 			this.getRouterInfo();
-	     //   			}
-		   	// 	})
+	  		}
+	  		else
+	  		{
+	  			 this.$message({
+		            type: 'error',
+		            message: '选择信息不完整,请检查'
+		          });    
+
+	  		}
+	  			this.saveAll();
+	  	},
+
+	  	comfirmAddJianjie() {
+	  		this.dialogTableVisibleJianjie = false;
+	  		if (this.formAddJianjie.insurerId && this.formAddJianjie.companyId) {
+	  			let payload = {
+	  				insurerId: this.formAddJianjie.insurerId,
+	  				companyId: this.formAddJianjie.companyId,
+	  				tid: this.tid,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			masterApi({
+		   			action: 'jian_jie_insurer_edit',
+		   			version: '1.0',
+		   			crudType: 1,
+		   			payload: payload
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.getInfoJianjie();
+	       			}
+		   		})
 	  		}
 	  		else
 	  		{
@@ -512,6 +444,7 @@ import { masterApi } from '@/ajax/post.js'
 
 	  	goback() {
 	  		this.dialogTableVisible = false;
+	  		this.dialogTableVisibleJianjie = false;
 	  	},
 
 	  	showPage() {
@@ -534,7 +467,32 @@ import { masterApi } from '@/ajax/post.js'
 	  		}
 	  	},
 
+	  	showPageJianjie() {
+	  		this.formDataJianjie = [];
+	  		if(this.lengthJianjie * this.pageCountJianjie < this.pageSizeJianjie * this.currentPageJianjie)
+	  		{
+	  			for (let i = 0; i < this.tableDataJianjie.length; i++) {
+	  				if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie) {
+	  					this.formDataJianjie.push(this.tableDataJianjie[i])
+	  				}
+	  			}
+	  		}
+	  		else
+	  		{
+	  			for (let i = 0; i < this.tableDataJianjie.length; i++) {
+	  				if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie && i < this.currentPageJianjie * this.pageSizeJianjie) {
+	  					this.formDataJianjie.push(this.tableDataJianjie[i])
+	  				}
+	  			}
+	  		}
+	  	},
+
 	  	pageChange(pg) {
+	  		this.currentPage = pg;
+	        this.showPage(); 
+	    },
+
+	  	pageChangeJianjie(pg) {
 	  		this.currentPage = pg;
 	        this.showPage(); 
 	    },
@@ -583,7 +541,7 @@ import { masterApi } from '@/ajax/post.js'
 	    },
 
 	    deleteRoute(row) {
-	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+	    	this.$confirm('此操作将执行删除, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
 	          cancelButtonText: '取消',
 	          type: 'warning'
@@ -594,6 +552,7 @@ import { masterApi } from '@/ajax/post.js'
 	        		}
 	        	}
 	        	this.deleteBuf.push(row.key);
+	        	this.saveAll();
 	    		// masterApi({
 		   		// 	action: 'route_edit',
 		   		// 	version: '1.0',
@@ -605,6 +564,34 @@ import { masterApi } from '@/ajax/post.js'
 	      //  			}
 		   		// })
 	  			this.showPage();
+	        }).catch(() => {
+	          this.$message({
+	            type: 'info',
+	            message: '已取消删除'
+	          });          
+	        }); 
+	    },
+
+	    deleteJianjie(row) {
+	    	this.$confirm('此操作将执行删除, 是否继续?', '提示', {
+	          confirmButtonText: '确定',
+	          cancelButtonText: '取消',
+	          type: 'warning'
+	        }).then(() => {
+	        	let payload = {
+		    		id: row.id
+		    	}
+		    	payload = JSON.stringify(payload);
+		    	masterApi({
+		   			action: 'jian_jie_insurer_edit',
+		   			version: '1.0',
+		   			crudType: 8,
+		   			payload: payload,
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.getInfoJianjie();
+	       			}
+		   		})
 	        }).catch(() => {
 	          this.$message({
 	            type: 'info',
@@ -670,6 +657,7 @@ import { masterApi } from '@/ajax/post.js'
 	  		// this.getTenantInfo();
 	  		// this.getBiHuInfo();
 	  		this.getInfo();
+	  		this.getInfoJianjie();
         }
 	}
 }

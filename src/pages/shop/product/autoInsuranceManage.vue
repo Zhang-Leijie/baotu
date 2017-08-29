@@ -39,9 +39,14 @@
 					<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
 				</ul>
 			</div>
+			<!-- <div class="dataBoxCol" v-for="formData,index in formRouterData">
+				<ul>
+					<li v-for="i in formData" @click="enterToNext(i,index)" :class="chooseds[index] === i.value?'choosedList':''">{{i.label}}</li>
+				</ul>
+			</div> -->
 		</div>
 
-		<el-row class="commonSet" v-if="!editing">
+		<!-- <el-row class="commonSet" v-if="!editing">
 			<el-col :span="11">
 				<label class="titleLabel">基础佣金设置</label>
 				<el-row>
@@ -68,11 +73,87 @@
 					</el-col>
 				</el-row>
 			</el-col>
-		</el-row>
+		</el-row> -->
 
 		<span style="font-size: 20px; margin-top:20px; display: inline-block" v-if="!editing">佣金调整系数</span>
 
-		<el-row class="tableBox" v-if="!editing">
+		<el-menu class="el-menu-demo" mode="horizontal" @select="selectMenu" @open="openMenu" menu-trigger="click">
+		  <el-menu-item :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="!item.children[0]">{{item.name}}</el-menu-item>
+		  <el-submenu :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="item.children[0]">
+		    <template slot="title">{{item.name}}</template>
+		    <el-menu-item :index="child.cfgCoefficientId.toString()" v-for="child in item.children">{{child.name}}</el-menu-item>
+		  </el-submenu>
+		</el-menu>
+
+		<span>当前系数：{{currentRange}}</span>
+
+
+		<!-- <div v-show="tableData[0]">
+			<el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
+			  <el-radio-button :label="false">展开</el-radio-button>
+			  <el-radio-button :label="true">收起</el-radio-button>
+			</el-radio-group>
+			<el-menu mode="horizontal" :collapse="isCollapse" class="el-menu-vertical-demo" menu-trigger="click" :unique-opened="true" theme="dark" @select="selectMenu" @open="openMenu">
+		      <el-submenu :index="item.cfgCoefficientId.toString()" v-for="item in tableData">
+		        <template slot="title">
+		          <i class="el-icon-setting"></i>
+		          <span slot="title">{{item.name}}</span>
+		        </template>
+		        <template v-if="!item.children[0]">
+		        	<el-menu-item-group>
+			          <span slot="title">{{item.name}}</span>
+			          <el-menu-item :index="range.id.toString()" v-for="range in item.ranges">{{range.name}}</el-menu-item>
+			        </el-menu-item-group>
+		        </template>
+		        <template v-else>
+		        	<el-menu-item-group>
+		        		<span slot="title">{{item.name}}</span>
+		        		<el-submenu :index="child.cfgCoefficientId.toString()" v-for="child in item.children" style="width: 200px">
+					        <span slot="title">{{child.name}}</span>
+				        	<el-menu-item-group>
+				        		<span slot="title">{{child.name}}</span>
+				        		<el-menu-item :index="range.id.toString()" v-for="range in child.ranges">{{range.name}}</el-menu-item>
+				        	</el-menu-item-group>
+				        </el-submenu>
+		        	</el-menu-item-group>
+		        </template>
+		      </el-submenu>
+		    </el-menu>
+		</div> -->
+
+		<div class="confirmBoxR" v-if="isCustom">
+			<el-button type="danger" size="large" @click="dialogAddVisible">新增</el-button>
+		</div>
+
+		<div class="tableBox">
+			<el-table :data="rangeData" border style="width: 100%;font-size:12px;">
+			    <!-- <el-table-column prop="id" label="序号"></el-table-column> -->
+			    <el-table-column prop="name" label="系数名称"></el-table-column>
+			    <el-table-column label="佣金比例">
+			    	<template scope="scope">
+			    		<span v-if="!(editedRange.id == scope.row.id)">{{scope.row.rate}}</span>
+			    		<el-input v-if="editedRange.id && (editedRange.id == scope.row.id)"></el-input>
+			    	</template>
+			    </el-table-column>
+			    <el-table-column label="操作">
+			    	<template scope="scope">
+			    		<el-button @click="editRange(scope.row)" v-if="!editedRange.id">编辑</el-button>
+			    		<el-button @click="confirmEditRange(scope.row)" v-if="editedRange.id && (editedRange.id == scope.row.id)">确认</el-button>
+			    	</template>
+			    </el-table-column>
+			    <!-- <el-table-column label="比较器类型">
+			    	<template scope="scope">
+			    		<span>{{reComparisonName(scope.row.comparison)}}</span>
+			    	</template>
+			    </el-table-column>
+			    <el-table-column label="比较器数值">
+			    	<template scope="scope">
+			    		<span>{{comparisonValueShow(scope.row)}}</span>
+			    	</template>
+			    </el-table-column> -->
+			</el-table>
+		</div>
+		<!-- <el-row class="tableBox" v-if="!editing">
 		    <el-col :span="24">
 		        <el-table :data="tableData" border style="width: 100%">
 		          	<el-table-column label="系数类型名">
@@ -110,9 +191,9 @@
 		            </el-table-column>
 		        </el-table>
 		    </el-col>
-		</el-row>
+		</el-row> -->
 
-		<el-row class="tableBox" v-if="tenantId.employeeId && editing">
+		<!-- <el-row class="tableBox" v-if="tenantId.employeeId && editing">
 		    <el-col :span="24">
 		        <el-table :data="editData" border style="width: 100%">
 		          	<el-table-column label="系数类型名">
@@ -155,17 +236,58 @@
 		            </el-table-column>
 		        </el-table>
 		    </el-col>
-		</el-row>
+		</el-row> -->
 
-		<div class="confirmBoxL" v-if="tenantId.employeeId">
+		<!-- <div class="confirmBoxL" v-if="tenantId.employeeId">
 			<el-button type="primary" size="large" @click="editMode" v-if="!editing">编辑系数</el-button>
 			<el-button size="large" @click="endEditMode" v-if="editing">完成编辑</el-button>
-		</div>
+		</div> -->
 
-		<div class="confirmBoxR" v-if="insurerId && choosed && !editing">
+		<div class="confirmBoxR" v-if="insurerId && choosed">
 			<el-button type="danger" size="large" @click="confirmSetDelete">删除</el-button>
 			<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
 		</div>
+
+		<el-dialog title="编辑" :visible.sync="dialogAddVisible" size="small" :before-close="handleEditClose">
+			<el-row>
+				<el-col :span="8">
+	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择">
+						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+	  			</el-col>
+	  			<el-col :span="9">
+	  				<el-row>
+	  					<el-col :span="6">
+	  						<span style="line-height: 30px;">区间数值: </span>
+	  					</el-col>
+	  					<el-col :span="16">
+	  						<el-input v-model="guimoEdit.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoEdit.comparison == 2"></el-input>
+			  				<el-row v-if="guimoEdit.comparison == 8">
+			  					<el-col :span="10">
+			  						<el-input v-model="guimoEdit.comparableValueA" style="width: 100%"></el-input>
+			  					</el-col>
+			  					<el-col :span="4" style="display: flex; justify-content:center;">
+			  						<span style="line-height: 36px;">--</span>
+			  					</el-col>
+			  					<el-col :span="10">
+			  						<el-input v-model="guimoEdit.comparableValueB" style="width: 100%"></el-input>
+			  					</el-col>
+			  				</el-row>
+	  					</el-col>
+	  				</el-row>
+	  			</el-col>
+	  			<el-col :span="7">
+	  				<span class="dataFont">系数名称: </span>
+	  				<el-input v-model="guimoEdit.num" style="width: 120px;"></el-input> 
+	  				<span class="dataFont">%</span>
+	  			</el-col>
+			</el-row>
+		    <div slot="footer" class="dialog-footer">
+		        <el-button @click="handleEditClose">取 消</el-button>
+		        <el-button type="primary" @click="guimoConfirmEdit">确 定</el-button>
+		    </div>
+		</el-dialog>
+
 	</div>
 </template>
 <script>
@@ -190,6 +312,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      originData: [],		//路由原始数据
 	      choosed: null,		//当前路由选择
 	      chooseds: [],			//路由选择列表
+	      formRouterData: [],
 	      formData1: [],		//1-4级路由数据
 	      formData2: [],
 	      formData3: [],
@@ -204,6 +327,9 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	jiaoqiang: null
 	      },
 	      tableData: [],
+	      rangeData: [],	//选中系数的数据
+	      currentRange: null,	//当前选中系数的名称
+	      isCustom: false,	//当前选中系数是否可编辑
 	      tenantId: {},		//当前选择代理商ID	
 	      // tenants: [],			//代理商列表数据
 	      insurerId: null,		//当前选择险企ID
@@ -223,6 +349,15 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      editing: false,	//系数编辑模式
 	      editData: [],
 	      isEdited: null,	//被编辑的系数id
+	      editedRange: {
+	      	id: null,
+	      	rate: null,
+	      },
+	      addedRange: {
+	      	id: null,
+	      	rate: null,
+	      },
+	      dialogAddVisible: false,
 	      isAdded: null,	//被添加的系数
 	      comparisons: [
 	      	{
@@ -269,7 +404,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	// 	value: 11,
 	      	// 	label: "不在 ... 之中"
 	      	// }
-	      ]
+	      ],
 	    }
 	  },
 	  methods: {
@@ -298,8 +433,53 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    
 	    init() {							//初始化页面
 	  		this.getInsurerList(); 			//获取险企列表  need:tid  get:insurerId
-	  		this.getRouteList();			//获取路由节点列表  need:employeeId  get:route
-	  		this.getEditSetting();			//获取全局系数设置表
+	  		this.getInfo();
+	  		// this.getRouteList();			//获取路由节点列表  need:employeeId  get:route
+	  		// this.getEditSetting();			//获取全局系数设置表
+	    },
+
+	    getInfo() {
+	    	let payload = {
+	    		employeeId: window.localStorage.getItem('employeeId'),
+	    	};
+	    	payload = JSON.stringify(payload);
+	    	autoApi({
+	   			action: 'poundage_node_structure',
+	   			version: '1.0',
+	   			payload: payload			
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if (res.attach) {
+	   					this.turnData(res.attach);
+	   				}
+       			}
+	   		})
+	    },
+
+	    turnData(data) {
+	    	// 转换数据
+	    	//将路由节点层级转换成数组对象
+	    	function formatChildren(data,formData) {
+	    		for (let item in data) {
+	    			let buf = {
+	    				value: data[item].id,
+	    				label: data[item].name,
+	    				type: data[item].type,
+	    				coefficientStructure: data[item].coefficientStructure?data[item].coefficientStructure:[],
+	    				children: [],
+	    			}
+	    			formData.push(buf);
+	    			for (let i = 0; i < formData.length; i++) {
+	    				if (formData[i].value == item) {
+		    				formatChildren(data[item].children,formData[i].children);
+		    			}
+	    			}
+	    		}
+	    	}
+	    	let formData = [];
+	    	formatChildren(data,formData);
+	    	this.formData1 = formData;
+	    	console.log(formData);
 	    },
 
 	    //获取险企列表
@@ -330,38 +510,45 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 
 	    insurerChange(value) {
-	  		this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+	  		// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    	//险企ID
 	    },
 
 	    //获取路由列表数据
-	    getRouteList() {
-	    	if(this.tenantId.employeeId) {
-	    		let payload = {
-	    			employeeId: this.tenantId.employeeId
-	    		}
-	    		payload = JSON.stringify(payload);
-	    		autoApi({
-		   			action: 'bonus_poundage_configs',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.originData = res.attach;
-		   				for(let one in res.attach.children) {
-		   					let databuf = {
-		   						value: null,
-		   						label: null,
-		   						data: null
-		   					}
-		   					databuf.value = res.attach.children[one].id;
-		   					databuf.label = res.attach.children[one].title;
-		   					databuf.data = res.attach.children[one];
-		   					this.formData1.push(databuf);
-		   				}
-	       			}
-		   		})
-	    	}
+	    // getRouteList() {
+	    // 	if(this.tenantId.employeeId) {
+	    // 		let payload = {
+	    // 			employeeId: this.tenantId.employeeId
+	    // 		}
+	    // 		payload = JSON.stringify(payload);
+	    // 		autoApi({
+		   // 			action: 'bonus_poundage_configs',
+		   // 			version: '1.0',
+		   // 			payload: payload
+		   // 		},window.localStorage.getItem('token')).then((res)=> {
+		   // 			if (res.code == 0) {
+		   // 				this.originData = res.attach;
+		   // 				this.formRouterData[0] = [];
+		   // 				for(let one in res.attach.children) {
+		   // 					let databuf = {
+		   // 						value: null,
+		   // 						label: null,
+		   // 						data: null
+		   // 					}
+		   // 					databuf.value = res.attach.children[one].id;
+		   // 					databuf.label = res.attach.children[one].title;
+		   // 					databuf.data = res.attach.children[one];
+		   // 					this.formData1.push(databuf);
+		   // 					this.formRouterData[0].push(databuf);
+		   // 				}
+	    //    			}
+		   // 		})
+	    // 	}
+	    // },
+
+	    enterToNext(val,i) {
+	    	this.choosed = val.value;
+	    	this.chooseds[i] = val.value;
 	    },
 	    //一级路由点击事件处理
 	    enterToSecond(val) {
@@ -375,18 +562,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	this.chooseds[2] = null;
 	    	this.chooseds[3] = null;
 	    	this.chooseds[4] = null;
-			for(let two in val.data.children) {
-				let databuf = {
-					value: null,
-					label: null,
-					data: null
-				}
-				databuf.value = val.data.children[two].id;
-				databuf.label = val.data.children[two].title;
-				databuf.data = val.data.children[two];
-				this.formData2.push(databuf);
-			}
-			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+			this.formData2 = val.children;
+			this.formatTableData(val.coefficientStructure);//格式化表格数据
 	    },
 	    //二级路由点击事件处理
 	    enterToThird(val) {
@@ -425,19 +602,11 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	}
 	    	else
 	    	{
-		    	for(let three in val.data.children) {
-					let databuf = {
-						value: null,
-						label: null,
-						data: null
-					}
-					databuf.value = val.data.children[three].id;
-					databuf.label = val.data.children[three].title;
-					databuf.data = val.data.children[three];
-					this.formData3.push(databuf);
-				}
+		    	this.formData3 = val.children;
 	    	}
-			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+
+			this.formatTableData(val.coefficientStructure);//格式化表格数据
+			// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //三级路由点击事件处理
 	    enterTofourth(val) {
@@ -474,19 +643,11 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	}
 	    	else
 	    	{
-		    	for(let four in val.data.children) {
-					let databuf = {
-						value: null,
-						label: null,
-						data: null
-					}
-					databuf.value = val.data.children[four].id;
-					databuf.label = val.data.children[four].title;
-					databuf.data = val.data.children[four];
-					this.formData4.push(databuf);
-				}
+		    	this.formData4 = val.children;
 	    	}
-			this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+
+			this.formatTableData(val.coefficientStructure);//格式化表格数据
+			// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //四级路由点击事件处理
 	    enterTofifth(val) {
@@ -521,116 +682,242 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	}
 	    	else
 	    	{
-		    	for(let five in val.data.children) {
-					let databuf = {
-						value: null,
-						label: null,
-						data: null
-					}
-					databuf.value = val.data.children[five].id;
-					databuf.label = val.data.children[five].name;
-					databuf.data = val.data.children[five];
-					this.formData5.push(databuf);
-				}
+		    	this.formData5 = val.children;
 	    	}
-	    	this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+
+			this.formatTableData(val.coefficientStructure);//格式化表格数据
+	    	// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
 	    },
 	    //五级路由点击事件处理
 	    enterToSixth(val) {
 	    	this.choosed = val.value;
 	    	this.chooseds[4] = val.value;
+			this.formatTableData(val.coefficientStructure);//格式化表格数据
 	    },
 
-	    //获取节点配置
-	    getSetting() {
-	    	if (this.choosed && this.insurerId) {
-		    	let payload = {
-		    		 path: '',                        	// 路由节点id链接字符串
-		    		 employeeId: this.tenantId.employeeId,
-	   				 insurerId: null,   
-	   				 all: 'false'       
-		    	};
-		    	
-		    	payload.insurerId = this.insurerId;			//险企ID
-				//页面节点路径    	
-				for (var i = 0; i < this.chooseds.length; i++) {
-					if(this.chooseds[i] === this.choosed) {
-						payload.path = payload.path + this.chooseds[i];
-						break;
-					}
-					else
-					{
-						payload.path = payload.path + this.chooseds[i] + "_";
-					}
-				}
+	    //格式化表格数据
+	    formatTableData(data) {
+	    	console.log(data);
+	    	function formatChildren(data,formData) {
+	    		for (let item in data) {
+	    			let buf = {
+	    				name: data[item].name,	
+	    				maxRanges: data[item].maxRanges,	
+	    				custom: data[item].custom,	
+	    				cfgCoefficientId: data[item].cfgCoefficientId,	
+	    				type: data[item].type,	
+	    				ranges: [],	
+	    				children: [],
+	    			}
+	    			if (buf.ranges) {
+	    				for (let col in data[item].ranges) {
+	    					let buf_Children = {
+	    						id: data[item].ranges[col].id,
+	    						name: data[item].ranges[col].name,
+	    						comparison: data[item].ranges[col].comparison,
+	    						comparableValue: data[item].ranges[col].comparableValue,
+	    					}
+	    					buf.ranges.push(buf_Children);
+	    				}
+	    			}
+	    			formData.push(buf);
+	    			if (data[item].children) {//说明有二级系数表
+	    				for (let i = 0; i < formData.length; i++) {
+	    					if (formData[i].cfgCoefficientId == item) {
+	    						formatChildren(data[item].children,formData[i].children);
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}	
+	    	let formData = [];
+	    	formatChildren(data.nodes,formData);
+	    	this.tableData = formData;
+	    	
+	    	this.rangeData = formData[0]?formData[0].ranges:[{}];
+	    	this.currentRange = formData[0]?formData[0].name:'';
+	    	this.isCustom = formData[0]?formData[0].custom:false;
+	    	console.log(formData);
+	    },
 
-				payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'poundage_coefficients',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-			            this.baseCommission.shangye = res.attach.commercialRate / 10;           	//基础 - 商业  
-			            this.baseCommission.jiaoqiang = res.attach.compulsoryRate / 10;            //基础 - 交强
-			            this.selfCommission.shangye = res.attach.commercialRetainRate / 10;       //自留 - 商业
-			            this.selfCommission.jiaoqiang = res.attach.compulsoryRetainRate / 10;       //自留 - 交强
-		   				
-		   				if (res.attach.coefficientTypes) {
-		   					for (var i = 0; i < res.attach.coefficientTypes.length; i++) {
-			   					res.attach.coefficientTypes[i]['choosed'] = null;			//当前选择的系数id
-			   					res.attach.coefficientTypes[i]['comparisonValue'] = null;
-			   					res.attach.coefficientTypes[i]['comparisonType'] = null;
-			   					res.attach.coefficientTypes[i]['addORdec'] = null;
-			   					res.attach.coefficientTypes[i]['rate'] = null;
-			   				}
-
-		   					for (var j = 0; j < res.attach.coefficientTypes.length; j++) {
-			   					if (res.attach.coefficientTypes[j].coefficients) {
-			   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
-				   						if (res.attach.coefficientTypes[j].coefficients[i].rate) {
-				   							res.attach.coefficientTypes[j].choosed = res.attach.coefficientTypes[j].coefficients[i].id;
-				   							res.attach.coefficientTypes[j].rate = Math.abs(res.attach.coefficientTypes[j].coefficients[i].rate / 10);
-				   							res.attach.coefficientTypes[j].addORdec = res.attach.coefficientTypes[j].coefficients[i].rate?(res.attach.coefficientTypes[j].coefficients[i].rate > 0?1:2):0;
-				   						}
-				   					}
-			   					}
-
-			   					if (res.attach.coefficientTypes.typeId == 3) {
-			   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
-				   						if (res.attach.coefficientTypes[j].coefficients.name == '0') {
-				   							res.attach.coefficientTypes[j].coefficients.name = '男';
-				   						}
-				   						if (res.attach.coefficientTypes[j].coefficients.name == '1') {
-				   							res.attach.coefficientTypes[j].coefficients.name = '女';
-				   						}
-				   					}
-			   					}
-
-			   					if (res.attach.coefficientTypes.typeId == 4) {
-			   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
-				   						if (res.attach.coefficientTypes[j].coefficients.name == '1') {
-				   							res.attach.coefficientTypes[j].coefficients.name = '新车';
-				   						}
-				   						if (res.attach.coefficientTypes[j].coefficients.name == '2') {
-				   							res.attach.coefficientTypes[j].coefficients.name = '转保';
-				   						}
-				   						if (res.attach.coefficientTypes[j].coefficients.name == '4') {
-				   							res.attach.coefficientTypes[j].coefficients.name = '侯保';
-				   						}
-				   					}
-			   					}
-		   					this.tableData = res.attach.coefficientTypes;			   				}
-		   				}
-		   				else
-		   				{
-		   					this.tableData = [];
-		   				}
-
-	       			}
-		   		})
+	    selectMenu(index,path) {
+	    	console.log('index:' + index);
+	    	console.log('path:' + path);
+	    	if (!path[1]) {		//说明点击的是一级系数
+	    		for (let i = 0; i < this.tableData.length; i++) {
+		    		if (this.tableData[i].cfgCoefficientId == index) {
+		    			if (this.tableData[i].custom) {//系数可编辑
+		    				//post
+		    				let payload = {
+		    					employeeId: window.localStorage.getItem('employeeId'),
+		    					id: index,
+		    				}
+		    				payload = JSON.stringify(payload);
+		    				autoApi({
+					   			action: 'poundage_coefficient_ranges',
+					   			version: '1.0',
+					   			payload: payload
+					   		},window.localStorage.getItem('token')).then((res)=> {
+					   			if (res.code == 0) {
+					   				if (res.attach) {
+					   					this.rangeData = res.attach;
+					   				}
+				       			}
+					   		})
+					   		this.currentRange = this.tableData[i].name;
+					   		this.isCustom = this.tableData[i].custom;
+		    			}
+		    			else
+		    			{
+			    			this.rangeData = this.tableData[i].ranges;
+			    			this.currentRange = this.tableData[i].name;
+					   		this.isCustom = this.tableData[i].custom;
+		    			}
+		    		}
+		    	}
+	    	}
+	    	else
+	    	{
+	    		//二级系数
+	    		for (let i = 0; i < this.tableData.length; i++) {
+		    		if (this.tableData[i].cfgCoefficientId == path[0]) {
+		    			for (let j = 0; j < this.tableData[i].children.length; j++) {
+		    				if (this.tableData[i].children[j].cfgCoefficientId == path[1]) {
+	    						if (this.tableData[i].custom) {//系数可编辑
+				    				//post
+				    				let payload = {
+				    					employeeId: window.localStorage.getItem('employeeId'),
+				    					id: index,
+				    				}
+				    				payload = JSON.stringify(payload);
+				    				autoApi({
+							   			action: 'poundage_coefficient_ranges',
+							   			version: '1.0',
+							   			payload: payload
+							   		},window.localStorage.getItem('token')).then((res)=> {
+							   			if (res.code == 0) {
+							   				if (res.attach) {
+							   					this.rangeData = res.attach;
+							   				}
+						       			}
+							   		})
+	    							this.currentRange = this.tableData[i].children[j].name
+					   				this.isCustom = this.tableData[i].children[j].custom;
+				    			}
+				    			else
+				    			{
+					    			this.rangeData = this.tableData[i].children[j].ranges;
+	    							this.currentRange = this.tableData[i].children[j].name;
+	    							this.isCustom = this.tableData[i].children[j].custom;
+				    			}
+		    				}
+		    			}
+		    		}
+		    	}
 	    	}
 	    },
+
+	    openMenu(index,path) {
+	    	console.log('OPENindex:' + index);
+	    	console.log('OPENpath:' + path);
+	    	for (let i = 0; i < this.tableData.length; i++) {
+	    		if (this.tableData[i].cfgCoefficientId == path[0]) {
+	    			this.rangeData = this.tableData[i].ranges;
+	    			this.currentRange = this.tableData[i].name;
+	    			this.isCustom = this.tableData[i].name;
+	    		}
+	    	}
+	    },
+	    //获取节点配置
+	   //  getSetting() {
+	   //  	if (this.choosed && this.insurerId) {
+		  //   	let payload = {
+		  //   		 path: '',                        	// 路由节点id链接字符串
+		  //   		 employeeId: this.tenantId.employeeId,
+	   // 				 insurerId: null,   
+	   // 				 all: 'false'       
+		  //   	};
+		    	
+		  //   	payload.insurerId = this.insurerId;			//险企ID
+				// //页面节点路径    	
+				// for (var i = 0; i < this.chooseds.length; i++) {
+				// 	if(this.chooseds[i] === this.choosed) {
+				// 		payload.path = payload.path + this.chooseds[i];
+				// 		break;
+				// 	}
+				// 	else
+				// 	{
+				// 		payload.path = payload.path + this.chooseds[i] + "_";
+				// 	}
+				// }
+
+				// payload = JSON.stringify(payload);
+		  //   	autoApi({
+		  //  			action: 'poundage_coefficients',
+		  //  			version: '1.0',
+		  //  			payload: payload
+		  //  		},window.localStorage.getItem('token')).then((res)=> {
+		  //  			if (res.code == 0) {
+			 //            this.baseCommission.shangye = res.attach.commercialRate / 10;           	//基础 - 商业  
+			 //            this.baseCommission.jiaoqiang = res.attach.compulsoryRate / 10;            //基础 - 交强
+			 //            this.selfCommission.shangye = res.attach.commercialRetainRate / 10;       //自留 - 商业
+			 //            this.selfCommission.jiaoqiang = res.attach.compulsoryRetainRate / 10;       //自留 - 交强
+		   				
+		  //  				if (res.attach.coefficientTypes) {
+		  //  					for (var i = 0; i < res.attach.coefficientTypes.length; i++) {
+			 //   					res.attach.coefficientTypes[i]['choosed'] = null;			//当前选择的系数id
+			 //   					res.attach.coefficientTypes[i]['comparisonValue'] = null;
+			 //   					res.attach.coefficientTypes[i]['comparisonType'] = null;
+			 //   					res.attach.coefficientTypes[i]['addORdec'] = null;
+			 //   					res.attach.coefficientTypes[i]['rate'] = null;
+			 //   				}
+
+		  //  					for (var j = 0; j < res.attach.coefficientTypes.length; j++) {
+			 //   					if (res.attach.coefficientTypes[j].coefficients) {
+			 //   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
+				//    						if (res.attach.coefficientTypes[j].coefficients[i].rate) {
+				//    							res.attach.coefficientTypes[j].choosed = res.attach.coefficientTypes[j].coefficients[i].id;
+				//    							res.attach.coefficientTypes[j].rate = Math.abs(res.attach.coefficientTypes[j].coefficients[i].rate / 10);
+				//    							res.attach.coefficientTypes[j].addORdec = res.attach.coefficientTypes[j].coefficients[i].rate?(res.attach.coefficientTypes[j].coefficients[i].rate > 0?1:2):0;
+				//    						}
+				//    					}
+			 //   					}
+
+			 //   					if (res.attach.coefficientTypes.typeId == 3) {
+			 //   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
+				//    						if (res.attach.coefficientTypes[j].coefficients.name == '0') {
+				//    							res.attach.coefficientTypes[j].coefficients.name = '男';
+				//    						}
+				//    						if (res.attach.coefficientTypes[j].coefficients.name == '1') {
+				//    							res.attach.coefficientTypes[j].coefficients.name = '女';
+				//    						}
+				//    					}
+			 //   					}
+
+			 //   					if (res.attach.coefficientTypes.typeId == 4) {
+			 //   						for (var i = 0; i < res.attach.coefficientTypes[j].coefficients.length; i++) {
+				//    						if (res.attach.coefficientTypes[j].coefficients.name == '1') {
+				//    							res.attach.coefficientTypes[j].coefficients.name = '新车';
+				//    						}
+				//    						if (res.attach.coefficientTypes[j].coefficients.name == '2') {
+				//    							res.attach.coefficientTypes[j].coefficients.name = '转保';
+				//    						}
+				//    						if (res.attach.coefficientTypes[j].coefficients.name == '4') {
+				//    							res.attach.coefficientTypes[j].coefficients.name = '侯保';
+				//    						}
+				//    					}
+			 //   					}
+		  //  					this.tableData = res.attach.coefficientTypes;			   				}
+		  //  				}
+		  //  				else
+		  //  				{
+		  //  					this.tableData = [];
+		  //  				}
+
+	   //     			}
+		  //  		})
+	   //  	}
+	   //  },
 
 	    isLegalNumber(val) {
 	    	return (-100 <= val && val <= 100)?true:false;
@@ -703,7 +990,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				this.getSetting();
+		   				// this.getSetting();
 		   				this.$message({
 				            message: '修改的设置已保存',
 				            type: 'success'
@@ -720,7 +1007,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		    }
 	    },
 
-	    confirmSetDelete () {
+	    confirmSetDelete() {
 	    	let payload = 
 				{
 				    path: '',       					//页面节点路径
@@ -771,65 +1058,74 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 
 	    //获取节点编辑配置
-	    getEditSetting() {
-	    	let payload = {
-	    		employeeId: this.tenantId.employeeId,
-	    		all: 'true',
+	    // getEditSetting() {
+	    // 	let payload = {
+	    // 		employeeId: this.tenantId.employeeId,
+	    // 		all: 'true',
 
-	    	}
-	    	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'poundage_coefficients',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					for (var i = 0; i < res.attach.length; i++) {
-		   					res.attach[i]['choosed'] = null;			//当前选择的系数id
-			   				res.attach[i]['name'] = null;			//需要编辑/添加的系数名称
-		   					res.attach[i]['comparisonValue'] = null;
-		   					res.attach[i]['comparisonType'] = null;
-		   					res.attach[i]['addORdec'] = null;
-		   					res.attach[i]['rate'] = null;
-		   				}
-	   				}
+	    // 	}
+	    // 	payload = JSON.stringify(payload);
+	    // 	autoApi({
+	   	// 		action: 'poundage_coefficients',
+	   	// 		version: '1.0',
+	   	// 		payload: payload
+	   	// 	},window.localStorage.getItem('token')).then((res)=> {
+	   	// 		if (res.code == 0) {
+	   	// 			if (res.attach) {
+	   	// 				for (var i = 0; i < res.attach.length; i++) {
+		   // 					res.attach[i]['choosed'] = null;			//当前选择的系数id
+			  //  				res.attach[i]['name'] = null;			//需要编辑/添加的系数名称
+		   // 					res.attach[i]['comparisonValue'] = null;
+		   // 					res.attach[i]['comparisonType'] = null;
+		   // 					res.attach[i]['addORdec'] = null;
+		   // 					res.attach[i]['rate'] = null;
+		   // 				}
+	   	// 			}
 
-	   				if (res.attach) {
-	   					for (var j = 0; j < res.attach.length; j++) {
-		   					if (res.attach[j].coefficients) {
-		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-			   						if (res.attach[j].coefficients[i].rate) {
-			   							res.attach[j].choosed = res.attach[j].coefficients[i].id;
-			   							res.attach[j].rate = Math.abs(res.attach[j].coefficients[i].rate / 10);
-			   							res.attach[j].addORdec = res.attach[j].coefficients[i].rate?(res.attach[j].coefficients[i].rate > 0?1:2):0;
-			   						}
-			   					}
-		   					}
+	   	// 			if (res.attach) {
+	   	// 				for (var j = 0; j < res.attach.length; j++) {
+		   // 					if (res.attach[j].coefficients) {
+		   // 						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+			  //  						if (res.attach[j].coefficients[i].rate) {
+			  //  							res.attach[j].choosed = res.attach[j].coefficients[i].id;
+			  //  							res.attach[j].rate = Math.abs(res.attach[j].coefficients[i].rate / 10);
+			  //  							res.attach[j].addORdec = res.attach[j].coefficients[i].rate?(res.attach[j].coefficients[i].rate > 0?1:2):0;
+			  //  						}
+			  //  					}
+		   // 					}
 		
-		   					if (res.attach.typeId == 3) {
-		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-			   						if (res.attach[j].coefficients.name == '0') {
-			   							res.attach[j].coefficients.name = '男';
-			   						}
-			   						if (res.attach[j].coefficients.name == '1') {
-			   							res.attach[j].coefficients.name = '女';
-			   						}
-			   					}
-		   					}
-		   				}
-	   				}
+		   // 					if (res.attach.typeId == 3) {
+		   // 						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+			  //  						if (res.attach[j].coefficients.name == '0') {
+			  //  							res.attach[j].coefficients.name = '男';
+			  //  						}
+			  //  						if (res.attach[j].coefficients.name == '1') {
+			  //  							res.attach[j].coefficients.name = '女';
+			  //  						}
+			  //  					}
+		   // 					}
+		   // 				}
+	   	// 			}
 
-	   				this.editData = res.attach;
-       			}
-	   		})
-	    },
+	   	// 			this.editData = res.attach;
+     //   			}
+	   	// 	})
+	    // },
 	    editMode() {
 	    	this.editing = true;
 	    },
 	    endEditMode() {
 	    	this.editing = false;
-	    	this.getSetting();
+	    	// this.getSetting();
+	    },
+	    editRange(row) {
+	    	this.editedRange.id = row.id;
+	    	this.editedRange.rate = row.rate;
+	    },
+	    confirmEditRange() {
+	    	this.editedRange.id = null;
+	    	this.editedRange.rate = null;
+	    	// this.getSetting();
 	    },
 	    editThisOne(row) {
 	    	this.isEdited = row.choosed;
@@ -1053,25 +1349,25 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				case 2:
 					return "大于等于"
 					break;
-				case 3:
+				case 4:
 					return "小于"
 					break;
-				case 4:
+				case 8:
 					return "小于等于"
 					break;
-				case 5:
+				case 16:
 					return "等于"
 					break;
 				// case 6:
 				// 	return "不等于"
 				// 	break;
-				case 7:
+				case 32:
 					return "开区间"
 					break;
-				case 8:
+				case 64:
 					return "前闭后开区间"
 					break;
-				case 9:
+				case 128:
 					return "前开后闭区间"
 					break;
 				// case 10:
@@ -1158,9 +1454,9 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	
 	    },
 	    comparisonValueShow(row) {
-	    	if(row.comparisonValue)
+	    	if(row.comparableValue)
 	    	{
-	    		let value = row.comparisonValue.split("_");
+	    		let value = row.comparableValue.split("_");
 		    	if (value[1]) {
 		    		switch(row.comparisonType)
 		    		{
@@ -1174,12 +1470,31 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		    				return "( " + value[0] + " , " + value[1] + " ]"
 		    				break;
 		    			default:
-		    				return row.comparisonValue
+		    				return row.comparableValue
 		    		}
 		    	}
-		    	else 
+		    	else if ((row.name == "男" || row.name == "女") && (row.comparableValue == "0" || row.comparableValue == "1")) {
+		    		switch(row.comparableValue)
+		    		{
+		    			case 1:
+		    				return "女"
+		    				break;
+		    			case '1':
+		    				return "女"
+		    				break;
+		    			case 0:
+		    				return "男"
+		    				break;
+		    			case '0':
+		    				return "男"
+		    				break;
+		    			default:
+		    				return row.comparableValue
+		    		}
+		    	}
+		    	else
 		    	{
-		    		return row.comparisonValue
+		    		return row.comparableValue
 		    	}
 	    	}
 	    }
@@ -1239,6 +1554,10 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			display: inline-block;
 		}
 	}
+	.el-menu-vertical-demo:not(.el-menu--collapse) {
+	    width: 200px;
+	    min-height: 400px;
+	}
 
 	.confirmBoxL {
 		margin-top: 20px;
@@ -1251,5 +1570,6 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		position: relative;
 		float: right;
 	}
+
 }
 </style>
