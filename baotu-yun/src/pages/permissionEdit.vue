@@ -187,77 +187,26 @@ import { masterApi } from '@/ajax/post.js'
 			},
 
 			getModulars() {
+				var payload = {
+					type: null,
+				}
 				if (this.modularType == "BT") {
-					masterApi({
-						action: 'modulars_bt',
-						version: '1.0',
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					// let res = {
-					// 	"code": 0,
-					// 	"attach": {
-					// 		"13": {
-					// 			"node": {
-					// 				"name": "平台",
-					// 				"type": 2,
-					// 				"created": 1503126180,
-					// 				"updated": 1503126180,
-					// 				"left": 0,
-					// 				"right": 1,
-					// 				"id": 13,
-					// 				"layer": 1
-					// 			},
-					// 			"children": {
-					// 				"15": {
-					// 					"node": {
-					// 						"name": "账号管理A",
-					// 						"type": 2,
-					// 						"created": 1503128041,
-					// 						"updated": 1503128041,
-					// 						"left": 1,
-					// 						"right": 2,
-					// 						"id": 15,
-					// 						"layer": 2,
-					// 						"parentId": 13
-					// 					}
-					// 				},
-					// 				"16": {
-					// 					"node": {
-					// 						"name": "账号管理B",
-					// 						"type": 2,
-					// 						"created": 1503128041,
-					// 						"updated": 1503128041,
-					// 						"left": 1,
-					// 						"right": 2,
-					// 						"id": 16,
-					// 						"layer": 2,
-					// 						"parentId": 13
-					// 					}
-					// 				}
-					// 			},
-					// 		}
-					// 	},
-					// 	"createTime": 1503129000515,
-					// 	"messageType": 2
-					// }
-						this.drawTree(res.attach);
-					})
+					payload.type = 'ADMIN';
 				}
 				else if (this.modularType == "APP") {
-					masterApi({
-						action: 'modulars_app',
-						version: '1.0',
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						this.drawTree(res.attach);
-					})
+					payload.type = 'USER';
 				}
 				else if (this.modularType == "TENANT") {
-					masterApi({
-						action: 'modulars_tenant',
-						version: '1.0',
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						this.drawTree(res.attach);
-					})
+					payload.type = 'EMPLOYEE';
 				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'modulars',
+					version: '1.0',
+					payload: payload,
+				},window.localStorage.getItem('tokenPlate')).then((res)=> {
+					this.drawTree(res.attach);
+				})
 			},
 
 			drawTree(nodeData) {

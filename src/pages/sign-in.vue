@@ -16,7 +16,7 @@
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
         <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
         	<el-form-item label="平台码" :label-width="formLabelWidth" prop="platCode">
-		      <el-input style="width:287px;" v-model="form.platCode" auto-complete="off" placeholder="请输入平台码" @change="getPlat"></el-input>
+		      <el-input style="width:287px;" v-model="form.platCode" auto-complete="off" placeholder="请输入平台码" @blur="getPlat"></el-input>
 		      <div style="text-align:left;line-height:20px;">{{platName}}</div>
 		    </el-form-item>
 		    <el-form-item label="账号" :label-width="formLabelWidth" prop="account">
