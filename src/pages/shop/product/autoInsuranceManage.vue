@@ -4,46 +4,49 @@
 		  	<el-breadcrumb-item>车险管理</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<span class="labelText" v-if="!editing">请选择保险公司</span>
+		<span class="labelText">请选择保险公司</span>
 		<div class="topBar">
-			<el-select v-model="insurerId" placeholder="请选择" v-if="!editing" @change="insurerChange">
+			<el-select v-model="insurerId" placeholder="请选择" @change="insurerChange">
 			    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 			<el-button type="primary" @click="" style="margin-left:20px; float:right" :disabled="true">是否关联佣金调整系数</el-button>
 		</div>
 
-		<span class="labelText" v-if="!editing">请选择车型</span>
-		<div class="dataBox" v-if="!editing">
-			<div class="dataBoxCol" key="box1">
-				<ul>
-					<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
-				</ul>
+		<div v-if="insurerId">
+			<span class="labelText">请选择车型</span>
+			<div class="dataBox">
+				<!-- <div class="dataBoxCol" key="box1">
+					<ul>
+						<li v-for="i in formData1" @click="enterToSecond(i)" :class="chooseds[0] === i.value?'choosedList':''">{{i.label}}</li>
+					</ul>
+				</div>
+				<div class="dataBoxCol" v-if="(formData2[0])" key="box2">
+					<ul>
+						<li v-for="i in formData2" @click="enterToThird(i)" :class="chooseds[1] === i.value?'choosedList':''">{{i.label}}</li>
+					</ul>
+				</div>
+				<div class="dataBoxCol" v-if="(formData3[0])" key="box3">
+					<ul>
+						<li v-for="i in formData3" @click="enterTofourth(i)" :class="chooseds[2] === i.value?'choosedList':''">{{i.label}}</li>
+					</ul>
+				</div>
+				<div class="dataBoxCol" v-if="(formData4[0])" key="box4">
+					<ul>
+						<li v-for="i in formData4" @click="enterTofifth(i)" :class="chooseds[3] === i.value?'choosedList':''">{{i.label}}</li>
+					</ul>
+				</div>
+				<div class="dataBoxCol" v-if="(formData5[0])" key="box5">
+					<ul>
+						<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
+					</ul>
+				</div> -->
+				<div v-if="switchBox"></div>
+				<div class="dataBoxCol" v-for="formData,index in formRouterData" v-if="formData[0]">
+					<ul>
+						<li v-for="i in formData" @click="enterToNext(i,index)" :class="chooseds[index] === i.value?'choosedList':''">{{i.label}}</li>
+					</ul>
+				</div>
 			</div>
-			<div class="dataBoxCol" v-if="(formData2[0])" key="box2">
-				<ul>
-					<li v-for="i in formData2" @click="enterToThird(i)" :class="chooseds[1] === i.value?'choosedList':''">{{i.label}}</li>
-				</ul>
-			</div>
-			<div class="dataBoxCol" v-if="(formData3[0])" key="box3">
-				<ul>
-					<li v-for="i in formData3" @click="enterTofourth(i)" :class="chooseds[2] === i.value?'choosedList':''">{{i.label}}</li>
-				</ul>
-			</div>
-			<div class="dataBoxCol" v-if="(formData4[0])" key="box4">
-				<ul>
-					<li v-for="i in formData4" @click="enterTofifth(i)" :class="chooseds[3] === i.value?'choosedList':''">{{i.label}}</li>
-				</ul>
-			</div>
-			<div class="dataBoxCol" v-if="(formData5[0])" key="box5">
-				<ul>
-					<li v-for="i in formData5" @click="enterToSixth(i)" :class="choosed === i.value?'choosedList':''">{{i.label}}</li>
-				</ul>
-			</div>
-			<!-- <div class="dataBoxCol" v-for="formData,index in formRouterData">
-				<ul>
-					<li v-for="i in formData" @click="enterToNext(i,index)" :class="chooseds[index] === i.value?'choosedList':''">{{i.label}}</li>
-				</ul>
-			</div> -->
 		</div>
 
 		<!-- <el-row class="commonSet" v-if="!editing">
@@ -74,18 +77,20 @@
 				</el-row>
 			</el-col>
 		</el-row> -->
+		<div v-if="insurerId">
+			<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
 
-		<span style="font-size: 20px; margin-top:20px; display: inline-block" v-if="!editing">佣金调整系数</span>
+			<el-menu class="el-menu-demo" mode="horizontal" @select="selectMenu" @open="openMenu" menu-trigger="click" default-active="defaultRange">
+			  <el-menu-item :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="!item.children[0]">{{item.name}}</el-menu-item>
+			  <el-submenu :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="item.children[0]">
+			    <template slot="title">{{item.name}}</template>
+			    <el-menu-item :index="child.cfgCoefficientId.toString()" v-for="child in item.children">{{child.name}}</el-menu-item>
+			  </el-submenu>
+			</el-menu>
 
-		<el-menu class="el-menu-demo" mode="horizontal" @select="selectMenu" @open="openMenu" menu-trigger="click">
-		  <el-menu-item :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="!item.children[0]">{{item.name}}</el-menu-item>
-		  <el-submenu :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="item.children[0]">
-		    <template slot="title">{{item.name}}</template>
-		    <el-menu-item :index="child.cfgCoefficientId.toString()" v-for="child in item.children">{{child.name}}</el-menu-item>
-		  </el-submenu>
-		</el-menu>
-
-		<span>当前系数：{{currentRange}}</span>
+			<span>当前系数：{{currentRange.name}}</span>
+		</div>
+			
 
 
 		<!-- <div v-show="tableData[0]">
@@ -121,24 +126,25 @@
 		    </el-menu>
 		</div> -->
 
-		<div class="confirmBoxR" v-if="isCustom">
-			<el-button type="danger" size="large" @click="dialogAddVisible">新增</el-button>
+		<div class="toolBoxR" v-if="isCustom">
+			<el-button type="danger" size="large" @click="dialogAddVisible = true">新增</el-button>
 		</div>
 
-		<div class="tableBox">
+		<div class="tableBox" v-if="insurerId">
 			<el-table :data="rangeData" border style="width: 100%;font-size:12px;">
 			    <!-- <el-table-column prop="id" label="序号"></el-table-column> -->
 			    <el-table-column prop="name" label="系数名称"></el-table-column>
 			    <el-table-column label="佣金比例">
 			    	<template scope="scope">
-			    		<span v-if="!(editedRange.id == scope.row.id)">{{scope.row.rate}}</span>
-			    		<el-input v-if="editedRange.id && (editedRange.id == scope.row.id)"></el-input>
+			    		<span v-if="!(editedRatio.id == scope.row.id)">{{scope.row.rate}}</span>
+			    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)"></el-input>
 			    	</template>
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button @click="editRange(scope.row)" v-if="!editedRange.id">编辑</el-button>
-			    		<el-button @click="confirmEditRange(scope.row)" v-if="editedRange.id && (editedRange.id == scope.row.id)">确认</el-button>
+			    		<el-button @click="editRange(scope.row)" v-if="isCustom">编辑</el-button>
+			    		<el-button @click="deleteRange(scope.row)" v-if="isCustom">删除</el-button>
+			    		<!-- <el-button @click="confirmEditRatio(scope.row)" v-if="editedRange.id && (editedRange.id == scope.row.id)">确认</el-button> -->
 			    	</template>
 			    </el-table-column>
 			    <!-- <el-table-column label="比较器类型">
@@ -248,10 +254,10 @@
 			<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
 		</div>
 
-		<el-dialog title="编辑" :visible.sync="dialogAddVisible" size="small" :before-close="handleEditClose">
+		<el-dialog :title="'新增系数 - '+ currentRange.name" :visible.sync="dialogAddVisible" size="small" :before-close="handleAddClose">
 			<el-row>
 				<el-col :span="8">
-	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择">
+	  				<el-select v-model="addedRange.comparison" placeholder="请选择">
 						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 	  			</el-col>
@@ -261,30 +267,68 @@
 	  						<span style="line-height: 30px;">区间数值: </span>
 	  					</el-col>
 	  					<el-col :span="16">
-	  						<el-input v-model="guimoEdit.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoEdit.comparison == 2"></el-input>
-			  				<el-row v-if="guimoEdit.comparison == 8">
+			  				<el-row v-if="(addedRange.comparison == 'bteween' || addedRange.comparison == 'lbteween' || addedRange.comparison == 'rbteween')">
 			  					<el-col :span="10">
-			  						<el-input v-model="guimoEdit.comparableValueA" style="width: 100%"></el-input>
+			  						<el-input v-model="addedRange.comparableValueA" style="width: 100%"></el-input>
 			  					</el-col>
 			  					<el-col :span="4" style="display: flex; justify-content:center;">
 			  						<span style="line-height: 36px;">--</span>
 			  					</el-col>
 			  					<el-col :span="10">
-			  						<el-input v-model="guimoEdit.comparableValueB" style="width: 100%"></el-input>
+			  						<el-input v-model="addedRange.comparableValueB" style="width: 100%"></el-input>
 			  					</el-col>
 			  				</el-row>
+	  						<el-input v-model="addedRange.comparableValue" style="width: 100%" class="inputPercent" v-if="!(addedRange.comparison == 'bteween' || addedRange.comparison == 'lbteween' || addedRange.comparison == 'rbteween')"></el-input>
 	  					</el-col>
 	  				</el-row>
 	  			</el-col>
 	  			<el-col :span="7">
 	  				<span class="dataFont">系数名称: </span>
-	  				<el-input v-model="guimoEdit.num" style="width: 120px;"></el-input> 
-	  				<span class="dataFont">%</span>
+	  				<el-input v-model="addedRange.name" style="width: 120px;"></el-input>
+	  			</el-col>
+			</el-row>
+		    <div slot="footer" class="dialog-footer">
+		        <el-button @click="handleAddClose">取 消</el-button>
+		        <el-button type="primary" @click="confirmAdd">确 定</el-button>
+		    </div>
+		</el-dialog>
+
+		<el-dialog title="编辑系数" :visible.sync="dialogEditVisible" size="small" :before-close="handleEditClose">
+			<el-row>
+				<el-col :span="8">
+	  				<el-select v-model="editedRange.comparison" placeholder="请选择">
+						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+	  			</el-col>
+	  			<el-col :span="9">
+	  				<el-row>
+	  					<el-col :span="6">
+	  						<span style="line-height: 30px;">区间数值: </span>
+	  					</el-col>
+	  					<el-col :span="16">
+			  				<el-row v-if="(editedRange.comparison == 'bteween' || editedRange.comparison == 'lbteween' || editedRange.comparison == 'rbteween')">
+			  					<el-col :span="10">
+			  						<el-input v-model="editedRange.comparableValueA" style="width: 100%"></el-input>
+			  					</el-col>
+			  					<el-col :span="4" style="display: flex; justify-content:center;">
+			  						<span style="line-height: 36px;">--</span>
+			  					</el-col>
+			  					<el-col :span="10">
+			  						<el-input v-model="editedRange.comparableValueB" style="width: 100%"></el-input>
+			  					</el-col>
+			  				</el-row>
+	  						<el-input v-model="editedRange.comparableValue" style="width: 100%" class="inputPercent" v-if="!(editedRange.comparison == 'bteween' || editedRange.comparison == 'lbteween' || editedRange.comparison == 'rbteween')"></el-input>
+	  					</el-col>
+	  				</el-row>
+	  			</el-col>
+	  			<el-col :span="7">
+	  				<span class="dataFont">系数名称: </span>
+	  				<el-input v-model="editedRange.name" style="width: 120px;"></el-input>
 	  			</el-col>
 			</el-row>
 		    <div slot="footer" class="dialog-footer">
 		        <el-button @click="handleEditClose">取 消</el-button>
-		        <el-button type="primary" @click="guimoConfirmEdit">确 定</el-button>
+		        <el-button type="primary" @click="confirmEditRange">确 定</el-button>
 		    </div>
 		</el-dialog>
 
@@ -328,7 +372,10 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      },
 	      tableData: [],
 	      rangeData: [],	//选中系数的数据
-	      currentRange: null,	//当前选中系数的名称
+	      currentRange: {	//当前选中系数的名称
+	      	id: 1,
+	      	name: null,
+	      },	
 	      isCustom: false,	//当前选中系数是否可编辑
 	      tenantId: {},		//当前选择代理商ID	
 	      // tenants: [],			//代理商列表数据
@@ -346,19 +393,31 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	value: 2,
 	      	label: '减少'
 	      }],
-	      editing: false,	//系数编辑模式
+	      // editing: false,	//系数编辑模式(已废弃)
 	      editData: [],
 	      isEdited: null,	//被编辑的系数id
-	      editedRange: {
+	      editedRatio: {	//被编辑的系数比例
 	      	id: null,
 	      	rate: null,
 	      },
 	      addedRange: {
-	      	id: null,
-	      	rate: null,
+	      	name: null,
+	      	comparison: null,
+	      	comparableValue: null,
+	      	comparableValueA: null,
+	      	comparableValueB: null,
+	      },
+	      editedRange: {
+	      	name: null,
+	      	comparison: null,
+	      	comparableValue: null,
+	      	comparableValueA: null,
+	      	comparableValueB: null,
 	      },
 	      dialogAddVisible: false,
+	      dialogEditVisible: false,
 	      isAdded: null,	//被添加的系数
+	      switchBox: false,	//刷新vue组件的肮脏写法
 	      comparisons: [
 	      	{
 	      		value: 'gt',
@@ -386,15 +445,15 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	// },
 	      	{
 	      		value: 'bteween',
-	      		label: "开区间 ( )"
+	      		label: "前后不含区间"
 	      	},
 	      	{
 	      		value: 'lbteween',
-	      		label: "前闭后开区间 [ )"
+	      		label: "前含后不含区间"
 	      	},
 	      	{
 	      		value: 'rbteween',
-	      		label: "前开后闭区间 ( ]"
+	      		label: "前不含后含区间"
 	      	},
 	      	// {
 	      	// 	value: 10,
@@ -434,6 +493,10 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    init() {							//初始化页面
 	  		this.getInsurerList(); 			//获取险企列表  need:tid  get:insurerId
 	  		this.getInfo();
+	  		for (let i = 0; i < 10; i++) {	
+	  			this.chooseds[i] = null;	
+	  			this.formRouterData[i] = {};
+	  		}
 	  		// this.getRouteList();			//获取路由节点列表  need:employeeId  get:route
 	  		// this.getEditSetting();			//获取全局系数设置表
 	    },
@@ -479,6 +542,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	let formData = [];
 	    	formatChildren(data,formData);
 	    	this.formData1 = formData;
+	    	this.formRouterData[0] = formData;
+	    	this.switchBox = !this.switchBox;
 	    	console.log(formData);
 	    },
 
@@ -546,154 +611,224 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    // 	}
 	    // },
 
-	    enterToNext(val,i) {
+	    enterToNext(val,index) {
+	    	this.switchBox = !this.switchBox;	//刷新渲染
 	    	this.choosed = val.value;
-	    	this.chooseds[i] = val.value;
-	    },
-	    //一级路由点击事件处理
-	    enterToSecond(val) {
-	    	this.formData2 = [];
-	    	this.formData3 = [];
-	    	this.formData4 = [];
-	    	this.formData5 = [];
-	    	this.choosed = val.value;
-	    	this.chooseds[0] = val.value;
-	    	this.chooseds[1] = null;
-	    	this.chooseds[2] = null;
-	    	this.chooseds[3] = null;
-	    	this.chooseds[4] = null;
-			this.formData2 = val.children;
-			this.formatTableData(val.coefficientStructure);//格式化表格数据
-	    },
-	    //二级路由点击事件处理
-	    enterToThird(val) {
-			this.formData3 = [];
-	    	this.formData4 = [];
-	    	this.formData5 = [];
-    		this.choosed = val.value;
-	    	this.chooseds[1] = val.value;
-	    	this.chooseds[2] = null;
-	    	this.chooseds[3] = null;
-	    	this.chooseds[4] = null;
-	    	if (this.chooseds[1] == 'brand') {
+	    	this.chooseds[index] = val.value;
+	    	//实现只显示当前选择的直接子集的功能
+	    	for (let j = index + 2; j < this.formRouterData.length; j++) {
+	    		this.formRouterData[j] = {};
+	    	}
+	    	//删除所选节点下级所有的选中状态
+	    	for (let j = index + 1; j < this.chooseds.length; j++) {
+	    		this.chooseds[j] = null;
+	    	}
+
+	    	var isSpecialPath = false;
+	    	for (let i = index; i >= 0; i--) {
+	    		if (this.chooseds[i] == 18) {
+	    			isSpecialPath = true;
+	    		}
+	    	}
+	    	if (isSpecialPath) {
 	    		let payload = {
-	    			employeeId: this.tenantId.employeeId
+	    			type: 'NODE_CHILDREN',
+	    			insurerId: this.insurerId,
+	    			employeeId: window.localStorage.getItem('employeeId'),
+	    			nodePath: [],
+	    		}
+	    		for (let i = 0; i < this.chooseds.length; i++) {
+	    			if (this.chooseds[i]) {
+	    				payload.nodePath[i] = this.chooseds[i];
+	    			}
 	    		}
 	    		payload = JSON.stringify(payload);
 	    		autoApi({
-		   			action: 'vehicle_brands',
+		   			action: 'poundage_node_children',
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				if (res.attach && res.attach.length > 0) {
-		   					for (var i = 0; i < res.attach.length; i++) {
-		   						let databuf = {
-									value: null,
-									label: null
-								}
-								databuf.value = res.attach[i].id;
-								databuf.label = res.attach[i].name;
-								this.formData3.push(databuf);
-		   					}
-		   				}
+		   				//将路由节点层级转换成数组对象
+				    	function formatChildren(data,formData) {
+				    		for (let item in data) {
+				    			let buf = {
+				    				value: data[item].id,
+				    				label: data[item].name,
+				    				type: data[item].type,
+				    				coefficientStructure: data[item].coefficientStructure?data[item].coefficientStructure:[],
+				    				children: [],
+				    			}
+				    			formData.push(buf);
+				    			for (let i = 0; i < formData.length; i++) {
+				    				if (formData[i].value == item) {
+					    				formatChildren(data[item].children,formData[i].children);
+					    			}
+				    			}
+				    		}
+				    	}
+				    	let formData = [];
+				    	formatChildren(res.attach,formData);
+				    	// this.formData1 = formData;
+				    	// this.formRouterData[0] = formData;
+				    	this.switchBox = !this.switchBox;
+		   				let child_index = index + 1;
+				    	this.formRouterData[child_index] = formData;
+				    	this.formatTableData(val.coefficientStructure);
 	       			}
 		   		})
 	    	}
 	    	else
-	    	{
-		    	this.formData3 = val.children;
+	    	{	
+	    		let child_index = index + 1
+		    	this.formRouterData[child_index] = val.children;
+		    	this.formatTableData(val.coefficientStructure);
 	    	}
+	    },
+	  //   //一级路由点击事件处理
+	  //   enterToSecond(val) {
+	  //   	this.formData2 = [];
+	  //   	this.formData3 = [];
+	  //   	this.formData4 = [];
+	  //   	this.formData5 = [];
+	  //   	this.choosed = val.value;
+	  //   	this.chooseds[0] = val.value;
+	  //   	this.chooseds[1] = null;
+	  //   	this.chooseds[2] = null;
+	  //   	this.chooseds[3] = null;
+	  //   	this.chooseds[4] = null;
+			// this.formData2 = val.children;
+			// this.formatTableData(val.coefficientStructure);//格式化表格数据
+	  //   },
+	  //   //二级路由点击事件处理
+	  //   enterToThird(val) {
+			// this.formData3 = [];
+	  //   	this.formData4 = [];
+	  //   	this.formData5 = [];
+   //  		this.choosed = val.value;
+	  //   	this.chooseds[1] = val.value;
+	  //   	this.chooseds[2] = null;
+	  //   	this.chooseds[3] = null;
+	  //   	this.chooseds[4] = null;
+	  //   	if (this.chooseds[1] == 'brand') {
+	  //   		let payload = {
+	  //   			employeeId: this.tenantId.employeeId
+	  //   		}
+	  //   		payload = JSON.stringify(payload);
+	  //   		autoApi({
+		 //   			action: 'vehicle_brands',
+		 //   			version: '1.0',
+		 //   			payload: payload
+		 //   		},window.localStorage.getItem('token')).then((res)=> {
+		 //   			if (res.code == 0) {
+		 //   				if (res.attach && res.attach.length > 0) {
+		 //   					for (var i = 0; i < res.attach.length; i++) {
+		 //   						let databuf = {
+			// 						value: null,
+			// 						label: null
+			// 					}
+			// 					databuf.value = res.attach[i].id;
+			// 					databuf.label = res.attach[i].name;
+			// 					this.formData3.push(databuf);
+		 //   					}
+		 //   				}
+	  //      			}
+		 //   		})
+	  //   	}
+	  //   	else
+	  //   	{
+		 //    	this.formData3 = val.children;
+	  //   	}
 
-			this.formatTableData(val.coefficientStructure);//格式化表格数据
-			// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
-	    },
-	    //三级路由点击事件处理
-	    enterTofourth(val) {
-			this.formData4 = [];
-	    	this.formData5 = [];
-	    	this.choosed = val.value;
-	    	this.chooseds[2] = val.value;
-	    	this.chooseds[3] = null;
-	    	this.chooseds[4] = null;
-	    	if (this.chooseds[1] == 'brand') {
-	    		let payload = {
-	    			employeeId: this.tenantId.employeeId,
-	    			brandId: val.value
-	    		}
-	    		autoApi({
-		   			action: 'vehicle_depts',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				if (res.attach && res.attach.length > 0) {
-		   					for (var i = 0; i < res.attach.length; i++) {
-		   						let databuf = {
-									value: null,
-									label: null
-								}
-								databuf.value = res.attach[i].id;
-								databuf.label = res.attach[i].name;
-								this.formData4.push(databuf);
-		   					}
-		   				}
-	       			}
-		   		})
-	    	}
-	    	else
-	    	{
-		    	this.formData4 = val.children;
-	    	}
+			// this.formatTableData(val.coefficientStructure);//格式化表格数据
+			// // this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+	  //   },
+	  //   //三级路由点击事件处理
+	  //   enterTofourth(val) {
+			// this.formData4 = [];
+	  //   	this.formData5 = [];
+	  //   	this.choosed = val.value;
+	  //   	this.chooseds[2] = val.value;
+	  //   	this.chooseds[3] = null;
+	  //   	this.chooseds[4] = null;
+	  //   	if (this.chooseds[1] == 'brand') {
+	  //   		let payload = {
+	  //   			employeeId: this.tenantId.employeeId,
+	  //   			brandId: val.value
+	  //   		}
+	  //   		autoApi({
+		 //   			action: 'vehicle_depts',
+		 //   			version: '1.0',
+		 //   			payload: payload
+		 //   		},window.localStorage.getItem('token')).then((res)=> {
+		 //   			if (res.code == 0) {
+		 //   				if (res.attach && res.attach.length > 0) {
+		 //   					for (var i = 0; i < res.attach.length; i++) {
+		 //   						let databuf = {
+			// 						value: null,
+			// 						label: null
+			// 					}
+			// 					databuf.value = res.attach[i].id;
+			// 					databuf.label = res.attach[i].name;
+			// 					this.formData4.push(databuf);
+		 //   					}
+		 //   				}
+	  //      			}
+		 //   		})
+	  //   	}
+	  //   	else
+	  //   	{
+		 //    	this.formData4 = val.children;
+	  //   	}
 
-			this.formatTableData(val.coefficientStructure);//格式化表格数据
-			// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
-	    },
-	    //四级路由点击事件处理
-	    enterTofifth(val) {
-	    	this.formData5 = [];
-	    	this.choosed = val.value;
-	    	this.chooseds[3] = val.value;
-	    	this.chooseds[4] = null;
-	    	if (this.chooseds[1] == 'brand') {
-	    		let payload = {
-	    			employeeId: this.tenantId.employeeId,
-	    			deptId: val.value,
-	    		}
-	    		autoApi({
-		   			action: 'vehicle_models',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				if (res.attach && res.attach.length > 0) {
-		   					for (var i = 0; i < res.attach.length; i++) {
-		   						let databuf = {
-									value: null,
-									label: null
-								}
-								databuf.value = res.attach[i].id;
-								databuf.label = res.attach[i].name;
-								this.formData5.push(databuf);
-		   					}
-		   				}
-	       			}
-		   		})
-	    	}
-	    	else
-	    	{
-		    	this.formData5 = val.children;
-	    	}
+			// this.formatTableData(val.coefficientStructure);//格式化表格数据
+			// // this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+	  //   },
+	  //   //四级路由点击事件处理
+	  //   enterTofifth(val) {
+	  //   	this.formData5 = [];
+	  //   	this.choosed = val.value;
+	  //   	this.chooseds[3] = val.value;
+	  //   	this.chooseds[4] = null;
+	  //   	if (this.chooseds[1] == 'brand') {
+	  //   		let payload = {
+	  //   			employeeId: this.tenantId.employeeId,
+	  //   			deptId: val.value,
+	  //   		}
+	  //   		autoApi({
+		 //   			action: 'vehicle_models',
+		 //   			version: '1.0',
+		 //   			payload: payload
+		 //   		},window.localStorage.getItem('token')).then((res)=> {
+		 //   			if (res.code == 0) {
+		 //   				if (res.attach && res.attach.length > 0) {
+		 //   					for (var i = 0; i < res.attach.length; i++) {
+		 //   						let databuf = {
+			// 						value: null,
+			// 						label: null
+			// 					}
+			// 					databuf.value = res.attach[i].id;
+			// 					databuf.label = res.attach[i].name;
+			// 					this.formData5.push(databuf);
+		 //   					}
+		 //   				}
+	  //      			}
+		 //   		})
+	  //   	}
+	  //   	else
+	  //   	{
+		 //    	this.formData5 = val.children;
+	  //   	}
 
-			this.formatTableData(val.coefficientStructure);//格式化表格数据
-	    	// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
-	    },
-	    //五级路由点击事件处理
-	    enterToSixth(val) {
-	    	this.choosed = val.value;
-	    	this.chooseds[4] = val.value;
-			this.formatTableData(val.coefficientStructure);//格式化表格数据
-	    },
+			// this.formatTableData(val.coefficientStructure);//格式化表格数据
+	  //   	// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
+	  //   },
+	  //   //五级路由点击事件处理
+	  //   enterToSixth(val) {
+	  //   	this.choosed = val.value;
+	  //   	this.chooseds[4] = val.value;
+			// this.formatTableData(val.coefficientStructure);//格式化表格数据
+	  //   },
 
 	    //格式化表格数据
 	    formatTableData(data) {
@@ -734,9 +869,23 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	formatChildren(data.nodes,formData);
 	    	this.tableData = formData;
 	    	
-	    	this.rangeData = formData[0]?formData[0].ranges:[{}];
-	    	this.currentRange = formData[0]?formData[0].name:'';
-	    	this.isCustom = formData[0]?formData[0].custom:false;
+	    	if (this.currentRange.id && formData[0]) {
+	    		for (let i = 0; i < formData.length; i++) {
+	    			if (formData[i].cfgCoefficientId == this.currentRange.id) {
+	    				this.rangeData = formData[0].ranges;
+				    	this.currentRange.name = formData[0].name;
+				    	this.currentRange.id = formData[0].cfgCoefficientId;
+				    	this.isCustom = formData[0].custom;
+	    			}
+	    		}
+	    	}
+	    	else
+	    	{
+	    		this.rangeData = formData[0]?formData[0].ranges:[{}];
+		    	this.currentRange.name = formData[0]?formData[0].name:'';
+		    	this.currentRange.id = formData[0]?formData[0].cfgCoefficientId:'';
+		    	this.isCustom = formData[0]?formData[0].custom:false;
+	    	}
 	    	console.log(formData);
 	    },
 
@@ -745,32 +894,19 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	console.log('path:' + path);
 	    	if (!path[1]) {		//说明点击的是一级系数
 	    		for (let i = 0; i < this.tableData.length; i++) {
-		    		if (this.tableData[i].cfgCoefficientId == index) {
+		    		if (this.tableData[i].cfgCoefficientId == index) {	//遍历tableData,对比id和函数返回的index判断当前要显示的系数
 		    			if (this.tableData[i].custom) {//系数可编辑
 		    				//post
-		    				let payload = {
-		    					employeeId: window.localStorage.getItem('employeeId'),
-		    					id: index,
-		    				}
-		    				payload = JSON.stringify(payload);
-		    				autoApi({
-					   			action: 'poundage_coefficient_ranges',
-					   			version: '1.0',
-					   			payload: payload
-					   		},window.localStorage.getItem('token')).then((res)=> {
-					   			if (res.code == 0) {
-					   				if (res.attach) {
-					   					this.rangeData = res.attach;
-					   				}
-				       			}
-					   		})
-					   		this.currentRange = this.tableData[i].name;
+		    				this.getEditedRangeData(index);
+					   		this.currentRange.name = this.tableData[i].name;
+					   		this.currentRange.id = this.tableData[i].cfgCoefficientId;
 					   		this.isCustom = this.tableData[i].custom;
 		    			}
 		    			else
 		    			{
 			    			this.rangeData = this.tableData[i].ranges;
-			    			this.currentRange = this.tableData[i].name;
+			    			this.currentRange.name = this.tableData[i].name;
+					   		this.currentRange.id = this.tableData[i].cfgCoefficientId;
 					   		this.isCustom = this.tableData[i].custom;
 		    			}
 		    		}
@@ -785,29 +921,16 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		    				if (this.tableData[i].children[j].cfgCoefficientId == path[1]) {
 	    						if (this.tableData[i].custom) {//系数可编辑
 				    				//post
-				    				let payload = {
-				    					employeeId: window.localStorage.getItem('employeeId'),
-				    					id: index,
-				    				}
-				    				payload = JSON.stringify(payload);
-				    				autoApi({
-							   			action: 'poundage_coefficient_ranges',
-							   			version: '1.0',
-							   			payload: payload
-							   		},window.localStorage.getItem('token')).then((res)=> {
-							   			if (res.code == 0) {
-							   				if (res.attach) {
-							   					this.rangeData = res.attach;
-							   				}
-						       			}
-							   		})
-	    							this.currentRange = this.tableData[i].children[j].name
+				    				this.getEditedRangeData(index);
+	    							this.currentRange.name = this.tableData[i].children[j].name
+					   				this.currentRange.id = this.tableData[i].children[j].cfgCoefficientId;
 					   				this.isCustom = this.tableData[i].children[j].custom;
 				    			}
 				    			else
 				    			{
 					    			this.rangeData = this.tableData[i].children[j].ranges;
-	    							this.currentRange = this.tableData[i].children[j].name;
+	    							this.currentRange.name = this.tableData[i].children[j].name;
+					   				this.currentRange.id = this.tableData[i].children[j].cfgCoefficientId;
 	    							this.isCustom = this.tableData[i].children[j].custom;
 				    			}
 		    				}
@@ -823,10 +946,38 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	for (let i = 0; i < this.tableData.length; i++) {
 	    		if (this.tableData[i].cfgCoefficientId == path[0]) {
 	    			this.rangeData = this.tableData[i].ranges;
-	    			this.currentRange = this.tableData[i].name;
-	    			this.isCustom = this.tableData[i].name;
+	    			this.currentRange.name = this.tableData[i].name;
+	    			this.currentRange.id = this.tableData[i].cfgCoefficientId;
+	    			this.isCustom = this.tableData[i].custom;
 	    		}
 	    	}
+	    },
+
+	    getEditedRangeData(index) {
+	    	let payload = {
+				employeeId: window.localStorage.getItem('employeeId'),
+				id: index,
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+	   			action: 'poundage_coefficient_ranges',
+	   			version: '1.0',
+	   			payload: payload
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if (res.attach) {
+	   					this.rangeData = res.attach;
+	   				}
+       			}
+	   		})
+	    },
+
+	    handleAddClose() {
+	    	this.dialogAddVisible = false;
+	    },
+
+	    handleEditClose() {
+	    	this.dialogEditVisible = false;
 	    },
 	    //获取节点配置
 	   //  getSetting() {
@@ -1111,21 +1262,44 @@ import { autoApi,commonApi } from '@/ajax/post.js'
      //   			}
 	   	// 	})
 	    // },
-	    editMode() {
-	    	this.editing = true;
-	    },
-	    endEditMode() {
-	    	this.editing = false;
-	    	// this.getSetting();
-	    },
+	    // editMode() {
+	    // 	this.editing = true;
+	    // },
+	    // endEditMode() {
+	    // 	this.editing = false;
+	    // 	// this.getSetting();
+	    // },
 	    editRange(row) {
+	    	this.dialogEditVisible = true;
 	    	this.editedRange.id = row.id;
-	    	this.editedRange.rate = row.rate;
+	    	this.editedRange.name = row.name;
+	    	for (let i = 0; i < this.comparisons.length; i++) {
+	    		if (this.reComparisonName(row.comparison) == this.comparisons[i].label) {
+	    			this.editedRange.comparison = this.comparisons[i].value;
+	    		}
+	    	}
+	    	this.editedRange.comparableValue = row.comparableValue;
+	    	this.editedRange.comparableValueA = row.comparableValueA;
+	    	this.editedRange.comparableValueB = row.comparableValueB;
+	    },
+	    deleteRange(row) {
+	    	//post
+	    	this.getEditedRangeData(this.currentRange.id);
+	    },
+	    confirmEditRatio() {
+	    	// this.editedRatio.id = null;
+	    	// this.editedRatio.rate = null;
+	    	// this.getSetting();
 	    },
 	    confirmEditRange() {
 	    	this.editedRange.id = null;
-	    	this.editedRange.rate = null;
-	    	// this.getSetting();
+	    	this.editedRange.name = null;
+	    	this.editedRange.comparison = null;
+	    	this.editedRange.comparableValue = null;
+	    	this.editedRange.comparableValueA = null;
+	    	this.editedRange.comparableValueB = null;
+	    	//post
+	    	this.getEditedRangeData(this.currentRange.id);
 	    },
 	    editThisOne(row) {
 	    	this.isEdited = row.choosed;
@@ -1250,58 +1424,93 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	          });          
 	        });   	
 	    },
-	    addOne(row) {
-	    	this.isAdded = row.typeId;
-	    	row.name = null;
-	    	row.comparisonType = null;
-	    	row.comparisonValue = null;
-	    },
-	    confirmAdd(row) {
-	    	let employeeId = this.tenantId.employeeId;
-	    	let coefficientType = this.reCoefficientType(this.isAdded);
-	    	let comparison = row.comparisonType;
-	    	let name = row.name;
-	    	let array = row.comparisonValue.split("_");
-	    	if (array[0] >= array[1]) {
-	    		this.$message({
-		            message: "区间数值应当从小到大排列,请检查输入",
-		            type: 'error'
-		        });
+	    // addOne(row) {
+	    // 	this.isAdded = row.typeId;
+	    // 	row.name = null;
+	    // 	row.comparisonType = null;
+	    // 	row.comparisonValue = null;
+	    // },
+	    confirmAdd() {
+	    	//post add
+	    	var payload = {
+		    		employeeId: window.localStorage.getItem('employeeId'),
+		    		cfgCoefficientId: this.currentRange.id,
+		    		name: this.addedRange.name,
+		    		val: [],
+		    		symbol: this.addedRange.comparison,
+		    	}
+	    	if (this.addedRange.comparison == "bteween" || this.addedRange.comparison == "lbteween" || this.addedRange.comparison == "rbteween") {
+	    		payload.val[0] = this.addedRange.comparableValueA;
+	    		payload.val[1] = this.addedRange.comparableValueB;
 	    	}
 	    	else
 	    	{
-	    		let payload = {
-	    			employeeId: employeeId,
-		   			coefficientType: coefficientType,
-		   			symbol: comparison,
-		   			val: array,
-		   			name: name,
-	    		}
-	    		payload = JSON.stringify(payload);
-	    		autoApi({
-		   			action: 'poundage_coefficient_edit',
+	    		payload.val[0] = this.addedRange.comparableValue;
+	    	}
+		   	payload = JSON.stringify(payload);
+	    	autoApi({
+		   			action: 'poundage_coefficient_range_edit',
 		   			version: '1.0',
-		   			crudType: 1,	//1:添加
-		   			payload: payload
+		   			crudType: 1,
+		   			payload: payload,
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				this.isAdded = null;
-		    			this.getEditSetting();
-		   				this.$message({
-				            message: '添加了新的系数',
-				            type: 'success'
-				        });
-	       			}
-	       			else if (res.code == 7) {
-	       				this.$message({
-				            message: '操作失败,请检查输入',
-				            type: 'error'
-				        });
+		   				this.addedRange.name = null;
+		   				this.addedRange.comparison = null;
+		   				this.addedRange.comparableValue = null;
+		   				this.addedRange.comparableValueA = null;
+		   				this.addedRange.comparableValueB = null;
+		   				this.getEditedRangeData(this.currentRange.id);
 	       			}
 		   		})
-	    	}
-		    		
+		   	this.dialogAddVisible = false;
 	    },
+	    // confirmAdd(row) {
+	    // 	let employeeId = this.tenantId.employeeId;
+	    // 	let coefficientType = this.reCoefficientType(this.isAdded);
+	    // 	let comparison = row.comparisonType;
+	    // 	let name = row.name;
+	    // 	let array = row.comparisonValue.split("_");
+	    // 	if (array[0] >= array[1]) {
+	    // 		this.$message({
+		   //          message: "区间数值应当从小到大排列,请检查输入",
+		   //          type: 'error'
+		   //      });
+	    // 	}
+	    // 	else
+	    // 	{
+	    // 		let payload = {
+	    // 			employeeId: employeeId,
+		   // 			coefficientType: coefficientType,
+		   // 			symbol: comparison,
+		   // 			val: array,
+		   // 			name: name,
+	    // 		}
+	    // 		payload = JSON.stringify(payload);
+	    // 		autoApi({
+		   // 			action: 'poundage_coefficient_edit',
+		   // 			version: '1.0',
+		   // 			crudType: 1,	//1:添加
+		   // 			payload: payload
+		   // 		},window.localStorage.getItem('token')).then((res)=> {
+		   // 			if (res.code == 0) {
+		   // 				this.isAdded = null;
+		   //  			this.getEditSetting();
+		   // 				this.$message({
+				 //            message: '添加了新的系数',
+				 //            type: 'success'
+				 //        });
+	    //    			}
+	    //    			else if (res.code == 7) {
+	    //    				this.$message({
+				 //            message: '操作失败,请检查输入',
+				 //            type: 'error'
+				 //        });
+	    //    			}
+		   // 		})
+	    // 	}
+		    		
+	    // },
 	    cancelAdd(row) {
 	    	this.isAdded = null;
 	    	//重新填写选择的数据,根据是否选择有两种处理方法
@@ -1362,13 +1571,13 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				// 	return "不等于"
 				// 	break;
 				case 32:
-					return "开区间"
+					return "前后不含区间"
 					break;
 				case 64:
-					return "前闭后开区间"
+					return "前含后不含区间"
 					break;
 				case 128:
-					return "前开后闭区间"
+					return "前不含后含区间"
 					break;
 				// case 10:
 				// 	return "在 ... 之中"
@@ -1395,13 +1604,13 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				// 	return "不等于"
 				// 	break;
 				case 'bteween':
-					return "开区间"
+					return "前后不含区间"
 					break;
 				case 'lbteween':
-					return "前闭后开区间"
+					return "前含后不含区间"
 					break;
 				case 'rbteween':
-					return "前开后闭区间"
+					return "前不含后含区间"
 					break;
 				// case 10:
 				// 	return "在 ... 之中"
@@ -1409,6 +1618,41 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				// case 11:
 				// 	return "不在 ... 之中"
 				// 	break;
+	    	}
+	    },
+	     reComparisonValue(val) {
+	    	switch(val)
+	    	{
+	    		case '大于':
+					return 'gt'
+					break;
+				case '大于等于':
+					return 'gte'
+					break;
+				case '小于':
+					return 'lt'
+					break;
+				case '小于等于':
+					return 'lte'
+					break;
+				case '等于':
+					return 'eq'
+					break;
+				// case 6:
+				// 	return "不等于"
+				// 	break;
+				case '前后不含区间':
+					return 'bteween'
+					break;
+				case '前含后不含区间':
+					return 'lbteween'
+					break;
+				case '前不含后含区间':
+					return 'rbteween'
+					break;
+				default:
+					return val
+					break;
 	    	}
 	    },
 	    reCoefficientType(val) {
@@ -1516,11 +1760,11 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		margin: 10px;
 	}
 	.dataBox {
-		width: 1200px;
+		width: 100%;
 		overflow-x: hidden;
 		.dataBoxCol {
 			float: left;
-			width: 18%;
+			width: 14%;
 			height: 200px;
 			overflow-y: scroll;
 			padding: 20px 0;
@@ -1567,6 +1811,12 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 
 	.confirmBoxR {
 		margin-top: 20px;
+		position: relative;
+		float: right;
+	}
+
+	.toolBoxR {
+		margin-bottom: 20px;
 		position: relative;
 		float: right;
 	}

@@ -1,7 +1,7 @@
 <template>
 	<div class="shopList">
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item>商家账号管理</el-breadcrumb-item>
+		  	<el-breadcrumb-item>保单列表</el-breadcrumb-item>
 		</el-breadcrumb>
 
 		<div class="toolBar">
@@ -13,20 +13,24 @@
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="tid" label="序号"></el-table-column>
-			    <el-table-column prop="name" label="订单编号"></el-table-column>
-			    <el-table-column prop="name" label="车主"></el-table-column>
-			    <el-table-column prop="name" label="车牌"></el-table-column>
-			    <el-table-column prop="name" label="业务员"></el-table-column>
-			    <el-table-column prop="name" label="保险公司"></el-table-column>
+			    <!-- <el-table-column prop="tid" label="序号"></el-table-column> -->
+			    <el-table-column prop="_id" label="订单编号"></el-table-column>
+			    <el-table-column prop="owner" label="车主"></el-table-column>
+			    <el-table-column prop="license" label="车牌"></el-table-column>
+			    <el-table-column prop="salesman" label="业务员"></el-table-column>
+			    <el-table-column prop="insurerName" label="保险公司"></el-table-column>
 			    <el-table-column label="签单日期">
 			    	<template scope="scope">
-			    		<span>{{formatDate(scope.row.expire)}}</span>
+			    		<span>{{formatDate(scope.row.issuanceTime)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column prop="name" label="配送方式"></el-table-column>
-			    <el-table-column prop="name" label="礼品"></el-table-column>
-			    <el-table-column prop="name" label="单证状态"></el-table-column>
+			    <el-table-column label="配送方式">
+			    	<template scope="scope">
+			    		<span>{{scope.row.deliveryInfo?reDelivery(scope.row.deliveryInfo.type):''}}</span>
+			    	</template>
+			    </el-table-column>
+			    <el-table-column prop="" label="礼品"></el-table-column>
+			    <el-table-column prop="" label="单证状态"></el-table-column>
 			    
 			    <el-table-column label="操作">
 			      <template scope="scope">
@@ -41,7 +45,7 @@
 
 			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 
-			<el-button @click="sync" type="primary" style="margin:20px auto;text-align:left;" :disabled="true">同步保单</el-button>
+			<el-button @click="sync" type="primary" style="margin:20px auto;text-align:left;">同步保单</el-button>
 		</div>
 	</div>
 </template>
@@ -145,8 +149,26 @@ export default {
 	   					message: '保单已同步',
 	   					type: 'success'
 	   				});
+	   				this.getInfo();
        			}
 	   		})
+	    },
+
+	    reDelivery(val) {
+	    	switch(val) {
+	    		case 'EXPRESS':
+	    			return '快递'
+	    			break;
+	    		case 'ACTIVE_PICK':
+	    			return '网点自取'
+	    			break;
+	    		case 'DOT_DISPATCH':
+	    			return  '网点配送'
+	    			break;
+	    		default:
+	    			return val
+	    			break;
+	    	}
 	    }
 	  },
 	  mounted() {

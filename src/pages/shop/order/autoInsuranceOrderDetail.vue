@@ -8,7 +8,7 @@
       <el-button @click="goback">返回</el-button>
     </div>
 
-    <table class="tableA" border="3">
+        <table class="tableA" border="3">
           <tr>
             <th>车牌号</th>
             <td>{{ tableData.license }}</td>
@@ -42,8 +42,8 @@
           <tr>
             <th>商业险起保时间</th>
             <td>{{ tableData.schema.commercialStart }}</td>
-            <th>交强险险起保时间</th>
-            <td>{{ tableData.schema.commercialEnd }}</td>
+            <th>交强险起保时间</th>
+            <td>{{ tableData.schema.compulsoryStart }}</td>
           </tr>
         </table>
 
@@ -75,39 +75,39 @@
           </tr>
           <tr>
             <th>不计免赔险(车损)</th>
-            <td>{{ tableData.schema.insurances.DAMAGE_DEDUCTIBLE.quota?'投保':'未投保' }}</td>
+            <td>{{ (tableData.schema.insurances.DAMAGE_DEDUCTIBLE.quota == 1)?'投保':'未投保' }}</td>
             <td>{{ tableData.schema.insurances.DAMAGE_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(三者)</th>
-            <td>{{ tableData.schema.insurances.THIRD.quota }}</td>
-            <td>{{ tableData.schema.insurances.THIRD.price }}</td>
-          </tr>
-          <tr>
-            <th>不计免赔险(乘客)</th>
-            <td>{{ tableData.schema.insurances.THIRD_DEDUCTIBLE.quota?'投保':'未投保' }}</td>
+            <td>{{ (tableData.schema.insurances.THIRD_DEDUCTIBLE.quota == 1)?'投保':'未投保' }}</td>
             <td>{{ tableData.schema.insurances.THIRD_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
+            <th>不计免赔险(乘客)</th>
+            <td>{{ (tableData.schema.insurances.PASSENGER_DEDUCTIBLE.quota == 1)?'投保':'未投保' }}</td>
+            <td>{{ tableData.schema.insurances.PASSENGER_DEDUCTIBLE.price }}</td>
+          </tr>
+          <tr>
             <th>不计免赔险(司机)</th>
-            <td>{{ tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota?'投保':'未投保' }}</td>
+            <td>{{ (tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota == 1)?'投保':'未投保' }}</td>
             <td>{{ tableData.schema.insurances.DRIVER_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
             <th>商业险保费合计</th>
-            <td colspan="2">{{ tableData.schema.commericialTotal }}</td>
+            <td colspan="2">{{ tableData.schema.commericialTotal?tableData.schema.commericialTotal:0 }}</td>
           </tr>
           <tr>
             <th>交强险保费合计</th>
-            <td colspan="2">{{ tableData.schema.compulsiveTotal }}</td>
+            <td colspan="2">{{ tableData.schema.compulsoryTotal?tableData.schema.compulsoryTotal:0 }}</td>
           </tr>
           <tr>
             <th>车船税合计</th>
-            <td colspan="2">{{ tableData.schema.vehicleVesselTotal }}</td>
+            <td colspan="2">{{ tableData.schema.vehicleVesselTotal?tableData.schema.vehicleVesselTotal:0 }}</td>
           </tr>
           <tr>
             <th>保费总金额</th>
-            <td colspan="2">{{ tableData.schema.commericialTotal + tableData.schema.compulsiveTotal + tableData.schema.vehicleVesselTotal }}</td>
+            <td colspan="2">{{ tableData.schema.commericialTotal?Number(tableData.schema.commericialTotal):0 + tableData.schema.compulsoryTotal?Number(tableData.schema.compulsoryTotal):0 + tableData.schema.vehicleVesselTotal?Number(tableData.schema.vehicleVesselTotal):0 }}</td>
           </tr>
         </table>
 
@@ -155,9 +155,9 @@ import { autoApi } from '@/ajax/post.js'
               "schema": {
                 "commericialTotal": 0,
                 "commercialStart": "",
-                "compulsiveTotal": 0,
+                "compulsoryTotal": 0,
                 "vehicleVesselTotal": 0,
-                "compulsiveStart": "",
+                "compulsoryStart": "",
                 "insurances": {
                   "DAMAGE": {
                     "quota": 0,
@@ -241,9 +241,9 @@ import { autoApi } from '@/ajax/post.js'
                   }
                   if (data.schema) {
                     tableData.schema.commercialStart = data.schema.commercialStart;
-                    tableData.schema.commercialEnd = data.schema.commercialEnd;
+                    tableData.schema.compulsoryStart = data.schema.compulsoryStart;
                     tableData.schema.commericialTotal = data.schema.commericialTotal;
-                    tableData.schema.compulsiveTotal = data.schema.compulsiveTotal;
+                    tableData.schema.compulsoryTotal = data.schema.compulsoryTotal;
                     tableData.schema.vehicleVesselTotal = data.schema.vehicleVesselTotal;
                     if (data.schema.insurances) {
                       if (data.schema.insurances.DAMAGE) {
@@ -277,6 +277,11 @@ import { autoApi } from '@/ajax/post.js'
                       if (data.schema.insurances.DRIVER_DEDUCTIBLE) {
                         tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota = data.schema.insurances.DRIVER_DEDUCTIBLE.quota;
                         tableData.schema.insurances.DRIVER_DEDUCTIBLE.price = data.schema.insurances.DRIVER_DEDUCTIBLE.price;
+                      }
+                      //乘客免赔险
+                      if (data.schema.insurances.PASSENGER_DEDUCTIBLE) {
+                        tableData.schema.insurances.PASSENGER_DEDUCTIBLE.quota = data.schema.insurances.PASSENGER_DEDUCTIBLE.quota;
+                        tableData.schema.insurances.PASSENGER_DEDUCTIBLE.price = data.schema.insurances.PASSENGER_DEDUCTIBLE.price;
                       }
                     }
                   }

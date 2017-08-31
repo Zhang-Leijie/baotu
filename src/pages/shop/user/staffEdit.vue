@@ -195,7 +195,7 @@ import { autoApi } from '@/ajax/post.js'
 		    getInfo(id) {
 		    	let payload = {
 		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		target: id,
+		    		id: id,
 		    	}
 		    	payload = JSON.stringify(payload);
 		    	autoApi({

@@ -42,8 +42,8 @@
           <tr>
             <th>商业险起保时间</th>
             <td>{{ tableData.schema.commercialStart }}</td>
-            <th>交强险险起保时间</th>
-            <td>{{ tableData.schema.commercialEnd }}</td>
+            <th>交强险起保时间</th>
+            <td>{{ tableData.schema.compulsoryStart }}</td>
           </tr>
         </table>
 
@@ -55,42 +55,42 @@
           </tr>
           <tr>
             <th>机动车损失保险</th>
-            <td>{{ tableData.schema.insurances.DAMAGE.quota }}</td>
+            <td>{{ tableData.schema.insurances.DAMAGE.quota?tableData.schema.insurances.DAMAGE.quota:0 }}</td>
             <td>{{ tableData.schema.insurances.DAMAGE.price }}</td>
           </tr>
           <tr>
             <th>第三者责任险</th>
-            <td>{{ tableData.schema.insurances.THIRD.quota }}</td>
+            <td>{{ tableData.schema.insurances.THIRD.quota?tableData.schema.insurances.THIRD.quota:0 }}</td>
             <td>{{ tableData.schema.insurances.THIRD.price }}</td>
           </tr>
           <tr>
             <th>车上人员责任险(司机)</th>
-            <td>{{ tableData.schema.insurances.DRIVER.quota }}</td>
+            <td>{{ tableData.schema.insurances.DRIVER.quota?tableData.schema.insurances.DRIVER.quota:0 }}</td>
             <td>{{ tableData.schema.insurances.DRIVER.price }}</td>
           </tr>
           <tr>
             <th>车上人员责任险(乘客)</th>
-            <td>{{ tableData.schema.insurances.PASSENGER.quota }}</td>
+            <td>{{ tableData.schema.insurances.PASSENGER.quota?tableData.schema.insurances.PASSENGER.quota:0 }}</td>
             <td>{{ tableData.schema.insurances.PASSENGER.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(车损)</th>
-            <td>{{ tableData.schema.insurances.DAMAGE_DEDUCTIBLE.quota?'投保':'未投保' }}</td>
+            <td>{{ (tableData.schema.insurances.DAMAGE_DEDUCTIBLE.quota == 1)?'投保':'未投保' }}</td>
             <td>{{ tableData.schema.insurances.DAMAGE_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
             <th>不计免赔险(三者)</th>
-            <td>{{ tableData.schema.insurances.THIRD.quota }}</td>
-            <td>{{ tableData.schema.insurances.THIRD.price }}</td>
-          </tr>
-          <tr>
-            <th>不计免赔险(乘客)</th>
-            <td>{{ tableData.schema.insurances.THIRD_DEDUCTIBLE.quota?'投保':'未投保' }}</td>
+            <td>{{ (tableData.schema.insurances.THIRD_DEDUCTIBLE.quota == 1)?'投保':'未投保'}}</td>
             <td>{{ tableData.schema.insurances.THIRD_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
+            <th>不计免赔险(乘客)</th>
+            <td>{{ (tableData.schema.insurances.PASSENGER_DEDUCTIBLE.quota == 1)?'投保':'未投保' }}</td>
+            <td>{{ tableData.schema.insurances.PASSENGER_DEDUCTIBLE.price }}</td>
+          </tr>
+          <tr>
             <th>不计免赔险(司机)</th>
-            <td>{{ tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota?'投保':'未投保' }}</td>
+            <td>{{ (tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota == 1)?'投保':'未投保' }}</td>
             <td>{{ tableData.schema.insurances.DRIVER_DEDUCTIBLE.price }}</td>
           </tr>
           <tr>
@@ -99,7 +99,7 @@
           </tr>
           <tr>
             <th>交强险保费合计</th>
-            <td colspan="2">{{ tableData.schema.compulsiveTotal }}</td>
+            <td colspan="2">{{ tableData.schema.compulsoryTotal }}</td>
           </tr>
           <tr>
             <th>车船税合计</th>
@@ -107,7 +107,7 @@
           </tr>
           <tr>
             <th>保费总金额</th>
-            <td colspan="2">{{ tableData.schema.commericialTotal + tableData.schema.compulsiveTotal + tableData.schema.vehicleVesselTotal }}</td>
+            <td colspan="2">{{ Number(tableData.schema.commericialTotal) + Number(tableData.schema.compulsoryTotal) + Number(tableData.schema.vehicleVesselTotal) }}</td>
           </tr>
         </table>
 
@@ -155,9 +155,9 @@ import { autoApi } from '@/ajax/post.js'
               "schema": {
                 "commericialTotal": 0,
                 "commercialStart": "",
-                "compulsiveTotal": 0,
+                "compulsoryTotal": 0,
                 "vehicleVesselTotal": 0,
-                "compulsiveStart": "",
+                "compulsoryStart": "",
                 "insurances": {
                   "DAMAGE": {
                     "quota": 0,
@@ -212,73 +212,90 @@ import { autoApi } from '@/ajax/post.js'
       getInfo(id) {
         let payload = {
           employeeId: window.localStorage.getItem('employeeId'),
-          orderId: id,
+          policyId: id,
         }
 
         payload = JSON.stringify(payload);
 
         autoApi({
-            action: 'vehicle_policy_info',
+            action: 'vehicle_policy',
             version: '1.0',
             payload: payload 
           },window.localStorage.getItem('token')).then((res)=> {
             if (res.code == 0) {
               if (res.attach) {
-                  let data = res.attach.tips;
+                  let data = res.attach;
                   let tableData = this.tableData;
                   tableData.license = data.license;
                   tableData.engine = data.engine;
                   tableData.vin = data.vin;
-                  tableData.enrollDate = data.enrollDate;
+                  tableData.enrollDate = data.enrollDate; //注册日期
                   tableData.name = data.name;
                   tableData.transfer = data.transfer;
-                  tableData.price = data.price;
-                  tableData.seatCount = data.seatCount;
-                  if (data.owner) {
-                    tableData.owner.name = data.owner.name;
-                    tableData.owner.idType = data.owner.idType;
-                    tableData.owner.idNo = data.owner.idNo;
+                  if (data.commercialDetail) {
+                    tableData.price = data.price;  //新车购置价
                   }
-                  if (data.schema) {
-                    tableData.schema.commercialStart = data.schema.commercialStart;
-                    tableData.schema.commercialEnd = data.schema.commercialEnd;
-                    tableData.schema.commericialTotal = data.schema.commericialTotal;
-                    tableData.schema.compulsiveTotal = data.schema.compulsiveTotal;
-                    tableData.schema.vehicleVesselTotal = data.schema.vehicleVesselTotal;
-                    if (data.schema.insurances) {
-                      if (data.schema.insurances.DAMAGE) {
-                        tableData.schema.insurances.DAMAGE.quota = data.schema.insurances.DAMAGE.quota
-                        tableData.schema.insurances.DAMAGE.price = data.schema.insurances.DAMAGE.price
+                  tableData.seatCount = data.seat; //座位数
+                  // if (data.owner) {
+                    tableData.owner.name = data.owner;
+                    // tableData.owner.idType = data.owner.idType;
+                    tableData.owner.idNo = data.idNo;
+                  // }
+                  if (data.commercialDetail) {
+                    tableData.schema.commercialStart = data.commercialDetail.startDate;
+                    tableData.schema.commericialTotal = data.commercialDetail.price
+                  }
+                  if (data.compulsoryDetail) {
+                    tableData.schema.compulsoryStart = data.compulsoryDetail.startDate;
+                    tableData.schema.compulsoryTotal = data.compulsoryDetail.price
+                    //车船税合计
+                    tableData.schema.vehicleVesselTotal = data.compulsoryDetail.vesselPrice;
+                  }
+                  if (data.insurances) {
+                      if (data.insurances.DAMAGE) {
+                        tableData.schema.insurances.DAMAGE.quota = data.insurances.DAMAGE.quota
+                        tableData.schema.insurances.DAMAGE.price = data.insurances.DAMAGE.price
                       }
-                      if (data.schema.insurances.THIRD) {
-                        tableData.schema.insurances.THIRD.quota = data.schema.insurances.THIRD.quota;
-                        tableData.schema.insurances.THIRD.price = data.schema.insurances.THIRD.price;
+                      if (data.insurances.THIRD) {
+                        tableData.schema.insurances.THIRD.quota = data.insurances.THIRD.quota;
+                        tableData.schema.insurances.THIRD.price = data.insurances.THIRD.price;
                       }
-                      if (data.schema.insurances.DRIVER) {
-                        tableData.schema.insurances.DRIVER.quota = data.schema.insurances.DRIVER.quota;
-                        tableData.schema.insurances.DRIVER.price = data.schema.insurances.DRIVER.price;
+                      if (data.insurances.DRIVER) {
+                        tableData.schema.insurances.DRIVER.quota = data.insurances.DRIVER.quota;
+                        tableData.schema.insurances.DRIVER.price = data.insurances.DRIVER.price;
                       }
-                      if (data.schema.insurances.PASSENGER) {
-                        tableData.schema.insurances.PASSENGER.quota = data.schema.insurances.PASSENGER.quota;
-                        tableData.schema.insurances.PASSENGER.price = data.schema.insurances.PASSENGER.price;
+                      if (data.insurances.PASSENGER) {
+                        tableData.schema.insurances.PASSENGER.quota = data.insurances.PASSENGER.quota;
+                        tableData.schema.insurances.PASSENGER.price = data.insurances.PASSENGER.price;
                       }
-                      if (data.schema.insurances.DAMAGE_DEDUCTIBLE) {
-                        tableData.schema.insurances.DAMAGE_DEDUCTIBLE.quota = data.schema.insurances.DAMAGE_DEDUCTIBLE.quota;
-                        tableData.schema.insurances.DAMAGE_DEDUCTIBLE.price = data.schema.insurances.DAMAGE_DEDUCTIBLE.price;
+                      if (data.insurances.DAMAGE_DEDUCTIBLE) {
+                        tableData.schema.insurances.DAMAGE_DEDUCTIBLE.quota = data.insurances.DAMAGE_DEDUCTIBLE.quota;
+                        tableData.schema.insurances.DAMAGE_DEDUCTIBLE.price = data.insurances.DAMAGE_DEDUCTIBLE.price;
                       }
-                      if (data.schema.insurances.THIRD) {
-                        tableData.schema.insurances.THIRD.quota = data.schema.insurances.THIRD.quota;
-                        tableData.schema.insurances.THIRD.price = data.schema.insurances.THIRD.price;
+                      if (data.insurances.THIRD) {
+                        tableData.schema.insurances.THIRD.quota = data.insurances.THIRD.quota;
+                        tableData.schema.insurances.THIRD.price = data.insurances.THIRD.price;
                       }
-                      if (data.schema.insurances.THIRD_DEDUCTIBLE) {
-                        tableData.schema.insurances.THIRD_DEDUCTIBLE.quota = data.schema.insurances.THIRD_DEDUCTIBLE.quota;
-                        tableData.schema.insurances.THIRD_DEDUCTIBLE.price = data.schema.insurances.THIRD_DEDUCTIBLE.price;
+                      if (data.insurances.THIRD_DEDUCTIBLE) {
+                        tableData.schema.insurances.THIRD_DEDUCTIBLE.quota = data.insurances.THIRD_DEDUCTIBLE.quota;
+                        tableData.schema.insurances.THIRD_DEDUCTIBLE.price = data.insurances.THIRD_DEDUCTIBLE.price;
                       }
-                      if (data.schema.insurances.DRIVER_DEDUCTIBLE) {
-                        tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota = data.schema.insurances.DRIVER_DEDUCTIBLE.quota;
-                        tableData.schema.insurances.DRIVER_DEDUCTIBLE.price = data.schema.insurances.DRIVER_DEDUCTIBLE.price;
+                      if (data.insurances.DRIVER_DEDUCTIBLE) {
+                        tableData.schema.insurances.DRIVER_DEDUCTIBLE.quota = data.insurances.DRIVER_DEDUCTIBLE.quota;
+                        tableData.schema.insurances.DRIVER_DEDUCTIBLE.price = data.insurances.DRIVER_DEDUCTIBLE.price;
+                      }
+                      if (data.insurances.PASSENGER_DEDUCTIBLE) {
+                        tableData.schema.insurances.PASSENGER_DEDUCTIBLE.quota = data.insurances.PASSENGER_DEDUCTIBLE.quota;
+                        tableData.schema.insurances.PASSENGER_DEDUCTIBLE.price = data.insurances.PASSENGER_DEDUCTIBLE.price;
                       }
                     }
+
+                  if (data.schema) {
+                    // tableData.schema.commercialStart = data.schema.commercialStart;
+                    // tableData.schema.compulsoryStart = data.schema.compulsoryStart;
+                    // tableData.schema.commericialTotal = data.schema.commericialTotal;
+                    // tableData.schema.compulsoryTotal = data.schema.compulsoryTotal;
+                    // tableData.schema.vehicleVesselTotal = data.schema.vehicleVesselTotal;
                   }
                   this.tableData = tableData;
                 }

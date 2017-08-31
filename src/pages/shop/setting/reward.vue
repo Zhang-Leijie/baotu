@@ -750,25 +750,25 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 					case 2:
 						return "gte"
 						break;
-					case 3:
+					case 4:
 						return "lt"
 						break;
-					case 4:
+					case 8:
 						return "lte"
 						break;
-					case 5:
+					case 16:
 						return "eq"
 						break;
 					// case 6:
 					// 	return "不等于"
 					// 	break;
-					case 7:
+					case 32:
 						return "bteween"
 						break;
-					case 8:
+					case 64:
 						return "lbteween"
 						break;
-					case 9:
+					case 128:
 						return "rbteween"
 						break;
 					// case 10:
