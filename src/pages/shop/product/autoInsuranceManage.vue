@@ -10,7 +10,6 @@
 			<el-select v-model="insurerId" placeholder="请选择" @change="insurerChange">
 			    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
 			</el-select>
-			<el-button type="primary" @click="" style="margin-left:20px; float:right" :disabled="true">是否关联佣金调整系数</el-button>
 		</div>
 
 		<div v-if="insurerId">
@@ -24,7 +23,7 @@
 			</div>
 		</div>
 
-		<el-row class="commonSet" v-if="insurerId">
+		<el-row class="commonSet" v-if="insurerId && choosed">
 			<el-col :span="11">
 				<label class="titleLabel">基础佣金设置</label>
 				<el-row>
@@ -53,48 +52,51 @@
 			</el-col>
 		</el-row>
 
-		<div v-if="insurerId">
+		<div v-if="insurerId && choosed" v-show="tagData[0][0]">
 			<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
+			<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
 
-			<el-menu class="el-menu-demo" mode="horizontal" @select="selectMenu" @open="openMenu" menu-trigger="click" default-active="defaultRange">
-			  <el-menu-item :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="!item.children[0]">{{item.name}}</el-menu-item>
-			  <el-submenu :index="item.cfgCoefficientId.toString()" v-for="item in tableData" v-if="item.children[0]">
-			    <template slot="title">{{item.name}}</template>
-			    <el-menu-item :index="child.cfgCoefficientId.toString()" v-for="child in item.children">{{child.name}}</el-menu-item>
-			  </el-submenu>
-			</el-menu>
-
-			<span>当前系数：</span>
-			<span style="font-weight: bold; font-size:20px;">{{currentRange.name}}</span>
-
-			<div class="toolBoxR" v-if="isCustom">
-				<el-button type="primary" size="large" @click="dialogAddVisible = true">新增</el-button>
+			<div v-for="tagList,level in tagData" class="listBox" v-show="tagData[level][0]">
+				<el-menu class="el-menu-demo" mode="horizontal" menu-trigger="click" :default-active="currentRange.id.toString()" v-if="tagList[0]">
+				  <el-menu-item :index="item.id.toString()" v-for="item,index in tagList" @click="selectMenu(item,level,index)">{{item.name}}</el-menu-item>
+				</el-menu>
 			</div>
 		</div>
 
+		<div class="toolBox" v-if="currentRange.name && insurerId && choosed">
+			<span>当前系数：</span>
+			<span style="font-weight: bold; font-size:20px;">{{currentRange.name}}</span>
+			<span>{{isRateEffective?"(当前调整系数生效中)":"(调整系数未生效)"}}</span>
+
+			<div class="toolBoxR" v-if="currentRange.isCustom">
+				<el-button type="primary" size="large" @click="dialogAddVisible = true">新增</el-button>
+			</div>
+		</div>
 		
-		<div class="tableBox" v-if="insurerId">
+		<div class="tableBox" v-if="insurerId && choosed && currentRange.id">
 			<el-table :data="rangeData" border style="width: 100%;font-size:12px;">
 			    <!-- <el-table-column prop="id" label="序号"></el-table-column> -->
 			    <el-table-column prop="name" label="系数名称"></el-table-column>
 			    <el-table-column label="佣金比例">
 			    	<template scope="scope">
 			    		<span v-if="!(editedRatio.id == scope.row.id)">{{scope.row.rate}}</span>
-			    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)"></el-input>
+			    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)" v-model="editedRatio.rate"></el-input>
+			    		<span v-if="scope.row.rate || (editedRatio.id && (editedRatio.id == scope.row.id))">%</span>
 			    	</template>
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button @click="editRange(scope.row)" v-if="isCustom">编辑</el-button>
-			    		<el-button @click="deleteRange(scope.row)" v-if="isCustom">删除</el-button>
-			    		<!-- <el-button @click="confirmEditRatio(scope.row)" v-if="editedRange.id && (editedRange.id == scope.row.id)">确认</el-button> -->
+			    		<el-button @click="editRange(scope.row)" v-if="currentRange.isCustom">编辑系数</el-button>
+			    		<el-button @click="deleteRange(scope.row)" v-if="currentRange.isCustom">删除</el-button>
+			    		<el-button @click="editRatio(scope.row)" v-if="!editedRatio.id">调整比例</el-button>
+			    		<el-button @click="confirmEditRatio(scope.row)" v-if="editedRatio.id && (editedRatio.id == scope.row.id)">确认</el-button>
+			    		<el-button @click="cancelEditRatio(scope.row)" v-if="editedRatio.id && (editedRatio.id == scope.row.id)">取消调整</el-button>
 			    	</template>
 			    </el-table-column>
 			</el-table>
 		</div>
 
 		<div class="confirmBoxR" v-if="insurerId && choosed">
-			<el-button type="danger" size="large" @click="confirmSetDelete">删除</el-button>
 			<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
 		</div>
 
@@ -207,13 +209,17 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	      	shangye: null,
 	      	jiaoqiang: null
 	      },
-	      tableData: [],
+	      isRateEffective: false,
+	      tagData: [],
 	      rangeData: [],	//选中系数的数据
+	      rateData: {},		//选中节点的手续费配置
 	      currentRange: {	//当前选中系数的名称
 	      	id: 1,
 	      	name: null,
+	      	isCustom: false,
+	      	maxmiumCustom: 0,	
+	      	depth: 0,
 	      },	
-	      isCustom: false,	//当前选中系数是否可编辑
 	      tenantId: {},		//当前选择代理商ID	
 	      insurerId: null,		//当前选择险企ID
 	      insurers: [], 			//险企列表数据
@@ -275,80 +281,15 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    }
 	  },
 	  methods: {
-	  	showCoefficient(row) {
-	  		for (var i = 0; i < row.coefficients.length; i++) {
-	  			if(row.coefficients[i].id === row.choosed) {
-	  				row.comparisonType = row.coefficients[i].comparison;
-	  				row.comparisonValue = row.coefficients[i].comparableValue;
-	  				if (row.coefficients[i].rate) {
-	  					row.rate = Math.abs(row.coefficients[i].rate / 10);
-	  					if (row.coefficients[i].rate > 0) {
-	  						row.addORdec = 1;
-	  					}
-	  					else {
-	  						row.addORdec = 2;
-	  					}
-	  				}
-	  				else
-	  				{
-	  					row.rate = null;
-	  					row.addORdec = null;
-	  				}
-	  			}
-	  		}
-	  	},
-	    
 	    init() {							//初始化页面
 	  		this.getInsurerList(); 			//获取险企列表  need:tid  get:insurerId
 	  		this.getInfo();
 	  		for (let i = 0; i < 10; i++) {	
 	  			this.chooseds[i] = null;	
-	  			this.formRouterData[i] = {};
+	  			this.formRouterData[i] = [];
+	  			this.tagData[i] = [];
+	  			//需要修改tagData的结构,[0]为第一层系数类型列表,[1]位第二层系数类型列表
 	  		}
-	    },
-
-	    getInfo() {
-	    	let payload = {
-	    		employeeId: window.localStorage.getItem('employeeId'),
-	    	};
-	    	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'poundage_node_structure',
-	   			version: '1.0',
-	   			payload: payload			
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.turnData(res.attach);
-	   				}
-       			}
-	   		})
-	    },
-
-	    turnData(data) {
-	    	// 转换数据
-	    	//将路由节点层级转换成数组对象
-	    	function formatChildren(data,formData) {
-	    		for (let item in data) {
-	    			let buf = {
-	    				value: data[item].id,
-	    				label: data[item].name,
-	    				type: data[item].type,
-	    				coefficientStructure: data[item].coefficientStructure?data[item].coefficientStructure:[],
-	    				children: [],
-	    			}
-	    			formData.push(buf);
-	    			for (let i = 0; i < formData.length; i++) {
-	    				if (formData[i].value == item) {
-		    				formatChildren(data[item].children,formData[i].children);
-		    			}
-	    			}
-	    		}
-	    	}
-	    	let formData = [];
-	    	formatChildren(data,formData);
-	    	this.formRouterData[0] = formData;
-	    	this.switchBox = !this.switchBox;
 	    },
 
 	    //获取险企列表
@@ -378,112 +319,149 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	   		})
 	    },
 
+	    //获取路由节点信息
+	    getInfo() {
+	    	let payload = {
+	    		employeeId: window.localStorage.getItem('employeeId'),
+	    	};
+	    	payload = JSON.stringify(payload);
+	    	autoApi({
+	   			action: 'poundage_documents',
+	   			version: '1.0',
+	   			payload: payload			
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if (res.attach) {
+	   					this.turnData(res.attach);
+	   				}
+       			}
+	   		})
+	    },
+
+	    //处理获取的路由节点数据并初始化路由节点列表
+	    turnData(data) {
+	    	// 转换数据
+	    	//将路由节点层级转换成数组对象
+	    	function formatChildren(data,formData) {
+	    		for (let item in data) {
+	    			let buf = {
+	    				value: data[item].node.id,
+	    				label: data[item].node.name,
+	    				children: [],
+	    			}
+	    			formData.push(buf);
+	    			if (data[item].children) {
+	    				for (let i = 0; i < formData.length; i++) {
+		    				if (formData[i].value == item) {
+			    				formatChildren(data[item].children,formData[i].children);
+			    			}
+		    			}
+	    			}
+	    		}
+	    	}
+	    	let formData = [];
+	    	formatChildren(data,formData);
+	    	this.formRouterData[0] = formData;
+	    	for (var i = 1; i < this.formRouterData.length; i++) {
+	    		this.formRouterData[i] = [];
+	    	}
+	    	this.switchBox = !this.switchBox;
+	    },
+
 	    insurerChange(value) {
-	  		// this.getSetting();				//获取表格设置列表	need:employeeId/insurerId/route
-	    	//险企ID
+	  		this.getInfo();	//路由节点列表数据刷新并初始化
+	  		//清除已有的页面选中记录
+	  		//清空所选节点下级所有的选中状态
+	    	for (let j = 0; j < this.chooseds.length; j++) {
+	    		this.chooseds[j] = null;
+	    	}
+	    	this.choosed = null;
+	    	//清空系数列表
+	    	for (let j = 0; j < this.tagData.length; j++) {
+	    		this.tagData[j] = [];
+	    	}
+	    	//清空当前系数
+	    	this.currentRange.id = null;
+	    	this.currentRange.name = null;
+	    	this.currentRange.isCustom = false;
+	    	this.currentRange.maxmiumCustom = 0;
+	    	this.currentRange.depth = 0;
+	    	//清空表格数据
+	    	this.rangeData = [];
+	    	//清空全局系数
+	    	this.baseCommission.shangye = null;
+	    	this.baseCommission.jiaoqiang = null;
+	    	this.selfCommission.shangye = null;
+	    	this.selfCommission.jiaoqiang = null;
+	    	this.isRateEffective = true;
 	    },
 
 	    enterToNext(val,index) {
-	    	this.switchBox = !this.switchBox;	//刷新渲染
 	    	this.choosed = val.value;
 	    	this.chooseds[index] = val.value;
 	    	//实现只显示当前选择的直接子集的功能
 	    	for (let j = index + 2; j < this.formRouterData.length; j++) {
-	    		this.formRouterData[j] = {};
+	    		this.formRouterData[j] = [];
 	    	}
-	    	//删除所选节点下级所有的选中状态
+	    	//清空所选节点下级所有的选中状态
 	    	for (let j = index + 1; j < this.chooseds.length; j++) {
 	    		this.chooseds[j] = null;
 	    	}
+	    	//清空系数列表
+	    	for (let j = 0; j < this.tagData.length; j++) {
+	    		this.tagData[j] = [];
+	    	}
+	    	//清空当前系数
+	    	this.currentRange.id = null;
+	    	this.currentRange.name = null;
+	    	this.currentRange.isCustom = false;
+	    	this.currentRange.maxmiumCustom = 0;
+	    	this.currentRange.depth = 0;
+	    	//清空编辑状态
+	    	this.editedRatio.id = null;
+	    	this.editedRatio.rate = null;
+	    	//清空全距系数配置
+	    	this.baseCommission.jiaoqiang = null;
+	    	this.baseCommission.shangye = null;
+	    	this.selfCommission.jiaoqiang = null;
+	    	this.selfCommission.shangye = null;
 
-	    	var isSpecialPath = false;
-	    	for (let i = index; i >= 0; i--) {
-	    		if (this.chooseds[i] == 18) {
-	    			isSpecialPath = true;
-	    		}
-	    	}
-	    	if (isSpecialPath) {
-	    		let payload = {
-	    			type: 'NODE_CHILDREN',
-	    			insurerId: this.insurerId,
-	    			employeeId: window.localStorage.getItem('employeeId'),
-	    			nodePath: [],
-	    		}
-	    		for (let i = 0; i < this.chooseds.length; i++) {
-	    			if (this.chooseds[i]) {
-	    				payload.nodePath[i] = this.chooseds[i];
-	    			}
-	    		}
-	    		payload = JSON.stringify(payload);
-	    		autoApi({
-		   			action: 'poundage_node_children',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				//将路由节点层级转换成数组对象
-				    	function formatChildren(data,formData) {
-				    		for (let item in data) {
-				    			let buf = {
-				    				value: data[item].id,
-				    				label: data[item].name,
-				    				type: data[item].type,
-				    				coefficientStructure: data[item].coefficientStructure?data[item].coefficientStructure:[],
-				    				children: [],
-				    			}
-				    			formData.push(buf);
-				    			for (let i = 0; i < formData.length; i++) {
-				    				if (formData[i].value == item) {
-					    				formatChildren(data[item].children,formData[i].children);
-					    			}
-				    			}
-				    		}
-				    	}
-				    	let formData = [];
-				    	formatChildren(res.attach,formData);
-				    	this.switchBox = !this.switchBox;
-		   				let child_index = index + 1;
-				    	this.formRouterData[child_index] = formData;
-				    	this.formatTableData(val.coefficientStructure);
-	       			}
-		   		})
-	    	}
-	    	else
-	    	{	
-	    		let child_index = index + 1
-		    	this.formRouterData[child_index] = val.children;
-		    	this.formatTableData(val.coefficientStructure);
-	    	}
+	    	let child_index = index + 1
+	    	this.formRouterData[child_index] = val.children;
+	    	// post
+	    	let payload = {
+	    		employeeId: window.localStorage.getItem('employeeId'),
+	    		id: val.value,
+	    	};
+	    	payload = JSON.stringify(payload);
+			autoApi({
+	   			action: 'coefficient_documents',
+	   			version: '1.0',
+	   			payload: payload			
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if(res.attach) {
+	   					this.formatTableData(res.attach);
+	   				}
+       			}
+	   		})
 	    },
 	 
-	    //格式化表格数据
+	    //格式化系数类型列表数据并显示
 	    formatTableData(data) {
 	    	function formatChildren(data,formData) {
 	    		for (let item in data) {
 	    			let buf = {
-	    				name: data[item].name,	
-	    				maxRanges: data[item].maxRanges,	
-	    				custom: data[item].custom,	
-	    				cfgCoefficientId: data[item].cfgCoefficientId,	
-	    				type: data[item].type,	
-	    				ranges: [],	
+	    				id: data[item].node.id,
+	    				name: data[item].node.name,	
+	    				maxmiumCustom: data[item].node.maxmiumCustom,	
+	    				custom: data[item].node.custom,	
 	    				children: [],
-	    			}
-	    			if (buf.ranges) {
-	    				for (let col in data[item].ranges) {
-	    					let buf_Children = {
-	    						id: data[item].ranges[col].id,
-	    						name: data[item].ranges[col].name,
-	    						comparison: data[item].ranges[col].comparison,
-	    						comparableValue: data[item].ranges[col].comparableValue,
-	    					}
-	    					buf.ranges.push(buf_Children);
-	    				}
 	    			}
 	    			formData.push(buf);
 	    			if (data[item].children) {//说明有二级系数表
 	    				for (let i = 0; i < formData.length; i++) {
-	    					if (formData[i].cfgCoefficientId == item) {
+	    					if (formData[i].id == item) {
 	    						formatChildren(data[item].children,formData[i].children);
 	    					}
 	    				}
@@ -491,105 +469,124 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    		}
 	    	}	
 	    	let formData = [];
-	    	formatChildren(data.nodes,formData);
-	    	this.tableData = formData;
+	    	formatChildren(data,formData);
+	    	this.tagData[0] = formData;
+	    	for (let i = 1; i < this.tagData.length; i++) {
+	    		this.tagData[i] = [];
+	    	}
 	    	
-	    	if (this.currentRange.id && formData[0]) {
+	    	if (this.currentRange.id && formData[0]) {	
 	    		for (let i = 0; i < formData.length; i++) {
-	    			if (formData[i].cfgCoefficientId == this.currentRange.id) {
-	    				this.rangeData = formData[0].ranges;
-				    	this.currentRange.name = formData[0].name;
-				    	this.currentRange.id = formData[0].cfgCoefficientId;
-				    	this.isCustom = formData[0].custom;
+	    			if (formData[i].id == this.currentRange.id) {
+				    	this.currentRange.name = formData[i].name;
+				    	this.currentRange.id = formData[i].id;
+				    	this.currentRange.isCustom = formData[i].custom;
+				    	this.currentRange.maxmiumCustom = formData[i].maxmiumCustom;
+	    				this.currentRange.depth = 0;
 	    			}
 	    		}
 	    	}
 	    	else
-	    	{
-	    		this.rangeData = formData[0]?formData[0].ranges:[{}];
+	    	{//默认显示第一条系数类型的数据
 		    	this.currentRange.name = formData[0]?formData[0].name:'';
-		    	this.currentRange.id = formData[0]?formData[0].cfgCoefficientId:'';
-		    	this.isCustom = formData[0]?formData[0].custom:false;
+		    	this.currentRange.id = formData[0]?formData[0].id:'';
+		    	this.currentRange.isCustom = formData[0]?formData[0].custom:false;
+		    	this.currentRange.maxmiumCustom = formData[0]?formData[0].maxmiumCustom:0;
+		    	this.currentRange.depth = 0;
 	    	}
+
+	    	this.getRanges(this.currentRange.id);
+	    	this.switchBox = !this.switchBox;	//刷新渲染
 	    },
 
-	    selectMenu(index,path) {
-	    	if (!path[1]) {		//说明点击的是一级系数
-	    		for (let i = 0; i < this.tableData.length; i++) {
-		    		if (this.tableData[i].cfgCoefficientId == index) {	//遍历tableData,对比id和函数返回的index判断当前要显示的系数
-		    			if (this.tableData[i].custom) {//系数可编辑
-		    				//post
-		    				this.getEditedRangeData(index);
-					   		this.currentRange.name = this.tableData[i].name;
-					   		this.currentRange.id = this.tableData[i].cfgCoefficientId;
-					   		this.isCustom = this.tableData[i].custom;
-		    			}
-		    			else
-		    			{
-			    			this.rangeData = this.tableData[i].ranges;
-			    			this.currentRange.name = this.tableData[i].name;
-					   		this.currentRange.id = this.tableData[i].cfgCoefficientId;
-					   		this.isCustom = this.tableData[i].custom;
-		    			}
-		    		}
-		    	}
+	    selectMenu(val,level,index) {//val:被点击的结构体, level:选中路由所在的层级数, index:选中路由在自身列表的位置
+    		
+	   		this.currentRange.id = val.id;
+	   		this.currentRange.name = val.name;
+	   		this.currentRange.isCustom = val.custom;
+	   		this.currentRange.maxmiumCustom = val.maxmiumCustom;
+	   		this.currentRange.depth = level;
+
+	    	var child_level = level + 1;
+	    	if (val.children[0]) {
+	    		this.tagData[child_level] = val.children;
+	    		for (let i = level + 2; i < this.tagData.length; i++) {
+	    			this.tagData[i] = [];
+	    		}
 	    	}
 	    	else
 	    	{
-	    		//二级系数
-	    		for (let i = 0; i < this.tableData.length; i++) {
-		    		if (this.tableData[i].cfgCoefficientId == path[0]) {
-		    			for (let j = 0; j < this.tableData[i].children.length; j++) {
-		    				if (this.tableData[i].children[j].cfgCoefficientId == path[1]) {
-	    						if (this.tableData[i].custom) {//系数可编辑
-				    				//post
-				    				this.getEditedRangeData(index);
-	    							this.currentRange.name = this.tableData[i].children[j].name
-					   				this.currentRange.id = this.tableData[i].children[j].cfgCoefficientId;
-					   				this.isCustom = this.tableData[i].children[j].custom;
-				    			}
-				    			else
-				    			{
-					    			this.rangeData = this.tableData[i].children[j].ranges;
-	    							this.currentRange.name = this.tableData[i].children[j].name;
-					   				this.currentRange.id = this.tableData[i].children[j].cfgCoefficientId;
-	    							this.isCustom = this.tableData[i].children[j].custom;
-				    			}
-		    				}
-		    			}
-		    		}
-		    	}
-	    	}
-	    },
-
-	    openMenu(index,path) {
-	    	for (let i = 0; i < this.tableData.length; i++) {
-	    		if (this.tableData[i].cfgCoefficientId == path[0]) {
-	    			this.rangeData = this.tableData[i].ranges;
-	    			this.currentRange.name = this.tableData[i].name;
-	    			this.currentRange.id = this.tableData[i].cfgCoefficientId;
-	    			this.isCustom = this.tableData[i].custom;
+	    		for (let i = level + 1; i < this.tagData.length; i++) {
+	    			this.tagData[i] = [];
 	    		}
 	    	}
+	    	this.getRanges(val.id);
+			this.switchBox = !this.switchBox;
 	    },
 
-	    getEditedRangeData(index) {
+	    getRanges(id) {
+	    	this.rangeData = [];
+	    	this.editedRatio.id = null;
+	    	this.editedRatio.rate = null;
+	    	// post
 	    	let payload = {
-				employeeId: window.localStorage.getItem('employeeId'),
-				id: index,
-			}
-			payload = JSON.stringify(payload);
+	    		employeeId: window.localStorage.getItem('employeeId'),
+	    		id: id,
+	    	};
+	    	payload = JSON.stringify(payload);
 			autoApi({
-	   			action: 'poundage_coefficient_ranges',
+	   			action: 'coefficient_ranges',
 	   			version: '1.0',
-	   			payload: payload
+	   			payload: payload			
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.rangeData = res.attach;
+	   				if(res.attach) {
+	   					for (let item in res.attach) {
+	   						let buf = res.attach[item];
+	   						this.rangeData.push(buf);
+	   					}
+	    				this.getRates(this.choosed);
 	   				}
        			}
 	   		})
+	    },
+
+	    getRates(id) {
+	    	this.rateData = {};
+	    	// post
+	    	let payload = {
+	    		employeeId: window.localStorage.getItem('employeeId'),
+	    		insurerId: this.insurerId,
+	    		nodeId: id,
+	    		coefficientId: this.currentRange.id,
+	    	};
+	    	payload = JSON.stringify(payload);
+			autoApi({
+	   			action: 'poundage_config',
+	   			version: '1.0',
+	   			payload: payload			
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if(res.attach) {
+	   					this.baseCommission.shangye = res.attach.cmRate / 10;
+	   					this.baseCommission.jiaoqiang = res.attach.cpRate / 10;
+	   					this.selfCommission.shangye = res.attach.cmRetainRate / 10;
+	   					this.selfCommission.jiaoqiang = res.attach.cpRetainRate / 10;
+	   					this.isRateEffective = res.attach.effective;
+	   					this.rateData = res.attach.ratios?res.attach.ratios:{};
+	   					this.fixData();	//展示中的系数与rate数据
+	   				}
+       			}
+	   		})
+	    },
+
+	    fixData() {		//将现有的rateData整合进rangeData里
+    		for (let i = 0; i < this.rangeData.length; i++) {
+    			if (this.rateData[this.rangeData[i].id]) {
+    				this.rangeData[i].rate = this.rateData[this.rangeData[i].id] / 10;
+    			}
+    		}
+    		this.switchBox = !this.switchBox;
 	    },
 
 	    handleAddClose() {
@@ -605,114 +602,106 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 
 	    confirmSetSave() {
-		    if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang)) {
-		    	let payload = 
-					{
-					    path: '',								//页面节点路径 
-		   				employeeId: this.tenantId.employeeId,                
-					    insurerId: null, 						//险企ID         
-					    routeBody: {
-				            commercialRate: null,           	//基础 - 商业  
-				            compulsoryRate: null, 				//基础 - 交强
-				            commercialRetainRate: null,			//自留 - 商业
-				            compulsoryRetainRate: null,			//自留 - 交强
-				            commercialCommisionSpinner: {}
-				        },
-				        delete: false
-					}
-				//页面节点路径    	
-				for (var i = 0; i < this.chooseds.length; i++) {
-					if(this.chooseds[i] === this.choosed) {
-						payload.path = payload.path + this.chooseds[i];
-						break;
-					}
-					else
-					{
-						payload.path = payload.path + this.chooseds[i] + "_";
-					}
-				}
-				
-				//基础 - 商业
-				payload.routeBody.commercialRate = parseInt(this.baseCommission.shangye * 10);
-				//基础 - 交强
-				payload.routeBody.compulsoryRate = parseInt(this.baseCommission.jiaoqiang * 10);
-				//自留 - 商业
-				payload.routeBody.commercialRetainRate = parseInt(this.selfCommission.shangye * 10);
-				//自留 - 交强
-				payload.routeBody.compulsoryRetainRate = parseInt(this.selfCommission.jiaoqiang * 10);
-				//商业险系数绑定
-				for (let i = 0; i < this.tableData.length; i++) {
-					if (this.tableData[i].choosed) {
-						payload.routeBody.commercialCommisionSpinner[this.tableData[i].choosed] = this.tableData[i].addORdec?(this.tableData[i].addORdec === 1?parseInt(this.tableData[i].rate * 10):-parseInt(this.tableData[i].rate * 10)):0;
-						for (let j = 0; j < this.tableData[i].coefficients.length; j++) {
-							if (this.tableData[i].coefficients[j].rate) {
-								let ifHasBeenChanged = false;
-								for (let id in payload.routeBody.commercialCommisionSpinner) {
-									if (id == this.tableData[i].coefficients[j].id)
-									{
-										ifHasBeenChanged = true;
-									}
-								}
-								if(!ifHasBeenChanged) {
-									payload.routeBody.commercialCommisionSpinner[this.tableData[i].coefficients[j].id] = this.tableData[i].coefficients[j].rate
-								}
-							}
-						}
-					}
-				}
-				
-				//险企ID
-				payload.insurerId = this.insurerId;
-				payload = JSON.stringify(payload);
-
-				autoApi({
-		   			action: 'bonus_poundage_config_edit',
+			//post
+			if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang) && this.isLegalNumber(this.editedRatio.rate)) {
+				let payload = {
+		    		employeeId: window.localStorage.getItem('employeeId'),
+	    			insurerId: this.insurerId,
+		    		nodeId: this.choosed,
+		    		config: {
+		    			cmRate: this.baseCommission.shangye?parseInt(this.baseCommission.shangye * 10):0,
+		    			cpRate: this.baseCommission.jiaoqiang?parseInt(this.baseCommission.jiaoqiang * 10):0,
+		    			cmRetainRate: this.selfCommission.shangye?parseInt(this.selfCommission.shangye * 10):0,
+		    			cpRetainRate: this.selfCommission.jiaoqiang?parseInt(this.selfCommission.jiaoqiang * 10):0,
+		    			effective: this.isRateEffective,
+		    		}
+		    	}
+		    	
+			   	payload = JSON.stringify(payload);
+		    	autoApi({
+		   			action: 'poundage_config_edit',
 		   			version: '1.0',
-		   			payload: payload
+		   			payload: payload,
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-		   				// this.getSetting();
-		   				this.$message({
-				            message: '修改的设置已保存',
-				            type: 'success'
-				        });
+		   				this.getRanges(this.currentRange.id);
+				    	this.$message({
+				    		message: '设置已保存',
+				    		type: 'success',
+				    	})
 	       			}
 		   		})
-		    }
-		    else
-		    {
+			}
+			else
+			{
 		    	this.$message({
-		            message: '数值输入有误,请在-100到100的范围内输入',
-		            type: 'error'
-		        });
+		    		message: '输入非法,请检查输入(正确输入范围是-100到100,小数将只保留一位)',
+		    		type: 'error',
+		    	})
 		    }
 	    },
+	    editRange(row) {
+	    	this.dialogEditVisible = true;
+	    	this.editedRange.id = row.id;
+	    	this.editedRange.name = row.name;
+	    	for (let i = 0; i < this.comparisons.length; i++) {
+	    		if (this.reComparisonName(row.comparison) == this.comparisons[i].label) {
+	    			this.editedRange.comparison = this.comparisons[i].value;
+	    		}
+	    	}
+	    	if (row.comparableValue.split('_')[1]) {
+	    		this.editedRange.comparableValueA = row.comparableValue.split('_')[0];
+	    	this.editedRange.comparableValueB = row.comparableValue.split('_')[1];
+	    	}
+	    	else {
+	    		this.editedRange.comparableValue = row.comparableValue;
+	    	}
+	    	
+	    },
+	    confirmEditRange() {
+	    	var payload = {
+	    			id: this.editedRange.id,
+		    		employeeId: window.localStorage.getItem('employeeId'),
+		    		coefficientId: this.currentRange.id,
+		    		name: this.editedRange.name,
+		    		val: [],
+		    		symbol: this.editedRange.comparison,
+		    	}
+	    	if (this.editedRange.comparison == "bteween" || this.editedRange.comparison == "lbteween" || this.editedRange.comparison == "rbteween") {
+	    		payload.val[0] = this.editedRange.comparableValueA;
+	    		payload.val[1] = this.editedRange.comparableValueB;
+	    	}
+	    	else
+	    	{
+	    		payload.val[0] = this.editedRange.comparableValue;
+	    	}
+		   	payload = JSON.stringify(payload);
+	    	autoApi({
+		   			action: 'coefficient_range_edit',
+		   			version: '1.0',
+		   			crudType: 4,
+		   			payload: payload,
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			if (res.code == 0) {
+		   				this.editedRange.id = null;
+				    	this.editedRange.name = null;
+				    	this.editedRange.comparison = null;
+				    	this.editedRange.comparableValue = null;
+				    	this.editedRange.comparableValueA = null;
+				    	this.editedRange.comparableValueB = null;
+				    	this.getRanges(this.currentRange.id);
+				    	this.$message({
+				    		message: '编辑已保存',
+				    		type: 'success',
+				    	});
+	       			}
+		   		})
+		   	this.dialogEditVisible = false;
+	    },
+	    deleteRange(row) {
+	    	//post
 
-	    confirmSetDelete() {
-	    	let payload = 
-				{
-				    path: '',       					//页面节点路径
-		   			employeeId: this.tenantId.employeeId,                 
-				    insurerId: null,                       //险企ID         
-				    delete: true
-				}
-			//页面节点路径    	
-			for (var i = 0; i < this.chooseds.length; i++) {
-				if(this.chooseds[i] === this.choosed) {
-					payload.path = payload.path + this.chooseds[i];
-					break;
-				}
-				else
-				{
-					payload.path = payload.path + this.chooseds[i] + "_";
-				}
-			}
-			//险企ID
-			payload.insurerId = this.insurerId;
-
-			payload = JSON.stringify(payload);
-
-			this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
 	          cancelButtonText: '取消',
 	          type: 'warning'
@@ -734,78 +723,22 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	            type: 'info',
 	            message: '已取消删除'
 	          });          
-	        });   	
+	        });   
 
-	    },
-	    editRange(row) {
-	    	this.dialogEditVisible = true;
-	    	this.editedRange.id = row.id;
-	    	this.editedRange.name = row.name;
-	    	for (let i = 0; i < this.comparisons.length; i++) {
-	    		if (this.reComparisonName(row.comparison) == this.comparisons[i].label) {
-	    			this.editedRange.comparison = this.comparisons[i].value;
-	    		}
-	    	}
-	    	this.editedRange.comparableValue = row.comparableValue;
-	    	this.editedRange.comparableValueA = row.comparableValueA;
-	    	this.editedRange.comparableValueB = row.comparableValueB;
-	    },
-	    confirmEditRange() {
-	    	var payload = {
-	    			id: this.editedRange.id,
-		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		cfgCoefficientId: this.currentRange.id,
-		    		name: this.editedRange.name,
-		    		val: [],
-		    		symbol: this.editedRange.comparison,
-		    	}
-	    	if (this.editedRange.comparison == "bteween" || this.editedRange.comparison == "lbteween" || this.editedRange.comparison == "rbteween") {
-	    		payload.val[0] = this.editedRange.comparableValueA;
-	    		payload.val[1] = this.editedRange.comparableValueB;
-	    	}
-	    	else
-	    	{
-	    		payload.val[0] = this.editedRange.comparableValue;
-	    	}
-		   	payload = JSON.stringify(payload);
-	    	autoApi({
-		   			action: 'poundage_coefficient_range_edit',
-		   			version: '1.0',
-		   			crudType: 4,
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.editedRange.id = null;
-				    	this.editedRange.name = null;
-				    	this.editedRange.comparison = null;
-				    	this.editedRange.comparableValue = null;
-				    	this.editedRange.comparableValueA = null;
-				    	this.editedRange.comparableValueB = null;
-				    	this.getEditedRangeData(this.currentRange.id);
-				    	this.$message({
-				    		message: '编辑已保存',
-				    		type: 'success',
-				    	});
-	       			}
-		   		})
-		   	this.dialogEditVisible = false;
-	    },
-	    deleteRange(row) {
-	    	//post
 	    	let payload = {
 	    			id: row.id,
 		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		cfgCoefficientId: this.currentRange.id,
+		    		coefficientId: this.currentRange.id,
 		    	}
 		   	payload = JSON.stringify(payload);
 	    	autoApi({
-		   			action: 'poundage_coefficient_range_edit',
+		   			action: 'coefficient_range_edit',
 		   			version: '1.0',
 		   			crudType: 8,
 		   			payload: payload,
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
-				    	this.getEditedRangeData(this.currentRange.id);
+		   				this.getRanges(this.currentRange.id);
 				    	this.$message({
 				    		message: '删除成功',
 				    		type: 'success',
@@ -813,16 +746,63 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	       			}
 		   		})
 	    },
+	    editRatio(row) {
+	    	this.editedRatio.id = row.id;
+	    	this.editedRatio.rate = row.rate;
+	    },
+	    cancelEditRatio(row) {
+	    	this.editedRatio.id = null;
+	    	this.editedRatio.rate = null;
+	    },
 	    confirmEditRatio() {
-	    	// this.editedRatio.id = null;
-	    	// this.editedRatio.rate = null;
-	    	// this.getSetting();
+	    	//post
+		    if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang) && this.isLegalNumber(this.editedRatio.rate)) {
+		    	let payload = {
+		    		employeeId: window.localStorage.getItem('employeeId'),
+	    			insurerId: this.insurerId,
+		    		nodeId: this.choosed,
+		    		config: {
+		    			cmRate: this.baseCommission.shangye?parseInt(this.baseCommission.shangye * 10):0,
+		    			cpRate: this.baseCommission.jiaoqiang?parseInt(this.baseCommission.jiaoqiang * 10):0,
+		    			cmRetainRate: this.selfCommission.shangye?parseInt(this.selfCommission.shangye * 10):0,
+		    			cpRetainRate: this.selfCommission.jiaoqiang?parseInt(this.selfCommission.jiaoqiang * 10):0,
+		    			effective: this.isRateEffective,
+		    			coefficientId: this.currentRange.id,
+		    			rangeId: this.editedRatio.id,
+		    			rangeRate: this.editedRatio.rate?parseInt(this.editedRatio.rate * 10):0,
+		    		}
+		    	}
+		    	
+			   	payload = JSON.stringify(payload);
+		    	autoApi({
+			   			action: 'poundage_config_edit',
+			   			version: '1.0',
+			   			payload: payload,
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+			   				this.getRanges(this.currentRange.id);
+					    	this.$message({
+					    		message: '设置已保存',
+					    		type: 'success',
+					    	})
+		       			}
+			   		})
+		    	this.editedRatio.id = null;
+		    	this.editedRatio.rate = null;
+		    }
+		    else
+		    {
+		    	this.$message({
+		    		message: '输入非法,请检查输入',
+		    		type: 'error',
+		    	})
+		    }
 	    },
 	    confirmAddRange() {
 	    	//post add
 	    	var payload = {
 		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		cfgCoefficientId: this.currentRange.id,
+		    		coefficientId: this.currentRange.id,
 		    		name: this.addedRange.name,
 		    		val: [],
 		    		symbol: this.addedRange.comparison,
@@ -837,7 +817,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	}
 		   	payload = JSON.stringify(payload);
 	    	autoApi({
-		   			action: 'poundage_coefficient_range_edit',
+		   			action: 'coefficient_range_edit',
 		   			version: '1.0',
 		   			crudType: 1,
 		   			payload: payload,
@@ -848,15 +828,19 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		   				this.addedRange.comparableValue = null;
 		   				this.addedRange.comparableValueA = null;
 		   				this.addedRange.comparableValueB = null;
-		   				this.getEditedRangeData(this.currentRange.id);
+		   				this.getRanges(this.currentRange.id);
+		   				this.$message({
+		   					message: '新增成功',
+		   					type: 'success',
+		   				});
 	       			}
 		   		})
 		   	this.dialogAddVisible = false;
 	    },
 	    //判断系数数量是否达到了最大值
 	    isFull(row) {
-	    	if (row.coefficients && row.maxCustomNum) {//最大值为0表示无上限
-	    		if (row.maxCustomNum <= row.coefficients.length) {
+	    	if (row.coefficients && row.maxmiumCustom) {//最大值为0表示无上限
+	    		if (row.maxmiumCustom <= row.coefficients.length) {
 	    			return true;
 	    		}
 	    	}
@@ -950,42 +934,6 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 					break;
 	    	}
 	    },
-	    reCoefficientType(val) {
-	    	switch(val)
-	    	{
-				case 1:
-					return "CLAIMS"
-					break;
-				case 2:
-					return "NO_CLAIMS"
-					break;
-				case 3:
-					return "GENDER"
-					break;
-				case 4:
-					return "ZXB"
-					break;
-				case 5:
-					return "SEAT_COUNT"
-					break;
-				case 6:
-					return "LICENSE"
-					break;
-				case 7:
-					return "VEHICLE_AGE"
-					break;
-				case 8:
-					return "PURCHASE_PRICE"
-					break;
-				case 9:
-					return "AGE"
-					break;
-				default:
-					return val
-					break;
-	    	}
-	    	
-	    },
 	    comparisonValueShow(row) {	//不修改参数,只是优化表现的函数
 	    	if(row.comparableValue)
 	    	{
@@ -1041,6 +989,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 </script>
 <style lang="less">
 .autoInsuranceManage{
+	min-width: 1000px;
 	.labelText {
 		font-size: 16px;
 		font-weight: bold;
@@ -1104,10 +1053,16 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		float: right;
 	}
 
-	.toolBoxR {
-		margin-bottom: 20px;
-		position: relative;
-		float: right;
+	.toolBox {
+		margin: 20px 0 ;
+		.toolBoxR {
+			position: relative;
+			float: right;
+		}
+	}
+
+	.listBox {
+		border-bottom: 1px solid #20a0ff;
 	}
 
 }
