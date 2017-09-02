@@ -102,11 +102,11 @@ import { autoApi } from '@/ajax/post.js'
 			    		CMRate: 0,
 			    		CPRate: 0
 			    	}
-			  		for (var i = 0; i < this.form.commonmoney.length; i++) {
+			  		for (let i = 0; i < this.form.commonmoney.length; i++) {
 			  			payload.mod = payload.mod + parseInt(this.form.commonmoney[i]);
 			  		}
-			  		for (var i = 0; i < this.form.teammoney.length; i++) {
-			  			payload.mod = payload.mod + parseInt(this.form.teammoney[i]);
+			  		for (let j = 0; j < this.form.teammoney.length; j++) {
+			  			payload.mod = payload.mod + parseInt(this.form.teammoney[j]);
 			  		}
 
 			    	payload.mod = payload.mod + parseInt(this.form.payway);

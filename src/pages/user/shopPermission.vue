@@ -173,24 +173,33 @@ import { autoApi } from '@/ajax/post.js'
 			},
 
 			comfirmSave() {
-				let payload = {
-					tarId: this.id,
-					modulars: this.choosed,
+				if (true) {
+					let payload = {
+						tarId: this.id,
+						modulars: this.choosed,
+					}
+					payload = JSON.stringify(payload);
+					autoApi({
+						action: 'authorize_tenant',
+						version: '1.0',
+						payload: payload
+					},window.localStorage.getItem('token')).then((res)=> {
+						this.$message({
+							message: '授予模块成功',
+							type: 'success',
+						});
+						router.push({
+					  	  name: "shop-shop-list"
+					    });
+					})
 				}
-				payload = JSON.stringify(payload);
-				autoApi({
-					action: 'authorize_tenant',
-					version: '1.0',
-					payload: payload
-				},window.localStorage.getItem('token')).then((res)=> {
+				else
+				{
 					this.$message({
-						message: '授予模块成功',
-						type: 'success',
+						message: '请选择要授权的模块',
+						type: 'info',
 					});
-					router.push({
-				  	  name: "shop-shop-list"
-				    });
-				})
+				}
 			},
 
 			goback() {

@@ -480,7 +480,14 @@ import { autoApi } from '@/ajax/post.js'
 			   				this.getInfo();
 		       			}
 			   		})
-				}      		
+				}
+				else
+				{
+					this.$message({
+						message: '提交数据为空,已取消提交',
+						type: 'info',
+					});
+				}
 	       	},
 	       	saveGuanli() {
 	       		for (var i = 0; i < this.guanliData.length; i++) {

@@ -176,25 +176,34 @@ export default {
 		},
 
 		comfirmSave() {
-			let payload = {
-				tarId: this.id,
-				modulars: this.choosed,
-			}
-			payload = JSON.stringify(payload);
-			autoApi({
-				action: 'authorize_user',
-				version: '1.0',
-				payload: payload,
-			},window.localStorage.getItem('token')).then((res)=> {
-				this.$message({
-					message: '授予模块成功',
-					type: 'success',
-				});
-				router.push({
-			  	  name: "shop-user-list",
-			    });
+			if (this.choosed) {
+				let payload = {
+					tarId: this.id,
+					modulars: this.choosed,
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'authorize_user',
+					version: '1.0',
+					payload: payload,
+				},window.localStorage.getItem('token')).then((res)=> {
+					this.$message({
+						message: '授予模块成功',
+						type: 'success',
+					});
+					router.push({
+				  	  name: "shop-user-list",
+				    });
 
-			})
+				})
+			}
+			else 
+			{
+				this.$message({
+					message: '请选择要授权的模块',
+					type: 'info',
+				});
+			}
 		},
 
 		goback() {

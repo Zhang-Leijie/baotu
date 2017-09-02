@@ -182,7 +182,7 @@
 </template>
 <script>
 
-import { autoApi,commonApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 	function formatDate(time){
 	  var   x = time - 0
@@ -660,7 +660,8 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	
 	    },
 	    confirmEditRange() {
-	    	var payload = {
+	    	if ((this.editedRange.comparableValue || this.editedRange.comparableValueA) && this.editedRange.name && this.editedRange.comparison) {
+	    		var payload = {
 	    			id: this.editedRange.id,
 		    		employeeId: window.localStorage.getItem('employeeId'),
 		    		coefficientId: this.currentRange.id,
@@ -668,16 +669,16 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		    		val: [],
 		    		symbol: this.editedRange.comparison,
 		    	}
-	    	if (this.editedRange.comparison == "bteween" || this.editedRange.comparison == "lbteween" || this.editedRange.comparison == "rbteween") {
-	    		payload.val[0] = this.editedRange.comparableValueA;
-	    		payload.val[1] = this.editedRange.comparableValueB;
-	    	}
-	    	else
-	    	{
-	    		payload.val[0] = this.editedRange.comparableValue;
-	    	}
-		   	payload = JSON.stringify(payload);
-	    	autoApi({
+		    	if (this.editedRange.comparison == "bteween" || this.editedRange.comparison == "lbteween" || this.editedRange.comparison == "rbteween") {
+		    		payload.val[0] = this.editedRange.comparableValueA;
+		    		payload.val[1] = this.editedRange.comparableValueB;
+		    	}
+		    	else
+		    	{
+		    		payload.val[0] = this.editedRange.comparableValue;
+		    	}
+			   	payload = JSON.stringify(payload);
+		    	autoApi({
 		   			action: 'coefficient_range_edit',
 		   			version: '1.0',
 		   			crudType: 4,
@@ -697,11 +698,18 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 				    	});
 	       			}
 		   		})
+	    	}
+	    	else
+	    	{
+	    		this.$message({
+	    			message: '编辑的数据不完整,已取消修改',
+	    			type: 'error',
+	    		});
+	    	}
 		   	this.dialogEditVisible = false;
 	    },
 	    deleteRange(row) {
 	    	//post
-
 	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
 	          cancelButtonText: '取消',
@@ -801,23 +809,24 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    },
 	    confirmAddRange() {
 	    	//post add
-	    	var payload = {
-		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		coefficientId: this.currentRange.id,
-		    		name: this.addedRange.name,
-		    		val: [],
-		    		symbol: this.addedRange.comparison,
+		    if ((this.addedRange.comparison || this.addedRange.comparableValueA) && this.addedRange.name && this.addedRange.comparison) {
+		    	var payload = {
+			    		employeeId: window.localStorage.getItem('employeeId'),
+			    		coefficientId: this.currentRange.id,
+			    		name: this.addedRange.name,
+			    		val: [],
+			    		symbol: this.addedRange.comparison,
+			    	}
+		    	if (this.addedRange.comparison == "bteween" || this.addedRange.comparison == "lbteween" || this.addedRange.comparison == "rbteween") {
+		    		payload.val[0] = this.addedRange.comparableValueA;
+		    		payload.val[1] = this.addedRange.comparableValueB;
 		    	}
-	    	if (this.addedRange.comparison == "bteween" || this.addedRange.comparison == "lbteween" || this.addedRange.comparison == "rbteween") {
-	    		payload.val[0] = this.addedRange.comparableValueA;
-	    		payload.val[1] = this.addedRange.comparableValueB;
-	    	}
-	    	else
-	    	{
-	    		payload.val[0] = this.addedRange.comparableValue;
-	    	}
-		   	payload = JSON.stringify(payload);
-	    	autoApi({
+		    	else
+		    	{
+		    		payload.val[0] = this.addedRange.comparableValue;
+		    	}
+			   	payload = JSON.stringify(payload);
+		    	autoApi({
 		   			action: 'coefficient_range_edit',
 		   			version: '1.0',
 		   			crudType: 1,
@@ -836,6 +845,14 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		   				});
 	       			}
 		   		})
+		    }
+		    else
+		    {
+		    	this.$message({
+		    		message: '提交数据不完整,添加已取消',
+		    		type: 'error',
+		    	});
+		    }
 		   	this.dialogAddVisible = false;
 	    },
 	    //判断系数数量是否达到了最大值

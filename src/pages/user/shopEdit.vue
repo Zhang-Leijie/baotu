@@ -103,31 +103,40 @@ import { autoApi } from '@/ajax/post.js'
 		   		})
 		    },
 		    confirmEdit() {
-		    	let payload = {
-		   			tname: this.form.name,
-		   			licenseImage: this.form.imageUrl,
-		   			expire: Date.parse(this.form.time) / 1000,
-		   			license: this.form.num,
-		   			tid: this.form.tid,
-		   			contacts: this.form.people,
-		   			contactsMobile: this.form.phone,
-		    	}
-		    	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'platform_tenant_set',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.$message({
-				            message: '修改的设置已保存',
-				            type: 'success',
-				        });
-				        router.push({
-					        path: '/shop/shop-list',
-					    });
-	       			}
-		   		})
+			    if (this.form.name && this.form.imageUrl && this.form.time && this.form.num && this.form.tid && this.form.people && this.form.phone) {
+			    	let payload = {
+			   			tname: this.form.name,
+			   			licenseImage: this.form.imageUrl,
+			   			expire: Date.parse(this.form.time) / 1000,
+			   			license: this.form.num,
+			   			tid: this.form.tid,
+			   			contacts: this.form.people,
+			   			contactsMobile: this.form.phone,
+			    	}
+			    	payload = JSON.stringify(payload);
+			    	autoApi({
+			   			action: 'platform_tenant_set',
+			   			version: '1.0',
+			   			payload: payload
+			   		},window.localStorage.getItem('token')).then((res)=> {
+			   			if (res.code == 0) {
+			   				this.$message({
+					            message: '修改的设置已保存',
+					            type: 'success',
+					        });
+					        router.push({
+						        path: '/shop/shop-list',
+						    });
+		       			}
+			   		})
+			    }
+			    else
+			    {
+			    	this.$message({
+			    		message: '信息填写不完整,请检查',
+			    		type: 'error',
+			    	});
+			    }
 		    },
 		    goback() {
 		    	router.push({

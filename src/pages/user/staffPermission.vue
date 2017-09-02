@@ -181,26 +181,34 @@ import { autoApi } from '@/ajax/post.js'
 			},
 
 			comfirmSave() {
-				let payload = {
-					tarId: this.id,
-					modulars: this.choosed,
-					employeeId: window.localStorage.getItem('employeeId'),
+				if (this.choosed) {
+					let payload = {
+						tarId: this.id,
+						modulars: this.choosed,
+						employeeId: window.localStorage.getItem('employeeId'),
+					}
+					payload = JSON.stringify(payload);
+					autoApi({
+						action: 'authorize_employee',
+						version: '1.0',
+						payload: payload
+					},window.localStorage.getItem('token')).then((res)=> {
+						this.$message({
+							message: '授予模块成功',
+							type: 'success',
+						});
+						router.push({
+					  	  name: "shop-staff-list"
+					    });
+					})
 				}
-				payload = JSON.stringify(payload);
-				autoApi({
-					action: 'authorize_employee',
-					version: '1.0',
-					payload: payload
-				},window.localStorage.getItem('token')).then((res)=> {
+				else
+				{
 					this.$message({
-						message: '授予模块成功',
-						type: 'success',
+						message: '请选择要授权的模块',
+						type: 'info',
 					});
-					router.push({
-				  	  name: "shop-staff-list"
-				    });
-
-				})
+				}
 			},
 
 			goback() {
