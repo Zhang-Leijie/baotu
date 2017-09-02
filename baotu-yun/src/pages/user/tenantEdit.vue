@@ -185,7 +185,9 @@
 			<el-form label-width="120px" class="appbox">
 			  	<el-form-item class="appblock" label="险企ID:">
 			  		<span v-show="!formAddJianjie.insurerId" style="color: red;">*</span>
-			    	<el-input type="text" style="width:150px;" v-model="formAddJianjie.insurerId" placeholder="请输入ID"></el-input>
+			  		<el-select v-model="formAddJianjie.insurerId" placeholder="请选择险企">
+					    <el-option v-for="item in insurerListJianjie" :label="item.label" :value="item.value"></el-option>
+					</el-select>
 			  	</el-form-item>
 			  	<el-form-item class="appblock" label="简捷ID:">
 			  		<span v-show="!formAddJianjie.companyId" style="color: red;">*</span>
@@ -214,6 +216,7 @@ import { masterApi } from '@/ajax/post.js'
 		    tenantData: [],				//基本信息
 		    tableData: [],				//路由列表数据
 		    insurerList: [],			//险企列表数据
+		    insurerListJianjie: [],			//险企列表数据
 		    formData: [],				//分页路由列表数据
 		    dialogTableVisible: false,
 		    currentPageJianjie: 1,
@@ -333,6 +336,7 @@ import { masterApi } from '@/ajax/post.js'
    					this.lengthJianjie = res.attach.length;
    					this.pageCountJianjie = parseInt((this.lengthJianjie - 1) / this.pageSizeJianjie) + 1;
    					this.showPageJianjie();
+   					this.getInsurerListJianjie();
        			}
 	   		})
 		},
@@ -363,6 +367,39 @@ import { masterApi } from '@/ajax/post.js'
 		   						buf.label = res.attach[i].name;
 		   						buf.value = res.attach[i].id;
 		   						this.insurerList.push(buf);
+	   						}
+	   					}
+	   				}
+       			}
+	   		})
+	  	},
+
+	  	getInsurerListJianjie() {
+	  		let payload = {};
+	  		payload = JSON.stringify(payload);
+	  		masterApi({
+	   			action: 'insurers',
+	   			version: '1.0',
+	   			payload: payload
+	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+	   			if (res.code == 0) {
+	   				if (res.attach) {
+	   					this.insurerListJianjie = [];
+	   					for (let i = 0; i < res.attach.length; i++) {
+	   						let check = false;
+	   						for (let j = 0; j < this.tableDataJianjie.length; j++) {
+	   							if(res.attach[i].id == this.tableDataJianjie[j].insurerId) {
+	   								check = true;
+	   							}
+	   						}
+	   						if (!check) {
+	   							let buf = {
+		   							label: null,
+		   							value: null
+		   						};
+		   						buf.label = res.attach[i].name;
+		   						buf.value = res.attach[i].id;
+		   						this.insurerListJianjie.push(buf);
 	   						}
 	   					}
 	   				}
@@ -532,6 +569,7 @@ import { masterApi } from '@/ajax/post.js'
       //  			}
 	   		// })
 	    	this.editedId = null;
+	  		this.saveAll();
 	  		this.showPage();
 	    },
 

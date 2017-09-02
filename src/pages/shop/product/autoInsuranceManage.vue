@@ -393,7 +393,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	this.baseCommission.jiaoqiang = null;
 	    	this.selfCommission.shangye = null;
 	    	this.selfCommission.jiaoqiang = null;
-	    	this.isRateEffective = true;
+	    	this.isRateEffective = false;
 	    },
 
 	    enterToNext(val,index) {
@@ -425,6 +425,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	    	this.baseCommission.shangye = null;
 	    	this.selfCommission.jiaoqiang = null;
 	    	this.selfCommission.shangye = null;
+	    	this.isRateEffective = false;
 
 	    	let child_index = index + 1
 	    	this.formRouterData[child_index] = val.children;
