@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div class="policyDetailBody">
     <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{name:'shop-order-policyList'}">车险订单列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{name:'shop-order-policyList'}">保单列表</el-breadcrumb-item>
+        <el-breadcrumb-item>保单详情</el-breadcrumb-item>
     </el-breadcrumb>
 
     <div style="text-align:right;margin-top:20px;">
@@ -317,6 +318,7 @@ import { autoApi } from '@/ajax/post.js'
   }
 </script>
 <style lang="less">
+.policyDetailBody {
   .tableA {
     font-size: 16px;
     margin: 20px 0;
@@ -339,4 +341,5 @@ import { autoApi } from '@/ajax/post.js'
       height: 24px;
     }
   }
+}
 </style>

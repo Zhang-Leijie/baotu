@@ -1,5 +1,5 @@
 <template>
-	<div class="GMPermissionBody">
+	<div class="staffPermissionBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item :to="{name:'shop-staff-list'}">员工列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>员工授权-{{$route.query.name}}</el-breadcrumb-item>
@@ -207,7 +207,7 @@ import { autoApi } from '@/ajax/post.js'
 				router.push({
 			  	  name: "shop-staff-list"
 			    })
-			}
+			},
 	    },
 	    mounted(){
 	        if (this.$route.query.id) {
@@ -218,10 +218,10 @@ import { autoApi } from '@/ajax/post.js'
 	}
 </script>
 <style lang="less">
-	.GMPermissionBody{
-		.contentBox{
-			margin-top: 20px;
-			margin-left: 10px;
-		}
+.staffPermissionBody{
+	.contentBox{
+		margin-top: 20px;
+		margin-left: 10px;
 	}
+}
 </style>

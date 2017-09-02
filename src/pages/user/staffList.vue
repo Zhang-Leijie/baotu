@@ -1,5 +1,5 @@
 <template>
-	<div class="staffList">
+	<div class="staffListBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>员工管理</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -18,11 +18,8 @@
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-				<!-- <el-table-column prop="id" label="ID"></el-table-column> -->
-				<!-- <el-table-column prop="uid" label="用户ID"></el-table-column> -->
 				<el-table-column prop="name" label="姓名"></el-table-column>
 				<el-table-column prop="mobile" label="账号"></el-table-column>
-			    <!-- <el-table-column prop="role" label="角色"></el-table-column> -->
 			    <el-table-column label="加入时间">
 			    	<template scope="scope">
 			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>
@@ -33,21 +30,13 @@
 			    		<span>{{payType(scope.row.mod)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <!-- <el-table-column prop="parentId" label="上级工号"></el-table-column> -->
 			    <el-table-column prop="parentName" label="邀请人"></el-table-column>
 			    <el-table-column prop="id" label="邀请码"></el-table-column>
-			    <!-- <el-table-column prop="parentUid" label="邀请码"></el-table-column> -->
-			    <!-- <el-table-column prop="parentMobile" label="上级手机号"></el-table-column> -->
 			    <el-table-column label="操作"> 
 			    	<template scope="scope">
 			      		<el-button type="text" size="small">
 							<router-link :to="{name:'shop-staff-edit',query:{id:scope.row.id}}">编辑</router-link>
 			      		</el-button>
-			      		<!-- <el-button type="text" size="small">
-							<router-link :to="{name:'shop-staff-permission',query:{id:scope.row.id,name:scope.row.name}}">授权</router-link>
-			      		</el-button> -->
-				        <!-- <el-button type="text" size="small">禁用</el-button>
-				        <el-button type="text" size="small">启用</el-button> -->
 			      	</template>
 			    </el-table-column>
 			</el-table>
@@ -56,20 +45,19 @@
 	</div>
 </template>
 <script>
-import { autoApi,commonApi } from '@/ajax/post.js'
-
-	export default {
-	  data() {
-	    return {
-	      total: null,
-	      pageSize: 10,
-	      currentPage: 1,
-	      searchID:'',
-	      tableData:[],
-		}
-	  },
-	  methods: {
-	  	formatDate(time){
+import { autoApi } from '@/ajax/post.js'
+export default {
+	data() {
+	return {
+	  total: null,
+	  pageSize: 10,
+	  currentPage: 1,
+	  searchID:'',
+	  tableData:[],
+	}
+	},
+	methods: {
+		formatDate(time){
 		  var   x = (time - 0) * 1000;
 		  var   now = new Date(x) 
 		  var   year = now.getFullYear();     
@@ -86,61 +74,60 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 		  		pageSize: this.pageSize,
 		  		asc: false,
 		  		employeeId: window.localStorage.getItem('employeeId'),
-		  		tarId: this.searchID?this.searchID:null
+		  		tarId: this.searchID?this.searchID:null,
 		  	}
 		  	payload = JSON.stringify(payload)
 		  	autoApi({
-	   			action: 'employees',
-	   			version: '1.0',
-	   			client: 2,
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.tableData = res.attach.list;
-	   				this.total = res.attach.total;
-	   			}
-	   		})
+				action: 'employees',
+				version: '1.0',
+				client: 2,
+				payload: payload
+			},window.localStorage.getItem('token')).then((res)=> {
+				if (res.code == 0) {
+					this.tableData = res.attach.list;
+					this.total = res.attach.total;
+				}
+			})
 		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.getInfo();
-	    },
+			pageChange(pg) {
+				this.currentPage = pg;
+		    this.getInfo();
+		},
 
-	    search() {
-	    	this.getInfo();
-	    },
+		search() {
+			this.getInfo();
+		},
 
-	    payType(val) {
-	    	const mod = [
-	    	{
-	    		value: 128,
-	    		label: '全额支付'
-	    	},
-	    	{
-	    		value: 256,
-	    		label: '净保费支付'
-	    	},
-	    	{
-	    		value: 512,
-	    		label: '公司垫付'
-	    	}];
-	    	for (var i = 0; i < mod.length; i++) {
-	    		let result = mod[i].value & val;
-	    		if (mod[i].value == result) {
-	    			return mod[i].label;
-	    		}
-	    	}
-	    }
-	  },
-	  mounted:function() {
-	  	this.getInfo();
-	  }
+		payType(val) {
+			const mod = [
+			{
+				value: 128,
+				label: '全额支付'
+			},
+			{
+				value: 256,
+				label: '净保费支付'
+			},
+			{
+				value: 512,
+				label: '公司垫付'
+			}];
+			for (let i = 0; i < mod.length; i++) {
+				let result = mod[i].value & val;
+				if (mod[i].value == result) {
+					return mod[i].label;
+				}
+			}
+		}
+	},
+	mounted() {
+		this.getInfo();
 	}
+}
 </script>
-
 <style lang="less">
-.staffList {
+.staffListBody {
 	.toolBar {
 		width: 100%;
 		overflow: hidden;

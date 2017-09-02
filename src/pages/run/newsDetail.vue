@@ -62,8 +62,8 @@
 		</el-dialog>
 	</div>
 </template>
-<script>
 
+<script>
 	function formatDate(time){
 	  var   x = time - 0
 	  console.log(x)
@@ -79,22 +79,20 @@
 	export default {
 	  data() {
 	    return {
-	      intotal:1,
-	      searchName:'',
+	      intotal: 1,
+	      searchName: '',
 	      tableData:[
 	      	{index:1,name:'张三',time:'2015-09-26 08:50:08',title:'如何在网上购买车险？'}
 	      ],
-	      currentPage:1,
-	      dialogVisible:false,
-	      dialogVisible2:false,
-	      textarea:''
+	      currentPage: 1,
+	      dialogVisible: false,
+	      dialogVisible2: false,
+	      textarea: ''
 		}
 	  },
 	  methods: {
 	  	handleCurrentChange(val) {
 	        this.currentPage = val;
-	        console.log(`当前页: ${val}`);
-	        // this.getlist(); 
 	    },
 	  },
 	  mounted:function() {

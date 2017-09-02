@@ -1,5 +1,5 @@
 <template>
-	<div class="statisticManage">
+	<div class="statisticManageBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>统计管理</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -267,7 +267,7 @@ require('echarts');
 	}
 </script>
 <style lang="less">
-.statisticManage {
+.statisticManageBody {
 	.blankCol {
 		margin: 10px 0 ;
 	}

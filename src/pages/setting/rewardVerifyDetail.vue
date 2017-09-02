@@ -1,10 +1,8 @@
 <template>
-	<div>
+	<div class="rewardVerifyDetailBody">
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item>
-				<router-link :to="{name:'shop-set-rewardVerify'}">
-	      			规模奖励审核
-	      		</router-link>
+				<router-link :to="{name:'shop-set-rewardVerify'}">规模奖励审核</router-link>
 			</el-breadcrumb-item>
 		  	<el-breadcrumb-item>业务流水</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -155,3 +153,8 @@ export default {
 	  }
 }
 </script>
+<style lang="less">
+.rewardVerifyDetailBody {
+	
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-	<div class="newsadd">
+	<div class="newsaddBody">
 		<div>
 			<el-breadcrumb separator="/">
 			  <el-breadcrumb-item :to="{name:'shop-run-newslist'}">资讯专区管理</el-breadcrumb-item>
@@ -78,35 +78,35 @@ import { autoApi } from '@/ajax/post.js'
 	}
 </script>
 <style lang="less">
-	.newsadd{
-		.appbox{
-			.appblock{
-				width: 50%;
-				float: left;
-			}
-		}
-	  	.avatar-uploader .el-upload {
-		    border: 1px dashed #d9d9d9;
-		    border-radius: 6px;
-		    cursor: pointer;
-		    position: relative;
-		    overflow: hidden;
-		}
-		.avatar-uploader .el-upload:hover {
-		    border-color: #20a0ff;
-		}
-		.avatar-uploader-icon {
-		    font-size: 28px;
-		    color: #8c939d;
-		    width: 178px;
-		    height: 178px;
-		    line-height: 178px;
-		    text-align: center;
-		}
-		.avatar {
-		    width: 178px;
-		    height: 178px;
-		    display: block;
+.newsaddBody{
+	.appbox{
+		.appblock{
+			width: 50%;
+			float: left;
 		}
 	}
+  	.avatar-uploader .el-upload {
+	    border: 1px dashed #d9d9d9;
+	    border-radius: 6px;
+	    cursor: pointer;
+	    position: relative;
+	    overflow: hidden;
+	}
+	.avatar-uploader .el-upload:hover {
+	    border-color: #20a0ff;
+	}
+	.avatar-uploader-icon {
+	    font-size: 28px;
+	    color: #8c939d;
+	    width: 178px;
+	    height: 178px;
+	    line-height: 178px;
+	    text-align: center;
+	}
+	.avatar {
+	    width: 178px;
+	    height: 178px;
+	    display: block;
+	}
+}
 </style>

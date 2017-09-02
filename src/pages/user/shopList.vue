@@ -1,5 +1,5 @@
 <template>
-	<div class="shopList">
+	<div class="shopListBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>商家账号管理</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -77,16 +77,14 @@
 	</div>
 </template>
 <script>
-import { autoApi,commonApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 export default {
 	  data() {
 	    return {
 	      searchName: null,
 	      searchId: null,
-	      tableData:[
-	      	// {index:1,account:'管理员',appname:'商家名称', license:'111111111', timeB:'2015-09-26 08:50:08',timeE:'2015-09-26 08:50:08',state:'正常'}
-	      ],
+	      tableData: [],
 	      total: null,
 	      currentPage: 1,
 	      pageSize: 10
@@ -122,10 +120,6 @@ export default {
 	   			if (res.code == 0) {
 	   				this.tableData = res.attach.list;
 	   				this.total = res.attach.total;
-	   				// this.$message({
-			     //        message: '修改的设置已保存',
-			     //        type: 'success'
-			     //    });
        			}
 	   		})
 	  	},
@@ -162,9 +156,8 @@ export default {
 	  }
 	}
 </script>
-
 <style lang="less">
-.shopList {
+.shopListBody {
 	.toolBar {
 		width: 100%;
 		overflow: hidden;

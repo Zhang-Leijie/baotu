@@ -2,9 +2,7 @@
   <div class="content">
     <div class="left-box">
       <div class="logo" style="text-align:center;" @click="gohome">
-      	<!-- <router-link :to="{name:'product-menu'}"> -->
           <img src="../assets/topLogo.png" style="height:70px;">
-        <!-- </router-link> -->
       </div>
       <el-col :span="8" style="width:100%">
         <el-menu  style="background-color:#32323a" unique-opened :default-active="activeRoute" :default-openeds="openedRouteList">
@@ -164,14 +162,12 @@
 	        </div> -->
 	        <div class="head-word">
               <router-link :to="{name:'sign-in'}">
-                <span @click="log" style="color:#4db3ff;font-size:14px;cursor:pointer">注销</span>
+                <span @click="logout" style="color:#4db3ff;font-size:14px;cursor:pointer">注销</span>
               </router-link>
 	        </div>
         </div>
     </div>
-    <!-- <div class="content-box">
-        <router-view></router-view>
-    </div> -->
+
     <div class="content-box">
       <transition name="fade" mode="out-in">
         <router-view></router-view>
@@ -180,9 +176,6 @@
   </div>
 </template>
 <script>
-
-// import { logout } from '../ajax/post.js'
-
 export default {
   data() {
     return {
@@ -194,17 +187,14 @@ export default {
     }
   },
   methods: {
-    log(){
-      // logout().then((res) => {
-      //   router.push({name:"sign-in"})
-      // })
+    logout() {
+        router.push({name:"sign-in"})
     },
     gohome() {
       router.push({name:"home"});
     }
   },
-  mounted:function() {
-
+  mounted() {
     this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
 
     if (this.$route.name == 'shop-shop-list') {

@@ -29,25 +29,13 @@
 			    <el-table-column label="操作">
 			      <template scope="scope">
 		      		<el-button type="text" size="small">
-						<a :href="scope.row.link">
-			      			查看评论
-			      		</a>
+						<a :href="scope.row.link">查看评论</a>
 		      		</el-button>
-		      		<!-- <router-link :to="{name:'shop-run-newsedit'}">
-						<el-button type="text" size="small">编辑</el-button>
-					</router-link> -->
 			        <el-button type="text" size="small" @click="deleteNews(scope.row)">删除</el-button>
 			      </template>
 			    </el-table-column>
 			</el-table>
-			<el-pagination v-if="total"
-		      @current-change="pageChange"
-		      :current-page="currentPage"
-		      :page-size="pageSize"
-		      layout="total , prev, pager, next, jumper"
-		      :total='total'
-		      style="margin:20px auto;text-align:center">
-		    </el-pagination>
+			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
 	</div>
 </template>
@@ -91,7 +79,7 @@ import { autoApi } from '@/ajax/post.js'
 	   			action: 'article_list',
 	   			version: '1.0',
 	   			payload: payload, 						
-	   			client: 2			
+	   			client: 2,
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if(res.attach.list[0]) {
@@ -117,11 +105,10 @@ import { autoApi } from '@/ajax/post.js'
 	    	else if (val.prop == "created") {
 	    		this.sortCol = "TIME";
 	    	}
-
 	        this.getInfo();
 	    },
 	    deleteNews(row) {
-	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+	    	this.$confirm('此操作将永久删除该条, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
 	          cancelButtonText: '取消',
 	          type: 'warning'

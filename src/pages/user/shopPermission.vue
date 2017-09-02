@@ -1,5 +1,5 @@
 <template>
-	<div class="GMPermissionBody">
+	<div class="shopPermissionBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item :to="{name:'shop-shop-list'}">商家列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>商家授权-{{$route.query.name}}</el-breadcrumb-item>
@@ -168,9 +168,7 @@ import { autoApi } from '@/ajax/post.js'
 						}
 					}
 				}
-				
 				this.$refs.tree.setCheckedKeys(this.choosed,false);
-
 				//因为element选中逻辑和需求不一致,因此重写了逻辑
 			},
 
@@ -192,7 +190,6 @@ import { autoApi } from '@/ajax/post.js'
 					router.push({
 				  	  name: "shop-shop-list"
 				    });
-
 				})
 			},
 
@@ -211,10 +208,10 @@ import { autoApi } from '@/ajax/post.js'
 	}
 </script>
 <style lang="less">
-	.GMPermissionBody{
-		.contentBox{
-			margin-top: 20px;
-			margin-left: 10px;
-		}
+.shopPermissionBody{
+	.contentBox{
+		margin-top: 20px;
+		margin-left: 10px;
 	}
+}
 </style>

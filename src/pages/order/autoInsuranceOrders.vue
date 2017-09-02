@@ -1,5 +1,5 @@
 <template>
-	<div class="ordersList">
+	<div class="autoInsuranceOrdersBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>列表</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -10,15 +10,13 @@
 				    <el-option v-for="item in stateList" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 				<el-button type="primary" @click="searchState">搜索</el-button>
+				<el-button @click="reSetSearch">重置</el-button>
 			</div>
 		</div>
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="id" label="保单id"></el-table-column>
-			    <!-- <el-table-column prop="uid" label="用户id"></el-table-column> -->
-			    <!-- <el-table-column prop="employeeId" label="雇员工号"></el-table-column> -->
-			    <!-- <el-table-column prop="userMobile" label="用户手机"></el-table-column> -->
 			    <el-table-column label="订单时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.created)}}</span>
@@ -31,17 +29,10 @@
 			    		<span>{{ showState(scope.row.state) }}</span>
 			    	</template>
 			    </el-table-column>
-			    <!-- <el-table-column label="单证状态">
-			    	<template scope="scope">
-			    		<span>{{scope.row?scope.row:''}}</span>
-			    	</template>
-			    </el-table-column> -->
 			    <el-table-column label="操作">
 			    	<template scope="scope">
 			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'shop-order-autoInsuranceOrderDetail',query:{id: scope.row.id}}">
-			      			查看详情
-				      		</router-link>
+			    			<router-link :to="{name:'shop-order-autoInsuranceOrderDetail',query:{id: scope.row.id}}">查看详情</router-link>
 			    		</el-button>
 			    	</template>
 			    </el-table-column>
@@ -56,13 +47,12 @@ import { autoApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
-	      dialogFormVisible: false,	
 	      currentPage: 1,
-	      total: null,
+	      total: 0,
 	      pageSize: 10,
 	      tableData: [],
 	      search: {
-	      	state: null
+	      	state: null,
 	      },
 	      stateList: [
 	      	  {
@@ -112,8 +102,7 @@ import { autoApi } from '@/ajax/post.js'
 		      {
 		      	value: "ISSUED",
 		      	label: "已出单"
-		      }
-	      ]
+		      }]
 		}
 	  },
 	  methods: {
@@ -135,7 +124,6 @@ import { autoApi } from '@/ajax/post.js'
 	  			var payload = {
 		  			page: this.currentPage,
 		  			pageSize: this.pageSize,
-		  			// uid: null,	保途端
 		  			state: this.search.state,
 		  			employeeId: window.localStorage.getItem('employeeId')
 		  		};
@@ -145,7 +133,6 @@ import { autoApi } from '@/ajax/post.js'
 	  			var payload = {
 		  			page: this.currentPage,
 		  			pageSize: this.pageSize,
-		  			// uid: null,	保途端
 		  			employeeId: window.localStorage.getItem('employeeId')
 		  		};
 	  		}
@@ -170,13 +157,18 @@ import { autoApi } from '@/ajax/post.js'
 	  		this.getInfo();
 	  	},
 
+	  	reSetSearch() {
+	  		this.search.state = null;
+	  		this.getInfo();
+	  	},
+
 	  	pageChange(pg) {
 	  		this.currentPage = pg;
 	        this.getInfo(); 
 	    },
 
 	    showState(state) {
-	    	for (var i = 0; i < this.stateList.length; i++) {
+	    	for (let i = 0; i < this.stateList.length; i++) {
 	    		if (this.stateList[i].value == state) {
 	    			return this.stateList[i].label;
 	    		}
@@ -189,7 +181,7 @@ import { autoApi } from '@/ajax/post.js'
 	}
 </script>
 <style lang="less">
-.ordersList{
+.autoInsuranceOrdersBody{
 	.toolBar{
 		width: 100%;
 		overflow: hidden;

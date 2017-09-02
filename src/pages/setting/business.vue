@@ -65,8 +65,8 @@
 		</div>
 	</div>
 </template>
-<script>
 
+<script>
 	function formatDate(time){
 	  var   x = time - 0
 	  console.log(x)

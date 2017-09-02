@@ -1,28 +1,21 @@
 <template>
-	<div>
+	<div class="shopAddBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item :to="{name:'shop-shop-list'}">商家列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>新增</el-breadcrumb-item>
 		</el-breadcrumb>
-		<el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">
+		<el-form label-position="right" label-width="120px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="商家名称:">
 		    <el-input type="text" style="width:300px;" v-model="form.name" placeholder="请输入商家名称"></el-input>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="顶级用户手机号:">
 		    <el-input style="width:300px;" v-model="form.phone" placeholder="请输入手机号"></el-input>
-		    <!-- <el-button type="primary" @click="getyzm" :disabled="!(getyzmMsg === '获取验证码')">{{getyzmMsg}}</el-button> -->
 		  </el-form-item>
 		  <el-form-item class="appblock" label="行政区划选择:">
 		    <el-select style="width:145px;" v-model="form.region" placeholder="请选择">
 			    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value"></el-option>
 			</el-select>
-			<!-- <el-select style="width:145px;" v-model="form.region" placeholder="请选择" v-if="regions">
-			    <el-option v-for="item in regions" :label="item[0]" :value="item[1]"></el-option>
-			</el-select> -->
 		  </el-form-item>
-		  <!-- <el-form-item class="appblock" label="填写验证码:">
-		    <el-input style="width:300px;" v-model="form.yzm" placeholder="请输入验证码"></el-input>
-		  </el-form-item> -->
 		  <el-form-item class="appblock" label="客服电话:">
 		    <el-input style="width:300px;" v-model="form.servicePhone"></el-input>
 		  </el-form-item>
@@ -38,55 +31,11 @@
 		  <el-form-item class="appblock" label="营业执照号:">
 		    <el-input style="width:300px;" v-model="form.license"></el-input>
 		  </el-form-item>
-		  <!-- <el-form-item class="appblock" label="注册时间:">
-		    2017-09-26 08:50:08
-		  </el-form-item> -->
-		  <!-- <el-form-item class="appblock" label="开通商家量:">
-		    <el-select v-model="form.shopNum" placeholder="请选择" style="width:300px;">
-			    <el-option
-			      v-for="item in options"
-			      :label="item.label"
-			      :value="item.value">
-			    </el-option>
-			</el-select>
-		  </el-form-item> -->
-		  <!-- <el-form-item class="appblock" label="账号状态:">
-		    正常
-		  </el-form-item> -->
 		</el-form>
+
 		<div style="clear:both"></div>
-		<!-- <el-form :label-position="labelPosition" label-width="120px" style="margin-top:20px;" class="appbox">
-		  <el-form-item class="appblock" label="支付开通:">
-		    <el-checkbox-group v-model="form.pay">
-			    <el-checkbox value='1' label="银行卡"></el-checkbox>
-			    <el-checkbox value='2' label="支付宝"></el-checkbox>
-			</el-checkbox-group>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="积分规则:">
-		    <el-radio class="radio" v-model="form.point" label="1">开通</el-radio>
-  			<el-radio class="radio" v-model="form.point" label="2">关闭</el-radio>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="险种:">
-		    <el-checkbox-group v-model="form.type">
-			    <el-checkbox value='1' label="意外险"></el-checkbox>
-			    <el-checkbox value='2' label="财产险"></el-checkbox>
-			</el-checkbox-group>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="险企:">
-		    <el-checkbox-group v-model="form.company">
-			    <el-checkbox value='1' label="平安保险"></el-checkbox>
-			    <el-checkbox value='2' label="太平洋保险"></el-checkbox>
-			</el-checkbox-group>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="其他:">
-		    <el-checkbox-group v-model="form.other">
-			    <el-checkbox value='1' label="资讯"></el-checkbox>
-			    <el-checkbox value='2' label="共享商城"></el-checkbox>
-			</el-checkbox-group>
-		  </el-form-item>
-		</el-form> -->
-		<!-- <div style="clear:both"></div> -->
-		<el-form :label-position="labelPosition" label-width="130px" style="margin-top:20px;" class="appbox">
+
+		<el-form label-position="right" label-width="130px" style="margin-top:20px;" class="appbox">
 		  <el-form-item class="appblock" label="营业执照副本:">
 		    <el-upload
 			  class="avatar-uploader"
@@ -97,36 +46,6 @@
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
 		  </el-form-item>
-		 <!--  <el-form-item class="appblock" label="营业执照反面:">
-		    <el-upload
-			  class="avatar-uploader"
-			  action="//jsonplaceholder.typicode.com/posts/"
-			  :show-file-list="false"
-			  :on-success="handleAvatarScucessB">
-			  <img v-if="imageUrlb" :src="imageUrlb" class="avatar">
-			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
-		  </el-form-item> -->
-		 <!--  <el-form-item class="appblock" label="联系人身份证正面:">
-		    <el-upload
-			  class="avatar-uploader"
-			  action="//jsonplaceholder.typicode.com/posts/"
-			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
-			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="联系人身份证反面:">
-		    <el-upload
-			  class="avatar-uploader"
-			  action="//jsonplaceholder.typicode.com/posts/"
-			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
-			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
-		  </el-form-item> -->
 		</el-form>
 		<div style="clear:both"></div>
 		<div style="text-align:center;margin-top:20px;">
@@ -135,52 +54,24 @@
 	</div>
 </template>
 <script>
-import { autoApi,logApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 	export default {
 	    data() {
 	      return {
 	      	imageUrla: '',
-	      	// imageUrlb: '',
-	        labelPosition: 'right',
 	        info:'',
 	        regionFormData: [],		//格式化行政区划表
-	        // regions: [],			//一级行政区划表
 	        form:{
 	        	name:'',
 	        	account:'',
 	        	region:'',
 	        	phone:'',
-	        	// yzm: null,
 	        	servicePhone: null,
 	        	license: null,		//营业执照号
-	        	// shopNum:'',
-	        	// pay:[],
-	        	// point:'',
-	        	// type:[],
-	        	// company:[],
-	        	// other:[],
 	        	people:'',
 	        	time: ''
 	        },
-	        // getyzmMsg: '获取验证码',
-	        // count: 30				//验证码计时器
-	        // options: [{
-	        //   value: '1',
-	        //   label: '5'
-	        // }, {
-	        //   value: '2',
-	        //   label: '10'
-	        // }, {
-	        //   value: '3',
-	        //   label: '15'
-	        // }, {
-	        //   value: '4',
-	        //   label: '20'
-	        // }, {
-	        //   value: '5',
-	        //   label: '25'
-	        // }],
 	      };
 	    },
 	    methods: {
@@ -223,31 +114,6 @@ import { autoApi,logApi } from '@/ajax/post.js'
 			handleAvatarScucessA(res, file) {
 		        this.imageUrla = URL.createObjectURL(file.raw);
 		    },
-		    // handleAvatarScucessB(res, file) {
-		    //     this.imageUrlb = URL.createObjectURL(file.raw);
-		    // },
-		    // getyzm() {
-		    // 	if (this.getyzmMsg == '获取验证码') {
-		    // 		this.getyzmMsg = this.count + 's';
-		    // 		logApi({
-		    //    			action: 'captcha_obtain',
-		    //    			version: '1.0',
-		    //    			mobile: '+86' + this.form.phone,
-		    //    			appId: window.localStorage.getItem("appId"),
-		    //    		}).then((res)=> {
-		    //    			if (res.code == 0) {
-		    //    				this.form.yzm = res.attach;		       			
-		    //    			}
-		    //    		})
-		    // 	}
-		    // 	this.count--;
-		    // 	this.getyzmMsg = this.count + 's后重新获取';
-		    // 	if (this.count <= 0) {
-		    // 		this.getyzmMsg = '获取验证码';
-		    // 		return false
-		    // 	}
-		    // 	setTimeout(this.getyzm,1000);
-		    // },
 
 		    confirmAdd() {
 		    	if (this.form.license && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.imageUrla && this.form.region) {
@@ -256,9 +122,7 @@ import { autoApi,logApi } from '@/ajax/post.js'
 			   			region: this.form.region,
 			   			license: this.form.license,
 			   			licenseImage: this.imageUrla,
-			   			// licenseBack: licenseBack,
 			   			mobile: this.form.phone,
-			   			// captcha: captcha,
 			   			expire: Date.parse(this.form.time) / 1000,
 			   			contacts: this.form.people,
 			   			contactsMobile: this.form.contactsMobile,
@@ -293,19 +157,12 @@ import { autoApi,logApi } from '@/ajax/post.js'
 		    }
 	    },
 	    mounted() {
-	        // this.form.phone = 13105716367;
-	        // for(let index in regionData) {
-	        // 	let buf = {
-	        // 		value: regionData[index],
-	        // 		label: index
-	        // 	}
-	        // 	this.regionFormData.push(buf);
-	        // }
 	        this.getRegion();
 	    }
 	}
 </script>
 <style lang="less">
+.shopAddBody {
 	.appbox{
 		.appblock{
 			width: 50%;
@@ -335,4 +192,6 @@ import { autoApi,logApi } from '@/ajax/post.js'
 		    display: block;
 		}
 	}
+}
+	
 </style>

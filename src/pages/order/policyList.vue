@@ -1,5 +1,5 @@
 <template>
-	<div class="shopList">
+	<div class="policyListBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>保单列表</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -35,9 +35,7 @@
 			    <el-table-column label="操作">
 			      <template scope="scope">
 		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-order-policyDetail',query:{id:scope.row._id}}">
-			      			查看
-			      		</router-link>
+						<router-link :to="{name:'shop-order-policyDetail',query:{id:scope.row._id}}">查看</router-link>
 		      		</el-button>
 			      </template>
 			    </el-table-column>
@@ -50,7 +48,7 @@
 	</div>
 </template>
 <script>
-import { autoApi,commonApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 export default {
 	  data() {
@@ -178,7 +176,7 @@ export default {
 </script>
 
 <style lang="less">
-.shopList {
+.policyListBody {
 	.toolBar {
 		width: 100%;
 		overflow: hidden;

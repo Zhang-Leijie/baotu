@@ -15,21 +15,21 @@
     <div class="logo-box">
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
         <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
-        	<el-form-item label="平台码" :label-width="formLabelWidth" prop="platCode">
-		      <el-input style="width:287px;" v-model="form.platCode" auto-complete="off" placeholder="请输入平台码" @blur="getPlat"></el-input>
-		      <div style="text-align:left;line-height:20px;">{{platName}}</div>
-		    </el-form-item>
-		    <el-form-item label="账号" :label-width="formLabelWidth" prop="account">
-		      <el-input style="width:250px;margin-left:10px;" v-model="form.account" auto-complete="off" placeholder="请输入手机号" @blur="checkPwd"></el-input>
-		    </el-form-item>
-		    <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
-		      <el-input style="width:287px;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
-		    </el-form-item>
-		    <div style="position:absolute">	    	
-				    <el-button type="text" v-if="haveCode == 1" @click="goSetCode">设置密码</el-button>
-			      <el-button type="text" v-if="haveCode == 2" @click="goSetCode">忘记密码</el-button>
-		    </div>
-		</el-form>
+        	<el-form-item label="平台码" label-width="80px" prop="platCode">
+  		      <el-input style="width:287px;" v-model="form.platCode" auto-complete="off" placeholder="请输入平台码" @blur="getPlat"></el-input>
+  		      <div style="text-align:left;line-height:20px;">{{platName}}</div>
+  		    </el-form-item>
+  		    <el-form-item label="账号" label-width="80px" prop="account">
+  		      <el-input style="width:250px;margin-left:10px;" v-model="form.account" auto-complete="off" placeholder="请输入手机号" @blur="checkPwd"></el-input>
+  		    </el-form-item>
+  		    <el-form-item label="密码" label-width="80px" prop="password">
+  		      <el-input style="width:287px;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
+  		    </el-form-item>
+  		    <div style="position:absolute">	    	
+  				    <el-button type="text" v-if="haveCode == 1" @click="goSetCode">设置密码</el-button>
+  			      <el-button type="text" v-if="haveCode == 2" @click="goSetCode">忘记密码</el-button>
+  		    </div>
+    		</el-form>
         <div class="log blue" @click="login">
             登 录
         </div>
@@ -38,22 +38,20 @@
 </div>
 </template>
 <script>
-
 import { logApi } from '@/ajax/post.js'
 
 export default {
     data() {
       return {
         ipAddrPlate: null,
-      	platName:'',
-      	haveCode:3,
-         form:{
+      	platName: '',
+      	haveCode: 3,
+        form:{
          	platCode: null,
          	account:'13295815927',
          	password:'aa111111',
-         },
-         formLabelWidth: '80px',
-         rules: {
+        },
+        rules: {
           platCode: [
             { required: true, message: '请输入平台码', trigger: 'blur' },
           ],
@@ -63,7 +61,7 @@ export default {
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' },
           ],
-        }
+        },
       }
     },
     methods: {
@@ -72,107 +70,106 @@ export default {
         localStorage.setItem('ipAddrPlate','192.168.0.125');
         this.$message({
           type: 'success',
-          message: '已改变目标地址'
+          message: '已改变目标地址',
         }); 
-       },
+      },
       confirmChangeIP() {
         localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
         this.$message({
           type: 'success',
-          message: '已改变目标地址'
+          message: '已改变目标地址',
         });
       },
-       goSetCode(){
-       		if (this.form.platCode == '' || this.platName == '查询无该平台' || this.form.account == '') {
-       			swal({
-                    title: "请输入正确平台码或账号",
-                    type: 'warning',
-                    text: "",
-                    timer: 2000,
-                })
-       		} else {
-       			router.push({name:'setcode',query:{plat:this.platName,account:this.form.account}})
-       		}
-       },
-       getPlat(){
-          this.platName = null;
-       		if(this.form.platCode) {
-            logApi({
-              action:'app_tips',
-              appId:this.form.platCode,
-            }).then((res)=> {
-              console.log(res.code)
-              if (res.code == 0) {
-                this.platName = res.attach.name;
-              } else {
-                this.platName = '查询无该平台'
-              }
-            })
-          }
-       },
-       checkPwd(){
-       		logApi({
-       			action:'user_check',
-       			version:'1.0',
+      goSetCode(){
+     		if (this.form.platCode == '' || this.platName == '查询无该平台' || this.form.account == '') {
+     			swal({
+                  title: "请输入正确平台码或账号",
+                  type: 'warning',
+                  text: "",
+                  timer: 2000,
+              })
+     		} else {
+     			router.push({name:'setcode',query:{plat:this.platName,account:this.form.account}});
+     		}
+      },
+      getPlat(){
+        this.platName = null;
+     		if(this.form.platCode) {
+          logApi({
+            action:'app_tips',
+            appId:this.form.platCode,
+          }).then((res)=> {
+            console.log(res.code)
+            if (res.code == 0) {
+              this.platName = res.attach.name;
+            } else {
+              this.platName = '查询无该平台';
+            }
+          })
+        }
+      },
+      checkPwd(){
+     		logApi({
+     			action:'user_check',
+     			version:'1.0',
+     			client:'2',
+     			appId:'1',
+     			mobile:'+86'+this.form.account,
+     		}).then((res)=> {
+     			if (res.code == 0) {
+     				this.haveCode = 2
+     			} else {
+     				this.haveCode = 1
+     			}
+     		})
+      },
+      login(){
+     		if (this.form.platCode == '' || this.platName == '查询无该平台') {
+     			swal({
+                  title: "登录失败",
+                  type: 'warning',
+                  text: "请输入正确平台码",
+                  timer: 2000,
+              })
+     		} else if (this.form.account == ''){
+     			swal({
+                  title: "登录失败",
+                  type: 'warning',
+                  text: "请输入账号",
+                  timer: 2000,
+              })
+     		} else if (this.form.password == ''){
+     			swal({
+                  title: "登录失败",
+                  type: 'warning',
+                  text: "请输入密码",
+                  timer: 2000,
+              })
+     		} else {
+          localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
+     			logApi({
+     				appId:'1',
+       			action:'login',
        			client:'2',
-       			appId:'1',
        			mobile:'+86'+this.form.account,
+       			pwd:this.form.password,
        		}).then((res)=> {
        			if (res.code == 0) {
-       				this.haveCode = 2
-       			} else {
-       				this.haveCode = 1
+              localStorage.setItem('token',res.attach.token);
+              localStorage.setItem('appId',this.form.platCode);
+
+              localStorage.setItem('userName',this.form.account);
+              localStorage.setItem('userPsd',this.form.password);
+
+       				router.push({name:'home'})
+               this.$message({
+                type: 'success',
+                message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
+              });   
        			}
        		})
-       },
-       login(){
-       		if (this.form.platCode == '' || this.platName == '查询无该平台') {
-       			swal({
-                    title: "登录失败",
-                    type: 'warning',
-                    text: "请输入正确平台码",
-                    timer: 2000,
-                })
-       		} else if (this.form.account == ''){
-       			swal({
-                    title: "登录失败",
-                    type: 'warning',
-                    text: "请输入账号",
-                    timer: 2000,
-                })
-       		} else if (this.form.password == ''){
-       			swal({
-                    title: "登录失败",
-                    type: 'warning',
-                    text: "请输入密码",
-                    timer: 2000,
-                })
-       		} else {
-            localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
-       			logApi({
-       				appId:'1',
-	       			action:'login',
-	       			client:'2',
-	       			mobile:'+86'+this.form.account,
-	       			pwd:this.form.password,
-	       		}).then((res)=> {
-	       			if (res.code == 0) {
-                localStorage.setItem('token',res.attach.token);
-                // localStorage.setItem('userId',res.attach.user.uid);
-                localStorage.setItem('appId',this.form.platCode);
-
-                localStorage.setItem('userName',this.form.account);
-                localStorage.setItem('userPsd',this.form.password);
-
-	       				router.push({name:'home'})
-                 this.$message({
-                  type: 'success',
-                  message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
-                });   
-	       			}
-	       		})
-       		}
-       },
+     		}
+      },
     },
     mounted(){
         this.ipAddrPlate = '101.37.34.55';

@@ -1,5 +1,5 @@
 <template>
-	<div class="verify">
+	<div class="verifyBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>审核管理</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -47,19 +47,19 @@
 	</div>
 </template>
 <script>
-import { autoApi,commonApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 export default {
-	  data() {
-	    return {
-	      searchName: '',
-	      tableData: [],
-	      total: null,
-	      currentPage: 1,
-	      pageSize: 10
+	data() {
+		return {
+		  searchName: '',
+		  tableData: [],
+		  total: null,
+		  currentPage: 1,
+		  pageSize: 10
 		}
-	  },
-	  methods: {
+	},
+	methods: {
 		formatDate (time){
 		  var   x = (time - 0) * 1000
 
@@ -72,58 +72,59 @@ export default {
 		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
 		},
 
-	  	getInfo() {
-	  		let payload = {
-	  			page: this.currentPage,
-	  			pageSize: this.pageSize,
-	  			employeeId: window.localStorage.getItem('employeeId')
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		autoApi({
-	   			action: 'apply_list',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.tableData = res.attach.list;
-	   				this.total = res.attach.total;
-       			}
-	   		})
-	  	},
-	  	pageChange(val) {
-	        this.currentPage = val;
-	        this.getInfo();
-	    },
-	    reject(row,isReject) {
-	    	let payload = {
-	    		uid: row.uid,
-	    		reject: isReject,
-	    		employeeId: window.localStorage.getItem('employeeId'),
-	    	}
-	    	payload = JSON.stringify(payload);
-	  		autoApi({
-	   			action: 'apply_audit',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.getInfo();
-       			}
-	   		})
-	    },
+			getInfo() {
+				let payload = {
+					page: this.currentPage,
+					pageSize: this.pageSize,
+					employeeId: window.localStorage.getItem('employeeId'),
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'apply_list',
+					version: '1.0',
+					payload: payload
+				},window.localStorage.getItem('token')).then((res)=> {
+					if (res.code == 0) {
+						this.tableData = res.attach.list;
+						this.total = res.attach.total;
+					}
+				})
+			},
 
-	    search() {
-	    	this.getInfo();
-	    }
-	  },
-	  mounted() {
-	  	this.getInfo(); //获取代理商列表
-	  }
-	}
+			pageChange(val) {
+		    this.currentPage = val;
+		    this.getInfo();
+		},
+
+		reject(row,isReject) {
+			let payload = {
+				uid: row.uid,
+				reject: isReject,
+				employeeId: window.localStorage.getItem('employeeId'),
+			}
+			payload = JSON.stringify(payload);
+				autoApi({
+					action: 'apply_audit',
+					version: '1.0',
+					payload: payload
+				},window.localStorage.getItem('token')).then((res)=> {
+					if (res.code == 0) {
+						this.getInfo();
+					}
+				})
+		},
+
+		search() {
+			this.getInfo();
+		},
+	},
+	mounted() {
+		this.getInfo(); //获取代理商列表
+	},
+}
 </script>
-
 <style lang="less">
-.verify {
+.verifyBody {
 	.toolBar {
 		width: 100%;
 		overflow: hidden;

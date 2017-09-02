@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="autoInsuranceOrderDetailBody">
     <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{name:'shop-order-policyList'}">车险订单列表</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{name:'shop-order-autoinsurance'}">车险订单列表</el-breadcrumb-item>
     </el-breadcrumb>
 
     <div style="text-align:right;margin-top:20px;">
@@ -213,7 +213,7 @@ import { autoApi } from '@/ajax/post.js'
         let payload = {
           employeeId: window.localStorage.getItem('employeeId'),
           orderId: id,
-        }
+        };
 
         payload = JSON.stringify(payload);
 
@@ -298,13 +298,14 @@ import { autoApi } from '@/ajax/post.js'
         }
       },
       mounted(){
-          if (this.$route.query) {
-            this.getInfo(this.$route.query.id);
-          }
+        if (this.$route.query) {
+          this.getInfo(this.$route.query.id);
+        }
       }
   }
 </script>
 <style lang="less">
+.autoInsuranceOrderDetailBody {
   .tableA {
     font-size: 16px;
     margin: 20px 0;
@@ -327,4 +328,5 @@ import { autoApi } from '@/ajax/post.js'
       height: 24px;
     }
   }
+}
 </style>

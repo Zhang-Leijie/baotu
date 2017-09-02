@@ -1,97 +1,45 @@
 <template>
-	<div>
+	<div class="staffEditBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item :to="{name:'shop-shop-list'}">员工列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>编辑</el-breadcrumb-item>
 		</el-breadcrumb>
-		<!-- <el-form :label-position="labelPosition" label-width="140px" style="margin-top:20px;" class="appbox">
-		  <el-form-item class="appblock" label="姓名:">
-		    <el-input type="text" style="width:300px;" v-model="form.name" auto-complete="off" placeholder="请输入姓名"></el-input>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="身份证号:">
-		    <el-input type="number" style="width:300px;" v-model="form.password" auto-complete="off" placeholder="身份证号"></el-input>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="手机号:">
-		    <el-input type="number" style="width:300px;" v-model="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="申请时间:">
-		    2017-09-26 08:50:08
-		  </el-form-item>
-		  <el-form-item class="appblock" label="邀请人:">
-		    <el-input type="text" style="width:300px;" v-model="form.people" auto-complete="off" placeholder="请输入邀请人"></el-input>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="邀请码:">
-		    <el-input type="text" style="width:300px;" v-model="form.code" auto-complete="off" placeholder="请输入邀请码"></el-input>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="积分余额:">
-		    300000
-		  </el-form-item>
-		  <el-form-item class="appblock" label="账号状态:">
-		    正常
-		  </el-form-item>
-		  <el-form-item class="appblock" label="联系人身份证正面:">
-		    <el-upload
-			  class="avatar-uploader"
-			  action="//jsonplaceholder.typicode.com/posts/"
-			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
-			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
-		  </el-form-item>
-		  <el-form-item class="appblock" label="联系人身份证反面:">
-		    <el-upload
-			  class="avatar-uploader"
-			  action="//jsonplaceholder.typicode.com/posts/"
-			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
-			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
-		  </el-form-item>
-		</el-form>
-		<div style="clear:both"></div> -->
-		<el-form :label-position="labelPosition" label-width="140px" style="margin-top:20px;" class="appbox">
-		  <el-form-item label="支付方式:">
-			<el-radio class="radio" v-model="form.payway" label="128">全额支付</el-radio>
-  		 	<el-radio class="radio" v-model="form.payway" label="256">净保费支付</el-radio>
-  		 	<el-radio class="radio" v-model="form.payway" label="512">垫付</el-radio>
-		  </el-form-item>
-		  <el-form-item label="团队佣金:">
-		    <el-checkbox-group v-model="form.teammoney">
-			    <el-checkbox value='1' label="1">规模佣金</el-checkbox>
-			    <el-checkbox value='2' label="2">管理佣金</el-checkbox>
-			</el-checkbox-group>
-		  </el-form-item>
-		  <el-form-item label="">
-		    <el-checkbox-group v-model="form.teammoney">
-			    <div style="height:20px"></div>
-			</el-checkbox-group>
-		  </el-form-item>
-		  <el-form-item label="普通佣金:">
-		    <el-checkbox-group v-model="form.commonmoney">
-			    <el-checkbox value='4' label="4">非营业客车</el-checkbox>
-			    <el-checkbox value='8' label="8">非营业货车</el-checkbox>
-			    <el-checkbox value='16' label="16">营业客车</el-checkbox>
-			    <el-checkbox value='32' label="32">营业货车</el-checkbox>
-			    <el-checkbox value='64' label="64">其他</el-checkbox>
-			</el-checkbox-group>
-		  </el-form-item>
-		  <el-row style="margin-left: 70px;">
+		<el-form label-position="right" label-width="140px" style="margin-top:20px;" class="appbox">
+		    <el-form-item label="支付方式:">
+				<el-radio class="radio" v-model="form.payway" label="128">全额支付</el-radio>
+	  		 	<el-radio class="radio" v-model="form.payway" label="256">净保费支付</el-radio>
+	  		 	<el-radio class="radio" v-model="form.payway" label="512">垫付</el-radio>
+		    </el-form-item>
+		    <el-form-item label="团队佣金:">
+			    <el-checkbox-group v-model="form.teammoney">
+				    <el-checkbox value='1' label="1">规模佣金</el-checkbox>
+				    <el-checkbox value='2' label="2">管理佣金</el-checkbox>
+				</el-checkbox-group>
+		    </el-form-item>
+		    <el-form-item label="">
+			    <el-checkbox-group v-model="form.teammoney">
+				    <div style="height:20px"></div>
+				</el-checkbox-group>
+		    </el-form-item>
+		    <el-form-item label="普通佣金:">
+			    <el-checkbox-group v-model="form.commonmoney">
+				    <el-checkbox value='4' label="4">非营业客车</el-checkbox>
+				    <el-checkbox value='8' label="8">非营业货车</el-checkbox>
+				    <el-checkbox value='16' label="16">营业客车</el-checkbox>
+				    <el-checkbox value='32' label="32">营业货车</el-checkbox>
+				    <el-checkbox value='64' label="64">其他</el-checkbox>
+				</el-checkbox-group>
+		    </el-form-item>
+		    <el-row style="margin-left: 70px;">
 		  		<span style="font-size: 14px;">商业险佣金比例(%): </span>
 		  		<el-input style="width:120px;" v-model="CMRate"></el-input>
 		  		<span style="font-size: 14px; margin-left: 100px;">交强险佣金比例(%): </span>
 			    <el-input style="width:120px;" v-model="CPRate"></el-input>
-		  </el-row>
-		  <!-- el-form-item label="角色配置:">
-		    <el-checkbox-group v-model="form.role">
-			    <el-checkbox value='1' label="角色1"></el-checkbox>
-			    <el-checkbox value='2' label="角色2"></el-checkbox>
-			    <el-checkbox value='3' label="角色3"></el-checkbox>
-			</el-checkbox-group>
-		  </el-form-item> -->
+		    </el-row>
 		</el-form>
+
 		<div style="clear:both"></div>
+
 		<div style="text-align:center;margin-top:20px;">
 			<el-button type="primary" @click="confirmEdit">确定</el-button>
 		</div>
@@ -106,7 +54,6 @@ import { autoApi } from '@/ajax/post.js'
 	      	CMRate: 0,
 	      	CPRate: 0,
 	      	imageUrl: '',
-	        labelPosition: 'right',
 	        info:'',
 	        form:{
 	        	role:[],
@@ -261,6 +208,7 @@ import { autoApi } from '@/ajax/post.js'
 	}
 </script>
 <style lang="less">
+.staffEditBody {
 	.appbox{
 		.appblock{
 			width: 50%;
@@ -290,4 +238,5 @@ import { autoApi } from '@/ajax/post.js'
 		    display: block;
 		}
 	}
+}
 </style>

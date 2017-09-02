@@ -1,6 +1,5 @@
-
 <template>
-	<div class="reward">
+	<div class="rewardBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>奖励设置</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -96,49 +95,49 @@
 	  		</el-row>
 	  		<el-button @click="showAddGuimo = !showAddGuimo"><i class="el-icon-plus"></i></el-button>
 			<div style="margin-top: 20px">
-			  <el-collapse-transition>
-			    <div v-show="showAddGuimo">
-			      	<div class="transition-box">
-			      		<el-row>
-			      			<el-col :span="6">
-	  							<span class="dataFont">比较类型: </span>
-			      				<el-select v-model="guimoAdd.comparison" placeholder="请选择" style="width:150px;">
-								<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
-								</el-select>
-			      			</el-col>
-			      			<el-col :span="7">
-			      				<el-row>
-				  					<el-col :span="6">
-				  						<span class="dataFont">区间数值: </span>
-				  					</el-col>
-				  					<el-col :span="16">
-				  						<el-input v-model="guimoAdd.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoAdd.comparison == 2"></el-input>
-						  				<el-row v-if="guimoAdd.comparison == 8">
-						  					<el-col :span="10">
-						  						<el-input v-model="guimoAdd.comparableValueA" style="width: 100%"></el-input>
-						  					</el-col>
-						  					<el-col :span="4" style="display: flex; justify-content:center;">
-						  						<span style="line-height: 36px;">--</span>
-						  					</el-col>
-						  					<el-col :span="10">
-						  						<el-input v-model="guimoAdd.comparableValueB" style="width: 100%"></el-input>
-						  					</el-col>
-						  				</el-row>
-				  					</el-col>
-				  				</el-row>
-			      			</el-col>
-			      			<el-col :span="7">
-	  							<span class="dataFont">奖励比例: </span>
-			      				<el-input v-model="guimoAdd.num" style="width: 150px;"></el-input> %
-			      			</el-col>
-			      			<el-col :span="4">
-			      				<el-button type="primary" @click="guimoConfirmAdd">确定</el-button>
-			      				<el-button @click="showAddGuimo = false">取消</el-button>
-			      			</el-col>
-			      		</el-row>
-			      	</div>
-			    </div>
-			  </el-collapse-transition>
+				<el-collapse-transition>
+				    <div v-show="showAddGuimo">
+				      	<div class="transition-box">
+				      		<el-row>
+				      			<el-col :span="6">
+		  							<span class="dataFont">比较类型: </span>
+				      				<el-select v-model="guimoAdd.comparison" placeholder="请选择" style="width:150px;">
+									<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+									</el-select>
+				      			</el-col>
+				      			<el-col :span="7">
+				      				<el-row>
+					  					<el-col :span="6">
+					  						<span class="dataFont">区间数值: </span>
+					  					</el-col>
+					  					<el-col :span="16">
+					  						<el-input v-model="guimoAdd.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoAdd.comparison == 2"></el-input>
+							  				<el-row v-if="guimoAdd.comparison == 8">
+							  					<el-col :span="10">
+							  						<el-input v-model="guimoAdd.comparableValueA" style="width: 100%"></el-input>
+							  					</el-col>
+							  					<el-col :span="4" style="display: flex; justify-content:center;">
+							  						<span style="line-height: 36px;">--</span>
+							  					</el-col>
+							  					<el-col :span="10">
+							  						<el-input v-model="guimoAdd.comparableValueB" style="width: 100%"></el-input>
+							  					</el-col>
+							  				</el-row>
+					  					</el-col>
+					  				</el-row>
+				      			</el-col>
+				      			<el-col :span="7">
+		  							<span class="dataFont">奖励比例: </span>
+				      				<el-input v-model="guimoAdd.num" style="width: 150px;"></el-input> %
+				      			</el-col>
+				      			<el-col :span="4">
+				      				<el-button type="primary" @click="guimoConfirmAdd">确定</el-button>
+				      				<el-button @click="showAddGuimo = false">取消</el-button>
+				      			</el-col>
+				      		</el-row>
+				      	</div>
+				    </div>
+				</el-collapse-transition>
 			</div>
 		</div>
 
@@ -182,7 +181,6 @@
 		    </div>
 		</el-dialog>
 			
-
 		<div v-if="viewMode == 2">
 			<el-row class="optionCol">
 				<el-col :span="12">
@@ -236,7 +234,7 @@
 </template>
 <script>
 
-import { commonApi,autoApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 	export default {
 	    data() {
@@ -270,61 +268,17 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	        },
 	        dialogEditVisible: false,
 	        comparisons: [
-		      	// {
-		      	// 	value: 1,
-		      	// 	label: "大于"
-		      	// },
-		      	{
-		      		value: 2,
-		      		label: "大于等于"
-		      	},
-		      	// {
-		      	// 	value: 3,
-		      	// 	label: "小于"
-		      	// },
-		      	// {
-		      	// 	value: 4,
-		      	// 	label: "小于等于"
-		      	// },
-		      	// {
-		      	// 	value: 5,
-		      	// 	label: "等于"
-		      	// },
-		      	// {
-		      	// 	value: 6,
-		      	// 	label: "不等于"
-		      	// },
-		      	// {
-		      	// 	value: 7,
-		      	// 	label: "开区间 ( )"
-		      	// },
-		      	{
-		      		value: 8,
-		      		label: "(含)金额1---金额2(不含)"
-		      	},
-		      	// {
-		      	// 	value: 9,
-		      	// 	label: "前开后闭区间 ( ]"
-		      	// },
-		      	// {
-		      	// 	value: 10,
-		      	// 	label: "在 ... 之中"
-		      	// },
-		      	// {
-		      	// 	value: 11,
-		      	// 	label: "不在 ... 之中"
-		      	// }
-		      ]
+	      	{
+	      		value: 2,
+	      		label: "大于等于"
+	      	},
+	      	{
+	      		value: 64,
+	      		label: "(含)金额1---金额2(不含)"
+	      	}],
 	      };
 	    },
 	    methods: {
-	       	delReward(index){
-	       		console.log(index)
-	       		this.form.rewardList.splice(index, 1);
-	       	},
-	       	addReward(){
-	       		this.form.rewardList.push({money1:'',money2:'',reward:''})
-	       	},
 	       	guanliShow() {
 	       		this.viewMode = 2;
 	       		this.getGuanli();
@@ -485,11 +439,9 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       			}
 		   		})
 	       	},
-
 		    isLegalNumber(val) {
 		    	return (-100 <= val && val <= 100)?true:false;
 		    },
-
 	       	comfirmSetting() {
 	       		let payload = {
 				    // name : xxx,                                                // 商户名字
@@ -617,7 +569,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	       				type: 'error',
 	       			});
 	       		}
-		       		
 	       	},
 	       	guimoEditMode(row) {
 	       		this.dialogEditVisible = true;
@@ -759,9 +710,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 					case 16:
 						return "eq"
 						break;
-					// case 6:
-					// 	return "不等于"
-					// 	break;
 					case 32:
 						return "bteween"
 						break;
@@ -771,12 +719,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 					case 128:
 						return "rbteween"
 						break;
-					// case 10:
-					// 	return "在 ... 之中"
-					// 	break;
-					// case 11:
-					// 	return "不在 ... 之中"
-					// 	break;
 					case 'gt':
 						return "大于"
 						break;
@@ -792,9 +734,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 					case 'eq':
 						return "等于"
 						break;
-					// case 6:
-					// 	return "不等于"
-					// 	break;
 					case 'bteween':
 						return "开区间"
 						break;
@@ -804,12 +743,6 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 					case 'rbteween':
 						return "前开后闭区间"
 						break;
-					// case 10:
-					// 	return "在 ... 之中"
-					// 	break;
-					// case 11:
-					// 	return "不在 ... 之中"
-					// 	break;
 		    	}
 		    },
 		    reModCount(mod) {
@@ -917,7 +850,7 @@ import { commonApi,autoApi } from '@/ajax/post.js'
 	}
 </script>
 <style lang="less">
-.reward {
+.rewardBody {
 	.topBar {
 		margin-top: 10px;
 		margin-bottom: 20px;

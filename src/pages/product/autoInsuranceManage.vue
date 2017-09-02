@@ -1,5 +1,5 @@
 <template>
-	<div class="autoInsuranceManage">
+	<div class="autoInsuranceManageBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>车险管理</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -57,7 +57,7 @@
 			<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
 
 			<div v-for="tagList,level in tagData" class="listBox" v-show="tagData[level][0]">
-				<el-menu class="el-menu-demo" mode="horizontal" menu-trigger="click" :default-active="currentRange.id.toString()" v-if="tagList[0]">
+				<el-menu mode="horizontal" menu-trigger="click" :default-active="currentRange.id.toString()" v-if="tagList[0]">
 				  <el-menu-item :index="item.id.toString()" v-for="item,index in tagList" @click="selectMenu(item,level,index)">{{item.name}}</el-menu-item>
 				</el-menu>
 			</div>
@@ -989,7 +989,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 	}
 </script>
 <style lang="less">
-.autoInsuranceManage{
+.autoInsuranceManageBody{
 	min-width: 1000px;
 	.labelText {
 		font-size: 16px;
@@ -1037,17 +1037,7 @@ import { autoApi,commonApi } from '@/ajax/post.js'
 			display: inline-block;
 		}
 	}
-	.el-menu-vertical-demo:not(.el-menu--collapse) {
-	    width: 200px;
-	    min-height: 400px;
-	}
-
-	.confirmBoxL {
-		margin-top: 20px;
-		position: relative;
-		float: left;
-	}
-
+	
 	.confirmBoxR {
 		margin-top: 20px;
 		position: relative;

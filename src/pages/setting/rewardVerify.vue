@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="rewardVerifyBody">
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>规模奖励审核</el-breadcrumb-item>
 		</el-breadcrumb>
@@ -17,7 +17,6 @@
 
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-	    		<!-- <el-table-column prop="employeeId" label="雇员号"></el-table-column> -->
 	    		<el-table-column prop="name" label="团长"></el-table-column>
 	    		<el-table-column label="统计总保费">
 	    			<template scope="scope">
@@ -143,6 +142,7 @@ export default {
 }
 </script>
 <style lang="less">
+.rewardVerifyBody {
 	.toptool {
 		margin: 20px 0;
 		float: right;	
@@ -151,4 +151,5 @@ export default {
 			margin-left: 20px;
 		}
 	}
+}
 </style>

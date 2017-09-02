@@ -17,7 +17,6 @@
 		        </div>
 		    </div>
 		</div>
-			
 
 		<el-button :disabled="true">PC端</el-button>
 		
@@ -25,29 +24,29 @@
 </template>
 
 <script>
-import { autoApi,commonApi } from '@/ajax/post.js'
+import { autoApi } from '@/ajax/post.js'
 
 export default {
-	  data() {
-	    return {
-	      tenantId: null,
-	      tenants: [],
-	      gotoShangjia: false
+	data() {
+		return {
+		  tenantId: null,
+		  tenants: [],
+		  gotoShangjia: false
 		}
-	  },
-	  methods: {
+	},
+	methods: {
 		//获取代理商列表
-	    getTenanList() {
-	    	let payload = {}
-	    	payload = JSON.stringify(payload)
-	    	autoApi({
-	   			action: 'tenants_user',
-	   			version: '1.0',
-	   			payload: payload		
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach.audit[0]) {
-	   					for (var i = 0; i < res.attach.audit.length; i++) {
+		getTenanList() {
+			let payload = {}
+			payload = JSON.stringify(payload)
+			autoApi({
+					action: 'tenants_user',
+					version: '1.0',
+					payload: payload		
+				},window.localStorage.getItem('token')).then((res)=> {
+					if (res.code == 0) {
+						if (res.attach.audit[0]) {
+							for (var i = 0; i < res.attach.audit.length; i++) {
 		   					let buf = {
 		   						value: {
 		   							tid: null
@@ -58,10 +57,10 @@ export default {
 		   					buf.label = res.attach.audit[i].tname + " (审核中)";
 		   					this.tenants.push(buf);
 		   				}
-	   				}
+						}
 
-	   				if (res.attach.own[0]) {
-	   					for (var i = 0; i < res.attach.own.length; i++) {
+						if (res.attach.own[0]) {
+							for (var i = 0; i < res.attach.own.length; i++) {
 		   					let buf = {
 		   						value: {
 		   							tid: null,
@@ -74,50 +73,47 @@ export default {
 		   					buf.label = res.attach.own[i].tname;
 		   					this.tenants.push(buf);
 		   				}
-	   				}
+						}
 		   				
-       			}
-	   		}) 
-	    },
+					}
+				}) 
+		},
 
-	    tenantChange(val) {
-        	localStorage.setItem('employeeId',val.employeeId);
-        	localStorage.setItem('tid',val.tid);
-        	this.goShangjia();
-	    },
+		tenantChange(val) {
+			localStorage.setItem('employeeId',val.employeeId);
+			localStorage.setItem('tid',val.tid);
+			this.goShangjia();
+		},
 
-	    goShangjia() {
-	    	localStorage.setItem('baotuUserType','shangjia');
-	    	router.push({name:'shop-staff-list'});
-	    },
+		goShangjia() {
+			localStorage.setItem('baotuUserType','shangjia');
+			router.push({name:'shop-staff-list'});
+		},
 
-	    goPingtai() {
-	    	localStorage.setItem('baotuUserType','pingtai');
-	    	localStorage.setItem('employeeId',null);
-        	localStorage.setItem('tid',null);
-	    	router.push({name:'shopHome'});
-	    },
+		goPingtai() {
+			localStorage.setItem('baotuUserType','pingtai');
+			localStorage.setItem('employeeId',null);
+			localStorage.setItem('tid',null);
+			router.push({name:'shopHome'});
+		},
 
-	    chooseShangjia() {
-	    	this.gotoShangjia = true;
-	    	this.$message({
-	    		message: '请选择商家',
-	    		type: 'info'
-	    	});
-	    },
+		chooseShangjia() {
+			this.gotoShangjia = true;
+			this.$message({
+				message: '请选择商家',
+				type: 'info'
+			});
+		},
 
-	    gotoPC() {
-	    	window.open('http://101.37.34.55/pc/');
-	    }
-
-	  },
-	  mounted() {
-	  	this.getTenanList();
-	  }
+		gotoPC() {
+			window.open('http://101.37.34.55/pc/');
+		},
+	},
+	mounted() {
+		this.getTenanList();
 	}
+}
 </script>
-
-
 <style lang="less">
 .signInBody {
     height: 100%;
