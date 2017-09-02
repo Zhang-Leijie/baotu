@@ -136,7 +136,6 @@
 </template>
 <script>
 import { autoApi,logApi } from '@/ajax/post.js'
-import regionData from '@/region.js'
 
 	export default {
 	    data() {

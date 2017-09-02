@@ -3,7 +3,7 @@
     <div class="left-box">
       <div class="logo" style="text-align:center;" @click="gohome">
       	<!-- <router-link :to="{name:'product-menu'}"> -->
-          <img src="../../assets/topLogo.png" style="height:70px;">
+          <img src="../assets/topLogo.png" style="height:70px;">
         <!-- </router-link> -->
       </div>
       <el-col :span="8" style="width:100%">
