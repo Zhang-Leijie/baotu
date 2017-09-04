@@ -82,18 +82,41 @@ export default {
 		tenantChange(val) {
 			localStorage.setItem('employeeId',val.employeeId);
 			localStorage.setItem('tid',val.tid);
-			this.goShangjia();
+			if (val.employeeId) {
+				let payload = {
+					employeeId: val.employeeId,
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'tenant_info',
+					version: '1.0',
+					payload: payload,
+				},window.localStorage.getItem('token')).then((res)=> {
+					if (res.code == 0) {
+						if ((res.attach.mod & 1) == 1) {
+							localStorage.setItem('isRoot_tenant','y');
+						}
+						else
+						{
+							localStorage.setItem('isRoot_tenant','n');
+						}
+					}
+				}) 
+			}
+			setTimeout(this.goShangjia(), 11110);
 		},
 
 		goShangjia() {
 			localStorage.setItem('baotuUserType','shangjia');
 			router.push({name:'shop-staff-list'});
+			// router.push({name:'shop-verify'});
 		},
 
 		goPingtai() {
 			localStorage.setItem('baotuUserType','pingtai');
 			localStorage.setItem('employeeId',null);
 			localStorage.setItem('tid',null);
+			localStorage.setItem('isRoot_tenant',null);
 			router.push({name:'shopHome'});
 		},
 
@@ -111,6 +134,22 @@ export default {
 	},
 	mounted() {
 		this.getTenanList();
+		if (window.localStorage.getItem('userId_plate')) {
+			autoApi({
+					action: 'user_info',
+					version: '1.0',
+				},window.localStorage.getItem('token')).then((res)=> {
+					if (res.code == 0) {
+						if ((res.attach.mod & 1) == 1) {
+							localStorage.setItem('isRoot_plate','y');
+						}
+						else
+						{
+							localStorage.setItem('isRoot_plate','n');
+						}
+					}
+				}) 
+		}
 	}
 }
 </script>

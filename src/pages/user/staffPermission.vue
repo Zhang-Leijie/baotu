@@ -58,6 +58,7 @@ import { autoApi } from '@/ajax/post.js'
 
 			getInfo() {
 				let payload = {
+					id: this.id,
 					employeeId: window.localStorage.getItem('employeeId'),
 				}
 				payload = JSON.stringify(payload);
@@ -73,25 +74,29 @@ import { autoApi } from '@/ajax/post.js'
 			},
 
 			drawTree(nodeData) {
-				function deep(data,formData) {//递归处理数据,将对象转化成对象数组并精简数据
+				function deep(data,formData,own) {//递归处理数据,将对象转化成对象数组并精简数据
 					for (let children in data) {
 						let buf = {
 							id: data[children].node.id,
 							label: data[children].node.name,
 							children: []
 						}
+						if (data[children].own) {
+							own.push(children);
+						}
 						formData.push(buf);
 						for (let i = 0; i < formData.length; i++) {
 							if (formData[i].id == children) {//判断子节点的归属
-								deep(data[children].children,formData[i].children,checkRepeat);
+								deep(data[children].children,formData[i].children,own);
 							}
 						}
 					}
 				}
 				
 				let formData = [];
-				let checkRepeat = [];
-				deep(nodeData,formData);
+				let own = [];
+				deep(nodeData,formData,own);
+				this.choosed = own;
 				this.dataTree = formData;
 				console.log(formData);
 			},

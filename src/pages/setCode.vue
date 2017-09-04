@@ -112,8 +112,8 @@ export default {
                   // localStorage.setItem('userId',res.attach.user.uid);
                   localStorage.setItem('appId',this.form.platCode);
 
-                  localStorage.setItem('userName',this.$route.query.account);
-                  localStorage.setItem('userPsd',this.form.passwordS);
+                  localStorage.setItem('userName_Plate',this.$route.query.account);
+                  localStorage.setItem('userPsd_plate',this.form.passwordS);
 
                   router.push({name:'home'})
                    this.$message({

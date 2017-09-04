@@ -34,7 +34,7 @@
             <template slot="title">设置</template>
             <el-menu-item-group>
               <router-link :to="{name:'shop-autoinsurance-manage'}">
-                <el-menu-item index="6-1" class="sub-title">车险设置</el-menu-item>
+                <el-menu-item index="6-1" class="sub-title">车险佣金设置</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <!-- <el-menu-item-group>

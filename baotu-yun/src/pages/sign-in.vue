@@ -67,6 +67,8 @@ export default {
        			pwd: this.form.password,
        		}).then((res)=> {
        			if (res.code == 0) {
+              (res.attach.mod & 1) == 1?localStorage.setItem('isRoot_baotu','y'):localStorage.setItem('isRoot_baotu','n');
+              (res.attach.mod & 1) == 1?localStorage.setItem('rootId_baotu',res.attach.uid):localStorage.setItem('rootId_baotu',null);
               localStorage.setItem('tokenPlate',res.attach.token);
               // localStorage.setItem('userId',res.attach.user.uid);
               localStorage.setItem('uid',res.attach.uid);

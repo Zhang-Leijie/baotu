@@ -57,9 +57,14 @@ export default {
 		},
 
 		getInfo() {
+			let payload = {
+				id: this.id,
+			}
+			payload = JSON.stringify(payload);
 			autoApi({
 				action: 'modulars_user',
 				version: '1.0',
+				payload: payload,
 			},window.localStorage.getItem('token')).then((res)=> {
 				this.sourceData = res.attach;
 				this.drawTree(res.attach);
@@ -70,25 +75,28 @@ export default {
 		drawTree(nodeData) {
 			function deep(data,formData) {//递归处理数据,将对象转化成对象数组并精简数据
 				for (let children in data) {
-					let buf = {
-						id: data[children].node.id,
-						label: data[children].node.name,
-						children: []
-					}
-					formData.push(buf);
-					for (let i = 0; i < formData.length; i++) {
-						if (formData[i].id == children) {//判断子节点的归属
-							deep(data[children].children,formData[i].children,checkRepeat);
+						let buf = {
+							id: data[children].node.id,
+							label: data[children].node.name,
+							children: []
+						}
+						if (data[children].own) {
+							own.push(children);
+						}
+						formData.push(buf);
+						for (let i = 0; i < formData.length; i++) {
+							if (formData[i].id == children) {//判断子节点的归属
+								deep(data[children].children,formData[i].children,own);
+							}
 						}
 					}
 				}
-			}
-			
-			let formData = [];
-			let checkRepeat = [];
-			deep(nodeData,formData);
-			this.dataTree = formData;
-			console.log(formData);
+				let formData = [];
+				let own = [];
+				deep(nodeData,formData,own);
+				this.choosed = own;
+				this.dataTree = formData;
+				console.log(formData);
 		},
 
 		handleCheckChange(data, checked, indeterminate) {

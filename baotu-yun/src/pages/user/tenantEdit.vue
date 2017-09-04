@@ -35,7 +35,7 @@
 		  	<el-form-item class="appblock" label="客服电话:">
 	    		 <span>{{ tenantData.servicePhone  }}</span>
 		  	</el-form-item>
-		  	<el-form-item class="appblock" label="gent:">
+		  	<el-form-item class="appblock" label="agent:">
 		    	<el-input type="text" style="width:150px;" v-model="formBiHu.agent" placeholder="未绑定壁虎"></el-input>
 		  	</el-form-item>
 		  	<el-form-item class="appblock" label="key:">
@@ -133,9 +133,9 @@
 		</el-breadcrumb>
 		<div class="tableBox">
 			<el-table :data="formDataJianjie" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="id" label="ID"></el-table-column>
+			    <!-- <el-table-column prop="id" label="ID"></el-table-column> -->
 			    <el-table-column prop="companyId" label="公司ID"></el-table-column>
-			    <el-table-column prop="insurerId" label="险企ID"></el-table-column>
+			    <!-- <el-table-column prop="insurerId" label="险企ID"></el-table-column> -->
 			    <el-table-column prop="insurerName" label="险企名称"></el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">

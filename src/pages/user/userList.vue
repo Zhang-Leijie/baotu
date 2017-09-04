@@ -24,6 +24,15 @@
 			    	</template>
 			    </el-table-column>
 			    <el-table-column label="状态"></el-table-column>
+			    <el-table-column label="操作" v-if="isRoot">
+					<template scope="scope">
+						<el-button type="text" size="small" v-if="!(rootId == scope.row.uid)">
+				    		<router-link :to="{name:'shop-user-permission',query:{id:scope.row.uid,name:scope.row.name}}">
+				      			授权
+				      		</router-link>
+			    		</el-button>
+				    </template>
+			    </el-table-column>
 			</el-table>
 			<el-pagination v-if="total" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='total' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
@@ -35,12 +44,14 @@ import { autoApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
-	      currentPage: 1,
-	      total: null,
-	      pageSize: 10,
-	      searchName: '',
-	      searchMobile: '',
-	      tableData: [],
+	    	isRoot: false,
+	    	rootId: null,
+		    currentPage: 1,
+		    total: null,
+		    pageSize: 10,
+		    searchName: '',
+		    searchMobile: '',
+		    tableData: [],
 		}
 	  },
 	  methods: {
@@ -86,8 +97,17 @@ import { autoApi } from '@/ajax/post.js'
 	        this.getInfo(); 
 	    },
 	  },
-	  mounted:function() {
+	  created() {
 	  	this.getInfo();
+	  	if (window.localStorage.getItem('isRoot_plate') == "y") {
+			this.isRoot = true;
+			this.rootId = window.localStorage.getItem('userId_plate');
+		}
+		else
+		{
+			this.isRoot = false;
+			this.rootId = null;
+		}
 	  }
 	}
 </script>

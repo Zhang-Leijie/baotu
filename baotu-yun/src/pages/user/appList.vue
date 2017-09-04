@@ -42,11 +42,11 @@
 			      			编辑
 				      		</router-link>
 			    		</el-button>
-			    		<el-button type="text" size="small">
+			    		<!-- <el-button type="text" size="small">
 			    			<router-link :to="{name:'APPPermission',query:{id:scope.row.id, name:scope.row.name}}">
 			      			授权
 				      		</router-link>
-			    		</el-button>
+			    		</el-button> -->
 			    	</template>
 			    </el-table-column>
 			</el-table>

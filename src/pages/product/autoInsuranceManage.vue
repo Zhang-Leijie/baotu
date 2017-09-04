@@ -54,7 +54,7 @@
 
 		<div v-if="insurerId && choosed" v-show="tagData[0][0]">
 			<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
-			<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
+			<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective;confirmSetSave()">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
 
 			<div v-for="tagList,level in tagData" class="listBox" v-show="tagData[level][0]">
 				<el-menu mode="horizontal" menu-trigger="click" :default-active="currentRange.id.toString()" v-if="tagList[0]">
@@ -79,7 +79,7 @@
 			    <el-table-column prop="name" label="系数名称"></el-table-column>
 			    <el-table-column label="佣金比例">
 			    	<template scope="scope">
-			    		<span v-if="!(editedRatio.id == scope.row.id)">{{scope.row.rate}}</span>
+			    		<span v-if="!(editedRatio.id == scope.row.id)">{{scope.row.rate?scope.row.rate:''}}</span>
 			    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)" v-model="editedRatio.rate"></el-input>
 			    		<span v-if="scope.row.rate || (editedRatio.id && (editedRatio.id == scope.row.id))">%</span>
 			    	</template>
@@ -497,7 +497,6 @@ import { autoApi } from '@/ajax/post.js'
 	    	}
 
 	    	this.getRanges(this.currentRange.id);
-	    	this.switchBox = !this.switchBox;	//刷新渲染
 	    },
 
 	    selectMenu(val,level,index) {//val:被点击的结构体, level:选中路由所在的层级数, index:选中路由在自身列表的位置
@@ -522,7 +521,6 @@ import { autoApi } from '@/ajax/post.js'
 	    		}
 	    	}
 	    	this.getRanges(val.id);
-			this.switchBox = !this.switchBox;
 	    },
 
 	    getRanges(id) {
@@ -544,6 +542,7 @@ import { autoApi } from '@/ajax/post.js'
 	   				if(res.attach) {
 	   					for (let item in res.attach) {
 	   						let buf = res.attach[item];
+	   						buf.rate = null;
 	   						this.rangeData.push(buf);
 	   					}
 	    				this.getRates(this.choosed);
@@ -586,8 +585,11 @@ import { autoApi } from '@/ajax/post.js'
     			if (this.rateData[this.rangeData[i].id]) {
     				this.rangeData[i].rate = this.rateData[this.rangeData[i].id] / 10;
     			}
+    			else
+    			{
+    				this.rangeData[i].rate = 0;
+    			}
     		}
-    		this.switchBox = !this.switchBox;
 	    },
 
 	    handleAddClose() {

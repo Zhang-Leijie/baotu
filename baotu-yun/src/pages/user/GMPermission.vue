@@ -57,13 +57,15 @@ import { masterApi } from '@/ajax/post.js'
 			},
 
 			getInfo() {
-				// let res = {"code": 0,"attach": {"13": {"node": {"name": "平台","type": 2,"created": 1503126180,"updated": 1503126180,"left": 0,"right": 1,"id": 13,"layer": 1},"children": {"15": {"node": {"name": "账号管理A","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 15,"layer": 2,"parentId": 13}},"16": {"node": {"name": "账号管理B","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 16,"layer": 2,"parentId": 13},"children": {"25": {"node": {"name": "账号管理BA","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 25,"layer": 2,"parentId": 13}},"26": {"node": {"name": "账号管理BB","type": 2,"created": 1503128041,"updated": 1503128041,"left": 1,"right": 2,"id": 26,"layer": 2,"parentId": 13}}},}},}},
-				// 		"createTime": 1503129000515,
-				// 		"messageType": 2
-				// 	}
+				let payload = {
+					tarId: this.id,
+					type: 'ADMIN',
+				}
+				payload = JSON.stringify(payload);
 				masterApi({
-					action: 'modulars_bt',
+					action: 'modulars',
 					version: '1.0',
+					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
 					this.sourceData = res.attach;
 					this.drawTree(res.attach);
@@ -72,25 +74,29 @@ import { masterApi } from '@/ajax/post.js'
 			},
 
 			drawTree(nodeData) {
-				function deep(data,formData) {//递归处理数据,将对象转化成对象数组并精简数据
+				function deep(data,formData,own) {//递归处理数据,将对象转化成对象数组并精简数据
 					for (let children in data) {
 						let buf = {
 							id: data[children].node.id,
 							label: data[children].node.name,
 							children: []
 						}
+						if (data[children].own) {
+							own.push(children);
+						}
 						formData.push(buf);
 						for (let i = 0; i < formData.length; i++) {
 							if (formData[i].id == children) {//判断子节点的归属
-								deep(data[children].children,formData[i].children,checkRepeat);
+								deep(data[children].children,formData[i].children,own);
 							}
 						}
 					}
 				}
 				
 				let formData = [];
-				let checkRepeat = [];
-				deep(nodeData,formData);
+				let own = [];
+				deep(nodeData,formData,own);
+				this.choosed = own;
 				this.dataTree = formData;
 				console.log(formData);
 			},
@@ -186,7 +192,7 @@ import { masterApi } from '@/ajax/post.js'
 				}
 				payload = JSON.stringify(payload);
 				masterApi({
-					action: 'authorize_admin',
+					action: 'authorize',
 					version: '1.0',
 					payload: payload
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {

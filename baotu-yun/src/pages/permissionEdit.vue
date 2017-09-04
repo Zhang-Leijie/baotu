@@ -4,7 +4,7 @@
 		  	<el-breadcrumb-item>模块权限设置</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<el-tabs v-model="modularType" @tab-click="getModulars">
+		<el-tabs v-model="modularType" @tab-click="getModulars" type="border-card" style="margin-top:10px">
 		    <el-tab-pane label="保途模块" name="BT">
 		    	<el-tree
 				  :data="dataBT"
@@ -57,7 +57,7 @@
 			<el-button @click="dialogAddVisible = true" type="primary" :disabled="(dataAPP[0] && !choosed[0])" v-show="modularType == 'APP'">新增模块</el-button>
 			<el-button @click="dialogAddVisible = true" type="primary" :disabled="(dataTENANT[0] && !choosed[0])" v-show="modularType == 'TENANT'">新增模块</el-button>
 			<el-button @click="editThisModular" type="primary" :disabled="!choosed[0]">编辑模块</el-button>
-			<el-button @click="deleteModular" type="primary" :disabled="!choosed[0] || this.apiData[0]">删除模块</el-button>
+			<el-button @click="deleteModular" type="primary" :disabled="!choosed[0] || !(!this.apiData[0])">删除模块</el-button>
 		</div>
 
 		<el-dialog title="新增模块" :visible.sync="dialogAddVisible" :before-close="handleAddClose">
@@ -297,6 +297,15 @@ import { masterApi } from '@/ajax/post.js'
 					modularType: this.modularType,
 					parentId: this.choosed[0],
 				}
+				if (this.modularType == "BT") {
+					payload.modularType = 'ADMIN';
+				}
+				else if (this.modularType == "APP") {
+					payload.modularType = 'USER';
+				}
+				else if (this.modularType == "TENANT") {
+					payload.modularType = 'EMPLOYEE';
+				}
 				payload = JSON.stringify(payload);
 				if (this.addModular.name) {
 					masterApi({
@@ -356,6 +365,15 @@ import { masterApi } from '@/ajax/post.js'
 					id: this.choosed[0],
 					name: this.editModular.name,
 					modularType: this.modularType,
+				}
+				if (this.modularType == "BT") {
+					payload.modularType = 'ADMIN';
+				}
+				else if (this.modularType == "APP") {
+					payload.modularType = 'USER';
+				}
+				else if (this.modularType == "TENANT") {
+					payload.modularType = 'EMPLOYEE';
 				}
 				payload = JSON.stringify(payload);
 				if (this.editModular.name) {

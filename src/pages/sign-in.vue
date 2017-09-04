@@ -16,7 +16,7 @@
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
         <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
         	<el-form-item label="平台码" label-width="80px" prop="platCode">
-  		      <el-input style="width:287px;" v-model="form.platCode" auto-complete="off" placeholder="请输入平台码" @blur="getPlat"></el-input>
+  		      <el-input style="width:287px;" v-model="form.platCode" auto-complete="off" placeholder="请输入平台码" @change="getPlat"></el-input>
   		      <div style="text-align:left;line-height:20px;">{{platName}}</div>
   		    </el-form-item>
   		    <el-form-item label="账号" label-width="80px" prop="account">
@@ -157,9 +157,9 @@ export default {
        			if (res.code == 0) {
               localStorage.setItem('token',res.attach.token);
               localStorage.setItem('appId',this.form.platCode);
-
-              localStorage.setItem('userName',this.form.account);
-              localStorage.setItem('userPsd',this.form.password);
+              localStorage.setItem('userId_plate',res.attach.user.uid);
+              localStorage.setItem('userName_plate',this.form.account);
+              localStorage.setItem('userPsd_plate',this.form.password);
 
        				router.push({name:'home'})
                this.$message({
@@ -174,9 +174,9 @@ export default {
     mounted(){
         this.ipAddrPlate = '101.37.34.55';
         localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
-        if (window.localStorage.getItem('userName') && window.localStorage.getItem('userPsd')) {
-          this.form.account = window.localStorage.getItem('userName');
-          this.form.password = window.localStorage.getItem('userPsd');
+        if (window.localStorage.getItem('userName_plate') && window.localStorage.getItem('userPsd_plate')) {
+          this.form.account = window.localStorage.getItem('userName_plate');
+          this.form.password = window.localStorage.getItem('userPsd_plate');
         }
     }
 }

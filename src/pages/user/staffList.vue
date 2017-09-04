@@ -37,6 +37,9 @@
 			      		<el-button type="text" size="small">
 							<router-link :to="{name:'shop-staff-edit',query:{id:scope.row.id}}">编辑</router-link>
 			      		</el-button>
+			      		<el-button type="text" size="small" v-if="isRoot && !(rootId == scope.row.id)">
+							<router-link :to="{name:'shop-staff-permission',query:{id:scope.row.id,name:scope.row.name}}">授权</router-link>
+			      		</el-button>
 			      	</template>
 			    </el-table-column>
 			</el-table>
@@ -48,13 +51,15 @@
 import { autoApi } from '@/ajax/post.js'
 export default {
 	data() {
-	return {
-	  total: null,
-	  pageSize: 10,
-	  currentPage: 1,
-	  searchID:'',
-	  tableData:[],
-	}
+		return {
+			isRoot: false,
+			rootId: null,
+		  	total: null,
+		  	pageSize: 10,
+		  	currentPage: 1,
+		  	searchID:'',
+		  	tableData:[],
+		}
 	},
 	methods: {
 		formatDate(time){
@@ -121,8 +126,17 @@ export default {
 			}
 		}
 	},
-	mounted() {
+	created() {
 		this.getInfo();
+		if (window.localStorage.getItem('isRoot_tenant') == "y") {
+			this.isRoot = true;
+			this.rootId = window.localStorage.getItem('tid');
+		}
+		else
+		{
+			this.isRoot = false;
+			this.rootId = null;
+		}
 	}
 }
 </script>
