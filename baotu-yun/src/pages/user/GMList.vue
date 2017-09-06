@@ -24,9 +24,9 @@
 			    		<span>{{formatDate(scope.row.updated)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column label="操作">
+			    <el-table-column label="操作" v-if="isRoot">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small" v-if="!(scope.row.id == rootId) && isRoot">
+			    		<el-button type="text" size="small" v-if="!(scope.row.id == rootId)">
 			    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id, name:scope.row.name}}">
 			      			授权
 				      		</router-link>

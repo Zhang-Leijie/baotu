@@ -8,19 +8,19 @@
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
 			    <el-table-column prop="tid" label="商户ID"></el-table-column>
 			    <el-table-column prop="name" label="商户名"></el-table-column>
-			    <el-table-column prop="appId" label="平台ID"></el-table-column>
+			    <!-- <el-table-column prop="appId" label="平台ID"></el-table-column> -->
 			    <el-table-column prop="appName" label="平台名字"></el-table-column>
-			    <el-table-column prop="jianJieId" label="简捷Id"></el-table-column>
+			    <!-- <el-table-column prop="jianJieId" label="简捷Id"></el-table-column> -->
 			    <el-table-column prop="teamDepth" label="团队层级"></el-table-column>
 			    <el-table-column prop="regionName" label="行政区划"></el-table-column>
-			    <el-table-column label="营业执照">
+			    <!-- <el-table-column label="营业执照">
 			    	<template scope="scope">
 		            	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
 		            	    <img :src="scope.row.licenseImage" class="bre"  slot="reference" style="width: 80px;">
 	                    	<img :src='scope.row.licenseImage' style="width: 475px;">
 	                	</el-popover>
 			    	</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column prop="license" label="营业执照号"></el-table-column>
 			     <el-table-column label="注册时间">
 			    	<template scope="scope">

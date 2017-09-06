@@ -6,8 +6,12 @@
 
 		<div class="toolBar">
 			<div class="searchBox">
-				<!-- <el-input icon="search" v-model="search.company" placeholder="搜索保险公司" :on-icon-click="search" style="width:240px"></el-input> -->
-				<el-input icon="search" v-model="search.sale" placeholder="搜索业务员" :on-icon-click="searchIt" style="width:240px"></el-input>
+				<el-select v-model="search.type" @change="searchIt" style="width:160px">
+					<el-option v-for="item in types" :label="item.label" :value="item.value"></el-option>
+				</el-select>
+				<el-input icon="search" v-model="search.company" placeholder="搜索保险公司" :on-icon-click="searchIt" style="width:160px"></el-input>
+				<el-input icon="search" v-model="search.sale" placeholder="搜索业务员" :on-icon-click="searchIt" style="width:160px"></el-input>
+				<el-button @click="reset">重置</el-button>
 			</div>
 		</div>
 
@@ -55,8 +59,21 @@ export default {
 	    return {
 	      search: {
 	      	company: null,
-	      	sale: null
+	      	sale: null,
+	      	type: null,
 	      },
+	      types: [{
+	      	value: 'EXTERNAL',
+	      	label: '外部保单',
+	      },
+	      {
+	      	value: 'TENANT_SELF',
+	      	label: '自售保单',
+	      },
+	      {
+	      	value: 'TENANT_OTHER',
+	      	label: '挂售保单',
+	      }],
 	      tableData:[],
 	      total: null,
 	      currentPage: 1,
@@ -80,7 +97,9 @@ export default {
   				page: this.currentPage,
   				pageSize: this.pageSize,
 	   			employeeId: window.localStorage.getItem('employeeId'),
-	   			// salesman: this.search.sale
+	   			type: this.search.type?this.search.type:null,
+	   			salesman: this.search.sale?this.search.sale:null,
+	   			// type: this.search.type?this.search.type:null,
   			};
   			
 	  		if (this.search.sale) {
@@ -112,6 +131,13 @@ export default {
 
 	    searchIt() {
 	    	this.getInfo(); 
+	    },
+
+	    reset() {
+	    	this.search.type = null;
+	    	this.search.sale = null;
+	    	this.search.company = null;
+	    	this.getInfo();
 	    },
 
 	    deleteShop(row) {

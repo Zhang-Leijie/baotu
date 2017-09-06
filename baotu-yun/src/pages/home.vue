@@ -4,64 +4,56 @@
       <div class="logo" style="text-align:center;">
         <img src="../assets/topLogo.png" style="height:70px;">
       </div>
-      <el-col :span="8" style="width:100%">
+      <el-col :span="8" style="width:100%" v-if="isPermiss('BT')">
         <el-menu style="background-color:#32323a" unique-opened :default-active="activeRoute" :default-openeds="openedRouteList">
-          <el-submenu index="2">
+          <el-submenu index="2" v-if="isPermiss('BT_account')">
             <template slot="title">账号管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'GMList'}">
+              <router-link :to="{name:'GMList'}" v-if="isPermiss('BT_account_gm')">
                 <el-menu-item index="2-1" class="sub-title">管理员账号</el-menu-item>
               </router-link>
-              <router-link :to="{name:'appList'}">
+              <router-link :to="{name:'appList'}" v-if="isPermiss('BT_account_app')">
                 <el-menu-item index="2-2" class="sub-title">平台管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'tenantList'}">
+              <router-link :to="{name:'tenantList'}" v-if="isPermiss('BT_account_tenant')">
                 <el-menu-item index="2-3" class="sub-title">商家管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'GMList'}">
+              <router-link :to="{name:'GMList'}" v-if="isPermiss('BT_account_role')">
                 <!-- <el-menu-item index="2-4" class="sub-title">角色管理*</el-menu-item> -->
               </router-link>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="3">
+          <el-submenu index="3" v-if="isPermiss('BT_set')">
             <template slot="title">设置</template>
             <el-menu-item-group>
-              <router-link :to="{name:'insurerList'}">
+              <router-link :to="{name:'insurerList'}" v-if="isPermiss('BT_set_insurer')">
                 <el-menu-item index="3-1" class="sub-title">险企设置</el-menu-item>
               </router-link>
-              <router-link :to="{name:'areaList'}">
+              <router-link :to="{name:'areaList'}" v-if="isPermiss('BT_set_area')">
                 <el-menu-item index="3-2" class="sub-title">地区设置</el-menu-item>
               </router-link>
               <!-- <router-link :to="{name:'brandsList'}">
                 <el-menu-item index="3-3" class="sub-title">特殊车辆管理</el-menu-item>
               </router-link> -->
-              <router-link :to="{name:'insurerList'}">
+              <router-link :to="{name:'insurerList'}" v-if="isPermiss('BT_set_system')">
                 <!-- <el-menu-item index="3-4" class="sub-title">系统设置*</el-menu-item> -->
               </router-link>
-              <router-link :to="{name:'insurerList'}">
+              <router-link :to="{name:'insurerList'}" v-if="isPermiss('BT_set_suggestion')">
                 <!-- <el-menu-item index="3-5" class="sub-title">意见反馈管理*</el-menu-item> -->
               </router-link>
-              <router-link :to="{name:'permissionEdit'}">
+              <router-link :to="{name:'permissionEdit'}" v-if="isPermiss('')">
                 <el-menu-item index="3-6" class="sub-title">模块权限设置</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
-         <!--  <el-submenu index="4">
+         <!--  <el-submenu index="4" v-if="isPermiss('BT_product')">
             <template slot="title">产品管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'nonAutoCategoryList'}">
+              <router-link :to="{name:'nonAutoCategoryList'}" v-if="isPermiss('BT_product_noAuto')">
                 <el-menu-item index="4-1" class="sub-title">非车险管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'nonAutoProductList'}">
+              <router-link :to="{name:'nonAutoProductList'}" v-if="isPermiss('BT_product_auto')">
                 <el-menu-item index="4-2" class="sub-title">共享车险产品管理</el-menu-item>
-              </router-link>
-            </el-menu-item-group>
-          </el-submenu> -->
-          <!-- <el-submenu index="5">
-            <template slot="title">系数管理</template>
-            <el-menu-item-group>
-              <router-link :to="{name:'poundageCoefficient'}">
-                <el-menu-item index="5-1" class="sub-title">手续费系数管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu> -->
@@ -83,22 +75,51 @@
   </div>
 </template>
 <script>
+import { masterApi } from '@/ajax/post.js'
 
 export default {
   data() {
     return {
       account:'',
-      roleName:null,
+      roleName: null,
       activeRoute: '',
-      openedRouteList: ['']
+      openedRouteList: [''],
+      myModulars: [],
     }
   },
   methods: {
     logOut(){
         router.push({name:"sign-in"})
-    }
+    },
+    getModular() {
+      masterApi({
+        action: 'modulars_possessed',
+        version: '1.0'
+      },window.localStorage.getItem('tokenPlate')).then((res)=> {
+        if (res.code == 0) {
+          if (res.attach) {
+            this.myModulars = res.attach;
+          }
+        }
+      })
+    },
+    isPermiss(modular) {
+      if (window.localStorage.getItem('isRoot_baotu') == 'y') {
+        return true;
+      }
+      else
+      {
+        for (let i = 0; i < this.myModulars.length; i++) {
+          if (this.myModulars[i] == modular) {
+            return true;
+          }
+        }
+        return false;
+      }
+    },
   },
-  mounted:function() {
+  mounted() {
+    this.getModular();
     if (this.$route.name == 'GMList') {
       this.activeRoute = '2-1';
       this.openedRouteList = ['2'];
@@ -119,10 +140,6 @@ export default {
       this.activeRoute = '3-2';
       this.openedRouteList = ['3'];
     }
-    // else if (this.$route.name == 'brandsList') {   //相关接口已删除
-    //   this.activeRoute = '3-3';
-    //   this.openedRouteList = ['3'];
-    // }
     else if (this.$route.name == 'permissionEdit') {
       this.activeRoute = '3-6';
       this.openedRouteList = ['3'];

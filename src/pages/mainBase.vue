@@ -9,19 +9,19 @@
           <!-- <router-link :to="{name:'admin-user-list'}">
             <el-menu-item index="1">账号管理</el-menu-item>
           </router-link> -->
-          <el-submenu index="2">
+          <el-submenu index="2" v-if="isPermiss('APP_account')">
             <template slot="title">账号管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-shop-list'}" v-if="isAdmin">
+              <router-link :to="{name:'shop-shop-list'}"  v-if="isPermiss('APP_account_tenant') && isAdmin">
                 <el-menu-item index="2-1" class="sub-title">商家管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-user-list'}" v-if="isAdmin">
+              <router-link :to="{name:'shop-user-list'}"  v-if="isPermiss('APP_account_userInfo') && isAdmin">
                 <el-menu-item index="2-5" class="sub-title">用户信息</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-staff-list'}" v-if="!isAdmin">
+              <router-link :to="{name:'shop-staff-list'}"  v-if="isPermiss('SHOP_staff') && !isAdmin">
                 <el-menu-item index="2-3" class="sub-title">员工管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-role-list'}">
+              <router-link :to="{name:'shop-role-list'}"  v-if="isPermiss('APP_account_role') || isPermiss('SHOP_role')">
                 <el-menu-item index="2-2" class="sub-title">角色管理</el-menu-item>
               </router-link>
               <!-- <router-link :to="{name:'shop-verify'}" v-if="!isAdmin">
@@ -30,10 +30,10 @@
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="6" v-if="!isAdmin">
+          <el-submenu index="6" v-if="isPermiss('SHOP_set') && !isAdmin">
             <template slot="title">设置</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-autoinsurance-manage'}">
+              <router-link :to="{name:'shop-autoinsurance-manage'}" v-if="isPermiss('SHOP_set_auto')">
                 <el-menu-item index="6-1" class="sub-title">车险佣金设置</el-menu-item>
               </router-link>
             </el-menu-item-group>
@@ -47,103 +47,103 @@
                 <el-menu-item index="6-3" class="sub-title">客户电话设置</el-menu-item>
               </router-link>
             </el-menu-item-group> -->
-            <el-menu-item-group>
-              <router-link :to="{name:'shop-set-reward'}">
+            <el-menu-item-group >
+              <router-link :to="{name:'shop-set-reward'}" v-if="isPermiss('SHOP_set_reward')">
                 <el-menu-item index="6-4" class="sub-title">奖励设置</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-set-rewardVerify'}">
+              <router-link :to="{name:'shop-set-rewardVerify'}" v-if="isPermiss('SHOP_set_scale')">
                 <el-menu-item index="6-5" class="sub-title">规模奖励审核</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="3" v-if="isAdmin">
+          <el-submenu index="3" v-if="isPermiss('APP_run') && isAdmin">
             <template slot="title">运营管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-run-rollimg'}">
-                <el-menu-item index="3-1" class="sub-title">默认轮播图管理</el-menu-item>
+              <router-link :to="{name:'shop-run-rollimg'}" v-if="isPermiss('APP_run_carousel')">
+                <el-menu-item index="3-1" class="sub-title">轮播图管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-run-qalist'}">
-                <el-menu-item index="3-2" class="sub-title">问答专区管理</el-menu-item>
+              <router-link :to="{name:'shop-run-qalist'}" v-if="isPermiss('APP_run_ask')">
+                <el-menu-item index="3-2" class="sub-title">问答管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-run-newslist'}">
-                <el-menu-item index="3-3" class="sub-title">资讯专区管理</el-menu-item>
+              <router-link :to="{name:'shop-run-newslist'}" v-if="isPermiss('APP_run_news')">
+                <el-menu-item index="3-3" class="sub-title">资讯管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
 
-          <!-- <el-submenu index="4" v-if="!isAdmin">
+          <!-- <el-submenu index="4" v-if="isPermiss('SHOP_product') && !isAdmin">
             <template slot="title">产品管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-set-insuranceN'}">
+              <router-link :to="{name:'shop-set-insuranceN'}" v-if="isPermiss('SHOP_product_noAuto')">
                 <el-menu-item index="4-1" class="sub-title">我的非车险</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-set-insuranceN'}">
+              <router-link :to="{name:'shop-set-insuranceN'}" v-if="isPermiss('SHOP_product_auto')">
                 <el-menu-item index="4-2" class="sub-title">共享车险商城*</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-set-insuranceN'}">
+              <router-link :to="{name:'shop-set-insuranceN'}" v-if="isPermiss('SHOP_product_myAuto')">
                 <el-menu-item index="4-3" class="sub-title">我的共享车险*</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu> -->
 
-          <el-submenu index="7"  v-if="!isAdmin">
+          <el-submenu index="7" v-if="isPermiss('SHOP_order') && !isAdmin">
             <template slot="title">订单管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-order-autoinsurance'}">
+              <router-link :to="{name:'shop-order-autoinsurance'}" v-if="isPermiss('SHOP_order_auto')">
                 <el-menu-item index="7-1" class="sub-title">车险订单</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-order-policyList'}">
+              <router-link :to="{name:'shop-order-policyList'}" v-if="isPermiss('SHOP_order_policy')">
                 <el-menu-item index="7-2" class="sub-title">车险已出单</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <!-- <el-menu-item-group>
-              <router-link :to="{name:'shop-order-policyList'}">
+              <router-link :to="{name:'shop-order-policyList'}" v-if="isPermiss('SHOP_order_sharing')">
                 <el-menu-item index="7-3" class="sub-title">共享车险订单*</el-menu-item>
               </router-link>
             </el-menu-item-group> -->
           </el-submenu>
 
-          <!-- <el-submenu index="5" v-if="!isAdmin">
+          <!-- <el-submenu index="5" v-if="isPermiss('SHOP_msg') && !isAdmin">
             <template slot="title">消息体系</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-msg-business'}">
+              <router-link :to="{name:'shop-msg-business'}" v-if="isPermiss('SHOP_msg_underline')">
                 <el-menu-item index="5-2" class="sub-title">线下业务通知</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-msg-notice'}">
+              <router-link :to="{name:'shop-msg-notice'}" v-if="isPermiss('SHOP_msg_notice')">
                 <el-menu-item index="5-1" class="sub-title">公告管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-msg-log'}">
+              <router-link :to="{name:'shop-msg-log'}" v-if="isPermiss('SHOP_msg_log')">
                 <el-menu-item index="5-3" class="sub-title">系统日志</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu> -->
 
-          <el-submenu index="8">
+          <el-submenu index="8" v-if="isPermiss('APP_count') || isPermiss('SHOP_count')">
             <template slot="title">统计管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-statistic-statisticManage'}">
+              <router-link :to="{name:'shop-statistic-statisticManage'}" v-if="isPermiss('APP_count') || isPermiss('SHOP_count_count')">
                 <el-menu-item index="8-1" class="sub-title">统计管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <!-- <el-menu-item-group>
-              <router-link :to="{name:'shop-statistic-statisticManage'}">
+              <router-link :to="{name:'shop-statistic-statisticManage'}" v-if="isPermiss('SHOP_count_business') && !isAdmin">
                 <el-menu-item index="8-2" class="sub-title">商品销售统计*</el-menu-item>
               </router-link>
             </el-menu-item-group> -->
@@ -176,6 +176,8 @@
   </div>
 </template>
 <script>
+import { autoApi } from '@/ajax/post.js'
+
 export default {
   data() {
     return {
@@ -184,6 +186,8 @@ export default {
       activeRoute: '',
       openedRouteList: [],
       isAdmin: null,
+      user_Modulars: [],
+      employee_Modulars: [],
     }
   },
   methods: {
@@ -192,11 +196,65 @@ export default {
     },
     gohome() {
       router.push({name:"home"});
-    }
+    },
+    getModulars() {
+      autoApi({
+        action: 'modulars_possessed',
+        version: '1.0',
+      },window.localStorage.getItem('token')).then((res)=> {
+        if (res.code == 0) {
+          if (res.attach) {
+            if (this.isAdmin) { //平台端
+              this.user_Modulars = res.attach.pmodulars;
+            }
+            else
+            { //商家端
+              if (res.attach.tmodulars[0]) {
+                for (let i = 0; i < res.attach.tmodulars.length; i++) {
+                  if (res.attach.tmodulars[i].employeeId == window.localStorage.getItem('employeeId')) {  //判断进入的商家
+                    this.employee_Modulars = res.attach.tmodulars[i].modulars;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }) 
+    },
+    isPermiss(modular) {
+      if (this.isAdmin) {//平台端
+        if (window.localStorage.getItem('isRoot_plate') == 'y') {
+          return true;
+        }
+        else
+        {
+          for (let i = 0; i < this.user_Modulars.length; i++) {
+            if (this.user_Modulars[i] == modular) {
+              return true;
+            }
+          }
+          return false;
+        }
+      }
+      else { //商家端
+        if (window.localStorage.getItem('isRoot_tenant') == 'y') {
+          return true;
+        }
+        else
+        {
+          for (let i = 0; i < this.employee_Modulars.length; i++) {
+            if (this.employee_Modulars[i] == modular) {
+              return true;
+            }
+          }
+          return false;
+        }
+      }
+    },
   },
   mounted() {
     this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
-
+    this.getModulars();
     if (this.$route.name == 'shop-shop-list') {
       this.activeRoute = '2-1';
       this.openedRouteList = ['2'];

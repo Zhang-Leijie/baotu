@@ -66,8 +66,8 @@ export default {
     },
     methods: {
       changeIpOpen() {
-        this.ipAddrPlate = '192.168.0.125';
-        localStorage.setItem('ipAddrPlate','192.168.0.125');
+        this.ipAddrPlate = '192.168.191.1';
+        localStorage.setItem('ipAddrPlate','192.168.191.1');
         this.$message({
           type: 'success',
           message: '已改变目标地址',

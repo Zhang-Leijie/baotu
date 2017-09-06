@@ -62,7 +62,14 @@
 
 		<el-dialog title="新增模块" :visible.sync="dialogAddVisible" :before-close="handleAddClose">
 			<span>当前新增:{{reModularType(modularType)}}</span>
-			<el-input v-model="addModular.name"></el-input>
+			<div>
+				<span>模块名称:</span>
+				<el-input v-model="addModular.name"></el-input>
+			</div>
+			<div>
+				<span>模块识别码:</span>
+				<el-input v-model="addModular.cid"></el-input>
+			</div>
 		    <div slot="footer" class="dialog-footer">
 		        <el-button @click="handleAddClose">取 消</el-button>
 		        <el-button type="primary" @click="confirmAdd">确 定</el-button>
@@ -126,6 +133,7 @@ import { masterApi } from '@/ajax/post.js'
 	        dialogAddVisible: false,
 	        addModular: {			//新增模块
 	        	name: null,
+	        	cid: null,
 	        },
 	        dialogEditVisible: false,
 	        editModular: {			//编辑模块
@@ -292,31 +300,42 @@ import { masterApi } from '@/ajax/post.js'
 
 			confirmAdd() {
 				this.dialogAddVisible = false;
-				let payload = {
-					name: this.addModular.name,
-					modularType: this.modularType,
-					parentId: this.choosed[0],
+				if (this.addModular.name && this.addModular.cid) {
+					let payload = {
+						name: this.addModular.name,
+						modularType: this.modularType,
+						parentId: this.choosed[0],
+						cid: this.addModular.cid,
+					}
+					if (this.modularType == "BT") {
+						payload.modularType = 'ADMIN';
+					}
+					else if (this.modularType == "APP") {
+						payload.modularType = 'USER';
+					}
+					else if (this.modularType == "TENANT") {
+						payload.modularType = 'EMPLOYEE';
+					}
+					payload = JSON.stringify(payload);
+					if (this.addModular.name) {
+						masterApi({
+							action: 'modular_edit',
+							version: '1.0',
+							crudType: '1',
+							payload: payload,
+						},window.localStorage.getItem('tokenPlate')).then((res)=> {
+							this.getModulars();
+							this.addModular.name = null;
+							this.addModular.cid = null;
+						})
+					}
 				}
-				if (this.modularType == "BT") {
-					payload.modularType = 'ADMIN';
-				}
-				else if (this.modularType == "APP") {
-					payload.modularType = 'USER';
-				}
-				else if (this.modularType == "TENANT") {
-					payload.modularType = 'EMPLOYEE';
-				}
-				payload = JSON.stringify(payload);
-				if (this.addModular.name) {
-					masterApi({
-						action: 'modular_edit',
-						version: '1.0',
-						crudType: '1',
-						payload: payload,
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						this.getModulars();
-						this.addModular.name = null;
-					})
+				else
+				{
+					this.$message({
+						message: '信息填写不完整,请重新添加',
+						type: 'error',
+					});
 				}
 			},
 
@@ -400,6 +419,7 @@ import { masterApi } from '@/ajax/post.js'
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
 					this.getModulars();
+					this.choosed = [];
 				})
 			},
 

@@ -12,15 +12,16 @@
 				<el-button type="primary" class="marginBtn">员工管理</el-button>
 			</div>
 			<div class="searchBox">
-				<el-input icon="search" v-model="searchID" placeholder="请输入ID" :on-icon-click="search" style="width:240px"></el-input>
+				<el-input icon="search" v-model="formSearch.mobile" placeholder="账号" :on-icon-click="search" style="width:160px"></el-input>
+				<el-input icon="search" v-model="formSearch.ID" placeholder="邀请码" :on-icon-click="search" style="width:160px"></el-input>
 			</div>
 		</div>
 
 		<div class="tableBox">
-			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
+			<el-table :data="tableData" border style="width: 100%;font-size:12px;" @sort-change="sortChange">
 				<el-table-column prop="name" label="姓名"></el-table-column>
 				<el-table-column prop="mobile" label="账号"></el-table-column>
-			    <el-table-column label="加入时间">
+			    <el-table-column prop="created" label="加入时间" sortable="custom">
 			    	<template scope="scope">
 			    		<span>{{scope.row.created?formatDate(scope.row.created):''}}</span>
 			    	</template>
@@ -35,7 +36,7 @@
 			    <el-table-column label="操作"> 
 			    	<template scope="scope">
 			      		<el-button type="text" size="small">
-							<router-link :to="{name:'shop-staff-edit',query:{id:scope.row.id}}">编辑</router-link>
+							<router-link :to="{name:'shop-staff-edit',query:{id:scope.row.id,name:scope.row.name}}">编辑</router-link>
 			      		</el-button>
 			      		<el-button type="text" size="small" v-if="isRoot && !(rootId == scope.row.id)">
 							<router-link :to="{name:'shop-staff-permission',query:{id:scope.row.id,name:scope.row.name}}">授权</router-link>
@@ -57,8 +58,15 @@ export default {
 		  	total: null,
 		  	pageSize: 10,
 		  	currentPage: 1,
-		  	searchID:'',
-		  	tableData:[],
+		  	formSearch: {
+		  		mobile: null,
+		  		ID: null,
+		  	},
+		  	sort: {
+		  		sortCol: null,
+		  		asc: false,
+		  	},
+		  	tableData: [],
 		}
 	},
 	methods: {
@@ -77,9 +85,11 @@ export default {
 			let payload = {
 		  		page: this.currentPage,
 		  		pageSize: this.pageSize,
-		  		asc: false,
+		  		sortCol: this.sort.sortCol?this.sort.sortCol:null,
+		  		asc: this.sort.asc,
 		  		employeeId: window.localStorage.getItem('employeeId'),
-		  		tarId: this.searchID?this.searchID:null,
+		  		tarId: this.formSearch.ID?this.formSearch.ID:null,
+		  		mobile: this.formSearch.mobile?this.formSearch.mobile:null,
 		  	}
 		  	payload = JSON.stringify(payload)
 		  	autoApi({
@@ -95,9 +105,22 @@ export default {
 			})
 		},
 
-			pageChange(pg) {
-				this.currentPage = pg;
-		    this.getInfo();
+		sortChange(val) {
+			if (val.order == "ascending") {
+				this.sort.asc = true;
+				this.sort.sortCol = "created";
+			}
+			else
+			{
+				this.sort.asc = false;
+				this.sort.sortCol = "created";
+			}
+			this.getInfo();
+		},
+
+		pageChange(pg) {
+			this.currentPage = pg;
+	    	this.getInfo();
 		},
 
 		search() {
@@ -130,7 +153,7 @@ export default {
 		this.getInfo();
 		if (window.localStorage.getItem('isRoot_tenant') == "y") {
 			this.isRoot = true;
-			this.rootId = window.localStorage.getItem('tid');
+			this.rootId = window.localStorage.getItem('employeeId');
 		}
 		else
 		{

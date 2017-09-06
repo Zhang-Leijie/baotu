@@ -5,14 +5,14 @@
 		</el-breadcrumb>
 		<div style="margin-top:10px;margin-bottom:10px;">
 			<el-input icon="search" v-model="searchName" placeholder="请输入姓名" :on-icon-click="search" style="float:right;width:240px;"></el-input>
-			<el-input icon="search" v-model="searchMobile" placeholder="请输入账号(+86)" :on-icon-click="search" style="float:right;width:240px;"></el-input>
+			<!-- <el-input icon="search" v-model="searchMobile" placeholder="请输入账号(+86)" :on-icon-click="search" style="float:right;width:240px;"></el-input> -->
 			<div style="clear:both"></div>
 		</div>
 		<div class="tableBox">
 			<el-table :data="tableData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="uid" label="序号"></el-table-column>
+			    <el-table-column prop="uid" label="ID"></el-table-column>
 			    <el-table-column prop="name" label="姓名"></el-table-column>
-			    <el-table-column label="申请代理商数量"></el-table-column>
+			    <!-- <el-table-column label="申请代理商数量"></el-table-column> -->
 			    <el-table-column label="注册时间">
 			    	<template scope="scope">
 			    		<span>{{formatDate(scope.row.created)}}</span>

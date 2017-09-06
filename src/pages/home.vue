@@ -5,12 +5,14 @@
 		    <div class="centerBox">
 		        <h1>入口选择</h1>
 		        <div class="inputBox">
-		        	<el-button @click="goPingtai" style="width:100px; height:60px; margin-right:50px;">平台端</el-button>
+		        	<el-button @click="goPingtai" style="width:100px; height:60px; margin-right:50px;" v-if="isAPPAllowed">平台端</el-button>
 			
-					<el-button @click="chooseShangjia" style="width:100px; height:60px; margin-right:50px;">商家端</el-button>
+					<el-button @click="chooseShangjia" style="width:100px; height:60px; margin-right:50px;" v-if="tenants[0]">商家端</el-button>
 					
-					<el-button @click="" style="width:100px; height:60px;" @click="gotoPC">展业</el-button>
-
+					<el-button @click="gotoPC" style="width:100px; height:60px;">展业</el-button>
+				</div>
+				
+				<div class="inputBox">
 					<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia" style="width:200px; margin-top:20px;">
 					    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
 					</el-select>
@@ -31,84 +33,97 @@ export default {
 		return {
 		  tenantId: null,
 		  tenants: [],
-		  gotoShangjia: false
+		  gotoShangjia: false,
+		  isAPPAllowed: false,
 		}
 	},
 	methods: {
 		//获取代理商列表
 		getTenanList() {
-			let payload = {}
-			payload = JSON.stringify(payload)
 			autoApi({
-					action: 'tenants_user',
-					version: '1.0',
-					payload: payload		
-				},window.localStorage.getItem('token')).then((res)=> {
-					if (res.code == 0) {
-						if (res.attach.audit[0]) {
-							for (var i = 0; i < res.attach.audit.length; i++) {
+				action: 'modulars_possessed',
+				version: '1.0',
+			},window.localStorage.getItem('token')).then((res)=> {
+				if (res.code == 0) {
+					if (res.attach.tmodulars) {	//商家模块入口控制
+						for (var i = 0; i < res.attach.tmodulars.length; i++) {
 		   					let buf = {
 		   						value: {
-		   							tid: null
+		   							tid: res.attach.tmodulars[i].tid,
+		   							employeeId: res.attach.tmodulars[i].employeeId,
+		   							layer: res.attach.tmodulars[i].layer,
 		   						},
-		   						label: null
+		   						label: res.attach.tmodulars[i].tname,
 		   					}
-		   					buf.value.tid = res.attach.audit[i].tid;
-		   					buf.label = res.attach.audit[i].tname + " (审核中)";
-		   					this.tenants.push(buf);
-		   				}
-						}
-
-						if (res.attach.own[0]) {
-							for (var i = 0; i < res.attach.own.length; i++) {
-		   					let buf = {
-		   						value: {
-		   							tid: null,
-		   							employeeId: null
-		   						},
-		   						label: null
+		   					if (res.attach.tmodulars[i].layer == 1) {
+		   						this.tenants.push(buf);
 		   					}
-		   					buf.value.tid = res.attach.own[i].tid;
-		   					buf.value.employeeId = res.attach.own[i].employeeId;
-		   					buf.label = res.attach.own[i].tname;
-		   					this.tenants.push(buf);
+		   					else
+		   					{
+		   						if (res.attach.tmodulars[i].modulars) {
+		   							if (this.isPermiss('SHOP',res.attach.tmodulars[i].modulars)) {
+		   								this.tenants.push(buf);
+		   							}	
+		   						}
+		   					}
 		   				}
-						}
-		   				
 					}
-				}) 
+
+					if (res.attach.pmodulars) {	//平台模块入口控制
+						if (this.isPermiss('APP',res.attach.pmodulars)) {
+							this.isAPPAllowed = true;
+						}
+					}
+				}
+			})
 		},
 
 		tenantChange(val) {
 			localStorage.setItem('employeeId',val.employeeId);
 			localStorage.setItem('tid',val.tid);
-			if (val.employeeId) {
-				let payload = {
-					employeeId: val.employeeId,
-				}
-				payload = JSON.stringify(payload);
-				autoApi({
-					action: 'tenant_info',
-					version: '1.0',
-					payload: payload,
-				},window.localStorage.getItem('token')).then((res)=> {
-					if (res.code == 0) {
-						if ((res.attach.mod & 1) == 1) {
-							localStorage.setItem('isRoot_tenant','y');
-						}
-						else
-						{
-							localStorage.setItem('isRoot_tenant','n');
-						}
-					}
-				}) 
+			if (val.layer == 1) {
+				localStorage.setItem('isRoot_tenant','y');
 			}
-			setTimeout(this.goShangjia(), 11110);
+			else
+			{
+				localStorage.setItem('isRoot_tenant','n');
+			}
+			// if (val.employeeId) {
+			// 	let payload = {
+			// 		employeeId: val.employeeId,
+			// 	}
+			// 	payload = JSON.stringify(payload);
+			// 	autoApi({
+			// 		action: 'tenant_info',
+			// 		version: '1.0',
+			// 		payload: payload,
+			// 	},window.localStorage.getItem('token')).then((res)=> {
+			// 		if (res.code == 0) {
+			// 			if ((res.attach.mod & 1) == 1) {debugger
+			// 				localStorage.setItem('isRoot_tenant','y');
+			// 			}
+			// 			else
+			// 			{
+			// 				localStorage.setItem('isRoot_tenant','n');
+			// 			}
+			// 		}
+			// 	}) 
+			// }
+			this.goShangjia();
 		},
+
+		isPermiss(modular,ownModulars) {	//判断模块modular是否在模块列表ownModulars中,若有,则返回true
+          	for (let i = 0; i < ownModulars.length; i++) {
+            	if (ownModulars[i] == modular) {
+              		return true;
+            	}
+          	}
+          	return false;
+	    },
 
 		goShangjia() {
 			localStorage.setItem('baotuUserType','shangjia');
-			router.push({name:'shop-staff-list'});
+			router.push({name:'shopWelcome'});
 			// router.push({name:'shop-verify'});
 		},
 
@@ -117,7 +132,7 @@ export default {
 			localStorage.setItem('employeeId',null);
 			localStorage.setItem('tid',null);
 			localStorage.setItem('isRoot_tenant',null);
-			router.push({name:'shopHome'});
+			router.push({name:'adminWelcome'});
 		},
 
 		chooseShangjia() {
@@ -133,23 +148,24 @@ export default {
 		},
 	},
 	mounted() {
-		this.getTenanList();
 		if (window.localStorage.getItem('userId_plate')) {
 			autoApi({
-					action: 'user_info',
-					version: '1.0',
-				},window.localStorage.getItem('token')).then((res)=> {
-					if (res.code == 0) {
-						if ((res.attach.mod & 1) == 1) {
-							localStorage.setItem('isRoot_plate','y');
-						}
-						else
-						{
-							localStorage.setItem('isRoot_plate','n');
-						}
+				action: 'user_info',
+				version: '1.0',
+			},window.localStorage.getItem('token')).then((res)=> {
+				if (res.code == 0) {
+					if ((res.attach.mod & 1) == 1) {
+						localStorage.setItem('isRoot_plate','y');
+						this.isAPPAllowed = true;
 					}
-				}) 
+					else
+					{
+						localStorage.setItem('isRoot_plate','n');
+					}
+				}
+			}) 
 		}
+		this.getTenanList();
 	}
 }
 </script>

@@ -272,6 +272,18 @@ const routes = [
         },{
             path: "/shop/home",
             redirect: '/shop/shop-list'
+        },{
+            path: "/welcome/shopWelcome",
+            name: 'shopWelcome',
+            component(resolve) {
+                require(['./pages/welcome/shopWelcome.vue'],resolve)
+            }
+        },{
+            path: "/welcome/adminWelcome",
+            name: 'adminWelcome',
+            component(resolve) {
+                require(['./pages/welcome/adminWelcome.vue'],resolve)
+            }
         }]
     },{
         path: "/",

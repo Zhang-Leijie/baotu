@@ -1,27 +1,65 @@
 <template>
 	<div class="staffEditBody">
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'shop-shop-list'}">员工列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'shop-staff-list'}">员工列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>编辑</el-breadcrumb-item>
 		</el-breadcrumb>
+
 		<el-form label-position="right" label-width="140px" style="margin-top:20px;" class="appbox">
-		    <el-form-item label="支付方式:">
+ 		  <el-form-item class="appblockSmall" label="姓名：">
+ 		  	<span>{{$route.query.name}}</span>
+ 		  </el-form-item>
+ 		  <el-form-item class="appblockSmall" label="身份证号：">
+ 		    {{info.identity}}
+ 		  </el-form-item>
+ 		  <el-form-item class="appblockSmall" label="手机号：">
+ 		    {{info.mobile}}
+ 		  </el-form-item>
+ 		  <el-form-item class="appblockSmall" label="申请时间：">
+ 		    {{formatDate(info.created  * 1000)}}
+ 		  </el-form-item>
+ 		  <el-form-item class="appblockSmall" label="邀请人：">
+ 		  	{{info.name}}
+		  </el-form-item>
+		  <el-form-item class="appblockSmall" label="邀请码：">
+		  	{{$route.query.id}}
+ 		  </el-form-item>
+ 		  <el-form-item class="appblockSmall" label="积分余额：">
+ 		    {{info.demo}}
+ 		  </el-form-item>
+ 		  <el-form-item class="appblockSmall" label="账号状态：">
+ 		    {{info.demo}}
+ 		  </el-form-item>
+ 		  <el-form-item class="appblock" label="联系人身份证正面：">
+		    <el-upload
+			  class="avatar-uploader"
+			  action="//jsonplaceholder.typicode.com/posts/"
+			  :show-file-list="false"
+			  :on-success="handleAvatarScucess">
+			  <img v-if="info.identityFace" :src="imageUrl" class="avatar">
+			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+			</el-upload>
+		  </el-form-item>
+		  <el-form-item class="appblock" label="联系人身份证反面：">
+		    <el-upload
+			  class="avatar-uploader"
+			  action="//jsonplaceholder.typicode.com/posts/"
+			  :show-file-list="false"
+			  :on-success="handleAvatarScucess">
+			  <img v-if="info.identityBack" :src="imageUrl" class="avatar">
+			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+			</el-upload>
+		  </el-form-item>
+ 		</el-form>
+ 		<div style="clear:both;width:90%;border-bottom: 1px solid black;margin-left: 20px;"></div>
+
+		<el-form label-position="right" label-width="140px" style="margin-top:20px;" class="appbox">
+		    <el-form-item label="支付方式：" class="appblock">
 				<el-radio class="radio" v-model="form.payway" label="128">全额支付</el-radio>
 	  		 	<el-radio class="radio" v-model="form.payway" label="256">净保费支付</el-radio>
 	  		 	<el-radio class="radio" v-model="form.payway" label="512">垫付</el-radio>
 		    </el-form-item>
-		    <el-form-item label="团队佣金:">
-			    <el-checkbox-group v-model="form.teammoney">
-				    <el-checkbox value='1' label="1">规模佣金</el-checkbox>
-				    <el-checkbox value='2' label="2">管理佣金</el-checkbox>
-				</el-checkbox-group>
-		    </el-form-item>
-		    <el-form-item label="">
-			    <el-checkbox-group v-model="form.teammoney">
-				    <div style="height:20px"></div>
-				</el-checkbox-group>
-		    </el-form-item>
-		    <el-form-item label="普通佣金:">
+		    <el-form-item label="普通佣金：" class="appblock">
 			    <el-checkbox-group v-model="form.commonmoney">
 				    <el-checkbox value='4' label="4">非营业客车</el-checkbox>
 				    <el-checkbox value='8' label="8">非营业货车</el-checkbox>
@@ -30,12 +68,21 @@
 				    <el-checkbox value='64' label="64">其他</el-checkbox>
 				</el-checkbox-group>
 		    </el-form-item>
-		    <el-row style="margin-left: 70px;">
-		  		<span style="font-size: 14px;">商业险佣金比例(%): </span>
-		  		<el-input style="width:120px;" v-model="CMRate"></el-input>
-		  		<span style="font-size: 14px; margin-left: 100px;">交强险佣金比例(%): </span>
-			    <el-input style="width:120px;" v-model="CPRate"></el-input>
-		    </el-row>
+		    <el-form-item label="团队佣金：" class="appblock">
+			    <el-checkbox-group v-model="form.teammoney">
+				    <el-checkbox value='1' label="1">规模佣金</el-checkbox>
+				    <el-checkbox value='2' label="2">管理佣金</el-checkbox>
+				</el-checkbox-group>
+		    </el-form-item>
+		    <el-form-item label="商业险佣金比例(%)" class="appblock">
+			  	<el-input style="width:120px;" v-model="CMRate"></el-input>
+		    </el-form-item>
+		    <el-form-item class="appblock">
+		  		<div></div>
+		    </el-form-item>
+		    <el-form-item label="交强险佣金比例(%)" class="appblock">
+				<el-input style="width:120px;" v-model="CPRate"></el-input>
+		    </el-form-item>
 		</el-form>
 
 		<div style="clear:both"></div>
@@ -54,7 +101,7 @@ import { autoApi } from '@/ajax/post.js'
 	      	CMRate: 0,
 	      	CPRate: 0,
 	      	imageUrl: '',
-	        info:'',
+	        info: {},
 	        form:{
 	        	role:[],
 	        	teammoney:[],
@@ -151,6 +198,7 @@ import { autoApi } from '@/ajax/post.js'
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
 		   			if (res.code == 0) {
+		   				this.info = res.attach;
 		   				this.modConut(res.attach.mod);
 		   				this.CMRate = res.attach.CMRate / 10;
 		   				this.CPRate = res.attach.CPRate / 10;
@@ -212,6 +260,10 @@ import { autoApi } from '@/ajax/post.js'
 	.appbox{
 		.appblock{
 			width: 50%;
+			float: left;
+		}
+		.appblockSmall {
+			width: 33%;
 			float: left;
 		}
 		.avatar-uploader .el-upload {
