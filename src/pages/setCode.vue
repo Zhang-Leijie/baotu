@@ -138,10 +138,13 @@ export default {
                     this.step = 1;
 
                     localStorage.setItem('token',res.attach.token);
-                    // localStorage.setItem('userId',res.attach.user.uid);
                     localStorage.setItem('appId',this.form.platCode);
+                    localStorage.setItem('userId_plate',res.attach.user.uid);
                     localStorage.setItem('userName_Plate',this.$route.query.account);
-                    localStorage.setItem('userPsd_plate',this.form.passwordS);
+                    localStorage.setItem('userPsd_plate',this.form.password);
+                    localStorage.setItem('top_name_plate',res.attach.user.name);
+                    localStorage.setItem('top_avatar_plate',res.attach.user.avatar);
+
 
                     router.push({name:'home'})
                      this.$message({

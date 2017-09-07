@@ -153,6 +153,8 @@ export default {
               localStorage.setItem('userId_plate',res.attach.user.uid);
               localStorage.setItem('userName_plate',this.form.account);
               localStorage.setItem('userPsd_plate',this.form.password);
+              localStorage.setItem('top_name_plate',res.attach.user.name);
+              localStorage.setItem('top_avatar_plate',res.attach.user.avatar);
 
        				router.push({name:'home'})
                this.$message({

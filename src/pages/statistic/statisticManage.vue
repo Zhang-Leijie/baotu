@@ -4,13 +4,13 @@
 		  	<el-breadcrumb-item>统计管理</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<div class="blankCol"></div>
+		<div style="margin: 10px;"></div>
 
 		<el-tabs type="border-card">
 		  <el-tab-pane>
 		    <span slot="label"><i class="el-icon-picture"></i> 统计图表</span>
 		    <div class="table1">
-				<el-select v-model="option1" placeholder="请选择车险">
+				<el-select v-model="data1.option" placeholder="请选择车险">
 				    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 
@@ -19,38 +19,38 @@
 				</el-select>
 
 				<div class="datePicker">
-					<el-date-picker v-model="date1" type="daterange" align="right" placeholder="选择日期范围" :picker-options="pickerOptions1"></el-date-picker>
+					<el-date-picker v-model="data1.date" type="daterange" align="right" placeholder="选择日期范围" :picker-options="pickerOptions1"></el-date-picker>
 				</div>
 			
-				<div id="main" style="width: 1200px;height:400px;"></div>
+				<div ref="main" style="width: 1200px;height:400px;"></div>
 			</div>
 		  </el-tab-pane>
 		  <el-tab-pane label="保险公司报表">
 		  	<div class="table2">
 				<label class="title">保险公司报表</label>
-				<el-select v-model="option2" placeholder="请选择">
+				<el-select v-model="data2.option" placeholder="请选择">
 				    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
-				<el-date-picker v-model="date2" type="daterange" align="right" placeholder="选择日期范围"></el-date-picker>
+				<el-date-picker v-model="data2.date" type="daterange" align="right" placeholder="选择日期范围"></el-date-picker>
 
-				<el-table :data="tableData2" border style="width: 100%;font-size:12px; margin-top:10px">
+				<el-table :data="data2.tableData" border style="width: 100%;font-size:12px; margin-top:10px">
 					<el-table-column prop="demo" label="保险公司"></el-table-column>
 					<el-table-column prop="demo" label="保单数"></el-table-column>
 					<el-table-column prop="demo" label="保费"></el-table-column>
 				</el-table>
 
-				<el-pagination v-if="pageCount2" @current-change="pageChange2" :current-page="currentPage2" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount2' style="margin:20px auto;text-align:center"></el-pagination>
+				<el-pagination v-if="data2.pageCount" @current-change="pageChange2" :current-page="data2.currentPage" :page-size="data2.pageSize" layout="total , prev, pager, next, jumper" :page-count='data2.pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
 		  </el-tab-pane>
 		  <el-tab-pane label="业务员报表" v-if="!isAdmin">
 		  	<div class="table3">
 				<label class="title">业务员报表</label>
-				<el-select v-model="option3" placeholder="请选择">
+				<el-select v-model="data3.option" placeholder="请选择">
 				    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
-				<el-date-picker v-model="date3" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
+				<el-date-picker v-model="data3.date" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
 
-				<el-table :data="tableData3" border style="width: 100%;font-size:12px; margin-top:10px" @sort-change="sortChange">
+				<el-table :data="data3.tableData" border style="width: 100%;font-size:12px; margin-top:10px" @sort-change="sortChange">
 					<el-table-column prop="demo" label="保险公司" sortable="custom"></el-table-column>
 					<el-table-column prop="demo" label="报价数量" sortable="custom"></el-table-column>
 					<el-table-column prop="demo" label="成交数量" sortable="custom"></el-table-column>
@@ -58,17 +58,17 @@
 					<el-table-column prop="demo" label="保费" sortable="custom"></el-table-column>
 				</el-table>
 
-				<el-pagination v-if="pageCount3" @current-change="pageChange3" :current-page="currentPage3" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount3' style="margin:20px auto;text-align:center"></el-pagination>
+				<el-pagination v-if="data3.pageCount" @current-change="pageChange3" :current-page="data3.currentPage" :page-size="data3.pageSize" layout="total , prev, pager, next, jumper" :page-count='data3.pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
 		  </el-tab-pane>
 		  <el-tab-pane label="保单列表" v-if="!isAdmin">
 		  	<div class="table4">
 				<label class="title">保单列表</label>
-				<el-date-picker v-model="date4" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
-				<el-input placeholder="使用性质" icon="search" v-model="SearchState" :on-icon-click="SearchData" style="width: 150px"></el-input>
-				<el-input placeholder="保险公司" icon="search" v-model="SearchCompany" :on-icon-click="SearchData" style="width: 150px"></el-input>
+				<el-date-picker v-model="data4.date" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
+				<el-input placeholder="使用性质" icon="search" v-model="data4.searchState" :on-icon-click="searchData" style="width: 150px"></el-input>
+				<el-input placeholder="保险公司" icon="search" v-model="data4.searchCompany" :on-icon-click="searchData" style="width: 150px"></el-input>
 
-				<el-table :data="tableData2" border style="width: 100%;font-size:12px; margin-top:10px">
+				<el-table :data="data4.tableData" border style="width: 100%;font-size:12px; margin-top:10px">
 					<el-table-column prop="demo" label="险种"></el-table-column>
 					<el-table-column prop="demo" label="车主"></el-table-column>
 					<el-table-column prop="demo" label="车牌号"></el-table-column>
@@ -82,7 +82,7 @@
 					<el-table-column prop="demo" label="保险公司"></el-table-column>
 				</el-table>
 
-				<el-pagination v-if="pageCount4" @current-change="pageChange4" :current-page="currentPage4" :page-size="pageSize" layout="total , prev, pager, next, jumper" :page-count='pageCount4' style="margin:20px auto;text-align:center"></el-pagination>
+				<el-pagination v-if="data4.pageCount" @current-change="pageChange4" :current-page="data4.currentPage" :page-size="data4.pageSize" layout="total , prev, pager, next, jumper" :page-count='data4.pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
 		  </el-tab-pane>
 		</el-tabs>
@@ -96,8 +96,63 @@ require('echarts');
 	export default {
 	  data() {
 	    return {
-	    	option: null,
-	    	options: [
+	    	data1: {
+	    		option: null,
+	    		date: null,
+	    		chartData: {
+	    			xAxis: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+	    			series: [
+				        {
+				            name:'人保',
+				            type:'line',
+				            data:[11, 11, 15, 13, 12, 13, 10, 21, 13, 12, 13, 10]
+				        },
+				        {
+				            name:'整体',
+				            type:'line',
+				            data:[1, 2, 2, 5, 3, 2, 0, 2, 2, 5, 3, 2]
+				        },
+				    ],
+	    		}
+	    	},
+	    	data2: {
+	    		option: null,
+	    		date: null,
+	    		tableData: [],
+	    		currentPage: 1,
+	       		pageSize: 10,
+	       		pageCount: null,
+	    	},
+	    	data3: {
+	    		option: null,
+	    		date: null,
+	    		tableData: [],
+	    		currentPage: 1,
+	       		pageSize: 10,
+	       		pageCount: null,
+	       		sortType: false,
+	       		sortCol: null,
+	    	},
+	    	data4: {
+	    		date: null,
+	    		searchState: null,
+	    		searchCompany: null,
+	    		tableData: [],
+	    		currentPage: 1,
+	       		pageSize: 10,
+	       		pageCount: null,
+	    	},
+	    	options: [],
+	    	optionsMultiple: [],
+	        optionMultiple: [],
+	        pickerOptions1: {},
+	        pickerOptions2: {},
+	        isAdmin: false,
+		}
+	  },
+	  methods: {
+	  	init() {
+	  		this.options = [
 	    	{
 	    		value: '1',
 	    		label: '非营业车'
@@ -109,8 +164,9 @@ require('echarts');
 	    	{
 	    		value: '3',
 	    		label: '整体车险'
-	    	}],
-	    	optionsMultiple: [{
+	    	}];
+	  		this.optionsMultiple = [
+	  		{
 	    		value: '1',
 	    		label: '太平洋保险'
 	    	},
@@ -121,9 +177,8 @@ require('echarts');
 	    	{
 	    		value: '3',
 	    		label: '阳光保险'
-	    	}],
-	        optionMultiple: [],
-	        pickerOptions1: {
+	    	}];
+	  		this.pickerOptions1 = {
 	          shortcuts: [{
 	            text: '最近一周',
 	            onClick(picker) {
@@ -149,57 +204,36 @@ require('echarts');
 	              picker.$emit('pick', [start, end]);
 	            }
 	          }]
-	        },
-	        pickerOptions2: {
-	          shortcuts: [{
-	            text: '今天',
-	            onClick(picker) {
-	              picker.$emit('pick', new Date());
-	            }
-	          }, {
-	            text: '昨天',
-	            onClick(picker) {
-	              const date = new Date();
-	              date.setTime(date.getTime() - 3600 * 1000 * 24);
-	              picker.$emit('pick', date);
-	            }
-	          }, {
-	            text: '一周前',
-	            onClick(picker) {
-	              const date = new Date();
-	              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-	              picker.$emit('pick', date);
-	            }
-	          }]
-	        },
-	        date1: '',
-	        date2: '',
-	        date3: '',
-	        date4: '',
-	        tableData2: [],
-	        tableData3: [],
-	        tableData4: [],
-	        currentPage2: 1,
-	        currentPage3: 1,
-	        currentPage4: 1,
-	        pageSize: 10,
-	        pageCount2: null,
-	        pageCount3: null,
-	        pageCount4: null,
-	        sortType: false,
-	        sortCol: null,
-	        isAdmin: false,
-		}
-	  },
-	  methods: {
-	  	initChart() {
-	  		 var myChart = echarts.init(document.getElementById('main'));
-
+	  		};
+	  		this.pickerOptions2 = {
+	  			shortcuts: [{
+		            text: '今天',
+		            onClick(picker) {
+		              picker.$emit('pick', new Date());
+		            }
+		          }, {
+		            text: '昨天',
+		            onClick(picker) {
+		              const date = new Date();
+		              date.setTime(date.getTime() - 3600 * 1000 * 24);
+		              picker.$emit('pick', date);
+		            }
+		          }, {
+		            text: '一周前',
+		            onClick(picker) {
+		              const date = new Date();
+		              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+		              picker.$emit('pick', date);
+		            }
+		        }]
+	  		};
+	  	},
+	  	drawChart() {
+	  		var myChart = echarts.init(this.$refs.main);
 	        // 指定图表的配置项和数据
 	        var option = {
 			    title: {
 			        text: '保险公司保费月统计图',
-			        subtext: '纯属虚构'
 			    },
 			    tooltip: {
 			        trigger: 'axis'
@@ -207,7 +241,7 @@ require('echarts');
 			    xAxis:  {
 			        type: 'category',
 			        boundaryGap: false,
-			        data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+			        data: this.data1.chartData.xAxis,
 			    },
 			    yAxis: {
 			        type: 'value',
@@ -215,62 +249,64 @@ require('echarts');
 			            formatter: '{value}'
 			        }
 			    },
-			    series: [
-			        {
-			            name:'人保',
-			            type:'line',
-			            data:[11, 11, 15, 13, 12, 13, 10, 21, 13, 12, 13, 10]
-			        },
-			        {
-			            name:'整体',
-			            type:'line',
-			            data:[1, 2, 2, 5, 3, 2, 0, 2, 2, 5, 3, 2]
-			        }
-			    ]
+			    series: this.data1.chartData.series,
 			};
 	        // 使用刚指定的配置项和数据显示图表。
 	        myChart.setOption(option);
 	  	},
 
-	  	getInfo4() {
-
+	  	getInfo(num) {
+	  		switch(num) {
+	  			case 1:
+	  				//
+	  			break;
+	  			case 2:
+	  				//
+	  			break;
+	  			case 3:
+	  				//
+	  			break;
+	  			case 4:
+	  				//
+	  			break;
+	  			default:
+	  			break;
+	  		}
 	  	},
 
-	  	SearchData() {
-	  		this.getInfo4();
+	  	searchData() {
+	  		this.getInfo(4);
 	  	},
 
 	  	pageChange2(pg) {
-	  		this.currentPage2 = pg;
+	  		this.data2.currentPage = pg;
 	  	},
 
 	  	pageChange3(pg) {
-	  		this.currentPage3 = pg;
+	  		this.data3.currentPage = pg;
 	  	},
 
 	  	pageChange4(pg) {
-	  		this.currentPage4 = pg;
+	  		this.data4.currentPage = pg;
 	  	},
 
 	  	sortChange(val) {
-	  		val.order == "ascending"?this.sortType = true:this.sortType = false;
+	  		val.order == "ascending"?this.data3.sortType = true:this.data3.sortType = false;
 
 	  		if (val.prop == "demo") {
-	    		this.sortCol = "demo";
+	    		this.data3.sortCol = "demo";
 	    	}
 	  	}
 	  },
 	  mounted() {
-	  	this.initChart();
+	  	this.init();
+	  	this.drawChart();
 	  	this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
 	  }
 	}
 </script>
 <style lang="less">
 .statisticManageBody {
-	.blankCol {
-		margin: 10px 0 ;
-	}
 	.table1 {
 		padding: 20px;
 		background-color: #ffffff;

@@ -157,15 +157,18 @@
     </div>
     <div class="top-box">
     	<div style="float:right">
-	        <!-- <div class="head-image" style="border-radius:50%">
-	          	<img src="/static/img/logo.png" style="width:100%;height:100%;border-radius:50%">
-	        </div> -->
-	        <div class="head-word">
-              <router-link :to="{name:'sign-in'}">
-                <span @click="logout" style="color:#4db3ff;font-size:14px;cursor:pointer">注销</span>
-              </router-link>
-	        </div>
+        <div class="head-image" style="border-radius:50%">
+          <img src="../assets/demoAvatar.jpg" style="width:100%;height:100%;border-radius:50%"/>
         </div>
+        <div class="head-word">
+            <router-link :to="{name:'sign-in'}">
+              <span @click="logout" style="color:#4db3ff;font-size:14px;cursor:pointer">注销</span>
+            </router-link>
+        </div>
+      </div>
+      <div style="float:right;margin-right:20px;">
+        <span style="line-height:60px">{{name}}</span>
+      </div>
     </div>
 
     <div class="content-box">
@@ -181,8 +184,9 @@ import { autoApi } from '@/ajax/post.js'
 export default {
   data() {
     return {
-      account:'',
-      roleName:null,
+      account: '',
+      name: null,
+      avatar: null,
       activeRoute: '',
       openedRouteList: [],
       isAdmin: null,
@@ -254,6 +258,8 @@ export default {
   },
   mounted() {
     this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
+    this.name = window.localStorage.getItem('top_name_plate');
+    this.avatar = window.localStorage.getItem('top_avatar_plate');
     this.getModulars();
     if (this.$route.name == 'shop-shop-list') {
       this.activeRoute = '2-1';
