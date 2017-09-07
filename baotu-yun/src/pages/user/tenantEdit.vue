@@ -437,6 +437,7 @@ import { masterApi } from '@/ajax/post.js'
 	  			this.tableData.push(buf);
 	  			this.addBuf.push(buf);
 	  			this.showPage();
+	  			this.saveAll();
 	  		}
 	  		else
 	  		{
@@ -446,7 +447,6 @@ import { masterApi } from '@/ajax/post.js'
 		          });    
 
 	  		}
-	  			this.saveAll();
 	  	},
 
 	  	comfirmAddJianjie() {

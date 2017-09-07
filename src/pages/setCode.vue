@@ -1,28 +1,35 @@
 <template>
 <div class="sign-in-body">
   <div class="sign-box">
+    <div style="position:absolute;margin-left:15%;margin-top:150px;">
+      <el-steps :space="100" direction="vertical" :active="step" finish-status="success">
+        <el-step title="获取验证码"></el-step>
+        <el-step title="设置新密码"></el-step>
+      </el-steps>
+    </div>
     <div class="logo-box">
-        <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
-        	<el-form-item label="平台:" :label-width="formLabelWidth">
-		      {{this.$route.query.plat}}
-		    </el-form-item>
-		    <el-form-item label="手机号:" :label-width="formLabelWidth">
-		      +86{{this.$route.query.account}}
-		    </el-form-item>
-		    <el-form-item label="验证码:" :label-width="formLabelWidth" prop="yzm">
-		      <el-input style="width:180px;" v-model="form.yzm" auto-complete="off" placeholder="请输入验证码"></el-input>
-		      <el-button type="text" style="margin-left:15px;" @click="getYzm">获取验证码</el-button>
-		    </el-form-item>
-		    <el-form-item label="密码:" :label-width="formLabelWidth" prop="password">
-		      <el-input style="width:270px;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
-		    </el-form-item>
-		    <el-form-item label="确认密码:" :label-width="formLabelWidth" prop="passwordS">
-		      <el-input style="width:270px;" v-model="form.passwordS" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
-		    </el-form-item>
-		</el-form>
-        <div class="log blue" @click="pwdReset">
-            确 定
+      <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
+        <el-row>
+          <el-col :span="12">
+            <span style="font-size: 16px;">{{this.$route.query.plat}}</span>
+          </el-col>
+          <el-col :span="12">
+            <span style="font-size: 16px;">+86{{this.$route.query.account}}</span>
+          </el-col>
+        </el-row>
+	      <div style="margin: 40px 0;">
+          <el-input style="width:180px;" v-model="form.yzm" auto-complete="off" placeholder="请输入验证码" v-show="step == 0"></el-input>
+          <el-button type="text" style="margin-left:15px;width:60px;" @click="getYzm" v-show="step == 0">{{timeCount > 0 && !form.yzm?timeCount + 's':'获取验证码'}}</el-button>
+          <el-input style="width:80%;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password" v-show="step == 1"></el-input>
+          <div style="margin:20px;"></div>
+          <el-input style="width:80%;" v-model="form.passwordS" auto-complete="off" placeholder="请重复输入上方的密码" type="password" v-show="step == 1"></el-input> 
         </div>
+  		</el-form>
+      <div class="log blue" @click="step = step - 1" v-show="!(step == 0)">返回上一步</div>
+      <div style="margin:20px;"></div>
+      <div class="log blue" @click="step = 1" v-show="form.yzm && step == 0">下一步</div>
+      <div style="margin:20px;"></div>
+      <div class="log blue" @click="pwdReset" v-show="step == 1">确认修改并登录</div>
     </div>
   </div>
 </div>
@@ -50,6 +57,8 @@ export default {
          	password:'',
          	passwordS:'',
          },
+         step: 0,
+         timeCount: 0,
          formLabelWidth: '100px',
          rules: {
           yzm: [
@@ -67,14 +76,31 @@ export default {
     methods: {
        getYzm(){
        	logApi({
-   			action:'captcha_obtain',
-   			mobile: '+86'+this.$route.query.account,
-   			appId: '1',
-   		}).then((res)=> {
-   			if (res.code == 0) {
-   				this.form.yzm = res.attach
-   			}
-   		})
+     			action:'captcha_obtain',
+     			mobile: '+86'+this.$route.query.account,
+     			appId: '1',
+     		}).then((res)=> {
+     			if (res.code == 0) {
+     				this.form.yzm = res.attach
+     			}
+     		});
+        this.timeCount = 0;
+        this.form.yzm = null;
+        this.startCountdown(60);
+       },
+       startCountdown(time) {
+        var vm = this;
+        if (time > 0) {
+          time = time - 1;
+          this.timeCount = time;
+          setTimeout(function(){
+            vm.startCountdown(time);
+          },1000);
+        }
+        else
+        {
+          this.timeCount = 0;
+        }
        },
        pwdReset(){
        	if (this.form.yzm == '') {
@@ -91,40 +117,48 @@ export default {
                 text: "",
                 timer: 2000,
             })
-       	} else{
+       	} else if(this.form.password == this.form.passwordS){
        		logApi({
 	       		pwd:this.form.passwordS,
 	       		captcha:this.form.yzm,
-	   			action:'pwd_reset',
-	   			mobile: '+86'+this.$route.query.account,
-	   			appId: '1',
-	   		}).then((res)=> {
-	   			if (res.code == 0) {
-       				logApi({
-                appId:'1',
-                action:'login',
-                client:'2',
-                mobile:'+86'+this.$route.query.account,
-                pwd:this.form.passwordS,
-              }).then((res)=> {
-                if (res.code == 0) {
-                  localStorage.setItem('token',res.attach.token);
-                  // localStorage.setItem('userId',res.attach.user.uid);
-                  localStorage.setItem('appId',this.form.platCode);
+  	   			action:'pwd_reset',
+  	   			mobile: '+86'+this.$route.query.account,
+  	   			appId: '1',
+  	   		}).then((res)=> {
+  	   			if (res.code == 0) {
+         				logApi({
+                  appId:'1',
+                  action:'login',
+                  client:'2',
+                  mobile:'+86'+this.$route.query.account,
+                  pwd:this.form.passwordS,
+                }).then((res)=> {
+                  if (res.code == 0) {
+                    this.step = 1;
+                    
+                    localStorage.setItem('token',res.attach.token);
+                    // localStorage.setItem('userId',res.attach.user.uid);
+                    localStorage.setItem('appId',this.form.platCode);
+                    localStorage.setItem('userName_Plate',this.$route.query.account);
+                    localStorage.setItem('userPsd_plate',this.form.passwordS);
 
-                  localStorage.setItem('userName_Plate',this.$route.query.account);
-                  localStorage.setItem('userPsd_plate',this.form.passwordS);
-
-                  router.push({name:'home'})
-                   this.$message({
-                    type: 'success',
-                    message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
-                  });   
-                }
-              })
-       			}
-	   		})
-       	}     	
+                    router.push({name:'home'})
+                     this.$message({
+                      type: 'success',
+                      message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
+                    });   
+                  }
+                })
+         			}
+  	   		})
+       	}
+        else
+        {
+          this.$message({
+            type: 'error',
+            message: '两次输入密码不一致'
+          }); 
+        }     	
        }
     },
     mounted:function(){
@@ -133,7 +167,7 @@ export default {
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="less">
+<style lang="less" scoped>
     .sign-in-box{
         position: absolute;
         top: 0px;
@@ -176,13 +210,14 @@ export default {
             margin-left: 40px;
         }
         .logo-box{
-            padding-top: 40px;
+            padding: 40px 20px;
             text-align: center;
             width: 500px;
-            height: 380px;
+            // height: 380px;
             margin: auto auto;
             background-color: rgba(241, 242, 248, 0.8);
-            margin-top: 100px;
+            margin-top: 150px;
+            border-radius: 20px;
             .input{
                 font-size: 14px;
                 // color: #ccc;
@@ -205,13 +240,20 @@ export default {
                 color: #333;
                 line-height: 40px;
                 margin: 0 auto;
-                width: 100px;
+                width: 300px;
                 height: 40px;
-                border-radius: 20px;
+                border-radius: 1px;
                 background-color: #dfdfdf;
+                box-shadow: 0 1px 1px #c1b1ad;
+                font-family: Microsoft YaHei,Hiragino Sans GB,\5b8b\4f53;
+                font-weight: 700;
+                font-size: 14px;
+            }
+            .log:hover {
+              background-color: #00b7d3;
             }
             .blue{
-                background-color: #4990e2;
+                background-color: #00C1DE;
                 color: #fff;
             }
         }

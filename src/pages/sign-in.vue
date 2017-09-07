@@ -15,23 +15,17 @@
     <div class="logo-box">
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
         <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
-        	<el-form-item label="平台码" label-width="80px" prop="platCode">
-  		      <el-input style="width:287px;" v-model="form.platCode" auto-complete="off" placeholder="请输入平台码" @change="getPlat"></el-input>
-  		      <div style="text-align:left;line-height:20px;">{{platName}}</div>
-  		    </el-form-item>
-  		    <el-form-item label="账号" label-width="80px" prop="account">
-  		      <el-input style="width:250px;margin-left:10px;" v-model="form.account" auto-complete="off" placeholder="请输入手机号" @blur="checkPwd"></el-input>
-  		    </el-form-item>
-  		    <el-form-item label="密码" label-width="80px" prop="password">
-  		      <el-input style="width:287px;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
-  		    </el-form-item>
-  		    <div style="position:absolute">	    	
-  				    <el-button type="text" v-if="haveCode == 1" @click="goSetCode">设置密码</el-button>
-  			      <el-button type="text" v-if="haveCode == 2" @click="goSetCode">忘记密码</el-button>
-  		    </div>
+        	<!-- <el-form-item label="平台码" label-width="80px" prop="platCode"> -->
+          <el-tooltip class="item" effect="light" :content="platName?'平台名称：'+ platName:'请输入平台码'" placement="right">
+            <el-input style="width:100%;" v-model="form.platCode" auto-complete="off" placeholder="平台码" @change="getPlat"></el-input>
+          </el-tooltip>
+  		    <el-input style="width:100%; margin-top:20px;" v-model="form.account" auto-complete="off" placeholder="手机号" @blur="checkPwd"></el-input> 
+          <el-input style="width:100%; margin: 20px 0;" v-model="form.password" auto-complete="off" placeholder="密码" type="password"></el-input> 
     		</el-form>
-        <div class="log blue" @click="login">
-            登 录
+        <div class="log blue" @click="login">登 录</div>
+        <div style="padding-left: 310px;">        
+            <el-button type="text" v-if="haveCode == 1 && form.platCode && form.account" @click="goSetCode">设置密码</el-button>
+            <el-button type="text" v-if="haveCode == 2 && form.platCode && form.account" @click="goSetCode">忘记密码</el-button>
         </div>
     </div>
   </div>
@@ -45,7 +39,7 @@ export default {
       return {
         ipAddrPlate: null,
       	platName: '',
-      	haveCode: 3,
+      	haveCode: 1,
         form:{
          	platCode: null,
          	account:'13295815927',
@@ -182,7 +176,7 @@ export default {
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="less">
+<style lang="less" scoped>
     .sign-in-box{
         position: absolute;
         top: 0px;
@@ -229,6 +223,7 @@ export default {
             margin: auto auto;
             background-color: rgba(241, 242, 248, 0.8);
             margin-top: 10px;
+            border-radius: 20px;
             .el-form-item__content{
             	text-align: left;
             }
@@ -238,7 +233,7 @@ export default {
                 padding: 10px;
                 background-color: #fff !important;
                 margin: 0px auto 20px;
-                height: 40px;
+                height: 50px;
                 width: 340px;
                 display: block;
                 border: none;
@@ -254,13 +249,20 @@ export default {
                 color: #333;
                 line-height: 40px;
                 margin: 0 auto;
-                width: 100px;
+                width: 370px;
                 height: 40px;
-                border-radius: 20px;
+                border-radius: 1px;
                 background-color: #dfdfdf;
+                box-shadow: 0 1px 1px #c1b1ad;
+                font-family: Microsoft YaHei,Hiragino Sans GB,\5b8b\4f53;
+                font-weight: 700;
+                font-size: 14px;
+            }
+            .log:hover {
+              background-color: #00b7d3;
             }
             .blue{
-                background-color: #4990e2;
+                background-color: #00C1DE;
                 color: #fff;
             }
         }

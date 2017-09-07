@@ -8,18 +8,16 @@
     <div style="position:absolute; right:20px; top:20px;">
       <span>当前的目标地址：</span>
       <el-input v-model="ipAddr" style="width:200px"></el-input> 
-      <el-button @click="changeIpOpen">外网</el-button>
+      <el-button @click="changeIpInside">内网</el-button>
     </div>
 
     <div class="logo-box">
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
       <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
-		    <el-form-item label="工号" label-width="80px" prop="account">
-		      <el-input style="width:250px;margin-left:10px;" v-model="form.account" auto-complete="off" placeholder="请输入工号"></el-input>
-		    </el-form-item>
-		    <el-form-item label="密码" label-width="80px" prop="password">
-		      <el-input style="width:287px;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
-		    </el-form-item>
+	      <el-input style="width:100%;" v-model="form.account" auto-complete="off" placeholder="请输入工号"></el-input>
+        <div style="margin:20px"></div>
+	      <el-input style="width:100%;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
+        <div style="margin:20px"></div>
 		    <div style="position:absolute">	    	
 				    <el-button type="text" v-if="haveCode == 1" @click="goSetCode">设置密码</el-button>
 			      <el-button type="text" v-if="haveCode == 2" @click="goSetCode">忘记密码</el-button>
@@ -80,18 +78,18 @@ export default {
        			}
        		})
        },
-       changeIpOpen() {
-        this.ipAddr = '101.37.34.55';
-        localStorage.setItem('ipAddr','101.37.34.55');
+       changeIpInside() {
+        this.ipAddr = '192.168.191.1';
+        localStorage.setItem('ipAddr',this.ipAddr);
         this.$message({
           type: 'success',
           message: '已改变目标地址'
         }); 
        }
     },
-    mounted:function(){
-        this.ipAddr = '192.168.191.1';
-        localStorage.setItem('ipAddr',this.ipAddr);
+    mounted(){
+        this.ipAddr = '101.37.34.55';
+        localStorage.setItem('ipAddr','101.37.34.55');
     }
 }
 </script>
@@ -169,13 +167,20 @@ export default {
                 color: #333;
                 line-height: 40px;
                 margin: 0 auto;
-                width: 100px;
+                width: 370px;
                 height: 40px;
-                border-radius: 20px;
+                border-radius: 1px;
                 background-color: #dfdfdf;
+                box-shadow: 0 1px 1px #c1b1ad;
+                font-family: Microsoft YaHei,Hiragino Sans GB,\5b8b\4f53;
+                font-weight: 700;
+                font-size: 14px;
+            }
+            .log:hover {
+              background-color: #00b7d3;
             }
             .blue{
-                background-color: #4990e2;
+                background-color: #00C1DE;
                 color: #fff;
             }
         }
