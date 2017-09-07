@@ -3,7 +3,7 @@
   <div class="sign-box">
     <div style="position:absolute;margin-left:15%;margin-top:150px;">
       <el-steps :space="100" direction="vertical" :active="step" finish-status="success">
-        <el-step title="获取验证码"></el-step>
+        <el-step title="填写验证码"></el-step>
         <el-step title="设置新密码"></el-step>
       </el-steps>
     </div>
@@ -19,7 +19,7 @@
         </el-row>
 	      <div style="margin: 40px 0;">
           <el-input style="width:180px;" v-model="form.yzm" auto-complete="off" placeholder="请输入验证码" v-show="step == 0"></el-input>
-          <el-button type="text" style="margin-left:15px;width:60px;" @click="getYzm" v-show="step == 0">{{timeCount > 0 && !form.yzm?timeCount + 's':'获取验证码'}}</el-button>
+          <el-button type="text" style="margin-left:15px;width:60px;" @click="getYzm" :disabled="!(timeCount.toString() == '0')" v-show="step == 0">{{timeCount > 0 && !form.yzm?timeCount + 's':'获取验证码'}}</el-button>
           <el-input style="width:80%;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password" v-show="step == 1"></el-input>
           <div style="margin:20px;"></div>
           <el-input style="width:80%;" v-model="form.passwordS" auto-complete="off" placeholder="请重复输入上方的密码" type="password" v-show="step == 1"></el-input> 
@@ -30,6 +30,7 @@
       <div class="log blue" @click="step = 1" v-show="form.yzm && step == 0">下一步</div>
       <div style="margin:20px;"></div>
       <div class="log blue" @click="pwdReset" v-show="step == 1">确认修改并登录</div>
+      <div class="log blue" @click="goBack" v-show="step == 0">返回登录页</div>
     </div>
   </div>
 </div>
@@ -135,7 +136,7 @@ export default {
                 }).then((res)=> {
                   if (res.code == 0) {
                     this.step = 1;
-                    
+
                     localStorage.setItem('token',res.attach.token);
                     // localStorage.setItem('userId',res.attach.user.uid);
                     localStorage.setItem('appId',this.form.platCode);
@@ -159,9 +160,14 @@ export default {
             message: '两次输入密码不一致'
           }); 
         }     	
+       },
+       goBack() {
+        router.push({
+          name: 'sign-in'
+        });
        }
     },
-    mounted:function(){
+    mounted(){
         
     }
 }
