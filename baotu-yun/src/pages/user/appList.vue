@@ -47,6 +47,9 @@
 			      			授权
 				      		</router-link>
 			    		</el-button> -->
+			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)">
+			      			{{scope.row.isAble?'禁用':'启用'}}
+			    		</el-button>
 			    	</template>
 			    </el-table-column>
 			</el-table>
@@ -92,7 +95,16 @@ import { masterApi } from '@/ajax/post.js'
 	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
 	   				if (res.attach) {
+	   					for (let i = 0; i < res.attach.length; i++) {
+	   						if((res.attach[i].mod & 1) == 1) {	//该条数据被禁用
+	   							res.attach[i].isAble = false;
+	   						}
+	   						else {
+	   							res.attach[i].isAble = true;
+	   						}
+	   					}
 	   					this.tableData = res.attach;
+
 	   					this.length = res.attach.length;
 	   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
 	   					this.showPage();
@@ -124,6 +136,36 @@ import { masterApi } from '@/ajax/post.js'
 	  					this.formData.push(this.tableData[i])
 	  				}
 	  			}
+	  		}
+	  	},
+
+	  	changeState(id,isAble) {
+	  		if (isAble) {	//当前可用,操作为禁用
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			masterApi({
+		   			action: 'app_seal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   			//
+		   		});
+	  		}
+	  		else
+	  		{	//当前不可用,操作为解禁
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			masterApi({
+		   			action: 'app_unseal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   			//
+		   		});
 	  		}
 	  	},
 

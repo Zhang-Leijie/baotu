@@ -24,9 +24,12 @@
 			    	</template>
 			    </el-table-column>
 			    <el-table-column label="状态"></el-table-column>
-			    <el-table-column label="操作" v-if="isRoot">
+			    <el-table-column label="操作">
 					<template scope="scope">
-						<el-button type="text" size="small" v-if="!(rootId == scope.row.uid)">
+						<el-button type="text" size="small" @click="changeState(scope.row.uid,scope.row.isAble)">
+			      			{{scope.row.isAble?'禁用':'启用'}}
+			    		</el-button>
+						<el-button type="text" size="small" v-if="!(rootId == scope.row.uid) && isRoot">
 				    		<router-link :to="{name:'shop-user-permission',query:{id:scope.row.uid,name:scope.row.name}}">
 				      			授权
 				      		</router-link>
@@ -84,7 +87,17 @@ import { autoApi } from '@/ajax/post.js'
 	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
-	   				this.tableData = res.attach.list;
+	   				if (res.attach.list) {
+	   					for (let i = 0; i < res.attach.list.length; i++) {
+	   						if((res.attach.list[i].mod & 2) == 2) {	//该条数据被禁用
+	   							res.attach.list[i].isAble = false;
+	   						}
+	   						else {
+	   							res.attach.list[i].isAble = true;
+	   						}
+	   					}
+		   				this.tableData = res.attach.list;
+	   				}
 	   				this.total = res.attach.total;
        			}
 	   		})
@@ -92,6 +105,37 @@ import { autoApi } from '@/ajax/post.js'
 	  	search() {
 	  		this.getInfo();
 	  	},
+
+	  	changeState(id,isAble) {
+	  		if (isAble) {	//当前可用,操作为禁用
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			autoApi({
+		   			action: 'user_seal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			//
+		   		});
+	  		}
+	  		else
+	  		{	//当前不可用,操作为解禁
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			autoApi({
+		   			action: 'user_unseal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			//
+		   		});
+	  		}
+	  	},
+	  	
 	  	pageChange(pg) {
 	  		this.currentPage = pg;
 	        this.getInfo(); 

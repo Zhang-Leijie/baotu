@@ -24,9 +24,12 @@
 			    		<span>{{formatDate(scope.row.updated)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column label="操作" v-if="isRoot">
+			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small" v-if="!(scope.row.id == rootId)">
+			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)">
+			      			{{scope.row.isAble?'禁用':'启用'}}
+			    		</el-button>
+			    		<el-button type="text" size="small" v-if="!(scope.row.id == rootId) && isRoot">
 			    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id, name:scope.row.name}}">
 			      			授权
 				      		</router-link>
@@ -78,7 +81,17 @@ import { masterApi } from '@/ajax/post.js'
 	   			payload: payload
 	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
 	   			if (res.code == 0) {
-	   				this.tableData = res.attach.list;
+	   				if (res.attach.list) {
+	   					for (let i = 0; i < res.attach.list.length; i++) {
+	   						if((res.attach.list[i].mod & 2) == 2) {	//该条数据被禁用
+	   							res.attach.list[i].isAble = false;
+	   						}
+	   						else {
+	   							res.attach.list[i].isAble = true;
+	   						}
+	   					}
+		   				this.tableData = res.attach.list;
+	   				}
 	   				this.total = res.attach.total;
        			}
 	   		})
@@ -88,6 +101,36 @@ import { masterApi } from '@/ajax/post.js'
 	  		 router.push({
 	  		 	name: "GM-edit"
 	  		 })
+	  	},
+
+	  	changeState(id,isAble) {
+	  		if (isAble) {	//当前可用,操作为禁用
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			masterApi({
+		   			action: 'admin_seal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   			//
+		   		});
+	  		}
+	  		else
+	  		{	//当前不可用,操作为解禁
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			masterApi({
+		   			action: 'admin_unseal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		   			//
+		   		});
+	  		}
 	  	},
 
 	  	pageChange(pg) {

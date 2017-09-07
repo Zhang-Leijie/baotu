@@ -53,6 +53,9 @@
 			    </el-table-column> -->
 			    <el-table-column label="操作">
 			      <template scope="scope">
+					<el-button type="text" size="small" @click="changeState(scope.row.tid,scope.row.isAble)">
+		      			{{scope.row.isAble?'禁用':'启用'}}
+		    		</el-button>
 		      		<el-button type="text" size="small">
 						<router-link :to="{name:'shop-shop-edit',query:{tid:scope.row.tid,contacts:scope.row.contacts,contractsMobile:scope.row.contractsMobile,expire:scope.row.expire}}">
 			      			编辑
@@ -118,10 +121,50 @@ export default {
 	   			payload: payload
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
-	   				this.tableData = res.attach.list;
+	   				if (res.attach.list) {
+	   					for (let i = 0; i < res.attach.list.length; i++) {
+	   						if((res.attach.list[i].mod & 16384) == 16384) {	//该条数据被禁用
+	   							res.attach.list[i].isAble = false;
+	   						}
+	   						else {
+	   							res.attach.list[i].isAble = true;
+	   						}
+	   					}
+		   				this.tableData = res.attach.list;
+	   				}
 	   				this.total = res.attach.total;
        			}
 	   		})
+	  	},
+
+	  	changeState(id,isAble) {
+	  		if (isAble) {	//当前可用,操作为禁用
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			autoApi({
+		   			action: 'tenant_seal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			//
+		   		});
+	  		}
+	  		else
+	  		{	//当前不可用,操作为解禁
+	  			let payload = {
+	  				id: id,
+	  			}
+	  			payload = JSON.stringify(payload);
+	  			autoApi({
+		   			action: 'tenant_unseal',
+		   			version: '1.0',
+		   			payload: payload
+		   		},window.localStorage.getItem('token')).then((res)=> {
+		   			//
+		   		});
+	  		}
 	  	},
 
 	  	pageChange(pg) {
@@ -149,7 +192,7 @@ export default {
 	            message: '已取消删除'
 	          });          
 	        });   	
-	    }
+	    },
 	  },
 	  mounted() {
 	  	this.getInfo();
