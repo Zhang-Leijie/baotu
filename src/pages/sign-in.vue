@@ -93,7 +93,6 @@ export default {
             action:'app_tips',
             appId:this.form.platCode,
           }).then((res)=> {
-            console.log(res.code)
             if (res.code == 0) {
               this.platName = res.attach.name;
             } else {

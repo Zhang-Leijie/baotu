@@ -45,7 +45,7 @@
 
 	function formatDate(time){
 	  var   x = time - 0
-	  console.log(x)
+	  
 	  var   now = new Date(x) 
 	  var   year = now.getFullYear();     
 	  var   month = "0" + (now.getMonth()+1);     
@@ -72,7 +72,7 @@
 	  methods: {
 	  	handleCurrentChange(val) {
 	        this.currentPage = val;
-	        console.log(`当前页: ${val}`);
+	        
 	        // this.getlist(); 
 	    },
 	  },

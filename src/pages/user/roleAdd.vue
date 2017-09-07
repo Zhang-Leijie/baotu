@@ -93,7 +93,7 @@
 	    methods: {
 	       formatDate(time){
 			  var   x = time - 0
-			  console.log(x)
+			  
 			  var   now = new Date(x) 
 			  var   year = now.getFullYear();     
 			  var   month = "0" + (now.getMonth()+1);     

@@ -184,7 +184,7 @@ import { masterApi } from '@/ajax/post.js'
 	    methods: {
 	       formatDate(time){
 			  var   x = (time - 0) * 1000
-			  console.log(x)
+			  
 			  var   now = new Date(x) 
 			  var   year = now.getFullYear();     
 			  var   month = "0" + (now.getMonth()+1);     
@@ -245,7 +245,6 @@ import { masterApi } from '@/ajax/post.js'
 				else if(this.modularType == "TENANT") {
 					this.dataTENANT = formData;
 				}
-				console.log(formData);
 			},
 
 			handleCheckChange(data, checked, indeterminate) {//element的树形控件current-node-key属性无效,也没有单选设置,故用此方法实现单选控制

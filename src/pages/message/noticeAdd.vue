@@ -84,7 +84,6 @@
 	  methods: {
 	  	getCheckedKeys() {
 	        this.arr = this.$refs.tree.getCheckedKeys();
-	        console.log(this.arr);
 	    },
 	    getarr(){
 	    	Array.prototype.indexOf = function(val) {
@@ -102,7 +101,6 @@
 	    	this.arr.remove('A1');
 	    	this.arr.remove('A2');
 	    	this.arr.remove('A3');
-	        console.log(this.arr)
 	    },
 	  	getContent(){
 	  		if (this.form.title==''||this.form.author==''||this.summary==''||this.editor.getContent()=='') {

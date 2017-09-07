@@ -47,7 +47,6 @@ export const uploadFactory = function(imgId) {
                         contentType: false,
                         cache: false
                     })).then(function(res){
-                        console.log(res)
                         // res = JSON.parse(res)
                         $('#' + field_name).val(res.data)
                         $('#' + field_name).attr('placeholder', '')
