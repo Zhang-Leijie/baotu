@@ -8,16 +8,16 @@
 		<span class="labelText">请选择保险公司</span>
 		<div class="topBar">
 			<el-select v-model="insurerId" placeholder="请选择" @change="insurerChange">
-			    <el-option v-for="item in insurers" :label="item.label" :value="item.value"></el-option>
+			    <el-option v-for="item in insurers" :label="item.label" :value="item.value" :key="item.value"></el-option>
 			</el-select>
 		</div>
 
 		<div v-if="insurerId">
 			<span class="labelText">请选择车型</span>
 			<div class="dataBox">
-				<div class="dataBoxCol" v-for="formData,index in formRouterData" v-if="formData[0]">
+				<div class="dataBoxCol" v-for="formData,index in formRouterData" v-if="formData[0]" :key="index">
 					<ul>
-						<li v-for="i in formData" @click="enterToNext(i,index)" :class="chooseds[index] === i.value?'choosedList':''">{{i.label}}</li>
+						<li v-for="i in formData" @click="enterToNext(i,index)" :class="chooseds[index] === i.value?'choosedList':''" :key="i.value">{{i.label}}</li>
 					</ul>
 				</div>
 			</div>
@@ -56,9 +56,9 @@
 			<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
 			<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective;confirmSetSave()">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
 
-			<div v-for="tagList,level in tagData" class="listBox" v-show="tagData[level][0]">
+			<div v-for="tagList,level in tagData" class="listBox" v-show="tagData[level][0]" :key="level">
 				<el-menu mode="horizontal" menu-trigger="click" :default-active="currentRange.id.toString()" v-if="tagList[0]">
-				  <el-menu-item :index="item.id.toString()" v-for="item,index in tagList" @click="selectMenu(item,level,index)">{{item.name}}</el-menu-item>
+				  <el-menu-item :index="item.id.toString()" v-for="item,index in tagList" @click="selectMenu(item,level,index)" :key="index">{{item.name}}</el-menu-item>
 				</el-menu>
 			</div>
 		</div>
@@ -104,7 +104,7 @@
 			<el-row>
 				<el-col :span="8">
 	  				<el-select v-model="addedRange.comparison" placeholder="请选择">
-						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+						<el-option v-for="item in comparisons" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 	  			</el-col>
 	  			<el-col :span="9">
@@ -143,7 +143,7 @@
 			<el-row>
 				<el-col :span="8">
 	  				<el-select v-model="editedRange.comparison" placeholder="请选择">
-						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+						<el-option v-for="item in comparisons" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 	  			</el-col>
 	  			<el-col :span="9">

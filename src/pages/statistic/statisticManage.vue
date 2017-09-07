@@ -11,11 +11,11 @@
 		    <span slot="label"><i class="el-icon-picture"></i> 统计图表</span>
 		    <div class="table1">
 				<el-select v-model="option1" placeholder="请选择车险">
-				    <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
+				    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 
 				<el-select v-model="optionMultiple" multiple placeholder="请选择险企">
-				    <el-option v-for="item in optionsMultiple" :label="item.label" :value="item.value"></el-option>
+				    <el-option v-for="item in optionsMultiple" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 
 				<div class="datePicker">
@@ -29,7 +29,7 @@
 		  	<div class="table2">
 				<label class="title">保险公司报表</label>
 				<el-select v-model="option2" placeholder="请选择">
-				    <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
+				    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 				<el-date-picker v-model="date2" type="daterange" align="right" placeholder="选择日期范围"></el-date-picker>
 
@@ -46,7 +46,7 @@
 		  	<div class="table3">
 				<label class="title">业务员报表</label>
 				<el-select v-model="option3" placeholder="请选择">
-				    <el-option v-for="item in options" :label="item.label" :value="item.value"></el-option>
+				    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 				<el-date-picker v-model="date3" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
 

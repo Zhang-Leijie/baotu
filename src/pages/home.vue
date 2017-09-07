@@ -14,7 +14,7 @@
 				
 				<div class="inputBox">
 					<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia" style="width:200px; margin-top:20px;">
-					    <el-option v-for="item in tenants" :label="item.label" :value="item.value"></el-option>
+					    <el-option v-for="item in tenants" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 		        </div>
 		    </div>

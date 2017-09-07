@@ -30,7 +30,7 @@
 	</div>
 </template>
 <script>
-	import { uploadFactory, addArticle } from '@/ajax/post.js'
+	import { uploadFactory } from '@/ajax/post.js'
 
 	export default {
 	  data() {
@@ -59,24 +59,24 @@
                     timer: 2000,
                 })
 	  		} else {
-	  			addArticle({
-	  				articleName: this.form.title,
-	  				author: this.form.author,
-	  				articleAbstract: this.form.summary,
-	  				abstractContent: this.editor.getContent()
-	  			}).then((res) => {
-	  				if (res.code == null) {
-	  					swal({
-		                    title: "创建成功",
-		                    type: 'success',
-		                    text: "",
-		                    timer: 2000,
-		                })
-		                setTimeout(() => {
-					        router.push({name:'content-article'})
-					    }, 1000);
-	  				}
-	  			})
+	  			// addArticle({
+	  			// 	articleName: this.form.title,
+	  			// 	author: this.form.author,
+	  			// 	articleAbstract: this.form.summary,
+	  			// 	abstractContent: this.editor.getContent()
+	  			// }).then((res) => {
+	  			// 	if (res.code == null) {
+	  			// 		swal({
+		    //                 title: "创建成功",
+		    //                 type: 'success',
+		    //                 text: "",
+		    //                 timer: 2000,
+		    //             })
+		    //             setTimeout(() => {
+					 //        router.push({name:'content-article'})
+					 //    }, 1000);
+	  			// 	}
+	  			// })
 	  		}
 	  	}
 	  },

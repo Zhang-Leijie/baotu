@@ -82,7 +82,7 @@
 			    	<template scope="scope">
 			    		<span v-if="!(isEdit && editedId === scope.row.key)">{{scope.row.laneName}}</span>
 			    		<el-select v-model="formEdit.laneId" placeholder="请选择线路" v-if="isEdit && editedId === scope.row.key">
-						    <el-option v-for="item in lanes" :label="item.label" :value="item.value"></el-option>
+						    <el-option v-for="item in lanes" :label="item.label" :value="item.value" :key="item.value"></el-option>
 						</el-select>
 			    	</template>
 			    </el-table-column>
@@ -157,13 +157,13 @@
 			  	<el-form-item class="appblock" label="险企:">
 					<span v-show="!formAdd.insurerId" style="color: red;">*</span>
 					<el-select v-model="formAdd.insurerId" placeholder="请选择险企">
-					    <el-option v-for="item in insurerList" :label="item.label" :value="item.value"></el-option>
+					    <el-option v-for="item in insurerList" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 				</el-form-item>
 			  	<el-form-item class="appblock" label="线路:">
 					<span v-show="!formAdd.laneId" style="color: red;">*</span>
 		    		<el-select v-model="formAdd.laneId" placeholder="请选择线路">
-					    <el-option v-for="item in lanes" :label="item.label" :value="item.value"></el-option>
+					    <el-option v-for="item in lanes" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 			  	</el-form-item>
 			  	<!-- <el-form-item class="appblock" label="商户ID:">
@@ -186,7 +186,7 @@
 			  	<el-form-item class="appblock" label="险企ID:">
 			  		<span v-show="!formAddJianjie.insurerId" style="color: red;">*</span>
 			  		<el-select v-model="formAddJianjie.insurerId" placeholder="请选择险企">
-					    <el-option v-for="item in insurerListJianjie" :label="item.label" :value="item.value"></el-option>
+					    <el-option v-for="item in insurerListJianjie" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 			  	</el-form-item>
 			  	<el-form-item class="appblock" label="简捷ID:">

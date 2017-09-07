@@ -11,7 +11,7 @@
 
 	  		<span class="labelSpan">月度/季度</span>
 	  		<el-select v-model="demo" placeholder="请选择">
-		    <el-option v-for="item in options" :label="item.label" :value="item.value"> </el-option>
+		    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 		</el-select>
 		</div>
 

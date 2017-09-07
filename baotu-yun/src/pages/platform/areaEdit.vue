@@ -16,10 +16,10 @@
 		  	</el-form-item>
 		  	<el-form-item class="appblock" label="行政区划选择:">
 			    <el-select style="width:145px;" v-model="regions" placeholder="请选择" @visible-change="form.region = null">
-				    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value"></el-option>
+				    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 				<el-select style="width:145px;" v-model="form.region" placeholder="请选择" v-if="regions || form.region">
-				    <el-option v-for="item in regions" :label="item[0]" :value="item[1]"></el-option>
+				    <el-option v-for="item in regions" :label="item[0]" :value="item[1]" :key="item.value"></el-option>
 				</el-select>
 		    </el-form-item>
 		</el-form>

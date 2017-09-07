@@ -15,7 +15,7 @@
 		            <el-table-column label="系数名称">
 		             	<template scope="scope">
 		                	<el-select v-model="scope.row.choosed" placeholder="点击查看已有系数" @change="chooseOneCoefficient(scope.row)" v-if="scope.row.coefficients && !(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">
-							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id"></el-option>
+							    <el-option v-for="item in scope.row.coefficients" :label="item.name" :value="item.id" :key="item.value"></el-option>
 							</el-select>
 							<el-input v-model="scope.row.name" v-if="(isEdited && isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)"></el-input>
 		             	</template>
@@ -24,10 +24,10 @@
 		             	<template scope="scope">
 		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{reComparisonName(scope.row.comparisonType)}}</span>
 		             		<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && !(editMode == 'chepai' || editMode == 'xubao' || editMode == 'xingbie')">
-    							<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+    							<el-option v-for="item in comparisons" :label="item.label" :value="item.value" :key="item.value"></el-option>
   							</el-select>
   							<el-select v-model="scope.row.comparisonType" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && (editMode == 'chepai' || editMode == 'xubao' || editMode == 'xingbie')">
-    							<el-option v-for="item in equalComparison" :label="item.label" :value="item.value"></el-option>
+    							<el-option v-for="item in equalComparison" :label="item.label" :value="item.value" :key="item.value"></el-option>
   							</el-select>
 		             	</template>
 		            </el-table-column>
@@ -36,10 +36,10 @@
 		             		<span v-if="!(isAdded && isAdded == scope.row.typeId) && !(isEdited && isEdited == scope.row.choosed)">{{comparisonValueShow(scope.row)}}</span>
 		             		<el-input v-model="scope.row.comparisonValue" :placeholder="editMode == 'chepai'?'浙A':'区间数值请用下划线 _ 隔开'" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && !(editMode == 'xubao' || editMode == 'xingbie')"></el-input>
 		             		<el-select v-model="scope.row.comparisonValue" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && editMode == 'xubao'">
-							    <el-option v-for="item in xubao" :label="item.name" :value="item.id"></el-option>
+							    <el-option v-for="item in xubao" :label="item.name" :value="item.id" :key="item.value"></el-option>
 							</el-select>
 							<el-select v-model="scope.row.comparisonValue" placeholder="请选择" v-if="(isEdited && (isEdited == scope.row.choosed) || (isAdded && isAdded == scope.row.typeId)) && editMode == 'xingbie'">
-							    <el-option v-for="item in xingbie" :label="item.name" :value="item.id"></el-option>
+							    <el-option v-for="item in xingbie" :label="item.name" :value="item.id" :key="item.value"></el-option>
 							</el-select>
 		             	</template>
 		            </el-table-column>

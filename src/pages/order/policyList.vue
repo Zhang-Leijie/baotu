@@ -7,7 +7,7 @@
 		<div class="toolBar">
 			<div class="searchBox">
 				<el-select v-model="search.type" @change="searchIt" style="width:160px">
-					<el-option v-for="item in types" :label="item.label" :value="item.value"></el-option>
+					<el-option v-for="item in types" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 				<el-input icon="search" v-model="search.company" placeholder="搜索保险公司" :on-icon-click="searchIt" style="width:160px"></el-input>
 				<el-input icon="search" v-model="search.sale" placeholder="搜索业务员" :on-icon-click="searchIt" style="width:160px"></el-input>

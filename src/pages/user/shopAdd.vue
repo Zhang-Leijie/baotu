@@ -13,7 +13,7 @@
 		  </el-form-item>
 		  <el-form-item class="appblock" label="行政区划选择:">
 		    <el-select style="width:145px;" v-model="form.region" placeholder="请选择">
-			    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value"></el-option>
+			    <el-option v-for="item in regionFormData" :label="item.label" :value="item.value" :key="item.value"></el-option>
 			</el-select>
 		  </el-form-item>
 		  <el-form-item class="appblock" label="客服电话:">

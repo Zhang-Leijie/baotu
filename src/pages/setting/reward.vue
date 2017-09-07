@@ -66,7 +66,7 @@
 		</div>
 
 		<div v-if="viewMode == 1" class="guimoDataBox">
-			<el-row v-for="item in guimoData" style="margin-bottom: 20px;">
+			<el-row v-for="(item,index) in guimoData" style="margin-bottom: 20px;" :key="index">
 	  			<el-col :span="2">
 	  				<el-button @click="guimoDelete(item)"><i class="el-icon-minus"></i></el-button>
 	  			</el-col>
@@ -102,7 +102,7 @@
 				      			<el-col :span="6">
 		  							<span class="dataFont">比较类型: </span>
 				      				<el-select v-model="guimoAdd.comparison" placeholder="请选择" style="width:150px;">
-									<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+									<el-option v-for="item in comparisons" :label="item.label" :value="item.value" :key="item.value"></el-option>
 									</el-select>
 				      			</el-col>
 				      			<el-col :span="7">
@@ -145,7 +145,7 @@
 			<el-row>
 				<el-col :span="8">
 	  				<el-select v-model="guimoEdit.comparison" placeholder="请选择">
-						<el-option v-for="item in comparisons" :label="item.label" :value="item.value"></el-option>
+						<el-option v-for="item in comparisons" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 	  			</el-col>
 	  			<el-col :span="9">
@@ -190,7 +190,7 @@
 					<span class="titleLabel">交强险</span>
 				</el-col>
 			</el-row>
-			<div v-for="guanli in guanliData">
+			<div v-for="(guanli,index) in guanliData" :key="index">
 				<el-row class="optionCol">
 					<el-col :span="12">
 						<label class="titleLabel">非营业车-{{guanli.shangye_N.depth}}级比例：</label>
