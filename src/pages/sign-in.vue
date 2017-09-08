@@ -20,7 +20,7 @@
         <el-tooltip class="item" effect="light" :content="platName?'平台名称：'+ platName:'请输入平台码'" placement="right">
           <el-input style="width:100%;" v-model="form.platCode" auto-complete="off" placeholder="平台码" @change="getPlat"></el-input>
         </el-tooltip>
-        <el-tooltip class="item" effect="light" content="首次登录请先设置密码" placement="right">
+        <el-tooltip class="item" effect="light" content="首次登录需设置密码" placement="right">
           <el-input style="width:100%; margin-top:20px;" v-model="form.account" auto-complete="off" placeholder="手机号"></el-input> 
           <!-- <el-input style="width:100%; margin-top:20px;" v-model="form.account" auto-complete="off" placeholder="手机号" @blur="checkPwd"></el-input>  -->
         </el-tooltip>

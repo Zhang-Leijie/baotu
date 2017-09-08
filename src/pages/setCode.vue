@@ -54,7 +54,6 @@ export default {
          	passwordS:'',
          },
          timeCount: 0,
-         formLabelWidth: '100px',
          rules: {
           yzm: [
             { required: true, message: '请输入验证码', trigger: 'blur' },

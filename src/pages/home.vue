@@ -14,7 +14,7 @@
 				
 				<div class="inputBox">
 					<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia" style="width:200px; margin-top:20px;">
-					    <el-option v-for="item in tenants" :label="item.label" :value="item.value" :key="item.value"></el-option>
+					    <el-option v-for="item in tenants" :label="item.label" :value="item.value" :key="item.value" :disabled="item.disabled"></el-option>
 					</el-select>
 		        </div>
 		    </div>
@@ -56,13 +56,41 @@ export default {
 		   						label: res.attach.tmodulars[i].tname,
 		   					}
 		   					if (res.attach.tmodulars[i].layer == 1) {
-		   						this.tenants.push(buf);
+   								if ((res.attach.tmodulars[i].tmod & 16384) == 16384) {
+   									buf.label = buf.label + '(商户被禁用)';
+   									buf.disabled = true;
+   									this.tenants.push(buf);
+   								}
+   								else if ((res.attach.tmodulars[i].mod & 1024) == 1024)
+   								{
+   									buf.label = buf.label + '(您被禁用)';
+   									buf.disabled = true;
+   									this.tenants.push(buf);
+   								}
+   								else
+   								{
+   									this.tenants.push(buf);
+   								}
 		   					}
 		   					else
 		   					{
 		   						if (res.attach.tmodulars[i].modulars) {
 		   							if (this.isPermiss('SHOP',res.attach.tmodulars[i].modulars)) {
-		   								this.tenants.push(buf);
+		   								if ((res.attach.tmodulars[i].tmod & 16384) == 16384) {
+		   									buf.label = buf.label + '(商户被禁用)';
+		   									buf.disabled = true;
+		   									this.tenants.push(buf);
+		   								}
+		   								else if ((res.attach.tmodulars[i].mod & 1024) == 1024) 
+		   								{
+		   									buf.label = buf.label + '(您被禁用)';
+		   									buf.disabled = true;
+		   									this.tenants.push(buf);
+		   								}
+		   								else
+		   								{
+		   									this.tenants.push(buf);
+		   								}
 		   							}	
 		   						}
 		   					}

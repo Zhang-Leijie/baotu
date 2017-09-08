@@ -23,7 +23,11 @@
 			    		<span>{{formatDate(scope.row.pcLoginTime)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column label="状态"></el-table-column>
+			    <el-table-column label="状态">
+			    	<template scope="scope">
+			    		<span>{{scope.row.isAble?'正常':'禁用'}}</span>
+			    	</template>
+			    </el-table-column>
 			    <el-table-column label="操作">
 					<template scope="scope">
 						<el-button type="text" size="small" @click="changeState(scope.row.uid,scope.row.isAble)" v-if="!(myId == scope.row.uid) && !((scope.row.mod & 1) == 1)">
