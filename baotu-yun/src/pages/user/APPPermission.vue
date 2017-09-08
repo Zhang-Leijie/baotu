@@ -63,18 +63,22 @@ import { masterApi } from '@/ajax/post.js'
 					action: 'modulars_app',
 					version: '1.0',
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.dataTreeApp = res.attach;
-					masterApi({
-						action: 'modulars_tenant',
-						version: '1.0',
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						this.dataTreeTenant = res.attach;
-						for (let item in this.dataTreeApp) {
-							res.attach[item] = this.dataTreeApp[item];
-						}
-						this.sourceData = res.attach;
-						this.drawTree(res.attach);
-					})
+					if (res.code == 0) {
+						this.dataTreeApp = res.attach;
+						masterApi({
+							action: 'modulars_tenant',
+							version: '1.0',
+						},window.localStorage.getItem('tokenPlate')).then((res)=> {
+							if (res.code == 0) {
+								this.dataTreeTenant = res.attach;
+							for (let item in this.dataTreeApp) {
+								res.attach[item] = this.dataTreeApp[item];
+							}
+							this.sourceData = res.attach;
+							this.drawTree(res.attach);
+							}
+						})
+					}
 				})
 			},
 			
@@ -195,15 +199,16 @@ import { masterApi } from '@/ajax/post.js'
 					version: '1.0',
 					payload: payload
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.$message({
-						message: '授予模块成功',
-						type: 'success',
-					});
+					if (res.code == 0) {
+						this.$message({
+							message: '授予模块成功',
+							type: 'success',
+						});
 
-					router.push({
-				  	  name: "appList"
-				    });
-
+						router.push({
+					  	  name: "appList"
+					    });
+					}
 				})
 			},
 

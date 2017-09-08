@@ -26,10 +26,10 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)">
+			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)" v-if="!(scope.row.id == myId) && !((scope.row.mod & 1) == 1)">
 			      			{{scope.row.isAble?'禁用':'启用'}}
 			    		</el-button>
-			    		<el-button type="text" size="small" v-if="!(scope.row.id == rootId) && isRoot">
+			    		<el-button type="text" size="small" v-if="!(scope.row.id == myId) && isRoot">
 			    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id, name:scope.row.name}}">
 			      			授权
 				      		</router-link>
@@ -47,8 +47,8 @@ import { masterApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
+	    	myId: null,
 	    	isRoot: false,
-	    	rootId: null,
 	      	currentPage: 1,
 	      	total: null,
 	      	pageSize: 10,
@@ -114,7 +114,13 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '禁用成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  		else
@@ -128,7 +134,13 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '解禁成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  	},
@@ -140,12 +152,8 @@ import { masterApi } from '@/ajax/post.js'
 	  },
 	  mounted() {
 	  	this.getInfo();
-	  	if (window.localStorage.getItem('isRoot_baotu') == 'y') {
-	  		this.isRoot = true;
-	  	}
-	  	if (window.localStorage.getItem('rootId_baotu')) {
-	  		this.rootId = window.localStorage.getItem('rootId_baotu');
-	  	}
+	  	this.myId = window.localStorage.getItem('loginId_baotu');
+	  	window.localStorage.getItem('isRoot_baotu') == 'y'?this.isRoot = true:this.isRoot = false;
 	  }
 	}
 </script>

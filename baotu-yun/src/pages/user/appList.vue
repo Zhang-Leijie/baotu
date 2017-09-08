@@ -37,6 +37,9 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
+			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)">
+			      			{{scope.row.isAble?'禁用':'启用'}}
+			    		</el-button>
 			    		<el-button type="text" size="small">
 			    			<router-link :to="{name:'app-edit',query:{id:scope.row.id, name:scope.row.name, regionName:scope.row.regionName, region:scope.row.region, maxArticlesCount:scope.row.maxArticlesCount, maxTenantsCount:scope.row.maxTenantsCount}}">
 			      			编辑
@@ -47,9 +50,6 @@
 			      			授权
 				      		</router-link>
 			    		</el-button> -->
-			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)">
-			      			{{scope.row.isAble?'禁用':'启用'}}
-			    		</el-button>
 			    	</template>
 			    </el-table-column>
 			</el-table>
@@ -150,7 +150,13 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '禁用成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  		else
@@ -164,7 +170,13 @@ import { masterApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '解禁成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  	},

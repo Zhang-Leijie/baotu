@@ -1,36 +1,29 @@
 <template>
 <div class="sign-in-body">
   <div class="sign-box">
-    <div style="position:absolute;margin-left:15%;margin-top:150px;">
-      <el-steps :space="100" direction="vertical" :active="step" finish-status="success">
-        <el-step title="填写验证码"></el-step>
-        <el-step title="设置新密码"></el-step>
-      </el-steps>
-    </div>
     <div class="logo-box">
       <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
-        <el-row>
-          <el-col :span="12">
-            <span style="font-size: 16px;">{{this.$route.query.plat}}</span>
-          </el-col>
-          <el-col :span="12">
-            <span style="font-size: 16px;">+86{{this.$route.query.account}}</span>
-          </el-col>
-        </el-row>
-	      <div style="margin: 40px 0;">
-          <el-input style="width:180px;" v-model="form.yzm" auto-complete="off" placeholder="请输入验证码" v-show="step == 0"></el-input>
-          <el-button type="text" style="margin-left:15px;width:60px;" @click="getYzm" :disabled="!(timeCount.toString() == '0')" v-show="step == 0">{{timeCount > 0 && !form.yzm?timeCount + 's':'获取验证码'}}</el-button>
-          <el-input style="width:80%;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password" v-show="step == 1"></el-input>
+	      <div style="margin: 20px 0;">
+          <el-tooltip class="item" effect="light" content="平台名称" placement="right">
+            <el-input style="width:100%;" v-model="form.plat" :disabled="true"></el-input>
+          </el-tooltip>
           <div style="margin:20px;"></div>
-          <el-input style="width:80%;" v-model="form.passwordS" auto-complete="off" placeholder="请重复输入上方的密码" type="password" v-show="step == 1"></el-input> 
+          <el-tooltip class="item" effect="light" content="账号" placement="right">
+            <el-input style="width:100%;" v-model="form.account" :disabled="true"></el-input> 
+          </el-tooltip>
+          <div style="margin:20px;"></div>
+          <el-input style="width:240px;" v-model="form.yzm" auto-complete="off" placeholder="请输入验证码"></el-input>
+          <el-button type="text" style="margin-left:55px;width:70px;" @click="getYzm" :disabled="!(timeCount.toString() == '0')">{{timeCount > 0 && !form.yzm?timeCount + 's':'获取验证码'}}</el-button>
+          <div style="margin:20px;"></div>
+          <el-input style="width:100%;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
+          <div style="margin:20px;"></div>
+          <el-input style="width:100%;" v-model="form.passwordS" auto-complete="off" placeholder="请重复输入上方的密码" type="password"></el-input> 
         </div>
   		</el-form>
-      <div class="log blue" @click="step = step - 1" v-show="!(step == 0)">返回上一步</div>
       <div style="margin:20px;"></div>
-      <div class="log blue" @click="step = 1" v-show="form.yzm && step == 0">下一步</div>
+      <div class="log blue" @click="pwdReset">确认修改并登录</div>
       <div style="margin:20px;"></div>
-      <div class="log blue" @click="pwdReset" v-show="step == 1">确认修改并登录</div>
-      <div class="log blue" @click="goBack" v-show="step == 0">返回登录页</div>
+      <div class="log blue" @click="goBack">返回登录页</div>
     </div>
   </div>
 </div>
@@ -53,12 +46,13 @@ export default {
       return {
       	 haveCode:false,
          form:{
+          plat:'',
          	platCode:'',
+          account:'',
          	yzm:'',
          	password:'',
          	passwordS:'',
          },
-         step: 0,
          timeCount: 0,
          formLabelWidth: '100px',
          rules: {
@@ -76,6 +70,9 @@ export default {
     },
     methods: {
        getYzm(){
+        this.timeCount = 0;
+        this.form.yzm = null;
+        this.startCountdown(60);
        	logApi({
      			action:'captcha_obtain',
      			mobile: '+86'+this.$route.query.account,
@@ -85,9 +82,6 @@ export default {
      				this.form.yzm = res.attach
      			}
      		});
-        this.timeCount = 0;
-        this.form.yzm = null;
-        this.startCountdown(60);
        },
        startCountdown(time) {
         var vm = this;
@@ -124,19 +118,17 @@ export default {
 	       		captcha:this.form.yzm,
   	   			action:'pwd_reset',
   	   			mobile: '+86'+this.$route.query.account,
-  	   			appId: '1',
+  	   			appId: this.form.platCode,
   	   		}).then((res)=> {
   	   			if (res.code == 0) {
          				logApi({
-                  appId:'1',
+                  appId: this.form.platCode,
                   action:'login',
                   client:'2',
                   mobile:'+86'+this.$route.query.account,
                   pwd:this.form.passwordS,
                 }).then((res)=> {
                   if (res.code == 0) {
-                    this.step = 1;
-
                     localStorage.setItem('token',res.attach.token);
                     localStorage.setItem('appId',this.form.platCode);
                     localStorage.setItem('userId_plate',res.attach.user.uid);
@@ -171,7 +163,12 @@ export default {
        }
     },
     mounted(){
-        
+        this.form.platCode = this.$route.query.platCode;
+        this.form.plat = this.$route.query.plat;
+        this.form.account = this.$route.query.account;
+        this.form.yzm = '';
+        this.form.password = '';
+        this.form.passwordS = '';
     }
 }
 </script>
@@ -249,7 +246,7 @@ export default {
                 color: #333;
                 line-height: 40px;
                 margin: 0 auto;
-                width: 300px;
+                width: 370px;
                 height: 40px;
                 border-radius: 1px;
                 background-color: #dfdfdf;

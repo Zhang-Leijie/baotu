@@ -26,10 +26,10 @@
 			    <el-table-column label="状态"></el-table-column>
 			    <el-table-column label="操作">
 					<template scope="scope">
-						<el-button type="text" size="small" @click="changeState(scope.row.uid,scope.row.isAble)">
+						<el-button type="text" size="small" @click="changeState(scope.row.uid,scope.row.isAble)" v-if="!(myId == scope.row.uid) && !((scope.row.mod & 1) == 1)">
 			      			{{scope.row.isAble?'禁用':'启用'}}
 			    		</el-button>
-						<el-button type="text" size="small" v-if="!(rootId == scope.row.uid) && isRoot">
+						<el-button type="text" size="small" v-if="!(myId == scope.row.uid) && isRoot">
 				    		<router-link :to="{name:'shop-user-permission',query:{id:scope.row.uid,name:scope.row.name}}">
 				      			授权
 				      		</router-link>
@@ -47,8 +47,8 @@ import { autoApi } from '@/ajax/post.js'
 	export default {
 	  data() {
 	    return {
+	    	myId: null,
 	    	isRoot: false,
-	    	rootId: null,
 		    currentPage: 1,
 		    total: null,
 		    pageSize: 10,
@@ -117,7 +117,13 @@ import { autoApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '禁用成功',
+			   				type: 'success',
+			   			});
+		   			}	
 		   		});
 	  		}
 	  		else
@@ -131,7 +137,13 @@ import { autoApi } from '@/ajax/post.js'
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '解禁成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  	},
@@ -143,15 +155,8 @@ import { autoApi } from '@/ajax/post.js'
 	  },
 	  created() {
 	  	this.getInfo();
-	  	if (window.localStorage.getItem('isRoot_plate') == "y") {
-			this.isRoot = true;
-			this.rootId = window.localStorage.getItem('userId_plate');
-		}
-		else
-		{
-			this.isRoot = false;
-			this.rootId = null;
-		}
+		this.myId = window.localStorage.getItem('userId_plate');
+		window.localStorage.getItem('isRoot_plate') == "y"?this.isRoot = true:this.isRoot = false;
 	  }
 	}
 </script>

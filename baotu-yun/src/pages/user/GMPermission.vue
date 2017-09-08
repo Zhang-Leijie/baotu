@@ -67,8 +67,10 @@ import { masterApi } from '@/ajax/post.js'
 					version: '1.0',
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.sourceData = res.attach;
-					this.drawTree(res.attach);
+					if (res.code == 0) {
+						this.sourceData = res.attach;
+						this.drawTree(res.attach);
+					}
 				})
 				
 			},
@@ -195,15 +197,16 @@ import { masterApi } from '@/ajax/post.js'
 					version: '1.0',
 					payload: payload
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.$message({
-						message: '授予模块成功',
-						type: 'success',
-					});
+					if (res.code == 0) {
+						this.$message({
+							message: '授予模块成功',
+							type: 'success',
+						});
 
-					router.push({
-				  	  name: "GMList"
-				    });
-
+						router.push({
+					  	  name: "GMList"
+					    });
+					}
 				})
 			},
 

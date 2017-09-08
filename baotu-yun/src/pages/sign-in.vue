@@ -18,10 +18,6 @@
         <div style="margin:20px"></div>
 	      <el-input style="width:100%;" v-model="form.password" auto-complete="off" placeholder="请输入密码" type="password"></el-input>
         <div style="margin:20px"></div>
-		    <div style="position:absolute">	    	
-				    <el-button type="text" v-if="haveCode == 1" @click="goSetCode">设置密码</el-button>
-			      <el-button type="text" v-if="haveCode == 2" @click="goSetCode">忘记密码</el-button>
-		    </div>
 		  </el-form>
       <div class="log blue" @click="login">
           登 录
@@ -37,7 +33,6 @@ import { logApi } from '@/ajax/post.js'
 export default {
     data() {
       return {
-      	haveCode:3,
          form:{
          	account:'1',
          	password:'123456',
@@ -66,7 +61,7 @@ export default {
        		}).then((res)=> {
        			if (res.code == 0) {
               (res.attach.mod & 1) == 1?localStorage.setItem('isRoot_baotu','y'):localStorage.setItem('isRoot_baotu','n');
-              (res.attach.mod & 1) == 1?localStorage.setItem('rootId_baotu',res.attach.uid):localStorage.setItem('rootId_baotu',null);
+              localStorage.setItem('loginId_baotu',res.attach.uid);
               localStorage.setItem('tokenPlate',res.attach.token);
               // localStorage.setItem('userId',res.attach.user.uid);
               localStorage.setItem('uid',res.attach.uid);
@@ -79,7 +74,7 @@ export default {
        		})
        },
        changeIpInside() {
-        this.ipAddr = '192.168.191.1';
+        this.ipAddr = '192.168.1.3';
         localStorage.setItem('ipAddr',this.ipAddr);
         this.$message({
           type: 'success',

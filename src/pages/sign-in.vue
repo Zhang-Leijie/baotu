@@ -1,32 +1,36 @@
 <template>
 <div class="sign-in-body">
   <div class="sign-box">
-  	<div class="sign-top">
+  	<div class="sign-top" @click="cheats">
   		<img class="logimg" src="../assets/login2.png">
   	</div>
-
-    <div style="position:absolute; right:20px; top:20px;">
-      <span>当前的目标地址：</span>
-      <el-input v-model="ipAddrPlate" style="width:200px"></el-input> 
-      <el-button @click="confirmChangeIP">确定</el-button>
-      <el-button @click="changeIpOpen">内网段</el-button> 
-    </div>
+    {{specialCount}}
+    <transition name="fade" mode="out-in">
+      <div style="position:absolute; right:20px; top:20px;" v-if="specialSwitch">
+        <span>当前的目标地址：</span>
+        <el-input v-model="ipAddrPlate" style="width:200px"></el-input> 
+        <el-button @click="confirmChangeIP">确定</el-button>
+        <el-button @click="changeIpOpen">内网段</el-button> 
+      </div>
+    </transition>
 
     <div class="logo-box">
     	<img src="../assets/login.png" style="width:200px;margin-top:10px;margin-bottom:10px;">
-        <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
-        	<!-- <el-form-item label="平台码" label-width="80px" prop="platCode"> -->
-          <el-tooltip class="item" effect="light" :content="platName?'平台名称：'+ platName:'请输入平台码'" placement="right">
-            <el-input style="width:100%;" v-model="form.platCode" auto-complete="off" placeholder="平台码" @change="getPlat"></el-input>
-          </el-tooltip>
-  		    <el-input style="width:100%; margin-top:20px;" v-model="form.account" auto-complete="off" placeholder="手机号" @blur="checkPwd"></el-input> 
-          <el-input style="width:100%; margin: 20px 0;" v-model="form.password" auto-complete="off" placeholder="密码" type="password"></el-input> 
-    		</el-form>
-        <div class="log blue" @click="login">登 录</div>
-        <div style="padding-left: 310px;">        
-            <el-button type="text" v-if="haveCode == 1 && form.platCode && form.account" @click="goSetCode">设置密码</el-button>
-            <el-button type="text" v-if="haveCode == 2 && form.platCode && form.account" @click="goSetCode">忘记密码</el-button>
-        </div>
+      <el-form :model="form" style="width:370px;margin:0 auto;" :rules="rules">
+        <el-tooltip class="item" effect="light" :content="platName?'平台名称：'+ platName:'请输入平台码'" placement="right">
+          <el-input style="width:100%;" v-model="form.platCode" auto-complete="off" placeholder="平台码" @change="getPlat"></el-input>
+        </el-tooltip>
+        <el-tooltip class="item" effect="light" content="首次登录请先设置密码" placement="right">
+          <el-input style="width:100%; margin-top:20px;" v-model="form.account" auto-complete="off" placeholder="手机号"></el-input> 
+          <!-- <el-input style="width:100%; margin-top:20px;" v-model="form.account" auto-complete="off" placeholder="手机号" @blur="checkPwd"></el-input>  -->
+        </el-tooltip>
+        <el-input style="width:100%; margin: 20px 0;" v-model="form.password" auto-complete="off" placeholder="密码" type="password"></el-input> 
+  		</el-form>
+      <div class="log blue" @click="login">登 录</div>
+      <div style="padding-left: 310px;">        
+          <el-button type="text" v-if="haveCode == 1 && form.platCode && form.account" @click="goSetCode">设置密码</el-button>
+          <!-- <el-button type="text" v-if="haveCode == 2 && form.platCode && form.account" @click="goSetCode">忘记密码</el-button> -->
+      </div>
     </div>
   </div>
 </div>
@@ -56,12 +60,34 @@ export default {
             { required: true, message: '请输入密码', trigger: 'blur' },
           ],
         },
+        specialCount: 0,
+        specialSwitch: true,
+      }
+    },
+    watch: {
+      specialCount(curVal,oldVal) {
+        var vm = this;
+        function countdown(num) {
+          if (num > 0) {
+            setTimeout(function(){
+              num = num - 1;
+              vm.specialCount = num;
+              countdown(num);
+            },1000);
+          }
+        }
+        if (curVal > 8) {
+          this.specialSwitch = true;
+        }
+        else if(curVal > oldVal && curVal > 0) {
+          countdown(curVal);
+        }
       }
     },
     methods: {
       changeIpOpen() {
-        this.ipAddrPlate = '192.168.191.1';
-        localStorage.setItem('ipAddrPlate','192.168.191.1');
+        this.ipAddrPlate = '192.168.1.3';
+        localStorage.setItem('ipAddrPlate','192.168.1.3');
         this.$message({
           type: 'success',
           message: '已改变目标地址',
@@ -83,7 +109,7 @@ export default {
                   timer: 2000,
               })
      		} else {
-     			router.push({name:'setcode',query:{plat:this.platName,account:this.form.account}});
+     			router.push({name:'setcode',query:{plat:this.platName,account:this.form.account,platCode:this.form.platCode}});
      		}
       },
       getPlat(){
@@ -101,21 +127,21 @@ export default {
           })
         }
       },
-      checkPwd(){
-     		logApi({
-     			action:'user_check',
-     			version:'1.0',
-     			client:'2',
-     			appId:'1',
-     			mobile:'+86'+this.form.account,
-     		}).then((res)=> {
-     			if (res.code == 0) {
-     				this.haveCode = 2
-     			} else {
-     				this.haveCode = 1
-     			}
-     		})
-      },
+      // checkPwd(){
+     	// 	logApi({
+     	// 		action:'user_check',
+     	// 		version:'1.0',
+     	// 		client:'2',
+     	// 		appId:'1',
+     	// 		mobile:'+86'+this.form.account,
+     	// 	}).then((res)=> {
+     	// 		if (res.code == 0) {
+     	// 			this.haveCode = 2
+     	// 		} else {
+     	// 			this.haveCode = 1
+     	// 		}
+     	// 	})
+      // },
       login(){
      		if (this.form.platCode == '' || this.platName == '查询无该平台') {
      			swal({
@@ -141,7 +167,7 @@ export default {
      		} else {
           localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
      			logApi({
-     				appId:'1',
+     				appId: this.form.platCode,
        			action:'login',
        			client:'2',
        			mobile:'+86'+this.form.account,
@@ -150,11 +176,11 @@ export default {
        			if (res.code == 0) {
               localStorage.setItem('token',res.attach.token);
               localStorage.setItem('appId',this.form.platCode);
-              localStorage.setItem('userId_plate',res.attach.user.uid);
-              localStorage.setItem('userName_plate',this.form.account);
-              localStorage.setItem('userPsd_plate',this.form.password);
-              localStorage.setItem('top_name_plate',res.attach.user.name);
-              localStorage.setItem('top_avatar_plate',res.attach.user.avatar);
+              localStorage.setItem('userId_plate',res.attach.user.uid); //
+              localStorage.setItem('userName_plate',this.form.account); //登录缓存
+              localStorage.setItem('userPsd_plate',this.form.password); //登录缓存
+              localStorage.setItem('top_name_plate',res.attach.user.name);  //用于顶部展示用的用户姓名
+              localStorage.setItem('top_avatar_plate',res.attach.user.avatar);  //用顶部展示用用户头像
 
        				router.push({name:'home'})
                this.$message({
@@ -165,6 +191,9 @@ export default {
        		})
      		}
       },
+      cheats() {
+        this.specialCount = this.specialCount + 1;
+      }
     },
     mounted(){
         this.ipAddrPlate = '101.37.34.55';
@@ -276,5 +305,11 @@ export default {
         right: 0px;
         bottom: 0px;
         height: 140px;
+    }
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity 1s
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
+      opacity: 0
     }
 </style>

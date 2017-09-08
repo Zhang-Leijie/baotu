@@ -148,7 +148,13 @@ export default {
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '禁用成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  		else
@@ -162,7 +168,13 @@ export default {
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '解禁成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  	},

@@ -35,13 +35,13 @@
 			    <el-table-column prop="id" label="邀请码"></el-table-column>
 			    <el-table-column label="操作"> 
 			    	<template scope="scope">
-						<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)">
+						<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)" v-if="!(myId == scope.row.id) && !(scope.row.layer == 1)"> 
 			      			{{scope.row.isAble?'禁用':'启用'}}
 			    		</el-button>
 			      		<el-button type="text" size="small">
 							<router-link :to="{name:'shop-staff-edit',query:{id:scope.row.id,name:scope.row.name}}">编辑</router-link>
 			      		</el-button>
-			      		<el-button type="text" size="small" v-if="isRoot && !(rootId == scope.row.id)">
+			      		<el-button type="text" size="small" v-if="isRoot && !(myId == scope.row.id)">
 							<router-link :to="{name:'shop-staff-permission',query:{id:scope.row.id,name:scope.row.name}}">授权</router-link>
 			      		</el-button>
 			      	</template>
@@ -56,8 +56,8 @@ import { autoApi } from '@/ajax/post.js'
 export default {
 	data() {
 		return {
+			myId: null,
 			isRoot: false,
-			rootId: null,
 		  	total: null,
 		  	pageSize: 10,
 		  	currentPage: 1,
@@ -104,8 +104,7 @@ export default {
 				if (res.code == 0) {
 					if (res.attach.list) {
 	   					for (let i = 0; i < res.attach.list.length; i++) {
-	   						//mod敏感值待定
-	   						if((res.attach.list[i].mod & 1) == 1) {	//该条数据被禁用
+	   						if((res.attach.list[i].mod & 1024) == 1024) {	//该条数据被禁用
 	   							res.attach.list[i].isAble = false;
 	   						}
 	   						else {
@@ -132,7 +131,7 @@ export default {
 			this.getInfo();
 		},
 
-	  	changeState(id,isAble) {debugger
+	  	changeState(id,isAble) {
 	  		if (isAble) {	//当前可用,操作为禁用
 	  			let payload = {
 	  				employeeId: window.localStorage.getItem('employeeId'),
@@ -144,7 +143,13 @@ export default {
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '禁用成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  		else
@@ -159,7 +164,13 @@ export default {
 		   			version: '1.0',
 		   			payload: payload
 		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			//
+		   			if (res.code == 0) {
+		   				this.getInfo();
+			   			this.$message({
+			   				message: '解禁成功',
+			   				type: 'success',
+			   			});
+		   			}
 		   		});
 	  		}
 	  	},
@@ -197,15 +208,8 @@ export default {
 	},
 	created() {
 		this.getInfo();
-		if (window.localStorage.getItem('isRoot_tenant') == "y") {
-			this.isRoot = true;
-			this.rootId = window.localStorage.getItem('employeeId');
-		}
-		else
-		{
-			this.isRoot = false;
-			this.rootId = null;
-		}
+		this.myId = window.localStorage.getItem('employeeId');
+		window.localStorage.getItem('isRoot_tenant') == "y"?this.isRoot = true:this.isRoot = false;
 	}
 }
 </script>

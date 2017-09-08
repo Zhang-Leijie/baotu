@@ -213,7 +213,11 @@ import { masterApi } from '@/ajax/post.js'
 					version: '1.0',
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.drawTree(res.attach);
+					if (res.code == 0) {
+						if (res.attach) {
+							this.drawTree(res.attach);
+						}
+					}
 				})
 			},
 
@@ -323,9 +327,11 @@ import { masterApi } from '@/ajax/post.js'
 							crudType: '1',
 							payload: payload,
 						},window.localStorage.getItem('tokenPlate')).then((res)=> {
-							this.getModulars();
-							this.addModular.name = null;
-							this.addModular.cid = null;
+							if (res.code == 0) {
+								this.getModulars();
+								this.addModular.name = null;
+								this.addModular.cid = null;
+							}
 						})
 					}
 				}
@@ -401,7 +407,9 @@ import { masterApi } from '@/ajax/post.js'
 						crudType: '4',
 						payload: payload,
 					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						this.getModulars();
+						if (res.code == 0) {
+							this.getModulars();
+						}
 					})
 				}
 			},
@@ -417,8 +425,10 @@ import { masterApi } from '@/ajax/post.js'
 					crudType: '8',
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.getModulars();
-					this.choosed = [];
+					if (res.code == 0) {
+						this.getModulars();
+						this.choosed = [];
+					}	
 				})
 			},
 
@@ -433,8 +443,10 @@ import { masterApi } from '@/ajax/post.js'
 					version: '1.0',
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					if (res.attach) {
-						this.apiData = res.attach;
+					if (res.code == 0) {
+						if (res.attach) {
+							this.apiData = res.attach;
+						}
 					}
 				})
 			},
@@ -453,7 +465,9 @@ import { masterApi } from '@/ajax/post.js'
 					crudType: 1,
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.getAPIs();
+					if (res.code == 0) {
+						this.getAPIs();
+					}
 				})
 			},
 
@@ -479,7 +493,9 @@ import { masterApi } from '@/ajax/post.js'
 					crudType: 4,
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.getAPIs();
+					if (res.code == 0) {
+						this.getAPIs();
+					}
 				})
 			},
 
@@ -496,7 +512,9 @@ import { masterApi } from '@/ajax/post.js'
 					crudType: 8,
 					payload: payload,
 				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					this.getAPIs();
+					if (res.code == 0) {
+						this.getAPIs();
+					}
 				})
 			},
 	    },

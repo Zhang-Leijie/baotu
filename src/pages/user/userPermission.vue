@@ -66,8 +66,10 @@ export default {
 				version: '1.0',
 				payload: payload,
 			},window.localStorage.getItem('token')).then((res)=> {
-				this.sourceData = res.attach;
-				this.drawTree(res.attach);
+				if (res.code == 0) {
+					this.sourceData = res.attach;
+					this.drawTree(res.attach);
+				}
 			})
 			
 		},
@@ -194,14 +196,15 @@ export default {
 					version: '1.0',
 					payload: payload,
 				},window.localStorage.getItem('token')).then((res)=> {
-					this.$message({
-						message: '授予模块成功',
-						type: 'success',
-					});
-					router.push({
-				  	  name: "shop-user-list",
-				    });
-
+					if (res.code == 0) {
+						this.$message({
+							message: '授予模块成功',
+							type: 'success',
+						});
+						router.push({
+					  	  name: "shop-user-list",
+					    });
+					}
 				})
 			}
 			else 
