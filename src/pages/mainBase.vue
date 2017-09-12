@@ -213,10 +213,10 @@ export default {
             }
             else
             { //商家端
-              if (res.attach.tmodulars[0]) {
-                for (let i = 0; i < res.attach.tmodulars.length; i++) {
-                  if (res.attach.tmodulars[i].employeeId == window.localStorage.getItem('employeeId')) {  //判断进入的商家
-                    this.employee_Modulars = res.attach.tmodulars[i].modulars;
+              if (res.attach.tenants[0]) {
+                for (let i = 0; i < res.attach.tenants.length; i++) {
+                  if (res.attach.tenants[i].employeeId == window.localStorage.getItem('employeeId')) {  //判断进入的商家
+                    this.employee_Modulars = res.attach.tenants[i].modulars;
                   }
                 }
               }

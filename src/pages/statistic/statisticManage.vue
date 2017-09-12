@@ -19,9 +19,9 @@
 				</el-select>
 
 				<div class="datePicker">
-					<el-date-picker v-model="data1.dateStart" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableStart"></el-date-picker>
+					<el-date-picker v-model="data1.dateStart" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerDisableStart"></el-date-picker>
 					<span>-</span>
-					<el-date-picker v-model="data1.dateEnd" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableEnd"></el-date-picker>
+					<el-date-picker v-model="data1.dateEnd" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerDisableEnd"></el-date-picker>
 				</div>
 			
 				<div ref="main" style="width: 1200px;height:400px;"></div>
@@ -151,8 +151,16 @@ require('echarts');
 	        pickerOptions1: {},
 	        pickerOptions2: {},
 	        isAdmin: false,
-	        pickerDisableStart: {},
-	        pickerDisableEnd: {},
+	        pickerDisableStart: {
+	        	disabledDate(time) {
+		            return false;
+		          }
+	        },
+	        pickerDisableEnd: {
+	        	disabledDate(time) {
+		            return true;
+		          }
+	        },
 		}
 	  },
 	  methods: {

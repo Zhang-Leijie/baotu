@@ -9,12 +9,16 @@
 			
 					<el-button @click="chooseShangjia" style="width:100px; height:60px; margin-right:50px;" v-if="tenants[0]">商家端</el-button>
 					
-					<el-button @click="gotoPC" style="width:100px; height:60px;">展业</el-button>
+					<el-button @click="chooseShangjiaPC" style="width:100px; height:60px;">展业</el-button>
 				</div>
 				
 				<div class="inputBox">
-					<el-select v-model="tenantId" placeholder="请选择" @change="tenantChange" v-show="gotoShangjia" style="width:200px; margin-top:20px;">
+					<el-select v-model="tenantId" placeholder="请选择商家" @change="tenantChange" v-show="gotoSomewhere == 'shangjia'" style="width:200px; margin-top:20px;">
 					    <el-option v-for="item in tenants" :label="item.label" :value="item.value" :key="item.value" :disabled="item.disabled"></el-option>
+					</el-select>
+
+					<el-select v-model="tenantIdPC" placeholder="请选择pc端商家" @change="goPC" v-show="gotoSomewhere == 'pc'" style="width:200px; margin-top:20px;">
+					    <el-option v-for="item in tenants_PC" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 		        </div>
 		    </div>
@@ -32,8 +36,10 @@ export default {
 	data() {
 		return {
 		  tenantId: null,
+		  tenantIdPC: null,
 		  tenants: [],
-		  gotoShangjia: false,
+		  tenants_PC: [],
+		  gotoSomewhere: null,
 		  isAPPAllowed: false,
 		}
 	},
@@ -45,23 +51,24 @@ export default {
 				version: '1.0',
 			},window.localStorage.getItem('token')).then((res)=> {
 				if (res.code == 0) {
-					if (res.attach.tmodulars) {	//商家模块入口控制
-						for (var i = 0; i < res.attach.tmodulars.length; i++) {
+					if (res.attach.tenants) {	//商家模块入口控制
+						for (var i = 0; i < res.attach.tenants.length; i++) {
 		   					let buf = {
 		   						value: {
-		   							tid: res.attach.tmodulars[i].tid,
-		   							employeeId: res.attach.tmodulars[i].employeeId,
-		   							layer: res.attach.tmodulars[i].layer,
+		   							tid: res.attach.tenants[i].tid,
+		   							employeeId: res.attach.tenants[i].employeeId,
+		   							layer: res.attach.tenants[i].layer,
+		   							name: res.attach.tenants[i].tname,
 		   						},
-		   						label: res.attach.tmodulars[i].tname,
+		   						label: res.attach.tenants[i].tname,
 		   					}
-		   					if (res.attach.tmodulars[i].layer == 1) {
-   								if ((res.attach.tmodulars[i].tmod & 16384) == 16384) {
+		   					if (res.attach.tenants[i].layer == 1) {
+   								if ((res.attach.tenants[i].tmod & 16384) == 16384) {
    									buf.label = buf.label + '(商户被禁用)';
    									buf.disabled = true;
    									this.tenants.push(buf);
    								}
-   								else if ((res.attach.tmodulars[i].mod & 1024) == 1024)
+   								else if ((res.attach.tenants[i].mod & 1024) == 1024)
    								{
    									buf.label = buf.label + '(您被禁用)';
    									buf.disabled = true;
@@ -74,14 +81,14 @@ export default {
 		   					}
 		   					else
 		   					{
-		   						if (res.attach.tmodulars[i].modulars) {
-		   							if (this.isPermiss('SHOP',res.attach.tmodulars[i].modulars)) {
-		   								if ((res.attach.tmodulars[i].tmod & 16384) == 16384) {
+		   						if (res.attach.tenants[i].modulars) {
+		   							if (this.isPermiss('SHOP',res.attach.tenants[i].modulars)) {
+		   								if ((res.attach.tenants[i].tmod & 16384) == 16384) {
 		   									buf.label = buf.label + '(商户被禁用)';
 		   									buf.disabled = true;
 		   									this.tenants.push(buf);
 		   								}
-		   								else if ((res.attach.tmodulars[i].mod & 1024) == 1024) 
+		   								else if ((res.attach.tenants[i].mod & 1024) == 1024) 
 		   								{
 		   									buf.label = buf.label + '(您被禁用)';
 		   									buf.disabled = true;
@@ -91,12 +98,12 @@ export default {
 		   								{
 		   									this.tenants.push(buf);
 		   								}
-		   							}	
+		   							}
 		   						}
 		   					}
+		   					this.tenants_PC.push(buf);
 		   				}
 					}
-
 					if (res.attach.pmodulars) {	//平台模块入口控制
 						if (this.isPermiss('APP',res.attach.pmodulars)) {
 							this.isAPPAllowed = true;
@@ -164,15 +171,32 @@ export default {
 		},
 
 		chooseShangjia() {
-			this.gotoShangjia = true;
+			this.gotoSomewhere = 'shangjia';
 			this.$message({
 				message: '请选择商家',
-				type: 'info'
+				type: 'info',
 			});
 		},
 
-		gotoPC() {
-			window.open('http://101.37.34.55/pc/');
+		chooseShangjiaPC() {
+			this.gotoSomewhere = 'pc';
+			this.$message({
+				message: '请选择pc端商家',
+				type: 'info',
+			});
+		},
+
+		goPC(val) {
+			var dataBuf = JSON.parse(window.localStorage.getItem('cacheData'));
+			dataBuf.own = [{
+				employeeId: val.employeeId,
+				tid: val.tid,
+				tname: val.name,
+			}];
+			dataBuf = JSON.stringify(dataBuf);
+			debugger
+			window.open('http://101.37.34.55/pc/#/insur/car?data=' + dataBuf);
+			this.tenantIdPC = null;
 		},
 	},
 	mounted() {

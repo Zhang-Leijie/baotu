@@ -140,6 +140,9 @@ export default {
                   payload: payload,
                 }).then((res)=> {
                   if (res.code == 0) {
+                    let cacheData = JSON.stringify(res.attach);
+                    localStorage.setItem('cacheData',cacheData);
+
                     localStorage.setItem('token',res.attach.token);
                     localStorage.setItem('appId',this.form.platCode);
                     localStorage.setItem('userId_plate',res.attach.user.uid);

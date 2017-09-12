@@ -23,7 +23,7 @@
 			</div>
 		</div>
 
-		<el-row class="commonSet" v-if="insurerId && choosed">
+		<el-row class="commonSet" v-if="insurerId && choosed && !isPoly">
 			<el-col :span="11">
 				<label class="titleLabel">基础佣金设置</label>
 				<el-row>
@@ -52,7 +52,7 @@
 			</el-col>
 		</el-row>
 
-		<div v-if="insurerId && choosed" v-show="tagData[0][0]">
+		<div v-if="insurerId && choosed" v-show="tagData[0][0] && !isPoly">
 			<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
 			<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective;confirmSetSave()">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
 
@@ -63,7 +63,7 @@
 			</div>
 		</div>
 
-		<div class="toolBox" v-if="currentRange.name && insurerId && choosed">
+		<div class="toolBox" v-if="currentRange.name && insurerId && choosed && !isPoly">
 			<span>当前系数：</span>
 			<span style="font-weight: bold; font-size:20px;">{{currentRange.name}}</span>
 			<span>{{isRateEffective?"(当前调整系数生效中)":"(调整系数未生效)"}}</span>
@@ -73,7 +73,7 @@
 			</div>
 		</div>
 		
-		<div class="tableBox" v-if="insurerId && choosed && currentRange.id">
+		<div class="tableBox" v-if="insurerId && choosed && currentRange.id && !isPoly">
 			<el-table :data="rangeData" border style="width: 100%;font-size:12px;">
 			    <!-- <el-table-column prop="id" label="序号"></el-table-column> -->
 			    <el-table-column prop="name" label="系数名称"></el-table-column>
@@ -96,7 +96,8 @@
 			</el-table>
 		</div>
 
-		<div class="confirmBoxR" v-if="insurerId && choosed">
+		<div class="confirmBoxR" v-if="insurerId && choosed && !isPoly">
+			<el-button type="danger" size="large" @click="clearData">清除</el-button>
 			<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
 		</div>
 
@@ -244,6 +245,7 @@ import { autoApi } from '@/ajax/post.js'
 	      dialogAddVisible: false,
 	      dialogEditVisible: false,
 	      switchBox: false,	//强行让vue组件重新刷新渲染的投机工具
+	      isPoly: false,
 	      comparisons: [
 	      	{
 	      		value: 'gt',
@@ -347,6 +349,7 @@ import { autoApi } from '@/ajax/post.js'
 	    			let buf = {
 	    				value: data[item].node.id,
 	    				label: data[item].node.name,
+	    				poly: data[item].node.poly,
 	    				children: [],
 	    			}
 	    			formData.push(buf);
@@ -399,6 +402,7 @@ import { autoApi } from '@/ajax/post.js'
 	    enterToNext(val,index) {
 	    	this.choosed = val.value;
 	    	this.chooseds[index] = val.value;
+	    	this.isPoly = val.poly;
 	    	//实现只显示当前选择的直接子集的功能
 	    	for (let j = index + 2; j < this.formRouterData.length; j++) {
 	    		this.formRouterData[j] = [];
@@ -571,6 +575,10 @@ import { autoApi } from '@/ajax/post.js'
 	   			payload: payload			
 	   		},window.localStorage.getItem('token')).then((res)=> {
 	   			if (res.code == 0) {
+	   				this.baseCommission.shangye = null;
+   					this.baseCommission.jiaoqiang = null;
+   					this.selfCommission.shangye = null;
+   					this.selfCommission.jiaoqiang = null;
 	   				if(res.attach) {
 	   					this.baseCommission.shangye = res.attach.cmRate / 10;
 	   					this.baseCommission.jiaoqiang = res.attach.cpRate / 10;
@@ -608,6 +616,31 @@ import { autoApi } from '@/ajax/post.js'
 	    	return (-100 <= val && val <= 100)?true:false;
 	    },
 
+	    clearData() {
+	    	let payload = {
+	    		employeeId: window.localStorage.getItem('employeeId'),
+    			insurerId: this.insurerId,
+	    		nodeId: this.choosed,
+	    		config: null,
+	    	}
+	    	
+		   	payload = JSON.stringify(payload);
+	    	autoApi({
+	   			action: 'poundage_config_edit',
+	   			version: '1.0',
+	   			payload: payload,
+	   		},window.localStorage.getItem('token')).then((res)=> {
+	   			if (res.code == 0) {
+	   				this.getRanges(this.currentRange.id);
+			    	this.$message({
+			    		message: '系数已清除',
+			    		type: 'success',
+			    	})
+			    	this.getRates(this.choosed);
+       			}
+	   		})
+	    },
+
 	    confirmSetSave() {
 			//post
 			if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang) && this.isLegalNumber(this.editedRatio.rate)) {
@@ -636,6 +669,7 @@ import { autoApi } from '@/ajax/post.js'
 				    		message: '设置已保存',
 				    		type: 'success',
 				    	})
+				    	this.getRates(this.choosed);
 	       			}
 		   		})
 			}

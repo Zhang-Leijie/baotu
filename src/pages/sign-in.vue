@@ -86,8 +86,8 @@ export default {
     },
     methods: {
       changeIpOpen() {
-        this.ipAddrPlate = '192.168.1.3';
-        localStorage.setItem('ipAddrPlate','192.168.1.3');
+        this.ipAddrPlate = '192.168.191.1';
+        localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
         this.$message({
           type: 'success',
           message: '已改变目标地址',
@@ -182,6 +182,9 @@ export default {
        			payload: payload,
        		}).then((res)=> {
        			if (res.code == 0) {
+              let cacheData = JSON.stringify(res.attach);
+              localStorage.setItem('cacheData',cacheData);
+
               localStorage.setItem('token',res.attach.token);
               localStorage.setItem('appId',this.form.platCode);
               localStorage.setItem('userId_plate',res.attach.user.uid); //
