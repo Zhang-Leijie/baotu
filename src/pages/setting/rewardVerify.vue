@@ -5,14 +5,17 @@
 		</el-breadcrumb>
 
 		<div class="toptool">
-			<span>统计间隔: </span>
-			<el-radio class="radio" v-model="radio" label="1">月度</el-radio>
-	  		<el-radio class="radio" v-model="radio" label="2">季度</el-radio>
+			<el-select v-model="demo" placeholder="请选择">
+			    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
+			</el-select>
 
-	  		<span class="labelSpan">月度/季度</span>
-	  		<el-select v-model="demo" placeholder="请选择">
-		    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
-		</el-select>
+			<div style="display:inline-block;margin:20px;"></div>
+			
+			<span>统计间隔: 月度</span>
+			<!-- <el-radio class="radio" v-model="radio" label="1">月度</el-radio> -->
+	  		<!-- <el-radio class="radio" v-model="radio" label="2">季度</el-radio> -->
+
+	  		<el-date-picker v-model="demo" type="month" align="right" placeholder="选择日期范围"></el-date-picker>
 		</div>
 
 		<div class="tableBox">
@@ -56,7 +59,6 @@
 			      		</router-link>
 			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,true)">同意</el-button>
 			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,false)">拒绝</el-button>
-			      		<el-button type="text" size="small">
 		      		</el-button>
 				    </template>
 	    		</el-table-column>
@@ -77,7 +79,14 @@ export default {
  		  total: null,
  		  radio: '1',
  		  demo: null,
- 		  options: [],
+ 		  options: [{
+ 		  	label: '未处理',
+ 		  	value: '1',
+ 		  },
+ 		  {
+ 		  	label: '已处理',
+ 		  	value: '2',
+ 		  }],
 		}
 	  },
 	  methods: {

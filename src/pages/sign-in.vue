@@ -115,9 +115,13 @@ export default {
       getPlat(){
         this.platName = null;
      		if(this.form.platCode) {
-          logApi({
-            action:'app_tips',
+          let payload = {
             appId:this.form.platCode,
+          }
+          payload = JSON.stringify(payload);
+          logApi({
+            action: 'app_tips',
+            payload: payload,
           }).then((res)=> {
             if (res.code == 0) {
               this.platName = res.attach.name;
@@ -166,12 +170,16 @@ export default {
               })
      		} else {
           localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
+          let payload = {
+            mobile:'+86'+this.form.account,
+            pwd:this.form.password,
+            appId: this.form.platCode,
+          }
+          payload = JSON.stringify(payload);
      			logApi({
-     				appId: this.form.platCode,
        			action:'login',
        			client:'2',
-       			mobile:'+86'+this.form.account,
-       			pwd:this.form.password,
+       			payload: payload,
        		}).then((res)=> {
        			if (res.code == 0) {
               localStorage.setItem('token',res.attach.token);

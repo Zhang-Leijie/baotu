@@ -444,6 +444,10 @@ import { autoApi } from '@/ajax/post.js'
 	   				if(res.attach) {
 	   					this.formatTableData(res.attach);
 	   				}
+	   				else
+	   				{
+	   					this.getRates(this.choosed);
+	   				}
        			}
 	   		})
 	    },

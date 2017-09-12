@@ -19,7 +19,9 @@
 				</el-select>
 
 				<div class="datePicker">
-					<el-date-picker v-model="data1.date" type="daterange" align="right" placeholder="选择日期范围" :picker-options="pickerOptions1"></el-date-picker>
+					<el-date-picker v-model="data1.dateStart" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableStart"></el-date-picker>
+					<span>-</span>
+					<el-date-picker v-model="data1.dateEnd" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableEnd"></el-date-picker>
 				</div>
 			
 				<div ref="main" style="width: 1200px;height:400px;"></div>
@@ -61,7 +63,7 @@
 				<el-pagination v-if="data3.pageCount" @current-change="pageChange3" :current-page="data3.currentPage" :page-size="data3.pageSize" layout="total , prev, pager, next, jumper" :page-count='data3.pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
 		  </el-tab-pane>
-		  <el-tab-pane label="保单列表" v-if="!isAdmin">
+		  <!-- <el-tab-pane label="保单列表" v-if="!isAdmin">
 		  	<div class="table4">
 				<label class="title">保单列表</label>
 				<el-date-picker v-model="data4.date" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
@@ -84,7 +86,7 @@
 
 				<el-pagination v-if="data4.pageCount" @current-change="pageChange4" :current-page="data4.currentPage" :page-size="data4.pageSize" layout="total , prev, pager, next, jumper" :page-count='data4.pageCount' style="margin:20px auto;text-align:center"></el-pagination>
 			</div>
-		  </el-tab-pane>
+		  </el-tab-pane> -->
 		</el-tabs>
 	</div>
 </template>
@@ -98,7 +100,8 @@ require('echarts');
 	    return {
 	    	data1: {
 	    		option: null,
-	    		date: null,
+	    		dateStart: null,
+	    		dateEnd: null,
 	    		chartData: {
 	    			xAxis: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
 	    			series: [
@@ -148,6 +151,8 @@ require('echarts');
 	        pickerOptions1: {},
 	        pickerOptions2: {},
 	        isAdmin: false,
+	        pickerDisableStart: {},
+	        pickerDisableEnd: {},
 		}
 	  },
 	  methods: {
@@ -227,6 +232,41 @@ require('echarts');
 		            }
 		        }]
 	  		};
+	  		// var vm = this;
+	  		// this.pickerDisableStart = {
+	  		// 	disabledDate(day) {
+	  		// 		// if (vm.data1.dateEnd) {
+	  		// 		// 	if (vm.data1.dateEnd.getTime() > day.getTime()) {
+	  		// 		// 		return false;
+	  		// 		// 	}
+	  		// 		// 	else
+	  		// 		// 	{
+	  		// 		// 		return true
+	  		// 		// 	}
+	  		// 		// }
+	  		// 		// else
+	  		// 		// {
+	  		// 		// 	return false;
+	  		// 		// }
+	  		// 	}
+	  		// },
+	  		// this.pickerDisableEnd = {
+	  		// 	disabledDate(day) {
+	  		// 	// 	if (vm.data1.dateStart) {
+	  		// 	// 		if (vm.data1.dateStart.getTime() < day.getTime()) {
+	  		// 	// 			return false;
+	  		// 	// 		}
+	  		// 	// 		else
+	  		// 	// 		{
+	  		// 	// 			return true
+	  		// 	// 		}
+	  		// 	// 	}
+	  		// 	// 	else
+	  		// 	// 	{
+	  		// 	// 		return false;
+	  		// 	// 	}
+	  		// 	}
+	  		// }
 	  	},
 	  	drawChart() {
 	  		var myChart = echarts.init(this.$refs.main);
@@ -307,6 +347,7 @@ require('echarts');
 </script>
 <style lang="less">
 .statisticManageBody {
+	min-width: 1200px;
 	.table1 {
 		padding: 20px;
 		background-color: #ffffff;
@@ -314,7 +355,7 @@ require('echarts');
 		.datePicker {
 			display: inline-block;
 			position: relative;
-			left: 450px;
+			left: 250px;
 		}
 	}
 	.table2, .table3, .table4 {

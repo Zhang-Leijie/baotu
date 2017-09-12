@@ -72,10 +72,14 @@ export default {
         this.timeCount = 0;
         this.form.yzm = null;
         this.startCountdown(60);
+        let payload = {
+          mobile: '+86'+this.$route.query.account,
+          appId: '1',
+        }
+        payload = JSON.stringify(payload);
        	logApi({
      			action:'captcha_obtain',
-     			mobile: '+86'+this.$route.query.account,
-     			appId: '1',
+     			payload: payload,
      		}).then((res)=> {
      			if (res.code == 0) {
      				this.form.yzm = res.attach
@@ -112,20 +116,28 @@ export default {
                 timer: 2000,
             })
        	} else if(this.form.password == this.form.passwordS){
+          let payload = {
+            pwd: this.form.passwordS,
+            captcha: this.form.yzm,
+            mobile: '+86'+this.$route.query.account,
+            appId: this.form.platCode,
+          }
+          payload = JSON.stringify(payload);
        		logApi({
-	       		pwd:this.form.passwordS,
-	       		captcha:this.form.yzm,
   	   			action:'pwd_reset',
-  	   			mobile: '+86'+this.$route.query.account,
-  	   			appId: this.form.platCode,
+  	   			payload: payload,
   	   		}).then((res)=> {
   	   			if (res.code == 0) {
-         				logApi({
-                  appId: this.form.platCode,
-                  action:'login',
-                  client:'2',
+                let payload = {
                   mobile:'+86'+this.$route.query.account,
                   pwd:this.form.passwordS,
+                  appId: this.form.platCode,
+                }
+                payload = JSON.stringify(payload);
+         				logApi({
+                  action:'login',
+                  client:'2',
+                  payload: payload,
                 }).then((res)=> {
                   if (res.code == 0) {
                     localStorage.setItem('token',res.attach.token);
@@ -135,7 +147,6 @@ export default {
                     localStorage.setItem('userPsd_plate',this.form.password);
                     localStorage.setItem('top_name_plate',res.attach.user.name);
                     localStorage.setItem('top_avatar_plate',res.attach.user.avatar);
-
 
                     router.push({name:'home'})
                      this.$message({
