@@ -309,11 +309,9 @@ import { autoApi } from '@/ajax/post.js'
 	   				if(res.attach[0]) {
 	   					for (var i = 0; i < res.attach.length; i++) {
 	   						let buf = {
-	   							value: null,
-	   							label: null
+	   							value: res.attach[i].id,
+	   							label: res.attach[i].name,
 	   						}
-	   						buf.value = res.attach[i].id;
-	   						buf.label = res.attach[i].name;
 	   						this.insurers.push(buf);
 	   					}
 	   				}

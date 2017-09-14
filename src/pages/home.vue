@@ -18,7 +18,7 @@
 					</el-select>
 
 					<el-select v-model="tenantIdPC" placeholder="请选择pc端商家" @change="goPC" v-show="gotoSomewhere == 'pc'" style="width:200px; margin-top:20px;">
-					    <el-option v-for="item in tenants_PC" :label="item.label" :value="item.value" :key="item.value"></el-option>
+					    <el-option v-for="item in tenants_PC" :label="item.value.name" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 		        </div>
 		    </div>
@@ -62,6 +62,8 @@ export default {
 		   						},
 		   						label: res.attach.tenants[i].tname,
 		   					}
+		   					this.tenants_PC.push(buf);
+		   					//商家权限管理
 		   					if (res.attach.tenants[i].layer == 1) {
    								if ((res.attach.tenants[i].tmod & 16384) == 16384) {
    									buf.label = buf.label + '(商户被禁用)';
@@ -101,7 +103,6 @@ export default {
 		   							}
 		   						}
 		   					}
-		   					this.tenants_PC.push(buf);
 		   				}
 					}
 					if (res.attach.pmodulars) {	//平台模块入口控制
@@ -187,16 +188,19 @@ export default {
 		},
 
 		goPC(val) {
-			var dataBuf = JSON.parse(window.localStorage.getItem('cacheData'));
-			dataBuf.own = [{
-				employeeId: val.employeeId,
-				tid: val.tid,
-				tname: val.name,
-			}];
-			dataBuf = JSON.stringify(dataBuf);
-			debugger
-			window.open('http://101.37.34.55/pc/#/insur/car?data=' + dataBuf);
-			this.tenantIdPC = null;
+			if (val) {
+				var dataBuf = JSON.parse(window.localStorage.getItem('cacheData'));
+				dataBuf.own = [{
+					employeeId: val.employeeId,
+					tid: val.tid,
+					tname: val.name,
+				}];
+
+				dataBuf.ip = window.localStorage.getItem('ipAddrPlate');
+				dataBuf = JSON.stringify(dataBuf);
+				window.open('http://101.37.34.55/pc/#/insur/car?data=' + dataBuf);
+				this.tenantIdPC = null;
+			}
 		},
 	},
 	mounted() {

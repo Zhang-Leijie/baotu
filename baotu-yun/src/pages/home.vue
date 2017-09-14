@@ -274,6 +274,7 @@ export default {
       overflow: scroll;
       padding: 10px;
       width: 100%;
+      min-width: 1000px;
       height: 100%;
       .btnDefult{
         margin-bottom: 10px;

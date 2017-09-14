@@ -217,6 +217,12 @@ import { masterApi } from '@/ajax/post.js'
 						if (res.attach) {
 							this.drawTree(res.attach);
 						}
+						else
+						{
+							this.dataBT = [];
+							this.dataAPP = [];
+							this.dataTENANT = [];
+						}
 					}
 				})
 			},

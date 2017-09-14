@@ -80,7 +80,7 @@
 	  					</el-col>
 	  					<el-col :span="16">
 	  						<span class="dataFont" v-if="item.comparison == 2">{{item.comparableValue}}</span>
-	  						<span class="dataFont" v-if="item.comparison == 8">
+	  						<span class="dataFont" v-if="item.comparison == 64">
 			  						<span>{{item.comparableValue.split("_")[0]}} -- {{item.comparableValue.split("_")[1]}}</span>
 	  						</span>
 	  					</el-col>
@@ -112,7 +112,7 @@
 					  					</el-col>
 					  					<el-col :span="16">
 					  						<el-input v-model="guimoAdd.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoAdd.comparison == 2"></el-input>
-							  				<el-row v-if="guimoAdd.comparison == 8">
+							  				<el-row v-if="guimoAdd.comparison == 64">
 							  					<el-col :span="10">
 							  						<el-input v-model="guimoAdd.comparableValueA" style="width: 100%"></el-input>
 							  					</el-col>
@@ -155,7 +155,7 @@
 	  					</el-col>
 	  					<el-col :span="16">
 	  						<el-input v-model="guimoEdit.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoEdit.comparison == 2"></el-input>
-			  				<el-row v-if="guimoEdit.comparison == 8">
+			  				<el-row v-if="guimoEdit.comparison == 64">
 			  					<el-col :span="10">
 			  						<el-input v-model="guimoEdit.comparableValueA" style="width: 100%"></el-input>
 			  					</el-col>
@@ -171,7 +171,7 @@
 	  			</el-col>
 	  			<el-col :span="7">
 	  				<span class="dataFont">奖励比例: </span>
-	  				<el-input v-model="guimoEdit.num" style="width: 120px;"></el-input> 
+	  				<el-input v-model="guimoEdit.num" style="width: 100px;"></el-input> 
 	  				<span class="dataFont">%</span>
 	  			</el-col>
 			</el-row>
@@ -582,13 +582,16 @@ import { autoApi } from '@/ajax/post.js'
 	       		this.guimoEdit.id = row.id;
 	       		this.guimoEdit.num = row.rate;
 	       		this.guimoEdit.comparison = row.comparison;
-	       		if (row.comparison == 8) {
+	       		if (row.comparison == 64) {
 	       			this.guimoEdit.comparableValueA = row.comparableValue.split("_")[0];
 	       			this.guimoEdit.comparableValueB = row.comparableValue.split("_")[1];
+	       			this.guimoEdit.comparableValue = null;
 	       		}
 	       		else
 	       		{
 	       			this.guimoEdit.comparableValue = row.comparableValue; 
+	       			this.guimoEdit.comparableValueA = null;
+	       			this.guimoEdit.comparableValueB = null;
 	       		}
 	       	},
 	       	handleEditClose() {
@@ -604,7 +607,7 @@ import { autoApi } from '@/ajax/post.js'
 		       			symbol: this.reComparisonName(this.guimoEdit.comparison),
 		       			val: [],
 		       		}
-		       		if (this.guimoEdit.comparison == 8) {
+		       		if (this.guimoEdit.comparison == 64) {
 		       			payload.val[0] = this.guimoEdit.comparableValueA;
 		       			payload.val[1] = this.guimoEdit.comparableValueB;
 		       		}
@@ -646,7 +649,7 @@ import { autoApi } from '@/ajax/post.js'
 		       			symbol: this.reComparisonName(this.guimoAdd.comparison),
 		       			val: [],
 		       		}
-		       		if (this.guimoAdd.comparison == 8) {
+		       		if (this.guimoAdd.comparison == 64) {
 		       			payload.val[0] = this.guimoAdd.comparableValueA;
 		       			payload.val[1] = this.guimoAdd.comparableValueB;
 		       		}

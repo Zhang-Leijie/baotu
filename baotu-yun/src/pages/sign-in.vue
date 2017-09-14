@@ -65,7 +65,7 @@ export default {
               localStorage.setItem('tokenPlate',res.attach.token);
               // localStorage.setItem('userId',res.attach.user.uid);
               localStorage.setItem('uid',res.attach.uid);
-       				router.push({name:'GMList'})
+       				router.push({name:'welcome'})
               this.$message({
                 type: 'success',
                 message: '正在访问:'+ window.localStorage.getItem('ipAddr')

@@ -86,7 +86,7 @@ export default {
     },
     methods: {
       changeIpOpen() {
-        this.ipAddrPlate = '192.168.191.1';
+        this.ipAddrPlate = '192.168.1.6';
         localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
         this.$message({
           type: 'success',

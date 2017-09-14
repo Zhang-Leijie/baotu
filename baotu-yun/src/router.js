@@ -150,6 +150,13 @@ const routes = [
                     require(['./pages/user/APPPermission.vue'],resolve)
                 }
             },
+            {
+                path: "/welcome",
+                name: "welcome",
+                component(resolve) {
+                    require(['./pages/welcome.vue'],resolve)
+                }
+            },
         ]
     },{
         path: "/",
