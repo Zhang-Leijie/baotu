@@ -29,9 +29,9 @@
 		  <el-form-item class="appblock" label="营业执照:">
 		    <el-upload
 			  class="avatar-uploader"
-			  action="//jsonplaceholder.typicode.com/posts/"
+			  action=""
 			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
+			  :before-upload="beforeUpload">
 			  <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar">
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
@@ -50,6 +50,7 @@ import { autoApi } from '@/ajax/post.js'
 	    data() {
 	      return {
 	        endTimeEdited: false,
+	        fileBuf: null,
 	        form:{
 	        	tid: null,
 	        	name: null,
@@ -102,11 +103,39 @@ import { autoApi } from '@/ajax/post.js'
 	       			}
 		   		})
 		    },
+
+		    beforeUpload(file) {
+			    var vm = this;
+		    	var reader = new FileReader();
+			    reader.readAsDataURL(file);
+			    reader.onload = function(e){
+			        vm.form.imageUrl = this.result;
+			    }
+			    this.fileBuf = file;
+			    return false; //放弃组件上传
+		    },
+
+		    uploadFile(tid,file) {
+		    	let xmlhttp = new XMLHttpRequest();
+			    xmlhttp.open("POST",'http://' + window.localStorage.getItem('ipAddrPlate') + ':8084/resources/api',true);
+				xmlhttp.setRequestHeader("token", window.localStorage.getItem('token'));
+				let fd = new FormData();
+				fd.append("action", 'upload_tenant_license');
+				fd.append("version", '1.0');
+				fd.append("license", file);
+				let payload = {
+					tid: tid,
+				}
+				payload = JSON.stringify(payload);
+				fd.append("payload", payload);
+
+				xmlhttp.send(fd);
+		    },
+
 		    confirmEdit() {
 			    if (this.form.name && this.form.imageUrl && this.form.time && this.form.num && this.form.tid && this.form.people && this.form.phone) {
 			    	let payload = {
 			   			tname: this.form.name,
-			   			licenseImage: this.form.imageUrl,
 			   			expire: Date.parse(this.form.time) / 1000,
 			   			license: this.form.num,
 			   			tid: this.form.tid,
@@ -124,9 +153,14 @@ import { autoApi } from '@/ajax/post.js'
 					            message: '修改的设置已保存',
 					            type: 'success',
 					        });
-					        router.push({
-						        path: '/shop/shop-list',
-						    });
+
+			   				this.uploadFile(this.form.tid,this.fileBuf);
+
+			   				setTimeout(function(){
+			   					router.push({
+							        path: '/shop/shop-list',
+							    });
+			   				},1000);
 		       			}
 			   		})
 			    }

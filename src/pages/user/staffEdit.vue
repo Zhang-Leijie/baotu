@@ -31,27 +31,27 @@
  		    {{info.demo}}
  		  </el-form-item>
  		  <el-form-item class="appblock" label="联系人身份证正面：">
-		    <el-upload
+		   <!--  <el-upload
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
 			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
+			  :on-success="handleAvatarScucess"> -->
 			  <img v-if="info.identityFace" :src="imageUrl" class="avatar">
-			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
+			  <!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+			</el-upload> -->
 		  </el-form-item>
 		  <el-form-item class="appblock" label="联系人身份证反面：">
-		    <el-upload
+		    <!-- <el-upload
 			  class="avatar-uploader"
 			  action="//jsonplaceholder.typicode.com/posts/"
 			  :show-file-list="false"
-			  :on-success="handleAvatarScucess">
+			  :on-success="handleAvatarScucess"> -->
 			  <img v-if="info.identityBack" :src="imageUrl" class="avatar">
-			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload>
+			  <!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+			</el-upload> -->
 		  </el-form-item>
  		</el-form>
- 		<div style="clear:both;width:90%;border-bottom: 1px solid black;margin-left: 20px;"></div>
+ 		<div style="clear:both;width:90%;border-bottom: 1px solid black;margin: 20px;padding: 20px;"></div>
 
 		<el-form label-position="right" label-width="140px" style="margin-top:20px;" class="appbox">
 		    <el-form-item label="支付方式：" class="appblock">

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item :to="{name:'insurerList'}">平台列表</el-breadcrumb-item>
+		  	<el-breadcrumb-item :to="{name:'insurerList'}">险企列表</el-breadcrumb-item>
 		  	<el-breadcrumb-item>{{isAdd?'新增':'编辑'}}</el-breadcrumb-item>
 		</el-breadcrumb>
 		<el-form label-width="120px" class="appbox">
@@ -22,9 +22,9 @@
 		  	<el-form-item class="appblock" label="险企图标:">
 			    <el-upload
 					class="avatar-uploader"
-					action="//jsonplaceholder.typicode.com/posts/"
+					action=""
 					:show-file-list="false"
-					:on-success="handleAvatarScucessA">
+					:before-upload="beforeUpload">
 					<img v-if="form.iconUrl" :src="form.iconUrl" class="avatar">
 					<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 				</el-upload>
@@ -33,7 +33,7 @@
 		<div style="clear:both"></div>
 		<div style="text-align:center;margin-top:20px;">
 			<el-button @click="goback">取消</el-button>
-			<el-button type="primary" @click="comfirmAdd" v-if="isAdd">添加平台</el-button>
+			<el-button type="primary" @click="comfirmAdd" v-if="isAdd">添加险企</el-button>
 			<el-button type="primary" @click="comfirmSave" v-if="!isAdd">保存修改</el-button>
 		</div>
 	</div>
@@ -44,11 +44,12 @@ import { masterApi } from '@/ajax/post.js'
 	    data() {
 	      return {
 	      	isAdd: false,
+	      	fileBuf: null,
 	        form: {
 	      		id: null,
 	        	name: null,
 	        	iconUrl: null,
-	        	agree: false,
+	        	agree: null,
 	        	leBaoBaId: null,
 	        }
 	      };
@@ -65,15 +66,42 @@ import { masterApi } from '@/ajax/post.js'
 			  var   min =  "0" +now.getMinutes();
 			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
 			},
-			handleAvatarScucessA(res, file) {
-		        this.form.iconUrl = URL.createObjectURL(file.raw);
+
+		    beforeUpload(file) {
+			    var vm = this;
+		    	var reader = new FileReader();
+			    reader.readAsDataURL(file);
+			    reader.onload = function(e){
+			        vm.form.iconUrl = this.result;
+			    }
+			    this.fileBuf = file;
+			    return false; //放弃组件上传
 		    },
+
+		    uploadFile(id,file) {
+		    	let xmlhttp = new XMLHttpRequest();
+			    xmlhttp.open("POST",'http://' + window.localStorage.getItem('ipAddr') + ':8084/resources/api',true);
+				xmlhttp.setRequestHeader("token", window.localStorage.getItem('tokenPlate'));
+				let fd = new FormData();
+				fd.append("action", 'upload_insurer_icon');
+				fd.append("version", '1.0');
+				fd.append("icon", file);
+				let payload = {
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				fd.append("payload", payload);
+
+				xmlhttp.send(fd);
+		    },
+
+
 			comfirmAdd() {
 				if (this.form.name && this.form.iconUrl) {
 					let payload = {
 						id: Math.pow(2,this.form.id),
 						name: this.form.name,
-						icon: this.form.iconUrl,
+						// icon: this.form.iconUrl,
 						biHuId: this.form.agree,		//壁虎id
 						leBaoBaId: this.form.leBaoBaId
 					}
@@ -82,15 +110,21 @@ import { masterApi } from '@/ajax/post.js'
 						action: 'insurer_edit',
 						version: '1.0',
 						crudType: 1,
+						payload: payload,
 					},window.localStorage.getItem('tokenPlate')).then((res)=> {
 						if (res.code == 0) {
 							this.$message({
 					            type: 'success',
 					            message: '添加险企成功'
 					        });
-						    router.push({
-						  	  name: "insurerList"
-						    })
+
+							this.uploadFile(Math.pow(2,this.form.id),this.fileBuf);
+
+						    setTimeout(function(){
+						    	router.push({
+							  	  name: "insurerList"
+							    })
+						    },1000);
 						}
 					})
 				}
@@ -124,9 +158,14 @@ import { masterApi } from '@/ajax/post.js'
 					            type: 'success',
 					            message: '险企修改已保存'
 					        });
-						    router.push({
-						  	  name: "insurerList"
-						    })
+
+						    this.uploadFile(Math.pow(2,this.form.id),this.fileBuf);
+
+						    setTimeout(function(){
+						    	router.push({
+							  	  name: "insurerList"
+							    })
+						    },1000);
 						}
 					})
 				}
@@ -146,7 +185,7 @@ import { masterApi } from '@/ajax/post.js'
 			}
 	    },
 	    mounted(){
-	        if (this.$route.query) {
+	        if (this.$route.query.id) {
 	        	this.isAdd = false
 	        	this.form.id = Math.log(this.$route.query.id) / Math.log(2);
 		        this.form.name = this.$route.query.name;

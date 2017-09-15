@@ -39,9 +39,9 @@
 		  <el-form-item class="appblock" label="营业执照副本:">
 		    <el-upload
 			  class="avatar-uploader"
-			  action="//jsonplaceholder.typicode.com/posts/"
+			  action=""
 			  :show-file-list="false"
-			  :on-success="handleAvatarScucessA">
+			  :before-upload="beforeUpload">
 			  <img v-if="imageUrla" :src="imageUrla" class="avatar">
 			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 			</el-upload>
@@ -60,6 +60,7 @@ import { autoApi } from '@/ajax/post.js'
 	    data() {
 	      return {
 	      	imageUrla: '',
+	      	fileBuf: null,
 	        info:'',
 	        regionFormData: [],		//格式化行政区划表
 	        form:{
@@ -111,17 +112,41 @@ import { autoApi } from '@/ajax/post.js'
 		   		})
 		    },
 
-			handleAvatarScucessA(res, file) {
-		        this.imageUrla = URL.createObjectURL(file.raw);
+		    beforeUpload(file) {
+			    var vm = this;
+		    	var reader = new FileReader();
+			    reader.readAsDataURL(file);
+			    reader.onload = function(e){
+			        vm.imageUrla = this.result;
+			    }
+			    this.fileBuf = file;
+			    return false; //放弃组件上传
+		    },
+
+		    uploadFile(tid,file) {
+		    	let xmlhttp = new XMLHttpRequest();
+			    xmlhttp.open("POST",'http://' + window.localStorage.getItem('ipAddrPlate') + ':8084/resources/api',true);
+				xmlhttp.setRequestHeader("token", window.localStorage.getItem('token'));
+				let fd = new FormData();
+				fd.append("action", 'upload_tenant_license');
+				fd.append("version", '1.0');
+				//version: '1.0'
+				fd.append("license", file);
+				let payload = {
+					tid: tid,
+				}
+				payload = JSON.stringify(payload);
+				fd.append("payload", payload);
+
+				xmlhttp.send(fd);
 		    },
 
 		    confirmAdd() {
-		    	if (this.form.license && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.imageUrla && this.form.region) {
+		    	if (this.form.license && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.form.region && this.imageUrla) {
 		    		let payload = {
 		    			tname: this.form.name,
 			   			region: this.form.region,
 			   			license: this.form.license,
-			   			licenseImage: this.imageUrla,
 			   			mobile: this.form.phone,
 			   			expire: Date.parse(this.form.time) / 1000,
 			   			contacts: this.form.people,
@@ -140,9 +165,16 @@ import { autoApi } from '@/ajax/post.js'
 					            message: '新增商户成功',
 					            type: 'success'
 					        });
-					        router.push({
-						        path: '/shop/shop-list'
-						    });
+
+			   				if (res.attach) {
+			   					this.uploadFile(res.attach.tid,this.fileBuf);
+			   				}
+
+					        setTimeout(function(){
+					        	router.push({
+							        path: '/shop/shop-list'
+							    });
+					        },1000)
 		       			}
 			   		})
 		    	}
