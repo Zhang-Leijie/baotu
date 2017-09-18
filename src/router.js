@@ -284,6 +284,12 @@ const routes = [
             component(resolve) {
                 require(['./pages/welcome/adminWelcome.vue'],resolve)
             }
+        },{
+            path: "/shop/camera",
+            name: 'shop-camera',
+            component(resolve) {
+                require(['./pages/camera/camera.vue'],resolve)
+            }
         }]
     },{
         path: "/",

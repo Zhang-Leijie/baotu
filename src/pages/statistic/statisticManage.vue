@@ -423,8 +423,6 @@ export default {
 					},window.localStorage.getItem('token')).then((res)=> {
 						if (res.code == 0) {
 							if (res.attach) {
-								//demo
-								res.attach.list = [{insurerName:'名字',total:'12',premium:'450.00'}];res.attach.total = 1;
 								this.data2.tableData = res.attach.list;
 								this.data2.length = res.attach.total;
 			   					this.data2.pageCount = parseInt((this.data2.length - 1) / this.data2.pageSize) + 1;
