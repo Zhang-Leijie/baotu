@@ -74,7 +74,7 @@ export default {
        		})
        },
        changeIpInside() {
-        this.ipAddr = '192.168.1.3';
+        this.ipAddr = 'http://192.168.1.3';
         localStorage.setItem('ipAddr',this.ipAddr);
         this.$message({
           type: 'success',
@@ -83,8 +83,8 @@ export default {
        }
     },
     mounted(){
-        this.ipAddr = '101.37.34.55';
-        localStorage.setItem('ipAddr','101.37.34.55');
+        this.ipAddr = 'http://101.37.34.55';
+        localStorage.setItem('ipAddr',this.ipAddr);
     }
 }
 </script>

@@ -86,7 +86,7 @@ export default {
     },
     methods: {
       changeIpOpen() {
-        this.ipAddrPlate = '192.168.1.6';
+        this.ipAddrPlate = 'http://192.168.1.6';
         localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
         this.$message({
           type: 'success',
@@ -207,7 +207,7 @@ export default {
       }
     },
     mounted(){
-        this.ipAddrPlate = '101.37.34.55';
+        this.ipAddrPlate = 'http://101.37.34.55';
         localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
         if (window.localStorage.getItem('userName_plate') && window.localStorage.getItem('userPsd_plate')) {
           this.form.account = window.localStorage.getItem('userName_plate');

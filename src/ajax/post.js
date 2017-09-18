@@ -1,21 +1,23 @@
 import { post } from './const'
 
 export function logApi(params) {
-  // return post('http://101.37.34.55:8080/login/api', params)
-  // return post('http://192.168.0.125:8080/login/api', params)
-  return post('http://' + window.localStorage.getItem('ipAddrPlate') + ':8080/login/api', params)
+  return post(window.localStorage.getItem('ipAddrPlate') + ':8080/login/api', params)
 }
 
 export function autoApi(params, token) {
-  // return post('http://101.37.34.55:8081/manager/api', params, token)
-  // return post('http://192.168.0.125:8081/manager/api', params, token)
-  return post('http://'+ window.localStorage.getItem('ipAddrPlate') + ':8081/manager/api', params, token)
+  return post(window.localStorage.getItem('ipAddrPlate') + ':8081/manager/api', params, token)
 }
 
 export function commonApi(params, token) {
-  // return post('http://101.37.34.55:8082/common/api', params, token)
-  // return post('http://192.168.0.125:8082/common/api', params, token)
-  return post('http://' + window.localStorage.getItem('ipAddrPlate') + ':8082/common/api', params, token)
+  return post(window.localStorage.getItem('ipAddrPlate') + ':8082/common/api', params, token)
+}
+
+export function uploadImg(fd) {
+  let xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST",window.localStorage.getItem('ipAddrPlate') + ':8084/resources/api',true);
+  xmlhttp.setRequestHeader("token", window.localStorage.getItem('token'));
+
+  xmlhttp.send(fd);
 }
 
 export const uploadFactory = function(imgId) {

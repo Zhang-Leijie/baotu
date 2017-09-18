@@ -6,8 +6,8 @@
 
 		<div style="margin: 10px;"></div>
 
-		<el-tabs type="border-card">
-			<el-tab-pane>
+		<el-tabs type="border-card" @tab-click="changeTab" value="first">
+			<el-tab-pane name="first">
 				<span slot="label"><i class="el-icon-picture"></i> 统计图表</span>
 				<div class="table1">
 					<el-select v-model="data1.option" placeholder="请选择车险" @change="option1Change">
@@ -28,7 +28,7 @@
 				</div>
 			</el-tab-pane>
 
-			<el-tab-pane label="保险公司报表">
+			<el-tab-pane label="保险公司报表" name="second">
 				<div class="table2">
 					<label class="title">保险公司报表</label>
 					<el-select v-model="data2.option" placeholder="请选择" @change="option2Change">
@@ -58,10 +58,16 @@
 						</el-table-column>
 					</el-table>
 
-					<el-pagination v-if="data2.pageCount" @current-change="pageChange2" :current-page="data2.currentPage" :page-size="data2.pageSize" :total="data2.length" layout="total , prev, pager, next, jumper" :page-count='data2.pageCount' style="margin:20px auto;text-align:center" v-show="data2.length"></el-pagination>
+					<div class="toolBarR">
+						<el-pagination v-if="data2.pageCount" @current-change="pageChange2" :current-page="data2.currentPage" :page-size="data2.pageSize" :total="data2.length" layout="total , prev, pager, next, jumper" :page-count='data2.pageCount' style="margin:20px auto;text-align:center" v-show="data2.length"></el-pagination>
+					</div>
+
+					<div class="toolBarL">
+						<el-button @click="downloadExcel2(data2.tableData)" style="margin:20px auto;">导出数据</el-button>
+					</div>
 				</div>
 			</el-tab-pane>
-			<el-tab-pane label="业务员报表" v-if="!isAdmin">
+			<el-tab-pane label="业务员报表" name="third">
 				<div class="table3">
 					<label class="title">业务员报表</label>
 					<el-select v-model="data3.option" placeholder="请选择">
@@ -81,11 +87,14 @@
 				</div>
 			</el-tab-pane>
 		</el-tabs>
+
+		<a href="" download="表单.xlsx" id="hf"></a>
 	</div>
 </template>
 <script>
 import { autoApi } from '@/ajax/post.js'
 var echarts = require('echarts/lib/echarts');
+
 // 引入表格
 require('echarts');
 
@@ -134,7 +143,6 @@ export default {
 	    	options: [],
 	    	optionsMultiple: [],
 	        pickerOptions2: {},
-	        isAdmin: false,
 	        pickerDisableStart: {},
 	        pickerDisableEnd: {}
 	    }
@@ -249,6 +257,23 @@ export default {
 	  		this.myChart = echarts.init(this.$refs.main);
 	  		this.getInfo(1);
 	  		this.drawChart();
+	  	},
+
+	  	changeTab(val) {
+	  		switch(val.name) {
+	  			case 'first':
+	  				this.getInfo(1);
+	  				break;
+	  			case 'second':
+	  				this.getInfo(2);
+	  				break;
+	  			case 'third':
+	  				this.getInfo(3);
+	  				break;
+	  			default:
+	  				//
+	  				break;
+	  		}
 	  	},
 
 	  	drawChart() {
@@ -398,6 +423,8 @@ export default {
 					},window.localStorage.getItem('token')).then((res)=> {
 						if (res.code == 0) {
 							if (res.attach) {
+								//demo
+								res.attach.list = [{insurerName:'名字',total:'12',premium:'450.00'}];res.attach.total = 1;
 								this.data2.tableData = res.attach.list;
 								this.data2.length = res.attach.total;
 			   					this.data2.pageCount = parseInt((this.data2.length - 1) / this.data2.pageSize) + 1;
@@ -529,11 +556,87 @@ export default {
 	  		if (val.prop == "demo") {
 	    		this.data3.sortCol = "demo";
 	    	}
-	  	}
+	  	},
+
+	  	downloadExcel2(jsonData, type) {
+		    if (jsonData[0]) {
+	  			let json = jsonData.concat([]);	//解决数组引用赋值的问题
+		    	var tmpdata = json[0];
+		        var vm = this;
+				var tmpDown; //导出的二进制对象
+		        json.unshift({});
+		        var keyMap = []; //获取keys
+		        for (var k in tmpdata) {
+		            keyMap.push(k);
+		            json[0][k] = k;
+		        }
+		      	tmpdata = [];//用来保存转换好的json 
+		      	
+	            json.map((v, i) => keyMap.map((k, j) => Object.assign({}, {
+	                v: v[k],
+	                position: (j > 25 ? vm.getCharCol(j) : String.fromCharCode(65 + j)) + (i + 1)
+	            }))).reduce((prev, next) => prev.concat(next)).forEach((v, i) => tmpdata[v.position] = {
+	                v: v.v
+	            });
+	            var outputPos = Object.keys(tmpdata); //设置区域,比如表格从A1到D10
+	            var tmpWB = {
+	                SheetNames: ['mySheet'], //保存的表标题
+	                Sheets: {
+	                    'mySheet': Object.assign({},
+	                        tmpdata, //内容
+	                        {
+	                            '!ref': outputPos[0] + ':' + outputPos[outputPos.length - 1] //设置填充区域
+	                        })
+	                }
+	            };
+	            tmpWB.Sheets.mySheet['A1'].v = '保险公司';
+	            tmpWB.Sheets.mySheet['B1'].v = '保单数';
+	            tmpWB.Sheets.mySheet['C1'].v = '保费';
+	            
+	            tmpDown = new Blob([vm.s2ab(XLSX.write(tmpWB, 
+	                {bookType: (type == undefined ? 'xlsx':type),bookSST: false, type: 'binary'}//这里的数据是用来定义导出的格式类型
+	                ))], {
+	                type: ""
+	            }); //创建二进制对象写入转换好的字节流
+
+		        var href = URL.createObjectURL(tmpDown); //创建对象超链接
+		        document.getElementById("hf").href = href; //绑定a标签
+		        document.getElementById("hf").click(); //模拟点击实现下载
+		        setTimeout(function() { //延时释放
+		            URL.revokeObjectURL(tmpDown); //用URL.revokeObjectURL()来释放这个object URL
+		        }, 100);
+		    }
+		    else
+		    {
+		    	this.$message({
+		    		message: '导出列表为空',
+		    		type: 'info',
+		    	});
+		    }
+	    },
+
+	    s2ab(s) { //字符串转字符流
+	        var buf = new ArrayBuffer(s.length);
+	        var view = new Uint8Array(buf);
+	        for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+	        return buf;
+	    },
+	     // 将指定的自然数转换为26进制表示。映射关系：[0-25] -> [A-Z]。
+	    
+	    getCharCol(n) {
+	        let temCol = '',
+	        s = '',
+	        m = 0
+	        while (n > 0) {
+	            m = n % 26 + 1
+	            s = String.fromCharCode(m + 64) + s
+	            n = (n - m) / 26
+	        }
+	        return s
+	    },
 	  },
 	  mounted() {
 	  	this.init();
-	  	this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
 	  }
 	}
 </script>
@@ -544,6 +647,11 @@ export default {
 		display: inline-block;
 		position: relative;
 		float: right;
+	}
+	.toolBarL {
+		display: inline-block;
+		position: relative;
+		float: left;
 	}
 	.table1 {
 		padding: 20px;

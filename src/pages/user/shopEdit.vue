@@ -45,7 +45,8 @@
 	</div>
 </template>
 <script>
-import { autoApi } from '@/ajax/post.js'
+import { autoApi,uploadImg } from '@/ajax/post.js'
+
 	export default {
 	    data() {
 	      return {
@@ -116,20 +117,16 @@ import { autoApi } from '@/ajax/post.js'
 		    },
 
 		    uploadFile(tid,file) {
-		    	let xmlhttp = new XMLHttpRequest();
-			    xmlhttp.open("POST",'http://' + window.localStorage.getItem('ipAddrPlate') + ':8084/resources/api',true);
-				xmlhttp.setRequestHeader("token", window.localStorage.getItem('token'));
 				let fd = new FormData();
-				fd.append("action", 'upload_tenant_license');
 				fd.append("version", '1.0');
+				fd.append("action", 'upload_tenant_license');
 				fd.append("license", file);
 				let payload = {
 					tid: tid,
 				}
 				payload = JSON.stringify(payload);
 				fd.append("payload", payload);
-
-				xmlhttp.send(fd);
+				uploadImg(fd);
 		    },
 
 		    confirmEdit() {

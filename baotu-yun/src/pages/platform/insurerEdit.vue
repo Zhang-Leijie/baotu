@@ -39,7 +39,7 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import { masterApi,uploadImg } from '@/ajax/post.js'
 	export default {
 	    data() {
 	      return {
@@ -79,12 +79,9 @@ import { masterApi } from '@/ajax/post.js'
 		    },
 
 		    uploadFile(id,file) {
-		    	let xmlhttp = new XMLHttpRequest();
-			    xmlhttp.open("POST",'http://' + window.localStorage.getItem('ipAddr') + ':8084/resources/api',true);
-				xmlhttp.setRequestHeader("token", window.localStorage.getItem('tokenPlate'));
 				let fd = new FormData();
-				fd.append("action", 'upload_insurer_icon');
 				fd.append("version", '1.0');
+				fd.append("action", 'upload_insurer_icon');
 				fd.append("icon", file);
 				let payload = {
 					id: id,
@@ -92,7 +89,7 @@ import { masterApi } from '@/ajax/post.js'
 				payload = JSON.stringify(payload);
 				fd.append("payload", payload);
 
-				xmlhttp.send(fd);
+				uploadImg(fd);
 		    },
 
 
