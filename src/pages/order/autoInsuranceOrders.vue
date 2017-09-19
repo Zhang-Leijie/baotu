@@ -6,11 +6,11 @@
 
 		<div class="toolBar">
 			<div class="toolBarR">
+				<el-button @click="reSetSearch">重置</el-button>
 				<el-select v-model="search.state" placeholder="请选择" style="width:150px;">
 				    <el-option v-for="item in stateList" :label="item.label" :value="item.value" :key="item.value"></el-option>
 				</el-select>
 				<el-button type="primary" @click="searchState">搜索</el-button>
-				<el-button @click="reSetSearch">重置</el-button>
 			</div>
 		</div>
 
