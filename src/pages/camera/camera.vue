@@ -63,7 +63,7 @@
 			    </el-upload>
 			</div>
 
-			<el-dialog title="分配" v-model="dialogVisible">
+			<el-dialog title="分配" v-model="dialogVisible" size="tiny">
 				<div class="contentBox">
 					<el-radio-group v-model="sale">
 					    <el-radio :label="item.label" v-for="item in sales" :key="item.label">{{item.name}}</el-radio>

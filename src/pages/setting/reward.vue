@@ -4,142 +4,199 @@
 		  	<el-breadcrumb-item>奖励设置</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<div class="topBar">
-			<el-button size="large" :type="viewMode == 1?'primary':''" @click="guimoShow">月度规模奖励</el-button>
-			<el-button size="large" :type="viewMode == 2?'primary':''" @click="guanliShow" :disabled="!formSetting.teamDepth">管理奖励</el-button>
-			<div class="topBarR">
-				<el-button type="primary" v-if="viewMode == 1" @click="guimoAccount" :disabled="true">统计规模结算</el-button>
-				<el-button type="primary" v-if="viewMode == 2" @click="guanliAccount" :disabled="true">管理奖励结算</el-button>
-			</div>
-		</div>
+		<div style="margin: 10px;"></div>
 
-		<el-form :label-position="labelPosition" label-width="180px" style="margin-top:20px;" class="appbox" v-if="viewMode == 1">
-		  <el-form-item class="appblock" label="团队层级:">
-		  	<el-radio class="radio" v-model="formSetting.teamDepth" label="1" value="1">一级</el-radio>
-  			<el-radio class="radio" v-model="formSetting.teamDepth" label="2" value="2">二级（含一级）</el-radio>
-  			<el-radio class="radio" v-model="formSetting.teamDepth" label="3" value="3">三级（含一、二级）</el-radio>
-		  </el-form-item>
-		</el-form>
+		<el-tabs type="border-card" @tab-click="changeTab" value="first">
+			<el-tab-pane label="月度规模奖励" name="first">
+				<div class="topBar">
+					<div class="topBarR">
+						<el-button type="primary" @click="guimoAccount" :disabled="true">统计规模结算</el-button>
+					</div>
+				</div>
+				<el-form :label-position="labelPosition" label-width="180px" style="margin-top:20px;" class="appbox">
+				  <el-form-item class="appblock" label="团队层级:">
+				  	<el-radio class="radio" v-model="formSetting.teamDepth" label="1" value="1">一级</el-radio>
+		  			<el-radio class="radio" v-model="formSetting.teamDepth" label="2" value="2">二级（含一级）</el-radio>
+		  			<el-radio class="radio" v-model="formSetting.teamDepth" label="3" value="3">三级（含一、二级）</el-radio>
+				  </el-form-item>
+				</el-form>
 
-		<div style="clear:both"></div>
+				<div style="clear:both"></div>
 
-		<el-form :label-position="labelPosition" label-width="180px" class="appbox" v-if="viewMode == 1">
-		    <el-form-item class="Btitle" label="规模保费统计口径:" style="margin-bottom:0px;"></el-form-item>
-		  	<el-form-item label="统计车型:">
-		  		<el-checkbox-group v-model="formSetting.bonusScaleCountMod">
-			    	<el-checkbox label="1" value="1">非营业客车</el-checkbox>
-					<el-checkbox label="2" value="2">非营业货车</el-checkbox>
-					<el-checkbox label="4" value="4">营业客车</el-checkbox>
-					<el-checkbox label="8" value="8">营业货车</el-checkbox>
-					<el-checkbox label="16" value="16">其他</el-checkbox>
-			  	</el-checkbox-group>
-		  	</el-form-item>
-		  	<el-form-item label="统计险种:">
-		  		<el-checkbox-group v-model="formSetting.bonusScaleCountInsuranceMod">
-			    	<el-checkbox label="32">商业险</el-checkbox>
-					<el-checkbox label="64">交强险</el-checkbox>
-			  	</el-checkbox-group>
-		  	</el-form-item>
-		</el-form>
-		
-		<el-form :label-position="labelPosition" label-width="180px" class="appbox" v-if="viewMode == 1">
-		  	<el-form-item class="Btitle" label="规模奖励对象:" style="margin-bottom:0px;"></el-form-item>
-		  	<el-form-item label="奖励车型:">
-				<el-checkbox-group v-model="formSetting.bonusScaleRewardMod">
-			    	<el-checkbox label="128">非营业客车</el-checkbox>
-					<el-checkbox label="256">非营业货车</el-checkbox>
-					<el-checkbox label="512">营业客车</el-checkbox>
-					<el-checkbox label="1024">营业货车</el-checkbox>
-					<el-checkbox label="2048">其他</el-checkbox>
-			  	</el-checkbox-group>
-		  	</el-form-item>
-		  	<el-form-item label="奖励险种:">
-				<el-checkbox-group v-model="formSetting.bonusScaleRewardInsuranceMod">
-			    	<el-checkbox label="4096">商业险</el-checkbox>
-					<el-checkbox label="8192">交强险</el-checkbox>
-			  	</el-checkbox-group>
-		  	</el-form-item>
-		</el-form>
+				<el-form :label-position="labelPosition" label-width="180px" class="appbox">
+				    <el-form-item class="Btitle" label="规模保费统计口径:" style="margin-bottom:0px;"></el-form-item>
+				  	<el-form-item label="统计车型:">
+				  		<el-checkbox-group v-model="formSetting.bonusScaleCountMod">
+					    	<el-checkbox label="1" value="1">非营业客车</el-checkbox>
+							<el-checkbox label="2" value="2">非营业货车</el-checkbox>
+							<el-checkbox label="4" value="4">营业客车</el-checkbox>
+							<el-checkbox label="8" value="8">营业货车</el-checkbox>
+							<el-checkbox label="16" value="16">其他</el-checkbox>
+					  	</el-checkbox-group>
+				  	</el-form-item>
+				  	<el-form-item label="统计险种:">
+				  		<el-checkbox-group v-model="formSetting.bonusScaleCountInsuranceMod">
+					    	<el-checkbox label="32">商业险</el-checkbox>
+							<el-checkbox label="64">交强险</el-checkbox>
+					  	</el-checkbox-group>
+				  	</el-form-item>
+				</el-form>
+				
+				<el-form :label-position="labelPosition" label-width="180px" class="appbox">
+				  	<el-form-item class="Btitle" label="规模奖励对象:" style="margin-bottom:0px;"></el-form-item>
+				  	<el-form-item label="奖励车型:">
+						<el-checkbox-group v-model="formSetting.bonusScaleRewardMod">
+					    	<el-checkbox label="128">非营业客车</el-checkbox>
+							<el-checkbox label="256">非营业货车</el-checkbox>
+							<el-checkbox label="512">营业客车</el-checkbox>
+							<el-checkbox label="1024">营业货车</el-checkbox>
+							<el-checkbox label="2048">其他</el-checkbox>
+					  	</el-checkbox-group>
+				  	</el-form-item>
+				  	<el-form-item label="奖励险种:">
+						<el-checkbox-group v-model="formSetting.bonusScaleRewardInsuranceMod">
+					    	<el-checkbox label="4096">商业险</el-checkbox>
+							<el-checkbox label="8192">交强险</el-checkbox>
+					  	</el-checkbox-group>
+				  	</el-form-item>
+				</el-form>
 
-		<div class="confirmBox" v-if="viewMode == 1">
-			<el-button type="primary" @click="comfirmSetting">保存设置</el-button>
-		</div>
+				<div class="confirmBox">
+					<el-button type="primary" @click="comfirmSetting">保存设置</el-button>
+				</div>
 
-		<div v-if="viewMode == 1" class="guimoDataBox">
-			<el-row v-for="(item,index) in guimoData" style="margin-bottom: 20px;" :key="index">
-	  			<el-col :span="2">
-	  				<el-button @click="guimoDelete(item)"><i class="el-icon-minus"></i></el-button>
-	  			</el-col>
-	  			<el-col :span="6">
-	  				<span class="dataFont">比较类型: {{reComparisonName(reComparisonName(item.comparison))}}</span>
-	  			</el-col>
-	  			<el-col :span="7">
-	  				<el-row>
-	  					<el-col :span="6">
-	  						<span class="dataFont">区间数值: </span>
-	  					</el-col>
-	  					<el-col :span="16">
-	  						<span class="dataFont" v-if="item.comparison == 2">{{item.comparableValue}}</span>
-	  						<span class="dataFont" v-if="item.comparison == 64">
-			  						<span>{{item.comparableValue.split("_")[0]}} -- {{item.comparableValue.split("_")[1]}}</span>
-	  						</span>
-	  					</el-col>
-	  				</el-row>
-	  			</el-col>
-	  			<el-col :span="5">
-	  				<span class="dataFont">奖励比例: {{item.rate?item.rate:0}} %</span>
-	  			</el-col>
-	  			<el-col :span="4">
-	  				<el-button @click="guimoEditMode(item)">编辑</el-button>
-	  			</el-col>
-	  		</el-row>
-	  		<el-button @click="showAddGuimo = !showAddGuimo"><i class="el-icon-plus"></i></el-button>
-			<div style="margin-top: 20px">
-				<el-collapse-transition>
-				    <div v-show="showAddGuimo">
-				      	<div class="transition-box">
-				      		<el-row>
-				      			<el-col :span="6">
-		  							<span class="dataFont">比较类型: </span>
-				      				<el-select v-model="guimoAdd.comparison" placeholder="请选择" style="width:150px;">
-									<el-option v-for="item in comparisons" :label="item.label" :value="item.value" :key="item.value"></el-option>
-									</el-select>
-				      			</el-col>
-				      			<el-col :span="7">
-				      				<el-row>
-					  					<el-col :span="6">
-					  						<span class="dataFont">区间数值: </span>
-					  					</el-col>
-					  					<el-col :span="16">
-					  						<el-input v-model="guimoAdd.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoAdd.comparison == 2"></el-input>
-							  				<el-row v-if="guimoAdd.comparison == 64">
-							  					<el-col :span="10">
-							  						<el-input v-model="guimoAdd.comparableValueA" style="width: 100%"></el-input>
+				<div class="guimoDataBox">
+					<el-row v-for="(item,index) in guimoData" style="margin-bottom: 20px;" :key="index">
+			  			<el-col :span="2">
+			  				<el-button @click="guimoDelete(item)"><i class="el-icon-minus"></i></el-button>
+			  			</el-col>
+			  			<el-col :span="6">
+			  				<span class="dataFont">比较类型: {{reComparisonName(reComparisonName(item.comparison))}}</span>
+			  			</el-col>
+			  			<el-col :span="7">
+			  				<el-row>
+			  					<el-col :span="6">
+			  						<span class="dataFont">区间数值: </span>
+			  					</el-col>
+			  					<el-col :span="16">
+			  						<span class="dataFont" v-if="item.comparison == 2">{{item.comparableValue}}</span>
+			  						<span class="dataFont" v-if="item.comparison == 64">
+					  						<span>{{item.comparableValue.split("_")[0]}} -- {{item.comparableValue.split("_")[1]}}</span>
+			  						</span>
+			  					</el-col>
+			  				</el-row>
+			  			</el-col>
+			  			<el-col :span="5">
+			  				<span class="dataFont">奖励比例: {{item.rate?item.rate:0}} %</span>
+			  			</el-col>
+			  			<el-col :span="4">
+			  				<el-button @click="guimoEditMode(item)">编辑</el-button>
+			  			</el-col>
+			  		</el-row>
+			  		<el-button @click="showAddGuimo = !showAddGuimo"><i class="el-icon-plus"></i></el-button>
+					<div style="margin-top: 20px">
+						<el-collapse-transition>
+						    <div v-show="showAddGuimo">
+						      	<div class="transition-box">
+						      		<el-row>
+						      			<el-col :span="6">
+				  							<span class="dataFont">比较类型: </span>
+						      				<el-select v-model="guimoAdd.comparison" placeholder="请选择" style="width:150px;">
+											<el-option v-for="item in comparisons" :label="item.label" :value="item.value" :key="item.value"></el-option>
+											</el-select>
+						      			</el-col>
+						      			<el-col :span="7">
+						      				<el-row>
+							  					<el-col :span="6">
+							  						<span class="dataFont">区间数值: </span>
 							  					</el-col>
-							  					<el-col :span="4" style="display: flex; justify-content:center;">
-							  						<span style="line-height: 36px;">--</span>
-							  					</el-col>
-							  					<el-col :span="10">
-							  						<el-input v-model="guimoAdd.comparableValueB" style="width: 100%"></el-input>
+							  					<el-col :span="16">
+							  						<el-input v-model="guimoAdd.comparableValue" style="width: 100%" class="inputPercent" v-if="guimoAdd.comparison == 2"></el-input>
+									  				<el-row v-if="guimoAdd.comparison == 64">
+									  					<el-col :span="10">
+									  						<el-input v-model="guimoAdd.comparableValueA" style="width: 100%"></el-input>
+									  					</el-col>
+									  					<el-col :span="4" style="display: flex; justify-content:center;">
+									  						<span style="line-height: 36px;">--</span>
+									  					</el-col>
+									  					<el-col :span="10">
+									  						<el-input v-model="guimoAdd.comparableValueB" style="width: 100%"></el-input>
+									  					</el-col>
+									  				</el-row>
 							  					</el-col>
 							  				</el-row>
-					  					</el-col>
-					  				</el-row>
-				      			</el-col>
-				      			<el-col :span="7">
-		  							<span class="dataFont">奖励比例: </span>
-				      				<el-input v-model="guimoAdd.num" style="width: 150px;"></el-input> %
-				      			</el-col>
-				      			<el-col :span="4">
-				      				<el-button type="primary" @click="guimoConfirmAdd">确定</el-button>
-				      				<el-button @click="showAddGuimo = false">取消</el-button>
-				      			</el-col>
-				      		</el-row>
-				      	</div>
-				    </div>
-				</el-collapse-transition>
-			</div>
-		</div>
+						      			</el-col>
+						      			<el-col :span="7">
+				  							<span class="dataFont">奖励比例: </span>
+						      				<el-input v-model="guimoAdd.num" style="width: 150px;"></el-input> %
+						      			</el-col>
+						      			<el-col :span="4">
+						      				<el-button type="primary" @click="guimoConfirmAdd">确定</el-button>
+						      				<el-button @click="showAddGuimo = false">取消</el-button>
+						      			</el-col>
+						      		</el-row>
+						      	</div>
+						    </div>
+						</el-collapse-transition>
+					</div>
+				</div>
+			</el-tab-pane>
+
+			<el-tab-pane label="管理奖励" name="second">
+				<div class="topBar">
+					<div class="topBarR">
+						<el-button type="primary" @click="guanliAccount" :disabled="true">管理奖励结算</el-button>
+					</div>
+				</div>
+
+					<el-row class="optionCol">
+						<el-col :span="12">
+							<span class="titleLabel">商业险</span>
+						</el-col>
+						<el-col :span="12">
+							<span class="titleLabel">交强险</span>
+						</el-col>
+					</el-row>
+					<div v-for="(guanli,index) in guanliData" :key="index">
+						<el-row class="optionCol">
+							<el-col :span="12">
+								<label class="titleLabel">非营业车-{{guanli.shangye_N.depth}}级比例：</label>
+								<el-input v-model="guanli.shangye_N.value" class="countTool"></el-input> %
+							</el-col>	
+							<el-col :span="12">
+								<label class="titleLabel">非营业车-{{guanli.jiaoqiang_N.depth}}级比例：</label>
+								<el-input v-model="guanli.jiaoqiang_N.value" class="countTool"></el-input> %
+							</el-col>	
+						</el-row>
+						<el-row class="optionCol">
+							<el-col :span="12">
+								<label class="titleLabel">营业车-{{guanli.shangye_Y.depth}}级比例：</label>
+								<el-input v-model="guanli.shangye_Y.value" class="countTool"></el-input> %
+							</el-col>
+							<el-col :span="12">
+								<label class="titleLabel">营业车-{{guanli.jiaoqiang_Y.depth}}级比例：</label>
+								<el-input v-model="guanli.jiaoqiang_Y.value" class="countTool"></el-input> %
+							</el-col>
+						</el-row>
+						<el-row class="optionCol">
+							<el-col :span="12">
+								<label class="titleLabel">其他车-{{guanli.shangye_other.depth}}级比例：</label>
+								<el-input v-model="guanli.shangye_other.value" class="countTool"></el-input> %
+							</el-col>
+							<el-col :span="12">
+								<label class="titleLabel">其他车-{{guanli.jiaoqiang_other.depth}}级比例：</label>
+								<el-input v-model="guanli.jiaoqiang_other.value" class="countTool"></el-input> %
+							</el-col>
+						</el-row>
+					</div>
+					
+				<div style="clear:both"></div>
+
+				<div class="confirmBox">
+					<el-button type="primary" @click="saveGuanli">保存设置</el-button>
+				</div>
+			</el-tab-pane>
+		</el-tabs>
 
 		<el-dialog title="编辑" :visible.sync="dialogEditVisible" size="small" :before-close="handleEditClose">
 			<el-row>
@@ -180,67 +237,16 @@
 		        <el-button type="primary" @click="guimoConfirmEdit">确 定</el-button>
 		    </div>
 		</el-dialog>
-			
-		<div v-if="viewMode == 2">
-			<el-row class="optionCol">
-				<el-col :span="12">
-					<span class="titleLabel">商业险</span>
-				</el-col>
-				<el-col :span="12">
-					<span class="titleLabel">交强险</span>
-				</el-col>
-			</el-row>
-			<div v-for="(guanli,index) in guanliData" :key="index">
-				<el-row class="optionCol">
-					<el-col :span="12">
-						<label class="titleLabel">非营业车-{{guanli.shangye_N.depth}}级比例：</label>
-						<el-input v-model="guanli.shangye_N.value" class="countTool"></el-input> %
-					</el-col>	
-					<el-col :span="12">
-						<label class="titleLabel">非营业车-{{guanli.jiaoqiang_N.depth}}级比例：</label>
-						<el-input v-model="guanli.jiaoqiang_N.value" class="countTool"></el-input> %
-					</el-col>	
-				</el-row>
-				<el-row class="optionCol">
-					<el-col :span="12">
-						<label class="titleLabel">营业车-{{guanli.shangye_Y.depth}}级比例：</label>
-						<el-input v-model="guanli.shangye_Y.value" class="countTool"></el-input> %
-					</el-col>
-					<el-col :span="12">
-						<label class="titleLabel">营业车-{{guanli.jiaoqiang_Y.depth}}级比例：</label>
-						<el-input v-model="guanli.jiaoqiang_Y.value" class="countTool"></el-input> %
-					</el-col>
-				</el-row>
-				<el-row class="optionCol">
-					<el-col :span="12">
-						<label class="titleLabel">其他车-{{guanli.shangye_other.depth}}级比例：</label>
-						<el-input v-model="guanli.shangye_other.value" class="countTool"></el-input> %
-					</el-col>
-					<el-col :span="12">
-						<label class="titleLabel">其他车-{{guanli.jiaoqiang_other.depth}}级比例：</label>
-						<el-input v-model="guanli.jiaoqiang_other.value" class="countTool"></el-input> %
-					</el-col>
-				</el-row>
-			</div>
-		</div>
-			
-		<div style="clear:both"></div>
-
-		<div class="confirmBox" v-if="viewMode == 2">
-			<el-button type="primary" @click="saveGuanli">保存设置</el-button>
-		</div>
 
 	</div>
 </template>
 <script>
-
 import { autoApi } from '@/ajax/post.js'
 
 	export default {
 	    data() {
 	      return { 
 	      	showAddGuimo: false,
-	      	viewMode: 1,
 	        labelPosition: 'right',
 	        formSetting:{
 	        	teamDepth: null,		//团队层级数
@@ -279,15 +285,20 @@ import { autoApi } from '@/ajax/post.js'
 	      };
 	    },
 	    methods: {
-	       	guanliShow() {
-	       		this.viewMode = 2;
-	       		this.getGuanli();
-	       	},
-	       	guimoShow() {
-	       		this.viewMode = 1;
-	       		this.getInfo();
-	       		this.getGuimo();
-	       	},
+	    	changeTab(val) {
+	    		switch(val.name) {
+	    			case 'first':
+	    				this.getInfo();
+			       		this.getGuimo();
+	    				break;
+	    			case 'second':
+	    				this.getGuanli();
+	    				break;
+	    			default:
+	    				//
+	    				break;
+	    		}
+	    	},
 	       	initGuanli(depth) {
 		       	this.guanliData = [];
 	       		for (var i = 2; i <= depth; i++) {
@@ -862,10 +873,9 @@ import { autoApi } from '@/ajax/post.js'
 <style lang="less">
 .rewardBody {
 	.topBar {
-		margin-top: 10px;
-		margin-bottom: 20px;
 		.topBarR {
-			float: right;
+			right: 20px;
+			position: absolute;
 		}
 	}
 	.appbox{
@@ -878,6 +888,7 @@ import { autoApi } from '@/ajax/post.js'
 		margin: 20px 0;
 		background-color: white;
 		min-width: 1050px;
+		border-top: 1px solid black;
 		.inputPercent {
 			width: 150px !important;
 		}

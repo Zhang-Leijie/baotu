@@ -3,103 +3,102 @@
 		<el-breadcrumb separator="/">
 		  	<el-breadcrumb-item>车险管理</el-breadcrumb-item>
 		</el-breadcrumb>
+
 		<div v-if="switchBox"></div>
+		<div style="margin: 10px;"></div>
 
-		<span class="labelText">请选择保险公司</span>
-		<div class="topBar">
-			<el-select v-model="insurerId" placeholder="请选择" @change="insurerChange">
-			    <el-option v-for="item in insurers" :label="item.label" :value="item.value" :key="item.value"></el-option>
-			</el-select>
-		</div>
-
-		<div v-if="insurerId">
-			<span class="labelText">请选择车型</span>
-			<div class="dataBox">
-				<div class="dataBoxCol" v-for="formData,index in formRouterData" v-if="formData[0]" :key="index">
-					<ul>
-						<li v-for="i in formData" @click="enterToNext(i,index)" :class="chooseds[index] === i.value?'choosedList':''" :key="i.value">{{i.label}}</li>
-					</ul>
+		<el-tabs type="border-card" @tab-click="changeTab" :value="insurerId?insurerId.toString():''">
+			<el-tab-pane :label="insurer.label" :name="insurer.value.toString()" v-for="insurer in insurers" :key="insurer.value">
+				<div>
+					<span class="labelText">请选择车型</span>
+					<div class="dataBox">
+						<div class="dataBoxCol" v-for="formData,index in formRouterData" v-if="formData[0]" :key="index">
+							<ul>
+								<li v-for="i in formData" @click="enterToNext(i,index)" :class="chooseds[index] === i.value?'choosedList':''" :key="i.value">{{i.label}}</li>
+							</ul>
+						</div>
+					</div>
 				</div>
-			</div>
-		</div>
 
-		<el-row class="commonSet" v-if="insurerId && choosed && !isPoly">
-			<el-col :span="11">
-				<label class="titleLabel">基础佣金设置</label>
-				<el-row>
-					<el-col :span="12">
-						<span class="titleNext">商业险佣金比例： </span>
-						<el-input v-model="baseCommission.shangye" class="countTool"></el-input> %
-					</el-col>
-					<el-col :span="12">
-						<span class="titleNext">交强险佣金比例： </span>
-						<el-input v-model="baseCommission.jiaoqiang" class="countTool"></el-input> %
+				<el-row class="commonSet" v-if="choosed && !isPoly">
+					<el-col :span="11">
+						<label class="titleLabel">基础佣金设置</label>
+						<el-row>
+							<el-col :span="12">
+								<span class="titleNext">商业险佣金比例： </span>
+								<el-input v-model="baseCommission.shangye" class="countTool"></el-input> %
+							</el-col>
+							<el-col :span="12">
+								<span class="titleNext">交强险佣金比例： </span>
+								<el-input v-model="baseCommission.jiaoqiang" class="countTool"></el-input> %
+							</el-col>
+						</el-row>
+					</el-col>	
+					<el-col :span="11">
+						<label class="titleLabel">自留佣金设置</label>
+						<el-row>
+							<el-col :span="12">
+								<span class="titleNext">商业险佣金比例： </span>
+								<el-input v-model="selfCommission.shangye" class="countTool"></el-input> %
+							</el-col>
+							<el-col :span="12">
+								<span class="titleNext">交强险佣金比例： </span>
+								<el-input v-model="selfCommission.jiaoqiang" class="countTool"></el-input> %
+							</el-col>
+						</el-row>
 					</el-col>
 				</el-row>
-			</el-col>	
-			<el-col :span="11">
-				<label class="titleLabel">自留佣金设置</label>
-				<el-row>
-					<el-col :span="12">
-						<span class="titleNext">商业险佣金比例： </span>
-						<el-input v-model="selfCommission.shangye" class="countTool"></el-input> %
-					</el-col>
-					<el-col :span="12">
-						<span class="titleNext">交强险佣金比例： </span>
-						<el-input v-model="selfCommission.jiaoqiang" class="countTool"></el-input> %
-					</el-col>
-				</el-row>
-			</el-col>
-		</el-row>
 
-		<div v-if="insurerId && choosed" v-show="tagData[0][0] && !isPoly">
-			<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
-			<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective;confirmSetSave()">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
+				<div v-if="choosed" v-show="tagData[0][0] && !isPoly">
+					<span style="font-size: 20px; margin-top:20px; display: inline-block">佣金调整系数</span>
+					<el-button :type="isRateEffective?'danger':'primary'" size="large" @click="isRateEffective = !isRateEffective;confirmSetSave()">{{isRateEffective?'取消关联佣金调整系数':'关联佣金调整系数'}}</el-button>
 
-			<div v-for="tagList,level in tagData" class="listBox" v-show="tagData[level][0]" :key="level">
-				<el-menu mode="horizontal" menu-trigger="click" :default-active="currentRange.id.toString()" v-if="tagList[0]">
-				  <el-menu-item :index="item.id.toString()" v-for="item,index in tagList" @click="selectMenu(item,level,index)" :key="index">{{item.name}}</el-menu-item>
-				</el-menu>
-			</div>
-		</div>
+					<div v-for="tagList,level in tagData" class="listBox" v-show="tagData[level][0]" :key="level">
+						<el-menu mode="horizontal" menu-trigger="click" :default-active="currentRange.id.toString()" v-if="tagList[0]">
+						  <el-menu-item :index="item.id.toString()" v-for="item,index in tagList" @click="selectMenu(item,level,index)" :key="index">{{item.name}}</el-menu-item>
+						</el-menu>
+					</div>
+				</div>
 
-		<div class="toolBox" v-if="currentRange.name && insurerId && choosed && !isPoly">
-			<span>当前系数：</span>
-			<span style="font-weight: bold; font-size:20px;">{{currentRange.name}}</span>
-			<span>{{isRateEffective?"(当前调整系数生效中)":"(调整系数未生效)"}}</span>
+				<div class="toolBox" v-if="currentRange.name && choosed && !isPoly">
+					<span>当前系数：</span>
+					<span style="font-weight: bold; font-size:20px;">{{currentRange.name}}</span>
+					<span>{{isRateEffective?"(当前调整系数生效中)":"(调整系数未生效)"}}</span>
 
-			<div class="toolBoxR" v-if="currentRange.isCustom">
-				<el-button type="primary" size="large" @click="dialogAddVisible = true">新增</el-button>
-			</div>
-		</div>
-		
-		<div class="tableBox" v-if="insurerId && choosed && currentRange.id && !isPoly">
-			<el-table :data="rangeData" border style="width: 100%;font-size:12px;">
-			    <!-- <el-table-column prop="id" label="序号"></el-table-column> -->
-			    <el-table-column prop="name" label="系数名称"></el-table-column>
-			    <el-table-column label="佣金比例">
-			    	<template scope="scope">
-			    		<span v-if="!(editedRatio.id == scope.row.id)">{{scope.row.rate?scope.row.rate:''}}</span>
-			    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)" v-model="editedRatio.rate"></el-input>
-			    		<span v-if="scope.row.rate || (editedRatio.id && (editedRatio.id == scope.row.id))">%</span>
-			    	</template>
-			    </el-table-column>
-			    <el-table-column label="操作">
-			    	<template scope="scope">
-			    		<el-button @click="editRange(scope.row)" v-if="currentRange.isCustom">编辑系数</el-button>
-			    		<el-button @click="deleteRange(scope.row)" v-if="currentRange.isCustom">删除</el-button>
-			    		<el-button @click="editRatio(scope.row)" v-if="!editedRatio.id">调整比例</el-button>
-			    		<el-button @click="confirmEditRatio(scope.row)" v-if="editedRatio.id && (editedRatio.id == scope.row.id)">确认</el-button>
-			    		<el-button @click="cancelEditRatio(scope.row)" v-if="editedRatio.id && (editedRatio.id == scope.row.id)">取消调整</el-button>
-			    	</template>
-			    </el-table-column>
-			</el-table>
-		</div>
+					<div class="toolBoxR" v-if="currentRange.isCustom">
+						<el-button type="primary" size="large" @click="dialogAddVisible = true">新增</el-button>
+					</div>
+				</div>
+				
+				<div class="tableBox" v-if="choosed && currentRange.id && !isPoly">
+					<el-table :data="rangeData" border style="width: 100%;font-size:12px;">
+					    <!-- <el-table-column prop="id" label="序号"></el-table-column> -->
+					    <el-table-column prop="name" label="系数名称"></el-table-column>
+					    <el-table-column label="佣金比例">
+					    	<template scope="scope">
+					    		<span v-if="!(editedRatio.id == scope.row.id)">{{scope.row.rate?scope.row.rate:''}}</span>
+					    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)" v-model="editedRatio.rate"></el-input>
+					    		<span v-if="scope.row.rate || (editedRatio.id && (editedRatio.id == scope.row.id))">%</span>
+					    	</template>
+					    </el-table-column>
+					    <el-table-column label="操作">
+					    	<template scope="scope">
+					    		<el-button @click="editRange(scope.row)" v-if="currentRange.isCustom">编辑系数</el-button>
+					    		<el-button @click="deleteRange(scope.row)" v-if="currentRange.isCustom">删除</el-button>
+					    		<el-button @click="editRatio(scope.row)" v-if="!editedRatio.id">调整比例</el-button>
+					    		<el-button @click="confirmEditRatio(scope.row)" v-if="editedRatio.id && (editedRatio.id == scope.row.id)">确认</el-button>
+					    		<el-button @click="cancelEditRatio(scope.row)" v-if="editedRatio.id && (editedRatio.id == scope.row.id)">取消调整</el-button>
+					    	</template>
+					    </el-table-column>
+					</el-table>
+				</div>
 
-		<div class="confirmBoxR" v-if="insurerId && choosed && !isPoly">
-			<el-button type="danger" size="large" @click="clearData">清除</el-button>
-			<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
-		</div>
+				<div class="confirmBoxR" v-if="choosed && !isPoly">
+					<el-button type="danger" size="large" @click="clearData">清除</el-button>
+					<el-button type="primary" size="large" @click="confirmSetSave">保存</el-button>
+				</div>
+			</el-tab-pane>
+		</el-tabs>
 
 		<el-dialog :title="'新增系数 - '+ currentRange.name" :visible.sync="dialogAddVisible" size="small" :before-close="handleAddClose">
 			<el-row>
@@ -313,6 +312,9 @@ import { autoApi } from '@/ajax/post.js'
 	   							label: res.attach[i].name,
 	   						}
 	   						this.insurers.push(buf);
+	   						if (i == 0) {
+	   							this.insurerId = res.attach[i].id; //默认选择第一个险企
+	   						}
 	   					}
 	   				}
        			}
@@ -367,6 +369,35 @@ import { autoApi } from '@/ajax/post.js'
 	    		this.formRouterData[i] = [];
 	    	}
 	    	this.switchBox = !this.switchBox;
+	    },
+
+	    changeTab(val) {
+	    	this.insurerId = parseInt(val.name);
+	    	this.getInfo();	//路由节点列表数据刷新并初始化
+	  		//清除已有的页面选中记录
+	  		//清空所选节点下级所有的选中状态
+	    	for (let j = 0; j < this.chooseds.length; j++) {
+	    		this.chooseds[j] = null;
+	    	}
+	    	this.choosed = null;
+	    	//清空系数列表
+	    	for (let j = 0; j < this.tagData.length; j++) {
+	    		this.tagData[j] = [];
+	    	}
+	    	//清空当前系数
+	    	this.currentRange.id = null;
+	    	this.currentRange.name = null;
+	    	this.currentRange.isCustom = false;
+	    	this.currentRange.maxmiumCustom = 0;
+	    	this.currentRange.depth = 0;
+	    	//清空表格数据
+	    	this.rangeData = [];
+	    	//清空全局系数
+	    	this.baseCommission.shangye = null;
+	    	this.baseCommission.jiaoqiang = null;
+	    	this.selfCommission.shangye = null;
+	    	this.selfCommission.jiaoqiang = null;
+	    	this.isRateEffective = false;
 	    },
 
 	    insurerChange(value) {
@@ -1058,7 +1089,7 @@ import { autoApi } from '@/ajax/post.js'
 		overflow-x: hidden;
 		.dataBoxCol {
 			float: left;
-			width: 14%;
+			width: 15%;
 			height: 200px;
 			overflow-y: scroll;
 			padding: 20px 0;
@@ -1073,7 +1104,7 @@ import { autoApi } from '@/ajax/post.js'
 				}
 			}
 		  	.choosedList {
-		  		color: #ffffff !important;
+		  		color: #ffffff;
 		  		background-color: #87CECB;
 		  	}
 		}
@@ -1109,6 +1140,9 @@ import { autoApi } from '@/ajax/post.js'
 
 	.listBox {
 		border-bottom: 1px solid #20a0ff;
+		ul {
+			background-color: #ffffff;
+		}
 	}
 
 }
