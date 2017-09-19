@@ -21,7 +21,8 @@
 			</el-tree>
 		</div>
 		
-		<div style="margin-left: 120px;margin-top: 20px;">
+		<div style="margin-left: 20px;margin-top: 20px;">
+			<el-button @click="chooseAll">全选</el-button>
 			<el-button @click="goback">取消</el-button>
 			<el-button type="primary" @click="comfirmSave">保存授权</el-button>
 		</div>
@@ -220,7 +221,23 @@ export default {
 			router.push({
 		  	  name: "shop-user-list",
 		    })
-		}
+		},
+
+		chooseAll() {
+			function findAllNode(data,array) {
+				for(let item in data) {
+					array.push(parseInt(item)); 
+					if (data[item].children) {
+						findAllNode(data[item].children,array);
+					}
+				}
+			}
+
+			let arrayBuf = [];
+			findAllNode(this.sourceData,arrayBuf);
+			this.choosed = arrayBuf;
+			this.$refs.tree.setCheckedKeys(this.choosed,false);
+		},
     },
     mounted(){
         if (this.$route.query.id) {
