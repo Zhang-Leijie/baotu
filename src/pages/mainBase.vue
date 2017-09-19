@@ -7,23 +7,27 @@
       <el-col :span="8" style="width:100%">
         <el-menu  style="background-color:#32323a" unique-opened :default-active="activeRoute" :default-openeds="openedRouteList">
 
-          <el-submenu index="1" v-if="isPermiss('APP_account')">
+          <el-submenu index="1" v-if="isPermiss('APP_account') && isAdmin">
             <template slot="title">账号管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-shop-list'}"  v-if="isPermiss('APP_account_tenant') && isAdmin">
+              <router-link :to="{name:'shop-shop-list'}"  v-if="isPermiss('APP_account_tenant')">
                 <el-menu-item index="1-1" class="sub-title">商家管理</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-user-list'}"  v-if="isPermiss('APP_account_userInfo') && isAdmin">
+              <router-link :to="{name:'shop-user-list'}"  v-if="isPermiss('APP_account_userInfo')">
                 <el-menu-item index="1-2" class="sub-title">用户信息</el-menu-item>
               </router-link>
-              <router-link :to="{name:'shop-staff-list'}"  v-if="isPermiss('SHOP_staff') && !isAdmin">
-                <el-menu-item index="1-3" class="sub-title">员工管理</el-menu-item>
-              </router-link>
-              <router-link :to="{name:'shop-role-list'}"  v-if="isPermiss('APP_account_role') || isPermiss('SHOP_role')">
+              <router-link :to="{name:'shop-role-list'}"  v-if="isPermiss('APP_account_role')">
                 <el-menu-item index="1-4" class="sub-title">角色管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
           </el-submenu>
+
+          <router-link :to="{name:'shop-staff-list'}"  v-if="isPermiss('SHOP_staff') && !isAdmin">
+            <el-menu-item index="1-3">员工管理</el-menu-item>
+          </router-link>
+          <router-link :to="{name:'shop-role-list'}"  v-if="isPermiss('SHOP_role') && !isAdmin">
+            <el-menu-item index="1-4">角色管理</el-menu-item>
+          </router-link>
 
           <el-submenu index="2" v-if="isPermiss('SHOP_set') && !isAdmin">
             <template slot="title">设置</template>
@@ -133,12 +137,12 @@
           <el-submenu index="7" v-if="isPermiss('SHOP_count') && !isAdmin">
             <template slot="title">统计管理</template>
             <el-menu-item-group>
-              <router-link :to="{name:'shop-statistic-statisticManage'}" v-if="isPermiss('APP_count') || isPermiss('SHOP_count_count')">
+              <router-link :to="{name:'shop-statistic-statisticManage'}" v-if="isPermiss('SHOP_count_count')">
                 <el-menu-item index="7-1" class="sub-title">统计管理</el-menu-item>
               </router-link>
             </el-menu-item-group>
             <!-- <el-menu-item-group>
-              <router-link :to="{name:''}" v-if="isPermiss('SHOP_count_business') && !isAdmin">
+              <router-link :to="{name:''}" v-if="isPermiss('SHOP_count_business')">
                 <el-menu-item index="7-2" class="sub-title">商品销售统计</el-menu-item>
               </router-link>
             </el-menu-item-group> -->
