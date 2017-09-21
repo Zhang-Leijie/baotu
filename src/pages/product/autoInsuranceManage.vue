@@ -400,34 +400,6 @@ import { autoApi } from '@/ajax/post.js'
 	    	this.isRateEffective = false;
 	    },
 
-	    insurerChange(value) {
-	  		this.getInfo();	//路由节点列表数据刷新并初始化
-	  		//清除已有的页面选中记录
-	  		//清空所选节点下级所有的选中状态
-	    	for (let j = 0; j < this.chooseds.length; j++) {
-	    		this.chooseds[j] = null;
-	    	}
-	    	this.choosed = null;
-	    	//清空系数列表
-	    	for (let j = 0; j < this.tagData.length; j++) {
-	    		this.tagData[j] = [];
-	    	}
-	    	//清空当前系数
-	    	this.currentRange.id = null;
-	    	this.currentRange.name = null;
-	    	this.currentRange.isCustom = false;
-	    	this.currentRange.maxmiumCustom = 0;
-	    	this.currentRange.depth = 0;
-	    	//清空表格数据
-	    	this.rangeData = [];
-	    	//清空全局系数
-	    	this.baseCommission.shangye = null;
-	    	this.baseCommission.jiaoqiang = null;
-	    	this.selfCommission.shangye = null;
-	    	this.selfCommission.jiaoqiang = null;
-	    	this.isRateEffective = false;
-	    },
-
 	    enterToNext(val,index) {
 	    	this.choosed = val.value;
 	    	this.chooseds[index] = val.value;

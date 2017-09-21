@@ -19,9 +19,9 @@
 					</el-select>
 
 					<div class="toolBarR">
-						<el-date-picker v-model="data1.dateStart" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableStart" @change="date1Change"></el-date-picker>
+						<el-date-picker v-model="data1.dateStart" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableStart" @change="date1Change" :clearable="false"></el-date-picker>
 						<span>-</span>
-						<el-date-picker v-model="data1.dateEnd" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableEnd" @change="date1Change"></el-date-picker>
+						<el-date-picker v-model="data1.dateEnd" type="month" align="right" placeholder="选择日期范围" :picker-options="pickerDisableEnd" @change="date1Change" :clearable="false"></el-date-picker>
 					</div>
 
 					<div ref="main" style="width: 1200px;height:400px;"></div>
@@ -43,9 +43,9 @@
 					    	<el-radio :label="100">月</el-radio>
 					    	<el-radio :label="1000">年</el-radio>
 						</el-radio-group>
-						<el-date-picker v-model="data2.dateBuf" type="date" align="right" placeholder="请选择某一天" v-show="data2.rangeType == '10'" @change="date2Change"></el-date-picker>
-						<el-date-picker v-model="data2.dateBuf" type="month" align="right" placeholder="请选择某一月" v-show="data2.rangeType == '100'" @change="date2Change"></el-date-picker>
-						<el-date-picker v-model="data2.dateBuf" type="year" align="right" placeholder="请选择某一年" v-show="data2.rangeType == '1000'" @change="date2Change"></el-date-picker>
+						<el-date-picker v-model="data2.dateBuf" type="date" align="right" placeholder="请选择某一天" v-show="data2.rangeType == '10'" @change="date2Change" :clearable="false"></el-date-picker>
+						<el-date-picker v-model="data2.dateBuf" type="month" align="right" placeholder="请选择某一月" v-show="data2.rangeType == '100'" @change="date2Change" :clearable="false"></el-date-picker>
+						<el-date-picker v-model="data2.dateBuf" type="year" align="right" placeholder="请选择某一年" v-show="data2.rangeType == '1000'" @change="date2Change" :clearable="false"></el-date-picker>
 					</div>
 
 					<el-table :data="data2.formData" border style="width: 100%;font-size:12px; margin-top:10px">
@@ -73,7 +73,7 @@
 					<el-select v-model="data3.option" placeholder="请选择">
 					    <el-option v-for="item in options" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
-					<el-date-picker v-model="data3.date" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2"></el-date-picker>
+					<el-date-picker v-model="data3.date" type="date" align="right" placeholder="选择日期范围" :picker-options="pickerOptions2" :clearable="false"></el-date-picker>
 
 					<el-table :data="data3.formData" border style="width: 100%;font-size:12px; margin-top:10px" @sort-change="sortChange">
 						<el-table-column prop="demo" label="保险公司" sortable="custom"></el-table-column>
@@ -104,22 +104,20 @@ export default {
 	    	myChart: null,
 	    	data1: {
 	    		option: null,
-	    		dateStart: null,
-	    		dateEnd: null,
-	       	 	optionMultiple: [],
+	    		dateStart: '',
+	    		dateEnd: '',
+	       	 	optionMultiple: [],	
 	    		chartData: {
-	    			xAxis: ['1','2'],
-	    			series: [{
-			            name: null,
-			            type: 'line',
-			            data: [1,2],
-			        }],
-	    		}
+	    			xAxis: [],
+	    			series: [],
+	    		},
+	    		chartXRecord:[],
+	    		chartYRecord: [],		//series里的数据归属列表,顺序与series里的保持相同
 	    	},
 	    	data2: {
 	    		option: null,
-	    		date: null,
-	    		dateBuf: null,
+	    		date: '',
+	    		dateBuf: '',
 	    		rangeType: null,
 	    		tableData: [],
 	    		formData: [],
@@ -130,7 +128,7 @@ export default {
 	    	},
 	    	data3: {
 	    		option: null,
-	    		date: null,
+	    		date: '',
 	    		tableData: [],
 	    		formData: [],
 	    		currentPage: 1,
@@ -151,11 +149,11 @@ export default {
 	  	init() {
 	  		this.options = [
 	    	{
-	    		value: 3,
+	    		value: 'BIZ',
 	    		label: '非营业车'
 	    	},
 	    	{
-	    		value: 12,
+	    		value: 'NO-BIZ',
 	    		label: '营业车'
 	    	},
 	    	{
@@ -255,8 +253,19 @@ export default {
 	  		this.data2.date = new Date();
 
 	  		this.myChart = echarts.init(this.$refs.main);
+
+	  		let firstDay = new Date();
+	  		firstDay.setDate(1);
+	  		firstDay.setMonth(0);
+	  		firstDay.setHours(0, 0, 0, 0);
+	  		let firstNextYear = new Date();
+	  		firstNextYear.setYear(firstNextYear.getFullYear() + 1);
+	  		firstNextYear.setDate(1);
+	  		firstNextYear.setMonth(0);
+	  		firstNextYear.setHours(0, 0, 0, 0);
+	  		this.data1.dateStart = firstDay;
+	  		this.data1.dateEnd = firstNextYear;
 	  		this.getInfo(1);
-	  		this.drawChart();
 	  	},
 
 	  	changeTab(val) {
@@ -299,125 +308,182 @@ export default {
 			    series: this.data1.chartData.series,
 			};
 	        // 使用刚指定的配置项和数据显示图表。
+	        
 	        this.myChart.setOption(option);
 	  	},
 
 	  	getInfo(num) {
 	  		switch(num) {
 	  			case 1:
-				  	//获取y轴数据
-	  				let payload1 = {
-				  		employeeId: window.localStorage.getItem('employeeId'),
-				  		insurers: this.data1.optionMultiple,
-				  		timeType: 'MONTH',		//必选,时间维度
-				  		statisticUsedMod: this.data1.option,	//统计使用性质模值	营利车:1+2 非营利车4+8
-				  		beginTime: this.data1.dateStart?this.data1.dateStart.getTime() / 1000:null,		//开始时间
-				  		endTime: this.data1.dateEnd?this.data1.dateEnd.getTime() / 1000:null,			//结束时间
-				  		groupMod: this.data1.optionMultiple[0]?8:null,
-				  	}
-				  	payload1 = JSON.stringify(payload1)
-				  	autoApi({
-						action: 'policy_statistic_tenant',
-						version: '1.0',
-						payload: payload1
-					},window.localStorage.getItem('token')).then((res)=> {
-						if (res.code == 0) {
-							if (res.attach) {
-								var xArray = [];	
-								var xANDy = [];		//和xArray数组保持同步,记录对应位的xArray代表的日期信息
-								var insurerList = [];	//返回的数据里有哪些公司的数据
+	  				if (this.data1.dateStart && this.data1.dateEnd) {
+	  					//生成x轴数据
+						var xArray = [];	
+						var timeRecord = [];
+	  					var startYear = this.data1.dateStart.getFullYear();
+	  					var endYear = this.data1.dateEnd.getFullYear();
+	  					var startMonth = this.data1.dateStart.getMonth();
+	  					var endMonth = this.data1.dateEnd.getMonth();
+	  					for (var i = startYear; i <= endYear; i++) {
+	  						if (startYear == endYear) {
+	  							for (let j = startMonth; j < endMonth; j++) {
+	  								let monthBuf = j + 1;
+	  								xArray.push(i + '年' + monthBuf + '月');
+	  								timeRecord.push({
+	  									month: j,
+	  									year: i,
+	  								});
+	  							}
+	  						}
+	  						else if(i == startYear)
+	  						{
+	  							for (let j = startMonth; j < 12; j++) {
+	  								let monthBuf = j + 1;
+	  								xArray.push(i + '年' + monthBuf + '月');
+	  								timeRecord.push({
+	  									month: j,
+	  									year: i,
+	  								});
+	  							}
+	  						}
+	  						else if(i == endYear)
+	  						{
+	  							for (let j = 0; j < endMonth; j++) {
+	  								let monthBuf = j + 1;
+	  								xArray.push(i + '年' + monthBuf + '月');
+	  								timeRecord.push({
+	  									month: j,
+	  									year: i,
+	  								});
+	  							}
+	  						}
+	  						else
+	  						{
+	  							for (let j = 0; j < 12; j++) {
+	  								let monthBuf = j + 1;
+	  								xArray.push(i + '年' + monthBuf + '月');
+	  								timeRecord.push({
+	  									month: j,
+	  									year: i,
+	  								});
+	  							}
+	  						}
+	  					}
+	  					this.data1.chartData.xAxis = xArray;
+	  					this.data1.chartXRecord = timeRecord;	//记录相应位x轴数据对应的日期数据
 
-								//整理出数据中的险企列表
-								for (var i = 0; i < res.attach.list.length; i++) {
-									var isInList = false;
-									for (var j = 0; j < insurerList.length; j++) {
-										if (insurerList[j] == res.attach.list[i].insurerName) {
-											isInList = true;
-										}
-									}
-									if (!isInList) {
-										insurerList.push(res.attach.list[i].insurerName);
-									}
-								}
-
-								//对返回的数据按时间进行排序
-								for (var i = 0; i < res.attach.list.length; i++) {
-									for (var j = 0; j < res.attach.list.length - i - 1; j++) {
-										if (((res.attach.list[j].month > res.attach.list[j+1].month) && (res.attach.list[j].year == res.attach.list[j+1].year) || (res.attach.list[j].year > res.attach.list[j+1].year))) {
-											let buf = res.attach.list[j];
-											res.attach.list[j] = res.attach.list[j+1];
-											res.attach.list[j+1] = buf;
-										}
-									}
-								}
-
-								//生成x轴数据
-								for (var i = 0; i < res.attach.list.length; i++) {
-									if ((i > 0) && !((res.attach.list[i].month == res.attach.list[i-1].month) && (res.attach.list[i].year == res.attach.list[i-1].year))) {
-										let monthCount = res.attach.list[i].month + 1;	//用于显示的月份
-										xArray.push(res.attach.list[i].year + '年' + monthCount + '月');	
-										let buf = {
-											month: res.attach.list[i].month, 		//用于对比的月份
-											year: res.attach.list[i].year,
-										}
-										xANDy.push(buf);
-									}
-									else if(i == 0) {
-										let monthCount = res.attach.list[i].month + 1;	//用于显示的月份
-										xArray.push(res.attach.list[i].year + '年' + monthCount + '月');
-										let buf = {
-											month: res.attach.list[i].month, 		//用于对比的月份
-											year: res.attach.list[i].year,
-										}
-										xANDy.push(buf);
-									}
-									else
-									{
-										//当前循环的日期和上一个相同,因此不做处理
-									}
-								}
-								this.data1.chartData.xAxis = xArray;
-								
-								//生成各组的y轴数据
-								this.data1.chartData.series = [];
-								for (var i = 0; i < insurerList.length; i++) {
-									var serieBuf = {
-										name: insurerList[i],
-										type: 'line',
-										data: [],
-									};
-									for (var j = 0; j < res.attach.list.length; j++) {	//遍历数据表
-										if (res.attach.list[j].insurerName == insurerList[i]) {	//找到当前循环的险企名称对应的数据
-											for (var k = 0; k < xANDy.length; k++) {		//找到本条符合名称的数据对应的x轴时间位置
-												if ((xANDy[k].year == res.attach.list[j].year) && (xANDy[k].month == res.attach.list[j].month)) {
-													serieBuf.data[k] = res.attach.list[j].premium;
-												}
+	  					//获取y轴数据
+	  					let payload1 = {
+				  			employeeId: window.localStorage.getItem('employeeId'),
+					  		insurers: this.data1.optionMultiple,
+					  		userType: this.data1.option,		//必选,时间维度
+					  		beginTime: this.data1.dateStart.getTime() / 1000,		//开始时间
+					  		endTime: this.data1.dateEnd.getTime() / 1000,			//结束时间
+					  	}
+					  	payload1 = JSON.stringify(payload1);
+					  	autoApi({
+							action: 'report_1',
+							version: '1.0',
+							payload: payload1,
+						},window.localStorage.getItem('token')).then((res)=> {
+							if (res.code == 0) {
+								if (res.attach) {
+									var insurerList = [];
+									//整理出数据中的险企列表
+									for (var i = 0; i < res.attach.length; i++) {
+										var isInList = false;
+										for (var j = 0; j < insurerList.length; j++) {
+											if (insurerList[j] == res.attach[i].insurerId) {
+												isInList = true;
 											}
 										}
-										else
-										{
-											//当前循环的数据不是想要的
+										if (!isInList) {
+											insurerList.push(res.attach[i].insurerId);
 										}
 									}
-									this.data1.chartData.series.push(serieBuf);
+
+									//对返回的数据按时间进行排序
+									for (var i = 0; i < res.attach.length; i++) {
+										for (var j = 0; j < res.attach.length - i - 1; j++) {
+											if (((res.attach[j].month > res.attach[j+1].month) && (res.attach[j].year == res.attach[j+1].year) || (res.attach[j].year > res.attach[j+1].year))) {
+												let buf = res.attach[j];
+												res.attach[j] = res.attach[j+1];
+												res.attach[j+1] = buf;
+											}
+										}
+									}
+									
+									//生成各组的y轴数据
+									this.data1.chartData.series = [];
+									for (var i = 0; i < insurerList.length; i++) {
+										var serieBuf = {
+											name: this.reInsurName(insurerList[i]),
+											type: 'line',
+											data: [],
+										};
+										for (var j = 0; j < res.attach.length; j++) {	//遍历数据表
+											if (res.attach[j].insurerId == insurerList[i]) {	//找到当前循环的险企ID 对应的数据
+												for (var k = 0; k < this.data1.chartXRecord.length; k++) {		//找到本条符合名称的数据对应的x轴时间位置
+													if ((this.data1.chartXRecord[k].year == res.attach[j].year) && (this.data1.chartXRecord[k].month == res.attach[j].month)) {
+														serieBuf.data[k] = res.attach[j].premium;
+													}
+													else
+													{
+														//本次遍历x轴索引记录的日期和当前遍历数据表的日期不相符,不作操作
+													}
+												}
+											}
+											else
+											{
+												//当前循环的数据不是想要的
+											}
+										}
+
+										//给空数据位写0
+										for (var n = 0; n < this.data1.chartXRecord.length; n++) {
+											if (!serieBuf.data[n]) {
+												serieBuf.data[n] = 0;
+											}
+											else
+											{
+												//当前位置有数据,不做处理
+											}
+										}
+
+										this.data1.chartData.series.push(serieBuf);
+										this.data1.chartYRecord.push(serieBuf.name);
+									}
+
+									//空列表处理(只有横坐标有数据,纵坐标数组对象为空的话会可能会出现未知的问题)
+									if (!(this.data1.chartData.series[0])) {
+										var serieBuf = {
+											name: '无数据',
+											type: 'line',
+											data: [],
+										};
+										for (var n = 0; n < this.data1.chartXRecord.length; n++) {
+											serieBuf.data[n] = 0;
+										}
+										this.data1.chartData.series[0] = serieBuf;
+									}
+
+									this.drawChart();
 								}
-								this.drawChart();
 							}
-						}
-					})
+						})
+	  				}
 	  			break;
 	  			case 2:
 	  				let payload2 = {
 				  		employeeId: window.localStorage.getItem('employeeId'),
 				  		timeType: (this.data2.rangeType == 1 || this.data2.rangeType == 0 || this.data2.rangeType == 10)?'DAY':(this.data2.rangeType == 100)?'MONTH':(this.data2.rangeType == 1000)?'YEAR':null,	//必选,时间维度
-				  		statisticUsedMod: this.data2.option,	//统计使用性质模值	营利车:1+2 非营利车4+8
+				  		userType: this.data2.option,	//统计使用性质模值
 				  		year: this.data2.date?this.data2.date.getFullYear():null,	//年
 				  		month: (this.data2.date && !(this.data2.rangeType == 1000))?this.data2.date.getMonth():null,	//月
-				  		day: (this.data2.date && !(this.data2.rangeType == 100) && !(this.data2.rangeType == 1000))?this.data2.date.getDate() - 1:null,	//月中的天数
+				  		day: (this.data2.date && !(this.data2.rangeType == 100) && !(this.data2.rangeType == 1000))?this.data2.date.getDate():null,	//月中的天数
 				  	}
 				  	payload2 = JSON.stringify(payload2)
 				    autoApi({
-						action: 'policy_statistic_tenant',
+						action: 'report_2',
 						version: '1.0',
 						payload: payload2
 					},window.localStorage.getItem('token')).then((res)=> {
@@ -440,6 +506,15 @@ export default {
 	  		}
 	  	},
 
+	  	reInsurName(id) {
+	  		for (var i = 0; i < this.optionsMultiple.length; i++) {
+	  			if (this.optionsMultiple[i].value == id) {
+	  				return this.optionsMultiple[i].label;
+	  			}
+	  		}
+	  		return '险企(' + id + ')';
+	  	},
+
 	  	option1Change(val) {	//单选下拉框选择时获取数据
 	  		this.getInfo(1);
 	  	},
@@ -453,10 +528,8 @@ export default {
 	  		this.getInfo(1);
 	  	},
 
-	  	date1Change(time) {	//时间范围的起止时间都有,或者都被清除的时候获取数据
-	  		if ((this.data1.dateStart && this.data1.dateEnd) || (!this.data1.dateStart && !this.data1.dateEnd)) {
-				this.getInfo(1);
-	  		}
+	  	date1Change(time) {
+			this.getInfo(1);
 	  	},
 
 	  	option2Change(val) {	//选择下拉框时获取数据
