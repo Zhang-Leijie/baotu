@@ -77,7 +77,7 @@
 					    <el-table-column label="佣金比例">
 					    	<template scope="scope">
 					    		<span v-if="!(editedRatio.id == scope.row.id)">{{scope.row.rate?scope.row.rate:''}}</span>
-					    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)" v-model="editedRatio.rate"></el-input>
+					    		<el-input v-if="editedRatio.id && (editedRatio.id == scope.row.id)" v-model="editedRatio.rate" style="width:90%;"></el-input>
 					    		<span v-if="scope.row.rate || (editedRatio.id && (editedRatio.id == scope.row.id))">%</span>
 					    	</template>
 					    </el-table-column>
