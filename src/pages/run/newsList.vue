@@ -28,9 +28,9 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			      <template scope="scope">
-		      		<el-button type="text" size="small">
-						<a :href="scope.row.link">查看评论</a>
-		      		</el-button>
+		      		<a :href="scope.row.link">
+						<el-button type="text" size="small">查看评论</el-button>
+		      		</a>
 			        <el-button type="text" size="small" @click="deleteNews(scope.row)">删除</el-button>
 			      </template>
 			    </el-table-column>

@@ -33,11 +33,9 @@
 						<el-button type="text" size="small" @click="changeState(scope.row.uid,scope.row.isAble)" v-if="!(myId == scope.row.uid) && !((scope.row.mod & 1) == 1)">
 			      			{{scope.row.isAble?'禁用':'启用'}}
 			    		</el-button>
-						<el-button type="text" size="small" v-if="!(myId == scope.row.uid) && isRoot">
-				    		<router-link :to="{name:'shop-user-permission',query:{id:scope.row.uid,name:scope.row.name}}">
-				      			授权
-				      		</router-link>
-			    		</el-button>
+						<router-link :to="{name:'shop-user-permission',query:{id:scope.row.uid,name:scope.row.name}}" v-if="!(myId == scope.row.uid) && isRoot">
+							<el-button type="text" size="small">授权</el-button>
+						</router-link>
 				    </template>
 			    </el-table-column>
 			</el-table>

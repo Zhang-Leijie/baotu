@@ -49,11 +49,9 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'insurer-edit',query:{id:scope.row.id, name:scope.row.name, icon:scope.row.icon, biHuId:scope.row.biHuId, leBaoBaId:scope.row.leBaoBaId}}">
-			      			编辑
-				      		</router-link>
-			    		</el-button>
+		    			<router-link :to="{name:'insurer-edit',query:{id:scope.row.id, name:scope.row.name, icon:scope.row.icon, biHuId:scope.row.biHuId, leBaoBaId:scope.row.leBaoBaId}}">
+				    		<el-button type="text" size="small">编辑</el-button>
+			      		</router-link>
 			    	</template>
 			    </el-table-column>
 			</el-table>

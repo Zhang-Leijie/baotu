@@ -31,11 +31,9 @@
 			      label="操作"
 			      min-width="150">
 			      <template scope="scope">
-		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-role-edit',query:{id:scope.row.id}}">
-			      			编辑
-			      		</router-link>
-		      		</el-button>
+					<router-link :to="{name:'shop-role-edit',query:{id:scope.row.id}}">
+			      		<el-button type="text" size="small">编辑</el-button>
+		      		</router-link>
 			        <el-button type="text" size="small">禁用</el-button>
 			        <el-button type="text" size="small">启用</el-button>
 			      </template>

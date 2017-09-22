@@ -40,16 +40,12 @@
 			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)">
 			      			{{scope.row.isAble?'禁用':'启用'}}
 			    		</el-button>
-			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'app-edit',query:{id:scope.row.id, name:scope.row.name, regionName:scope.row.regionName, region:scope.row.region, maxArticlesCount:scope.row.maxArticlesCount, maxTenantsCount:scope.row.maxTenantsCount}}">
-			      			编辑
-				      		</router-link>
-			    		</el-button>
-			    		<!-- <el-button type="text" size="small">
-			    			<router-link :to="{name:'APPPermission',query:{id:scope.row.id, name:scope.row.name}}">
-			      			授权
-				      		</router-link>
-			    		</el-button> -->
+		    			<router-link :to="{name:'app-edit',query:{id:scope.row.id, name:scope.row.name, regionName:scope.row.regionName, region:scope.row.region, maxArticlesCount:scope.row.maxArticlesCount, maxTenantsCount:scope.row.maxTenantsCount}}">
+				    		<el-button type="text" size="small">编辑</el-button>
+			      		</router-link>
+		    			<router-link :to="{name:'APPPermission',query:{id:scope.row.id, name:scope.row.name}}">
+				    		<el-button type="text" size="small">授权</el-button>
+			      		</router-link>
 			    	</template>
 			    </el-table-column>
 			</el-table>

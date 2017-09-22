@@ -7,7 +7,7 @@
 	      		</router-link>
 			</el-breadcrumb-item>
 		  	<el-breadcrumb-item>
-		  	<router-link :to="{name:'deptsList',query:{id: grandId}}">
+			<router-link :to="{name:'deptsList',query:{id: grandId}}">
 		      		汽车车系列表
 	      		</router-link>
 		  	</el-breadcrumb-item>

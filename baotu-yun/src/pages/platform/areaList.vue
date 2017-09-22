@@ -42,11 +42,9 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'area-edit',query:{id:scope.row.id, name:scope.row.name, biHuId:scope.row.biHuId, renewalPeriod:scope.row.renewalPeriod, vehiclePriceNoTax:scope.row.vehiclePriceNoTax, code:scope.row.code}}">
-			      			编辑
-				      		</router-link>
-			    		</el-button>
+		    			<router-link :to="{name:'area-edit',query:{id:scope.row.id, name:scope.row.name, biHuId:scope.row.biHuId, renewalPeriod:scope.row.renewalPeriod, vehiclePriceNoTax:scope.row.vehiclePriceNoTax, code:scope.row.code}}">
+				    		<el-button type="text" size="small">编辑</el-button>
+			      		</router-link>
 			    	</template>
 			    </el-table-column>
 			</el-table>

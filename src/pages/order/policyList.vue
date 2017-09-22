@@ -38,9 +38,9 @@
 			    
 			    <el-table-column label="操作">
 			      <template scope="scope">
-		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-order-policyDetail',query:{id:scope.row._id}}">查看</router-link>
-		      		</el-button>
+			      	<router-link :to="{name:'shop-order-policyDetail',query:{id:scope.row._id}}">
+						<el-button type="text" size="small">查看</el-button>
+					</router-link>
 			      </template>
 			    </el-table-column>
 			</el-table>

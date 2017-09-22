@@ -56,16 +56,12 @@
 					<el-button type="text" size="small" @click="changeState(scope.row.tid,scope.row.isAble)">
 		      			{{scope.row.isAble?'禁用':'启用'}}
 		    		</el-button>
-		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-shop-edit',query:{tid:scope.row.tid,contacts:scope.row.contacts,contractsMobile:scope.row.contractsMobile,expire:scope.row.expire}}">
-			      			编辑
-			      		</router-link>
-		      		</el-button>
-		      		<!-- <el-button type="text" size="small">
-						<router-link :to="{name:'shop-shop-permission',query:{id:scope.row.tid,name:scope.row.name}}">
-			      			授权
-			      		</router-link>
-		      		</el-button> -->
+					<router-link :to="{name:'shop-shop-edit',query:{tid:scope.row.tid,contacts:scope.row.contacts,contractsMobile:scope.row.contractsMobile,expire:scope.row.expire}}">
+			      		<el-button type="text" size="small">编辑</el-button>
+		      		</router-link>
+					<!-- <router-link :to="{name:'shop-shop-permission',query:{id:scope.row.tid,name:scope.row.name}}">
+			      		<el-button type="text" size="small">授权</el-button>
+		      		</router-link> -->
 			        <!-- <el-button type="text" size="small">禁用</el-button>
 			        <el-button type="text" size="small">启用</el-button>
 			        <el-button type="text" size="small">轮播图</el-button> -->

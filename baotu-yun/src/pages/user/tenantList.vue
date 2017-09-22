@@ -34,11 +34,9 @@
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'tenant-edit',query:{tid:scope.row.tid}}">
-			      			详情
-				      		</router-link>
-			    		</el-button>
+		    			<router-link :to="{name:'tenant-edit',query:{tid:scope.row.tid}}">
+				    		<el-button type="text" size="small">详情</el-button>
+			      		</router-link>
 			    	</template>
 			    </el-table-column>
 			</el-table>

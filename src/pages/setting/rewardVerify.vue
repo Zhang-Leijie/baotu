@@ -55,7 +55,7 @@
 	    		<el-table-column label="操作">
 	    			<template scope="scope">
 						<router-link :to="{name:'shop-set-rewardVerifyDetail',query:{id:scope.row.employeeId}}">
-			      			查看流水
+			      			<el-button type="text" size="small">查看流水</el-button>
 			      		</router-link>
 			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,true)">同意</el-button>
 			      		<el-button type="text" size="small" @click="checkThisOne(scope.row,false)">拒绝</el-button>

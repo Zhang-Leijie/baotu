@@ -29,11 +29,9 @@
 			    		<el-button type="text" size="small" @click="changeState(scope.row.id,scope.row.isAble)" v-if="!(scope.row.id == myId) && !((scope.row.mod & 1) == 1)">
 			      			{{scope.row.isAble?'禁用':'启用'}}
 			    		</el-button>
-			    		<el-button type="text" size="small" v-if="!(scope.row.id == myId) && isRoot">
-			    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id, name:scope.row.name}}">
-			      			授权
-				      		</router-link>
-			    		</el-button>
+		    			<router-link :to="{name:'GMPermission',query:{id:scope.row.id, name:scope.row.name}}">
+				    		<el-button type="text" size="small" v-if="!(scope.row.id == myId) && isRoot">授权</el-button>
+			      		</router-link>
 			    	</template>
 			    </el-table-column>
 			</el-table>

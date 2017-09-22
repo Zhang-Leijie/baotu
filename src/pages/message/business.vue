@@ -63,11 +63,9 @@
 			      label="操作"
 			      min-width="150">
 			      <template scope="scope">
-		      		<el-button type="text" size="small">
-						<router-link :to="{name:'shop-msg-noticecheck',query:{id:scope.row.id}}">
-			      			查看
-			      		</router-link>
-		      		</el-button>
+			      	<router-link :to="{name:'shop-msg-noticecheck',query:{id:scope.row.id}}">
+			      		<el-button type="text" size="small">查看</el-button>
+		      		</router-link>
 			        <el-button type="text" size="small">删除</el-button>
 			      </template>
 			    </el-table-column>

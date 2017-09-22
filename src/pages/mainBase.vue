@@ -160,9 +160,9 @@
           <img src="../assets/demoAvatar.jpg" style="width:100%;height:100%;border-radius:50%"/>
         </div>
         <div class="head-word">
-            <router-link :to="{name:'sign-in'}">
-              <span @click="logout" style="color:#4db3ff;font-size:14px;cursor:pointer">注销</span>
-            </router-link>
+          <router-link :to="{name:'sign-in'}">
+            <el-button type="text" @click="logout" style="color:#4db3ff;font-size:14px;cursor:pointer;height:60px;">注销</el-button>
+          </router-link>
         </div>
       </div>
       <div style="float:right;margin-right:20px;">
@@ -187,7 +187,7 @@ export default {
       name: null,
       avatar: null,
       activeRoute: '',
-      openedRouteList: [],
+      openedRouteList: [''],
       isAdmin: null,
       user_Modulars: [],
       employee_Modulars: [],
@@ -406,7 +406,6 @@ export default {
       .head-word{
         float: left;
         margin-left: 20px;
-        margin-top: 18px;
         .name{
           font-size: 16px;
           color: #333;
