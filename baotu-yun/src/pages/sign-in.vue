@@ -31,61 +31,72 @@
 import { logApi } from '@/ajax/post.js'
 
 export default {
-    data() {
-      return {
-         form:{
-         	account:'1',
-         	password:'123456',
-         },
-         rules: {
-          account: [
-            { required: true, message: '请输入手机号', trigger: 'blur' },
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-          ],
-        },
-        ipAddr: null
-      }
-    },
-    methods: {
-       goSetCode(){
-       			router.push({name:'setcode',query:{account:this.form.account}});
-       },
-       login(){
-          localStorage.setItem('ipAddr',this.ipAddr);
-     			logApi({
-       			action: 'login',
-       			id: this.form.account,
-       			pwd: this.form.password,
-       		}).then((res)=> {
-       			if (res.code == 0) {
-              (res.attach.mod & 1) == 1?localStorage.setItem('isRoot_baotu','y'):localStorage.setItem('isRoot_baotu','n');
-              localStorage.setItem('loginId_baotu',res.attach.uid);
-              localStorage.setItem('tokenPlate',res.attach.token);
-              // localStorage.setItem('userId',res.attach.user.uid);
-              localStorage.setItem('uid',res.attach.uid);
-       				router.push({name:'welcome'})
-              this.$message({
-                type: 'success',
-                message: '正在访问:'+ window.localStorage.getItem('ipAddr')
-              });   
-       			}
-       		})
-       },
-       changeIpInside() {
-        this.ipAddr = 'http://192.168.1.3';
-        localStorage.setItem('ipAddr',this.ipAddr);
-        this.$message({
-          type: 'success',
-          message: '已改变目标地址'
-        }); 
-       }
-    },
-    mounted(){
-        this.ipAddr = 'http://101.37.34.55';
-        localStorage.setItem('ipAddr',this.ipAddr);
+  data() {
+    return {
+      form: {
+        account: '1',
+        password: '123456',
+      },
+      rules: {
+        account: [{
+          required: true,
+          message: '请输入手机号',
+          trigger: 'blur'
+        }, ],
+        password: [{
+          required: true,
+          message: '请输入密码',
+          trigger: 'blur'
+        }, ],
+      },
+      ipAddr: null
     }
+  },
+  methods: {
+    goSetCode() {
+      router.push({
+        name: 'setcode',
+        query: {
+          account: this.form.account
+        }
+      });
+    },
+    login() {
+      localStorage.setItem('ipAddr', this.ipAddr);
+      logApi({
+        action: 'login',
+        id: this.form.account,
+        pwd: this.form.password,
+      }).then((res) => {
+        if (res.code == 0) {
+          (res.attach.mod & 1) == 1 ? localStorage.setItem('isRoot_baotu', 'y') : localStorage.setItem('isRoot_baotu', 'n');
+          localStorage.setItem('loginId_baotu', res.attach.uid);
+          localStorage.setItem('tokenPlate', res.attach.token);
+          // localStorage.setItem('userId',res.attach.user.uid);
+          localStorage.setItem('uid', res.attach.uid);
+          router.push({
+            name: 'welcome'
+          })
+          this.$message({
+            type: 'success',
+            message: '正在访问:' + window.localStorage.getItem('ipAddr')
+          });
+        }
+      })
+    },
+    changeIpInside() {
+      this.ipAddr = 'http://192.168.1.3';
+      localStorage.setItem('ipAddr', this.ipAddr);
+      this.$message({
+        type: 'success',
+        message: '已改变目标地址'
+      });
+    }
+  },
+  mounted() {
+    this.ipAddr = 'http://101.37.34.55';
+    localStorage.setItem('ipAddr', this.ipAddr);
+  }
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

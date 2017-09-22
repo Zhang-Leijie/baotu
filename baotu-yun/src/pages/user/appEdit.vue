@@ -35,133 +35,129 @@
 import { masterApi } from '@/ajax/post.js'
 import regionData from '@/region.js'
 
-	export default {
-	    data() {
-	      return {
-	      	id: null,
-        	regionFormData: [],		//格式化行政区划表
-	        regions: [],			//一级行政区划表
-	        form: {
-	        	name: null,
-	        	region: null,
-	        	maxShop: null,
-	        	maxHold: null
-	        }
-	      };
-	    },
-	    methods: {
-	       formatDate(time){
-			  var   x = (time - 0) * 1000
-			  
-			  var   now = new Date(x) 
-			  var   year = now.getFullYear();     
-			  var   month = "0" + (now.getMonth()+1);     
-			  var   date = "0" +(now.getDate());   
-			  var   hour = "0" +now.getHours();
-			  var   min =  "0" +now.getMinutes();
-			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-			},
-
-			comfirmAdd() {
-				if (this.form.name && this.form.region && this.form.maxHold && this.form.maxShop) {
-					let payload = {
-						region: this.form.region,
-						name: this.form.name,
-						maxTenantsCount: this.form.maxShop,
-						maxArticlesCount: this.form.maxHold
-					}
-					payload = JSON.stringify(payload);
-					masterApi({
-						action: 'app_edit',
-						version: '1.0',
-						crudType: 1,
-						payload: payload
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						if (res.code == 0) {
-							this.$message({
-					            type: 'success',
-					            message: '添加平台成功'
-					        });
-						    router.push({
-						  	  name: "appList"
-						    })
-						}
-					})
-				}
-				else
-				{
-					this.$message({
-			            type: 'error',
-			            message: '信息填写不完整'
-			        });
-				}
-			},
-
-			comfirmSave() {
-				if (this.form.maxHold && this.form.maxShop) {
-					let payload = {
-						appId: this.id,
-						region: this.form.region,
-						name: this.form.name,
-						maxTenantsCount: this.form.maxShop,
-						maxArticlesCount: this.form.maxHold
-					}
-					payload = JSON.stringify(payload);
-					masterApi({
-						action: 'app_edit',
-						version: '1.0',
-						crudType: 4,
-						payload: payload
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						if (res.code == 0) {
-							this.$message({
-					            type: 'success',
-					            message: '平台修改成功'
-					        });
-						    router.push({
-						  	  name: "appList"
-						    })
-						}
-					})
-				}
-				else
-				{
-					this.$message({
-			            type: 'error',
-			            message: '信息填写不完整'
-			        });
-				}
-			},
-
-			goback() {
-				router.push({
-			  	  name: "appList"
-			    })
+export default {
+	data() {
+		return {
+			id: null,
+			regionFormData: [], //格式化行政区划表
+			regions: [], //一级行政区划表
+			form: {
+				name: null,
+				region: null,
+				maxShop: null,
+				maxHold: null
 			}
-	    },
-	    mounted(){
-	        if (this.$route.query) {
-	        	this.id = this.$route.query.id;
-		        this.form.name = this.$route.query.name;
-		        let regionName = this.$route.query.regionName;
-		        let region = this.$route.query.region;
-		        this.regions = [
-		        	[regionName,region]
-		        ];
-		        this.form.region = this.$route.query.region;
-		        this.form.maxHold = this.$route.query.maxArticlesCount;
-		        this.form.maxShop = this.$route.query.maxTenantsCount;
-	        }
-	        
-	        for(let index in regionData) {
-	        	let buf = {
-	        		value: regionData[index],
-	        		label: index
-	        	}
-	        	this.regionFormData.push(buf);
-	        }
-	    }
+		};
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000
+
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
+		},
+
+		comfirmAdd() {
+			if (this.form.name && this.form.region && this.form.maxHold && this.form.maxShop) {
+				let payload = {
+					region: this.form.region,
+					name: this.form.name,
+					maxTenantsCount: this.form.maxShop,
+					maxArticlesCount: this.form.maxHold
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'app_edit',
+					version: '1.0',
+					crudType: 1,
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							type: 'success',
+							message: '添加平台成功'
+						});
+						router.push({
+							name: "appList"
+						})
+					}
+				})
+			} else {
+				this.$message({
+					type: 'error',
+					message: '信息填写不完整'
+				});
+			}
+		},
+
+		comfirmSave() {
+			if (this.form.maxHold && this.form.maxShop) {
+				let payload = {
+					appId: this.id,
+					region: this.form.region,
+					name: this.form.name,
+					maxTenantsCount: this.form.maxShop,
+					maxArticlesCount: this.form.maxHold
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'app_edit',
+					version: '1.0',
+					crudType: 4,
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							type: 'success',
+							message: '平台修改成功'
+						});
+						router.push({
+							name: "appList"
+						})
+					}
+				})
+			} else {
+				this.$message({
+					type: 'error',
+					message: '信息填写不完整'
+				});
+			}
+		},
+
+		goback() {
+			router.push({
+				name: "appList"
+			})
+		}
+	},
+	mounted() {
+		if (this.$route.query) {
+			this.id = this.$route.query.id;
+			this.form.name = this.$route.query.name;
+			let regionName = this.$route.query.regionName;
+			let region = this.$route.query.region;
+			this.regions = [
+				[regionName, region]
+			];
+			this.form.region = this.$route.query.region;
+			this.form.maxHold = this.$route.query.maxArticlesCount;
+			this.form.maxShop = this.$route.query.maxTenantsCount;
+		}
+
+		for (let index in regionData) {
+			let buf = {
+				value: regionData[index],
+				label: index
+			}
+			this.regionFormData.push(buf);
+		}
 	}
+}
 </script>
 <style lang="less">
 	.appbox{

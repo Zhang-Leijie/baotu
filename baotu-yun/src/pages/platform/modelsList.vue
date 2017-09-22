@@ -61,181 +61,180 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	      grandId: null,		//所属品牌ID
-	      id: null,				//所属车系ID
-	      currentPage: 1,
-	      pageCount: null,
-	      length: null,
-	      pageSize: 10,
-	      tableData: [],
-	      formData: [],
-	      dialogFormVisible: false,
-	      isEdit: false,
-	      editForm: {
-	      	id: null,
-	      	name: null
-	      },
-	      addForm: {
-	      	name:null
-	      }
+export default {
+	data() {
+		return {
+			grandId: null, //所属品牌ID
+			id: null, //所属车系ID
+			currentPage: 1,
+			pageCount: null,
+			length: null,
+			pageSize: 10,
+			tableData: [],
+			formData: [],
+			dialogFormVisible: false,
+			isEdit: false,
+			editForm: {
+				id: null,
+				name: null
+			},
+			addForm: {
+				name: null
+			}
 		}
-	  },
-	  methods: {
-	  	formatDate(time) {
-		  var   x = (time - 0) * 1000;
-		  
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" + (now.getDate());   
-		  var   hour = "0" + now.getHours();
-		  var   min =  "0" + now.getMinutes();
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000;
 
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-	  		let payload = {
-	  			id: this.id
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'vehicle_models',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.tableData = res.attach;
-	   					this.length = res.attach.length;
-	   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-	   					this.showPage();
-	   				}
-       			}
-	   		})
-	  	},
+		getInfo() {
+			let payload = {
+				id: this.id
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'vehicle_models',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.tableData = res.attach;
+						this.length = res.attach.length;
+						this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+						this.showPage();
+					}
+				}
+			})
+		},
 
-	  	confirmAdd() {
-	  		this.dialogFormVisible = false;
-	  		let payload = {
-	  			deptId: this.id,
-	  			name: this.addForm.name,
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'vehicle_model_edit',
-	   			version: '1.0',
-	   			crudType: 1,
-	   			payload: payload,
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-   					this.$message({
-   						message: '新增厂牌型号成功',
-   						type: 'success'
-   					});
-   					this.getInfo();
-   					this.addForm.name = null;
-       			}
-	   		})
-	  	},
+		confirmAdd() {
+			this.dialogFormVisible = false;
+			let payload = {
+				deptId: this.id,
+				name: this.addForm.name,
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'vehicle_model_edit',
+				version: '1.0',
+				crudType: 1,
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.$message({
+						message: '新增厂牌型号成功',
+						type: 'success'
+					});
+					this.getInfo();
+					this.addForm.name = null;
+				}
+			})
+		},
 
-	  	editBrands(row) {
-	  		this.isEdit = true;
-	  		this.editForm.id = row.id;
-	  		this.editForm.name = row.name;
-	  	},
+		editBrands(row) {
+			this.isEdit = true;
+			this.editForm.id = row.id;
+			this.editForm.name = row.name;
+		},
 
-	  	confirmEdit() {
-	  		let payload = {
-	  			name: this.editForm.name,
-	  			id: this.editForm.id,
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'vehicle_model_edit',
-	   			version: '1.0',
-	   			crudType: 4,
-	   			payload: payload,
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-   					this.$message({
-   						message: '已保存修改',
-   						type: 'success'
-   					});
-   					this.isEdit = false;
-   					this.editForm.id = null;
-   					this.editForm.name = null;
-   					this.getInfo();
-       			}
-	   		})
-	  	},
+		confirmEdit() {
+			let payload = {
+				name: this.editForm.name,
+				id: this.editForm.id,
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'vehicle_model_edit',
+				version: '1.0',
+				crudType: 4,
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.$message({
+						message: '已保存修改',
+						type: 'success'
+					});
+					this.isEdit = false;
+					this.editForm.id = null;
+					this.editForm.name = null;
+					this.getInfo();
+				}
+			})
+		},
 
-	  	cancelEdit() {
-	  		this.isEdit = false;
-	  		this.editForm.id = null;
-	  		this.editForm.name = null;
-	  	},
+		cancelEdit() {
+			this.isEdit = false;
+			this.editForm.id = null;
+			this.editForm.name = null;
+		},
 
-	  	// deleteBrands(row) {
-	  	// 	let id = row.id;
-	  	// 	masterApi({
-	   // 			action: 'vehicle_brand_edit',
-	   // 			version: '1.0',
-	   // 			crudType: 8,
-	   // 			id, id
-	   // 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   // 			if (res.code == 0) {
-   	// 				this.$message({
-   	// 					message: '删除完成',
-   	// 					type: 'success'
-   	// 				});
-   	// 				this.getInfo();
-    //    			}
-	   // 		})
-	  	// },
+		// deleteBrands(row) {
+		// 	let id = row.id;
+		// 	masterApi({
+		// 			action: 'vehicle_brand_edit',
+		// 			version: '1.0',
+		// 			crudType: 8,
+		// 			id, id
+		// 		},window.localStorage.getItem('tokenPlate')).then((res)=> {
+		// 			if (res.code == 0) {
+		// 				this.$message({
+		// 					message: '删除完成',
+		// 					type: 'success'
+		// 				});
+		// 				this.getInfo();
+		//    			}
+		// 		})
+		// },
 
-	  	handleFormClose() {
-	  		this.dialogFormVisible = false;
-	  	},
+		handleFormClose() {
+			this.dialogFormVisible = false;
+		},
 
-	  	showPage() {
-	  		this.formData = [];
-	  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  		else
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  	},
+		showPage() {
+			this.formData = [];
+			if (this.length * this.pageCount < this.pageSize * this.currentPage) {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			} else {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			}
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.showPage(); 
-	    },
-	  },
-	  mounted() {
-	  	if (this.$route.query) {
-	  		this.id = this.$route.query.id;
-	  		this.grandId = this.$route.query.parentId;
-	  		this.getInfo();
-	  	}
-	  }
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.showPage();
+		},
+	},
+	mounted() {
+		if (this.$route.query) {
+			this.id = this.$route.query.id;
+			this.grandId = this.$route.query.parentId;
+			this.getInfo();
+		}
 	}
+}
 </script>
 <style lang="less">
 .modelsList{

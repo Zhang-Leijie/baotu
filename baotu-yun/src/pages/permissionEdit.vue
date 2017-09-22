@@ -124,410 +124,394 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	    data() {
-	      return {
-	        modularType: 'BT',
-	        dialogAddVisible: false,
-	        addModular: {			//新增模块
-	        	name: null,
-	        	cid: null,
-	        },
-	        dialogEditVisible: false,
-	        editModular: {			//编辑模块
-	        	name: null,
-	        },
-	        modulars: [{
-	        	value: 'BT',
-	        	label: '保途模块',
-	        },
-	        {
-	        	value: 'APP',
-	        	label: '平台模块',
-	        },
-	        {
-	        	value: 'TENANT',
-	        	label: '商户模块',
-	        }],
-	        dataBT: [],
-	        dataAPP: [],
-	        dataTENANT: [],
-	        choosed: [],
-	        // defaultChoosed: [],
-	        defaultProps: {
-	          children: 'children',
-	          label: 'label'
-	        },
-	        //接口部分数据
-	        apiData: [],
-	        apiUpdate: {
-	        	addPkg: null,
-	        	addName: null,
-	        },
-	        editedAPI: {
-	        	id: null,
-	        	pkg: null,
-	        	name: null,
-	        },
-	        dialogAPIAddVisible: false,
-	        dialogAPIEditVisible: false,
-	      };
-	    },
-	    watch: {
-	    	modularType(new1,old) {
-				this.choosed[0] = null;
-				this.apiData = [];
-	    	}
-	    },
-	    methods: {
-	       formatDate(time){
-			  var   x = (time - 0) * 1000
-			  
-			  var   now = new Date(x) 
-			  var   year = now.getFullYear();     
-			  var   month = "0" + (now.getMonth()+1);     
-			  var   date = "0" +(now.getDate());   
-			  var   hour = "0" +now.getHours();
-			  var   min =  "0" +now.getMinutes();
-			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+export default {
+	data() {
+		return {
+			modularType: 'BT',
+			dialogAddVisible: false,
+			addModular: { //新增模块
+				name: null,
+				cid: null,
 			},
+			dialogEditVisible: false,
+			editModular: { //编辑模块
+				name: null,
+			},
+			modulars: [{
+				value: 'BT',
+				label: '保途模块',
+			}, {
+				value: 'APP',
+				label: '平台模块',
+			}, {
+				value: 'TENANT',
+				label: '商户模块',
+			}],
+			dataBT: [],
+			dataAPP: [],
+			dataTENANT: [],
+			choosed: [],
+			// defaultChoosed: [],
+			defaultProps: {
+				children: 'children',
+				label: 'label'
+			},
+			//接口部分数据
+			apiData: [],
+			apiUpdate: {
+				addPkg: null,
+				addName: null,
+			},
+			editedAPI: {
+				id: null,
+				pkg: null,
+				name: null,
+			},
+			dialogAPIAddVisible: false,
+			dialogAPIEditVisible: false,
+		};
+	},
+	watch: {
+		modularType(new1, old) {
+			this.choosed[0] = null;
+			this.apiData = [];
+		}
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000
 
-			getModulars() {
-				var payload = {
-					type: null,
-				}
-				if (this.modularType == "BT") {
-					payload.type = 'ADMIN';
-				}
-				else if (this.modularType == "APP") {
-					payload.type = 'USER';
-				}
-				else if (this.modularType == "TENANT") {
-					payload.type = 'EMPLOYEE';
-				}
-				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'modulars',
-					version: '1.0',
-					payload: payload,
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					if (res.code == 0) {
-						if (res.attach) {
-							this.drawTree(res.attach);
-						}
-						else
-						{
-							this.dataBT = [];
-							this.dataAPP = [];
-							this.dataTENANT = [];
-						}
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
+		},
+
+		getModulars() {
+			var payload = {
+				type: null,
+			}
+			if (this.modularType == "BT") {
+				payload.type = 'ADMIN';
+			} else if (this.modularType == "APP") {
+				payload.type = 'USER';
+			} else if (this.modularType == "TENANT") {
+				payload.type = 'EMPLOYEE';
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'modulars',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.drawTree(res.attach);
+					} else {
+						this.dataBT = [];
+						this.dataAPP = [];
+						this.dataTENANT = [];
 					}
-				})
-			},
+				}
+			})
+		},
 
-			drawTree(nodeData) {
-				function deep(data,formData) {//递归处理数据,将对象转化成对象数组并精简数据
-					for (let children in data) {
-						let buf = {
-							id: data[children].node.id,
-							label: data[children].node.name,
-							children: []
-						}
-						formData.push(buf);
-						for (let i = 0; i < formData.length; i++) {
-							if (formData[i].id == children) {//判断子节点的归属
-								deep(data[children].children,formData[i].children);
-							}
+		drawTree(nodeData) {
+			function deep(data, formData) { //递归处理数据,将对象转化成对象数组并精简数据
+				for (let children in data) {
+					let buf = {
+						id: data[children].node.id,
+						label: data[children].node.name,
+						children: []
+					}
+					formData.push(buf);
+					for (let i = 0; i < formData.length; i++) {
+						if (formData[i].id == children) { //判断子节点的归属
+							deep(data[children].children, formData[i].children);
 						}
 					}
 				}
+			}
 
-				let formData = [];
-				deep(nodeData,formData);
-				if (this.modularType == "BT") {
-					this.dataBT = formData;
-				}
-				else if(this.modularType == "APP") {
-					this.dataAPP = formData;
-				}
-				else if(this.modularType == "TENANT") {
-					this.dataTENANT = formData;
-				}
-			},
+			let formData = [];
+			deep(nodeData, formData);
+			if (this.modularType == "BT") {
+				this.dataBT = formData;
+			} else if (this.modularType == "APP") {
+				this.dataAPP = formData;
+			} else if (this.modularType == "TENANT") {
+				this.dataTENANT = formData;
+			}
+		},
 
-			handleCheckChange(data, checked, indeterminate) {//element的树形控件current-node-key属性无效,也没有单选设置,故用此方法实现单选控制
-				// this.dataBT = [];
-				// this.getModulars();
-				if (checked) {
-					this.choosed[0] = data.id;
-					this.getModulars();
-					this.getAPIs();
-				}
-				else if(data.id == this.choosed[0])
-				{
-					this.choosed = [];
-				}
+		handleCheckChange(data, checked, indeterminate) { //element的树形控件current-node-key属性无效,也没有单选设置,故用此方法实现单选控制
+			// this.dataBT = [];
+			// this.getModulars();
+			if (checked) {
+				this.choosed[0] = data.id;
+				this.getModulars();
+				this.getAPIs();
+			} else if (data.id == this.choosed[0]) {
+				this.choosed = [];
+			}
 			//data:传递给 data 属性的数组中该节点所对应的对象、
 			//checked:节点本身是否被选中、
 			//indeterminate:节点的子树中是否有被选中的节点
-			},
+		},
 
-			handleAddClose() {
-				this.dialogAddVisible = false;
-			},
+		handleAddClose() {
+			this.dialogAddVisible = false;
+		},
 
-			handleEditClose() {
-				this.dialogEditVisible = false;
-			},
+		handleEditClose() {
+			this.dialogEditVisible = false;
+		},
 
-			handleAPIAddClose() {
-				this.dialogAPIAddVisible = false;
-			},
+		handleAPIAddClose() {
+			this.dialogAPIAddVisible = false;
+		},
 
-			handleAPIEditClose() {
-				this.dialogAPIEditVisible = false;
-			},
+		handleAPIEditClose() {
+			this.dialogAPIEditVisible = false;
+		},
 
-			reModularType(val) {
-				switch(val) {
-					case 'BT':
+		reModularType(val) {
+			switch (val) {
+				case 'BT':
 					return '保途模块';
 					break;
-					case 'APP': 
+				case 'APP':
 					return '平台模块';
 					break;
-					case 'TENANT':
+				case 'TENANT':
 					return '商家模块';
 					break;
-					default:
+				default:
 					return val;
 					break;
-				}
-			},
+			}
+		},
 
-			confirmAdd() {
-				this.dialogAddVisible = false;
-				if (this.addModular.name && this.addModular.cid) {
-					let payload = {
-						name: this.addModular.name,
-						modularType: this.modularType,
-						parentId: this.choosed[0],
-						cid: this.addModular.cid,
-					}
-					if (this.modularType == "BT") {
-						payload.modularType = 'ADMIN';
-					}
-					else if (this.modularType == "APP") {
-						payload.modularType = 'USER';
-					}
-					else if (this.modularType == "TENANT") {
-						payload.modularType = 'EMPLOYEE';
-					}
-					payload = JSON.stringify(payload);
-					if (this.addModular.name) {
-						masterApi({
-							action: 'modular_edit',
-							version: '1.0',
-							crudType: '1',
-							payload: payload,
-						},window.localStorage.getItem('tokenPlate')).then((res)=> {
-							if (res.code == 0) {
-								this.getModulars();
-								this.addModular.name = null;
-								this.addModular.cid = null;
-							}
-						})
-					}
-				}
-				else
-				{
-					this.$message({
-						message: '信息填写不完整,请重新添加',
-						type: 'error',
-					});
-				}
-			},
-
-			editThisModular() {
-				function traversal(data,formData) {//遍历已有格式化数据,根据id返回name
-					for (let i in data) {
-						formData.push(data[i]);
-						if (data[i].children) {
-						    traversal(data[i].children,formData);
-						}
-					}
-				}
-				this.dialogEditVisible = true;
-				if (this.modularType == "BT") {
-					let traversalData = [];
-					traversal(this.dataBT,traversalData);
-					for (let i = 0; i < traversalData.length; i++) {
-						if(traversalData[i].id == this.choosed[0]) {
-							this.editModular.name = traversalData[i].label;
-						}
-					}
-				}
-				else if(this.modularType == "APP") {
-					let traversalData = [];
-					traversal(this.dataAPP,traversalData);
-					for (let i = 0; i < traversalData.length; i++) {
-						if(traversalData[i].id == this.choosed[0]) {
-							this.editModular.name = traversalData[i].label;
-						}
-					}
-				}
-				else if(this.modularType == "TENANT") {
-					let traversalData = [];
-					traversal(this.dataTENANT,traversalData);
-					for (let i = 0; i < traversalData.length; i++) {
-						if(traversalData[i].id == this.choosed[0]) {
-							this.editModular.name = traversalData[i].label;
-						}
-					}
-				}
-			},
-
-			confirmEdit() {
-				this.dialogEditVisible = false;
+		confirmAdd() {
+			this.dialogAddVisible = false;
+			if (this.addModular.name && this.addModular.cid) {
 				let payload = {
-					id: this.choosed[0],
-					name: this.editModular.name,
+					name: this.addModular.name,
 					modularType: this.modularType,
+					parentId: this.choosed[0],
+					cid: this.addModular.cid,
 				}
 				if (this.modularType == "BT") {
 					payload.modularType = 'ADMIN';
-				}
-				else if (this.modularType == "APP") {
+				} else if (this.modularType == "APP") {
 					payload.modularType = 'USER';
-				}
-				else if (this.modularType == "TENANT") {
+				} else if (this.modularType == "TENANT") {
 					payload.modularType = 'EMPLOYEE';
 				}
 				payload = JSON.stringify(payload);
-				if (this.editModular.name) {
+				if (this.addModular.name) {
 					masterApi({
 						action: 'modular_edit',
 						version: '1.0',
-						crudType: '4',
+						crudType: '1',
 						payload: payload,
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
+					}, window.localStorage.getItem('tokenPlate')).then((res) => {
 						if (res.code == 0) {
 							this.getModulars();
+							this.addModular.name = null;
+							this.addModular.cid = null;
 						}
 					})
 				}
-			},
+			} else {
+				this.$message({
+					message: '信息填写不完整,请重新添加',
+					type: 'error',
+				});
+			}
+		},
 
-			deleteModular() {
-				let payload = {
-					id: this.choosed[0],
+		editThisModular() {
+			function traversal(data, formData) { //遍历已有格式化数据,根据id返回name
+				for (let i in data) {
+					formData.push(data[i]);
+					if (data[i].children) {
+						traversal(data[i].children, formData);
+					}
 				}
-				payload = JSON.stringify(payload);
+			}
+			this.dialogEditVisible = true;
+			if (this.modularType == "BT") {
+				let traversalData = [];
+				traversal(this.dataBT, traversalData);
+				for (let i = 0; i < traversalData.length; i++) {
+					if (traversalData[i].id == this.choosed[0]) {
+						this.editModular.name = traversalData[i].label;
+					}
+				}
+			} else if (this.modularType == "APP") {
+				let traversalData = [];
+				traversal(this.dataAPP, traversalData);
+				for (let i = 0; i < traversalData.length; i++) {
+					if (traversalData[i].id == this.choosed[0]) {
+						this.editModular.name = traversalData[i].label;
+					}
+				}
+			} else if (this.modularType == "TENANT") {
+				let traversalData = [];
+				traversal(this.dataTENANT, traversalData);
+				for (let i = 0; i < traversalData.length; i++) {
+					if (traversalData[i].id == this.choosed[0]) {
+						this.editModular.name = traversalData[i].label;
+					}
+				}
+			}
+		},
+
+		confirmEdit() {
+			this.dialogEditVisible = false;
+			let payload = {
+				id: this.choosed[0],
+				name: this.editModular.name,
+				modularType: this.modularType,
+			}
+			if (this.modularType == "BT") {
+				payload.modularType = 'ADMIN';
+			} else if (this.modularType == "APP") {
+				payload.modularType = 'USER';
+			} else if (this.modularType == "TENANT") {
+				payload.modularType = 'EMPLOYEE';
+			}
+			payload = JSON.stringify(payload);
+			if (this.editModular.name) {
 				masterApi({
 					action: 'modular_edit',
 					version: '1.0',
-					crudType: '8',
+					crudType: '4',
 					payload: payload,
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
 					if (res.code == 0) {
 						this.getModulars();
-						this.choosed = [];
-					}	
-				})
-			},
-
-			//接口部分代码
-			getAPIs() {
-				let payload = {
-					modularId: this.choosed[0],
-				}
-				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'apis',
-					version: '1.0',
-					payload: payload,
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					if (res.code == 0) {
-						if (res.attach) {
-							this.apiData = res.attach;
-						}
 					}
 				})
-			},
+			}
+		},
 
-			addAPI() {
-				this.dialogAPIAddVisible = false;
-				let payload = {
-					pkg: this.apiUpdate.addPkg,
-					name: this.apiUpdate.addName,
-					modularId: this.choosed[0],
+		deleteModular() {
+			let payload = {
+				id: this.choosed[0],
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'modular_edit',
+				version: '1.0',
+				crudType: '8',
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.getModulars();
+					this.choosed = [];
 				}
-				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'api_edit',
-					version: '1.0',
-					crudType: 1,
-					payload: payload,
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					if (res.code == 0) {
-						this.getAPIs();
+			})
+		},
+
+		//接口部分代码
+		getAPIs() {
+			let payload = {
+				modularId: this.choosed[0],
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'apis',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.apiData = res.attach;
 					}
-				})
-			},
-
-			editAPI(row) {
-				this.dialogAPIEditVisible = true;
-				this.editAPI.id = row.id;
-				this.editedAPI.pkg = row.pkg;
-				this.editedAPI.name = row.name;
-			},
-
-			confirmEditAPI() {
-				this.dialogAPIEditVisible = false;
-				let payload = {
-					id: this.editedAPI.id,
-					pkg: this.editedAPI.pkg,
-					name: this.editedAPI.name,
-					modularId: this.choosed[0],
 				}
-				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'api_edit',
-					version: '1.0',
-					crudType: 4,
-					payload: payload,
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					if (res.code == 0) {
-						this.getAPIs();
-					}
-				})
-			},
+			})
+		},
 
-			deleteAPI(row) {
-				let payload = {
-					id: row.id,
-					pkg: row.pkg,
-					modularId: this.choosed[0],
+		addAPI() {
+			this.dialogAPIAddVisible = false;
+			let payload = {
+				pkg: this.apiUpdate.addPkg,
+				name: this.apiUpdate.addName,
+				modularId: this.choosed[0],
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'api_edit',
+				version: '1.0',
+				crudType: 1,
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.getAPIs();
 				}
-				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'api_edit',
-					version: '1.0',
-					crudType: 8,
-					payload: payload,
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					if (res.code == 0) {
-						this.getAPIs();
-					}
-				})
-			},
-	    },
-	    mounted(){
-	        this.getModulars();
-	    }
+			})
+		},
+
+		editAPI(row) {
+			this.dialogAPIEditVisible = true;
+			this.editAPI.id = row.id;
+			this.editedAPI.pkg = row.pkg;
+			this.editedAPI.name = row.name;
+		},
+
+		confirmEditAPI() {
+			this.dialogAPIEditVisible = false;
+			let payload = {
+				id: this.editedAPI.id,
+				pkg: this.editedAPI.pkg,
+				name: this.editedAPI.name,
+				modularId: this.choosed[0],
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'api_edit',
+				version: '1.0',
+				crudType: 4,
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.getAPIs();
+				}
+			})
+		},
+
+		deleteAPI(row) {
+			let payload = {
+				id: row.id,
+				pkg: row.pkg,
+				modularId: this.choosed[0],
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'api_edit',
+				version: '1.0',
+				crudType: 8,
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.getAPIs();
+				}
+			})
+		},
+	},
+	mounted() {
+		this.getModulars();
 	}
+}
 </script>
 <style lang="less">
 	.toolBar {

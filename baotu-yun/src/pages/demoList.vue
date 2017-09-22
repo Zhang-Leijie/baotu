@@ -40,93 +40,92 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	      dialogFormVisible: false,	
-	      currentPage: 1,
-	      pageCount: null,
-	      length: null,
-	      pageSize: 10,
-	      tableData: [],
-	      formData: []
+export default {
+	data() {
+		return {
+			dialogFormVisible: false,
+			currentPage: 1,
+			pageCount: null,
+			length: null,
+			pageSize: 10,
+			tableData: [],
+			formData: []
 		}
-	  },
-	  methods: {
-	  	formatDate(time) {
-		  var   x = (time - 0) * 1000;
-		  
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" + (now.getDate());   
-		  var   hour = "0" + now.getHours();
-		  var   min =  "0" + now.getMinutes();
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000;
 
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-	  		// masterApi({
-	   	// 		action: 'demos',
-	   	// 		version: '1.0'
-	   	// 	},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   	// 		if (res.code == 0) {
-	   	// 			if (res.attach) {
-	   	// 				this.tableData = res.attach;
-	   	// 				this.length = res.attach.length;
-	   	// 				this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-	   	// 				this.showPage();
-	   	// 			}
-     //   			}
-	   	// 	})
-	  	},
+		getInfo() {
+			// masterApi({
+			// 		action: 'demos',
+			// 		version: '1.0'
+			// 	},window.localStorage.getItem('tokenPlate')).then((res)=> {
+			// 		if (res.code == 0) {
+			// 			if (res.attach) {
+			// 				this.tableData = res.attach;
+			// 				this.length = res.attach.length;
+			// 				this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+			// 				this.showPage();
+			// 			}
+			//   			}
+			// 	})
+		},
 
-	  	addDemo() {
-	  		 router.push({
-	  		 	name: "demo-edit"
-	  		 })
-	  	},
+		addDemo() {
+			router.push({
+				name: "demo-edit"
+			})
+		},
 
-	  	confirmAdd() {
-	  		this.dialogFormVisible = false;
-	  	},
+		confirmAdd() {
+			this.dialogFormVisible = false;
+		},
 
-	  	handleFormClose() {
-	  		this.dialogFormVisible = false;
-	  	},
+		handleFormClose() {
+			this.dialogFormVisible = false;
+		},
 
-	  	showPage() {
-	  		this.formData = [];
-	  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  		else
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  	},
+		showPage() {
+			this.formData = [];
+			if (this.length * this.pageCount < this.pageSize * this.currentPage) {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			} else {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			}
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.showPage(); 
-	    },
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  }
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.showPage();
+		},
+	},
+	mounted() {
+		this.getInfo();
 	}
+}
 </script>
 <style lang="less">
 .demoList{

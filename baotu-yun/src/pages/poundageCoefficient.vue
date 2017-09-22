@@ -61,398 +61,375 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	      editData: [],
-	      isEdited: null,	//被编辑的系数id
-	      isAdded: null,	//被添加的系数
-	      comparisons: [
-	      	{
-	      		value: 'gt',
-	      		label: "大于"
-	      	},
-	      	{
-	      		value: 'gte',
-	      		label: "大于等于"
-	      	},
-	      	{
-	      		value: 'lt',
-	      		label: "小于"
-	      	},
-	      	{
-	      		value: 'lte',
-	      		label: "小于等于"
-	      	},
-	      	{
-	      		value: 'eq',
-	      		label: "等于"
-	      	},
-	      	// {
-	      	// 	value: 6,
-	      	// 	label: "不等于"
-	      	// },
-	      	{
-	      		value: 'bteween',
-	      		label: "开区间 ( )"
-	      	},
-	      	{
-	      		value: 'lbteween',
-	      		label: "前闭后开区间 [ )"
-	      	},
-	      	{
-	      		value: 'rbteween',
-	      		label: "前开后闭区间 ( ]"
-	      	},
-	      	// {
-	      	// 	value: 10,
-	      	// 	label: "在 ... 之中"
-	      	// },
-	      	// {
-	      	// 	value: 11,
-	      	// 	label: "不在 ... 之中"
-	      	// }
-	      ],
-	      equalComparison: [{
-      		  value: 'eq',
-      		  label: "等于"
-      	  }],
-	      xubao: [{
-	      	id: 1,
-	      	name: '新车'
-	      },
-	      {
-	      	id: 2,
-	      	name: '转保'
-	      },
-	      {
-	      	id: 3,
-	      	name: '续保'
-	      }],
-	      xingbie: [{
-	      	id: 0,
-	      	name: '男'
-	      },
-	      {
-	      	id: 1,
-	      	name: '女'
-	      }],
-	      editMode: null		//'xubao':转续保,'chepai':车牌,'xingbie':性别
+export default {
+	data() {
+		return {
+			editData: [],
+			isEdited: null, //被编辑的系数id
+			isAdded: null, //被添加的系数
+			comparisons: [{
+					value: 'gt',
+					label: "大于"
+				}, {
+					value: 'gte',
+					label: "大于等于"
+				}, {
+					value: 'lt',
+					label: "小于"
+				}, {
+					value: 'lte',
+					label: "小于等于"
+				}, {
+					value: 'eq',
+					label: "等于"
+				},
+				// {
+				// 	value: 6,
+				// 	label: "不等于"
+				// },
+				{
+					value: 'bteween',
+					label: "开区间 ( )"
+				}, {
+					value: 'lbteween',
+					label: "前闭后开区间 [ )"
+				}, {
+					value: 'rbteween',
+					label: "前开后闭区间 ( ]"
+				},
+				// {
+				// 	value: 10,
+				// 	label: "在 ... 之中"
+				// },
+				// {
+				// 	value: 11,
+				// 	label: "不在 ... 之中"
+				// }
+			],
+			equalComparison: [{
+				value: 'eq',
+				label: "等于"
+			}],
+			xubao: [{
+				id: 1,
+				name: '新车'
+			}, {
+				id: 2,
+				name: '转保'
+			}, {
+				id: 3,
+				name: '续保'
+			}],
+			xingbie: [{
+				id: 0,
+				name: '男'
+			}, {
+				id: 1,
+				name: '女'
+			}],
+			editMode: null //'xubao':转续保,'chepai':车牌,'xingbie':性别
 		}
-	  },
-	  methods: {
-	  	//获取节点编辑配置
-	    getEditSetting() {
-	    	let payload = {}
-	    	payload = JSON.stringify(payload);
-	    	masterApi({
-	   			action: 'poundage_coefficients',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					for (var i = 0; i < res.attach.length; i++) {
-		   					res.attach[i]['choosed'] = null;			//当前选择的系数id
-			   				res.attach[i]['name'] = null;			//需要编辑/添加的系数名称
-		   					res.attach[i]['comparisonValue'] = null;
-		   					res.attach[i]['comparisonType'] = null;
-		   					res.attach[i]['addORdec'] = null;
-		   					res.attach[i]['rate'] = null;
-		   				}
-	   				}
+	},
+	methods: {
+		//获取节点编辑配置
+		getEditSetting() {
+			let payload = {}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'poundage_coefficients',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						for (var i = 0; i < res.attach.length; i++) {
+							res.attach[i]['choosed'] = null; //当前选择的系数id
+							res.attach[i]['name'] = null; //需要编辑/添加的系数名称
+							res.attach[i]['comparisonValue'] = null;
+							res.attach[i]['comparisonType'] = null;
+							res.attach[i]['addORdec'] = null;
+							res.attach[i]['rate'] = null;
+						}
+					}
 
-	   				if (res.attach) {
-	   					for (var j = 0; j < res.attach.length; j++) {
-		   					if (res.attach[j].coefficients) {
-		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-			   						if (res.attach[j].coefficients[i].rate) {
-			   							res.attach[j].choosed = res.attach[j].coefficients[i].id;
-			   							res.attach[j].rate = res.attach[j].coefficients[i].rate / 10;
-			   							res.attach[j].addORdec = res.attach[j].coefficients[i].rate?(res.attach[j].coefficients[i].rate > 0?1:2):0;
-			   						}
-			   					}
-		   					}
-		   					if (res.attach.typeId == 3) {
-		   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-			   						if (res.attach[j].coefficients.name == '0') {
-			   							res.attach[j].coefficients.name = '男';
-			   						}
-			   						if (res.attach[j].coefficients.name == '1') {
-			   							res.attach[j].coefficients.name = '女';
-			   						}
-			   					}
-		   					}
-		   					if (res.attach.typeId == 4) {
-			   						for (var i = 0; i < res.attach[j].coefficients.length; i++) {
-				   						if (res.attach[j].coefficients.name == '1') {
-				   							res.attach[j].coefficients.name = '新车';
-				   						}
-				   						if (res.attach[j].coefficients.name == '2') {
-				   							res.attach[j].coefficients.name = '转保';
-				   						}
-				   						if (res.attach[j].coefficients.name == '4') {
-				   							res.attach[j].coefficients.name = '侯保';
-				   						}
-				   					}
-			   					}
-		   				}
-	   				}
+					if (res.attach) {
+						for (var j = 0; j < res.attach.length; j++) {
+							if (res.attach[j].coefficients) {
+								for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+									if (res.attach[j].coefficients[i].rate) {
+										res.attach[j].choosed = res.attach[j].coefficients[i].id;
+										res.attach[j].rate = res.attach[j].coefficients[i].rate / 10;
+										res.attach[j].addORdec = res.attach[j].coefficients[i].rate ? (res.attach[j].coefficients[i].rate > 0 ? 1 : 2) : 0;
+									}
+								}
+							}
+							if (res.attach.typeId == 3) {
+								for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+									if (res.attach[j].coefficients.name == '0') {
+										res.attach[j].coefficients.name = '男';
+									}
+									if (res.attach[j].coefficients.name == '1') {
+										res.attach[j].coefficients.name = '女';
+									}
+								}
+							}
+							if (res.attach.typeId == 4) {
+								for (var i = 0; i < res.attach[j].coefficients.length; i++) {
+									if (res.attach[j].coefficients.name == '1') {
+										res.attach[j].coefficients.name = '新车';
+									}
+									if (res.attach[j].coefficients.name == '2') {
+										res.attach[j].coefficients.name = '转保';
+									}
+									if (res.attach[j].coefficients.name == '4') {
+										res.attach[j].coefficients.name = '侯保';
+									}
+								}
+							}
+						}
+					}
 
-	   				this.editData = res.attach;
-       			}
-	   		})
-	    },
-	    editThisOne(row) {
-	    	row.comparisonType = this.reComparisonName(row.comparisonType);
-	    	switch(row.typeId) {
-	    		case 4: 
-	    		this.editMode = 'xubao';
-	    		break;
-	    		case 6: 
-	    		this.editMode = 'chepai';
-	    		break;
-	    		case 3: 
-	    		this.editMode = 'xingbie';
-	    		break;
-	    		default: 
-	    		this.editMode = false;
-	    		break;
-	    	}
-	    	this.isEdited = row.choosed;
-	    	for (var i = 0; i < row.coefficients.length; i++) {
-	    		if (row.coefficients[i].id === row.choosed) {
-	    			row.name = row.coefficients[i].name;
-	    		}
-	    	}
-	    },
-	    confirmEdit(row) {
-	    	row.comparisonType = this.reComparisonName(row.comparisonType);
-	    	let checkChange = false;
-	    	for (var i = 0; i < row.coefficients.length; i++) {
-	    		if (row.coefficients[i].id === row.choosed) {
-	    			if(row.coefficients[i].comparableValue == row.comparisonValue && row.coefficients[i].comparison == row.comparisonType && row.coefficients[i].name == row.name)
-	    			{
-	    				checkChange = false;
-	    				this.$message({
-				            message: "数值未修改",
-				            type: 'info'
-				        });
-	    			}
-	    			else
-	    			{
-	    				checkChange = true;
-	    			}
-	    		}
-	    	}
-	    	if (checkChange) {
-		    	let coefficientType = this.reCoefficientType(row.typeId);
-		    	let comparison = row.comparisonType;
-		    	let name = row.name;
-		    	let array = row.comparisonValue.split("_");
-		    	let id = row.choosed;
-		    	if (array[0] >= array[1]) {
-		    		this.$message({
-			            message: "区间数值应当从小到大排列,请检查输入",
-			            type: 'error'
-			        });
-		    	}
-		    	else
-		    	{
-		    		let payload = {
-			   			employeeId: 1,	//无意义的参数
-			   			coefficientType: coefficientType,
-			   			id: id,
-			   			symbol: comparison,
-			   			val: array,
-			   			name: name,
-		    		}
-		    		payload = JSON.stringify(payload);
-		    		masterApi({
-			   			action: 'poundage_coefficient_edit',
-			   			version: '1.0',
-			   			crudType: 4,	//4:修改
-			   			payload: payload
-			   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-			   			if (res.code == 0) {
-			   				this.isEdited = null;
-			    			this.getEditSetting();
-			   				this.$message({
-					            message: '系数编辑完成',
-					            type: 'success'
-					        });
-		       			}
-		       			else if (res.code == 7) {
-		       				this.$message({
-					            message: '操作失败,请检查输入',
-					            type: 'error'
-					        });
-		       			}
-			   		})
-		    	}
-	    	}
-		    this.editMode = false;	
-	    },
-	    cancelEdit(row) {
-	    	row.comparisonType = this.reComparisonName(row.comparisonType);
-	    	this.isEdited = null;
-	    	// 重新填写选择的系数信息,因为只有在choosed的情况下才会编辑,所以不用对choosed做判断,coefficients也是一样,只有coefficients不为空时才可以choose
-	    	for (var i = 0; i < row.coefficients.length; i++) {
-	    		if (row.coefficients[i].id === row.choosed) {
-	    			row.comparisonType = row.coefficients[i].comparison;
-	    			row.comparisonValue = row.coefficients[i].comparableValue;
-	    		}
-	    	}
-		    this.editMode = false;	
-	    },
-	    deleteThisOne(row) {
-	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
-	          confirmButtonText: '确定',
-	          cancelButtonText: '取消',
-	          type: 'warning'
-	        }).then(() => {
-	         	let payload = {
-			    	coefficientType: this.reCoefficientType(row.typeId),
-			    	id: row.choosed,
-	         	}
-	         	payload = JSON.stringify(payload);
-	    		masterApi({
-		   			action: 'poundage_coefficient_edit',
-		   			version: '1.0',
-		   			crudType: 8,	//4:修改
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		    			this.getEditSetting();
-		   				this.$message({
-				            message: '系数已删除',
-				            type: 'success'
-				        });
-	       			}
-	       			else if (res.code == 7) {
-	       				this.$message({
-				            message: '操作失败,请检查输入',
-				            type: 'error'
-				        });
-	       			}
-		   		})
-	        }).catch(() => {
-	          this.$message({
-	            type: 'info',
-	            message: '已取消删除'
-	          });          
-	        });   	
-	    },
-	    addOne(row) {
-	    	switch(row.typeId) {
-	    		case 4: 
-	    		this.editMode = 'xubao';
-	    		break;
-	    		case 6: 
-	    		this.editMode = 'chepai';
-	    		break;
-	    		case 3: 
-	    		this.editMode = 'xingbie';
-	    		break;
-	    		default: 
-	    		this.editMode = false;
-	    		break;
-	    	}
-	    	this.isAdded = row.typeId;
-	    	row.name = null;
-	    	row.comparisonType = null;
-	    	row.comparisonValue = null;
-	    },
-	    confirmAdd(row) {
-	    	let coefficientType = this.reCoefficientType(this.isAdded);
-	    	let comparison = row.comparisonType;
-	    	let name = row.name;
-	    	let array = row.comparisonValue.toString().split("_");
-	    	if (array[0] >= array[1]) {
-	    		this.$message({
-		            message: "区间数值应当从小到大排列,请检查输入",
-		            type: 'error'
-		        });
-	    	}
-	    	else
-	    	{
-	    		let payload = {
-	    			employeeId: 1,	//无效的参数
-		   			coefficientType: coefficientType,
-		   			symbol: comparison,
-		   			val: array,
-		   			name: name,
-	    		}
-	    		payload = JSON.stringify(payload);
-	    		masterApi({
-		   			action: 'poundage_coefficient_edit',
-		   			version: '1.0',
-		   			crudType: 1,	//1:添加
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.isAdded = null;
-		    			this.getEditSetting();
-		   				this.$message({
-				            message: '添加了新的系数',
-				            type: 'success'
-				        });
-	       			}
-	       			else if (res.code == 7) {
-	       				this.$message({
-				            message: '操作失败,请检查输入',
-				            type: 'error'
-				        });
-	       			}
-		   		})
-	    	}
-		    this.editMode = false;		
-	    },
-	    cancelAdd(row) {
-	    	this.isAdded = null;
-	    	//重新填写选择的数据,根据是否选择有两种处理方法
-	    	if(row.choosed) {
-	    		for (var i = 0; i < row.coefficients.length; i++) {
-		    		if (row.coefficients[i].id === row.choosed) {
-		    			row.comparisonType = row.coefficients[i].comparison;
-		    			row.comparisonValue = row.coefficients[i].comparableValue;
-		    		}
-		    	}
-	    	}
-	    	else
-	    	{
-	    		row.name = null;
-	    		row.comparisonType = null;
-	    		row.comparisonValue = null;
-	    	}
-		    this.editMode = false;		
-	    },
-	    //判断系数数量是否达到了最大值
-	    isFull(row) {
-	    	if (row.coefficients && row.maxCustomNum) {// 0 表示无限制
-	    		if (row.maxCustomNum <= row.coefficients.length) {
-	    			return true;
-	    		}
-	    	}
-	    	else
-	    	{
-	    		return false;
-	    	}
-	    },
-	    chooseOneCoefficient(row) {
-	    	for (var i = 0; i < row.coefficients.length; i++) {
-	    		if (row.coefficients[i].id === row.choosed) {
-	    			row.comparisonType = row.coefficients[i].comparison;
-	    			row.comparisonValue = row.coefficients[i].comparableValue;
-	    		}
-	    	}
-	    },
-	    reComparisonName(val) {
-	    	switch(val)
-	    	{
-	    		case 1:
+					this.editData = res.attach;
+				}
+			})
+		},
+		editThisOne(row) {
+			row.comparisonType = this.reComparisonName(row.comparisonType);
+			switch (row.typeId) {
+				case 4:
+					this.editMode = 'xubao';
+					break;
+				case 6:
+					this.editMode = 'chepai';
+					break;
+				case 3:
+					this.editMode = 'xingbie';
+					break;
+				default:
+					this.editMode = false;
+					break;
+			}
+			this.isEdited = row.choosed;
+			for (var i = 0; i < row.coefficients.length; i++) {
+				if (row.coefficients[i].id === row.choosed) {
+					row.name = row.coefficients[i].name;
+				}
+			}
+		},
+		confirmEdit(row) {
+			row.comparisonType = this.reComparisonName(row.comparisonType);
+			let checkChange = false;
+			for (var i = 0; i < row.coefficients.length; i++) {
+				if (row.coefficients[i].id === row.choosed) {
+					if (row.coefficients[i].comparableValue == row.comparisonValue && row.coefficients[i].comparison == row.comparisonType && row.coefficients[i].name == row.name) {
+						checkChange = false;
+						this.$message({
+							message: "数值未修改",
+							type: 'info'
+						});
+					} else {
+						checkChange = true;
+					}
+				}
+			}
+			if (checkChange) {
+				let coefficientType = this.reCoefficientType(row.typeId);
+				let comparison = row.comparisonType;
+				let name = row.name;
+				let array = row.comparisonValue.split("_");
+				let id = row.choosed;
+				if (array[0] >= array[1]) {
+					this.$message({
+						message: "区间数值应当从小到大排列,请检查输入",
+						type: 'error'
+					});
+				} else {
+					let payload = {
+						employeeId: 1, //无意义的参数
+						coefficientType: coefficientType,
+						id: id,
+						symbol: comparison,
+						val: array,
+						name: name,
+					}
+					payload = JSON.stringify(payload);
+					masterApi({
+						action: 'poundage_coefficient_edit',
+						version: '1.0',
+						crudType: 4, //4:修改
+						payload: payload
+					}, window.localStorage.getItem('tokenPlate')).then((res) => {
+						if (res.code == 0) {
+							this.isEdited = null;
+							this.getEditSetting();
+							this.$message({
+								message: '系数编辑完成',
+								type: 'success'
+							});
+						} else if (res.code == 7) {
+							this.$message({
+								message: '操作失败,请检查输入',
+								type: 'error'
+							});
+						}
+					})
+				}
+			}
+			this.editMode = false;
+		},
+		cancelEdit(row) {
+			row.comparisonType = this.reComparisonName(row.comparisonType);
+			this.isEdited = null;
+			// 重新填写选择的系数信息,因为只有在choosed的情况下才会编辑,所以不用对choosed做判断,coefficients也是一样,只有coefficients不为空时才可以choose
+			for (var i = 0; i < row.coefficients.length; i++) {
+				if (row.coefficients[i].id === row.choosed) {
+					row.comparisonType = row.coefficients[i].comparison;
+					row.comparisonValue = row.coefficients[i].comparableValue;
+				}
+			}
+			this.editMode = false;
+		},
+		deleteThisOne(row) {
+			this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				let payload = {
+					coefficientType: this.reCoefficientType(row.typeId),
+					id: row.choosed,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'poundage_coefficient_edit',
+					version: '1.0',
+					crudType: 8, //4:修改
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.getEditSetting();
+						this.$message({
+							message: '系数已删除',
+							type: 'success'
+						});
+					} else if (res.code == 7) {
+						this.$message({
+							message: '操作失败,请检查输入',
+							type: 'error'
+						});
+					}
+				})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+		},
+		addOne(row) {
+			switch (row.typeId) {
+				case 4:
+					this.editMode = 'xubao';
+					break;
+				case 6:
+					this.editMode = 'chepai';
+					break;
+				case 3:
+					this.editMode = 'xingbie';
+					break;
+				default:
+					this.editMode = false;
+					break;
+			}
+			this.isAdded = row.typeId;
+			row.name = null;
+			row.comparisonType = null;
+			row.comparisonValue = null;
+		},
+		confirmAdd(row) {
+			let coefficientType = this.reCoefficientType(this.isAdded);
+			let comparison = row.comparisonType;
+			let name = row.name;
+			let array = row.comparisonValue.toString().split("_");
+			if (array[0] >= array[1]) {
+				this.$message({
+					message: "区间数值应当从小到大排列,请检查输入",
+					type: 'error'
+				});
+			} else {
+				let payload = {
+					employeeId: 1, //无效的参数
+					coefficientType: coefficientType,
+					symbol: comparison,
+					val: array,
+					name: name,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'poundage_coefficient_edit',
+					version: '1.0',
+					crudType: 1, //1:添加
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.isAdded = null;
+						this.getEditSetting();
+						this.$message({
+							message: '添加了新的系数',
+							type: 'success'
+						});
+					} else if (res.code == 7) {
+						this.$message({
+							message: '操作失败,请检查输入',
+							type: 'error'
+						});
+					}
+				})
+			}
+			this.editMode = false;
+		},
+		cancelAdd(row) {
+			this.isAdded = null;
+			//重新填写选择的数据,根据是否选择有两种处理方法
+			if (row.choosed) {
+				for (var i = 0; i < row.coefficients.length; i++) {
+					if (row.coefficients[i].id === row.choosed) {
+						row.comparisonType = row.coefficients[i].comparison;
+						row.comparisonValue = row.coefficients[i].comparableValue;
+					}
+				}
+			} else {
+				row.name = null;
+				row.comparisonType = null;
+				row.comparisonValue = null;
+			}
+			this.editMode = false;
+		},
+		//判断系数数量是否达到了最大值
+		isFull(row) {
+			if (row.coefficients && row.maxCustomNum) { // 0 表示无限制
+				if (row.maxCustomNum <= row.coefficients.length) {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		},
+		chooseOneCoefficient(row) {
+			for (var i = 0; i < row.coefficients.length; i++) {
+				if (row.coefficients[i].id === row.choosed) {
+					row.comparisonType = row.coefficients[i].comparison;
+					row.comparisonValue = row.coefficients[i].comparableValue;
+				}
+			}
+		},
+		reComparisonName(val) {
+			switch (val) {
+				case 1:
 					return "大于"
 					break;
 				case 2:
@@ -467,9 +444,9 @@ import { masterApi } from '@/ajax/post.js'
 				case 5:
 					return "等于"
 					break;
-				// case 6:
-				// 	return "不等于"
-				// 	break;
+					// case 6:
+					// 	return "不等于"
+					// 	break;
 				case 7:
 					return "开区间"
 					break;
@@ -479,12 +456,12 @@ import { masterApi } from '@/ajax/post.js'
 				case 9:
 					return "前开后闭区间"
 					break;
-				// case 10:
-				// 	return "在 ... 之中"
-				// 	break;
-				// case 11:
-				// 	return "不在 ... 之中"
-				// 	break;
+					// case 10:
+					// 	return "在 ... 之中"
+					// 	break;
+					// case 11:
+					// 	return "不在 ... 之中"
+					// 	break;
 				case '大于':
 					return 1
 					break;
@@ -500,9 +477,9 @@ import { masterApi } from '@/ajax/post.js'
 				case '等于':
 					return 5
 					break;
-				// case 6:
-				// 	return "不等于"
-				// 	break;
+					// case 6:
+					// 	return "不等于"
+					// 	break;
 				case '开区间':
 					return 7
 					break;
@@ -512,12 +489,12 @@ import { masterApi } from '@/ajax/post.js'
 				case '前开后闭区间':
 					return 9
 					break;
-				// case 10:
-				// 	return "在 ... 之中"
-				// 	break;
-				// case 11:
-				// 	return "不在 ... 之中"
-				// 	break;
+					// case 10:
+					// 	return "在 ... 之中"
+					// 	break;
+					// case 11:
+					// 	return "不在 ... 之中"
+					// 	break;
 				case 'gt':
 					return "大于"
 					break;
@@ -533,9 +510,9 @@ import { masterApi } from '@/ajax/post.js'
 				case 'eq':
 					return "等于"
 					break;
-				// case 6:
-				// 	return "不等于"
-				// 	break;
+					// case 6:
+					// 	return "不等于"
+					// 	break;
 				case 'bteween':
 					return "开区间"
 					break;
@@ -545,17 +522,16 @@ import { masterApi } from '@/ajax/post.js'
 				case 'rbteween':
 					return "前开后闭区间"
 					break;
-				// case 10:
-				// 	return "在 ... 之中"
-				// 	break;
-				// case 11:
-				// 	return "不在 ... 之中"
-				// 	break;
-	    	}
-	    },
-	    reCoefficientType(val) {
-	    	switch(val)
-	    	{
+					// case 10:
+					// 	return "在 ... 之中"
+					// 	break;
+					// case 11:
+					// 	return "不在 ... 之中"
+					// 	break;
+			}
+		},
+		reCoefficientType(val) {
+			switch (val) {
 				case 1:
 					return "CLAIMS"
 					break;
@@ -583,98 +559,94 @@ import { masterApi } from '@/ajax/post.js'
 				case 9:
 					return "AGE"
 					break;
-				// case 10:
-				// 	return "在 ... 之中"
-				// 	break;
-				// case 11:
-				// 	return "不在 ... 之中"
-				// 	break;
+					// case 10:
+					// 	return "在 ... 之中"
+					// 	break;
+					// case 11:
+					// 	return "不在 ... 之中"
+					// 	break;
 				default:
 					return val
 					break;
-	    	} 	
-	    },
-	    reXubao(val) {
-	    	switch(val) {
-	    		case 1:
-	    		return '新车';
-	    		break;
-	    		case 2:
-	    		return '转保';
-	    		break;
-	    		case 4:
-	    		return '续保';
-	    		break;
-	    		case '1':
-	    		return '新车';
-	    		break;
-	    		case '2':
-	    		return '转保';
-	    		break;
-	    		case '4':
-	    		return '续保';
-	    		break;
-	    		default:
-	    		return val;
-	    		break;
-	    	}
-	    },
-	    reSex(val) {
-	    	switch(val) {
-	    		case 1:
-	    		return '女';
-	    		break;
-	    		case 0:
-	    		return '男';
-	    		break;
-	    		case '1':
-	    		return '女';
-	    		break;
-	    		case '0':
-	    		return '男';
-	    		break;
-	    		default:
-	    		return val;
-	    		break;
-	    	}
-	    },
-	    comparisonValueShow(row) {
-	    	if (row.typeId == 4) {//转续保
-	    		row.comparisonValue = this.reXubao(row.comparisonValue);
-	    	}
-	    	if (row.typeId == 3) {//性别
-	    		row.comparisonValue = this.reSex(row.comparisonValue);
-	    	}		
-	    	if(row.comparisonValue)
-	    	{
-	    		let value = row.comparisonValue.toString().split("_");
-		    	if (value[1]) {
-		    		switch(row.comparisonType)
-		    		{
-		    			case 7:
-		    				return "( " + value[0] + " , " + value[1] + " )"
-		    				break;
-		    			case 8:
-		    				return "[ " + value[0] + " , " + value[1] + " )"
-		    				break;
-		    			case 9:
-		    				return "( " + value[0] + " , " + value[1] + " ]"
-		    				break;
-		    			default:
-		    				return row.comparisonValue
-		    		}
-		    	}
-		    	else 
-		    	{
-		    		return row.comparisonValue
-		    	}
-	    	}
-	    }
-	  },
-	  mounted() {
-	  	this.getEditSetting();
-	  }
+			}
+		},
+		reXubao(val) {
+			switch (val) {
+				case 1:
+					return '新车';
+					break;
+				case 2:
+					return '转保';
+					break;
+				case 4:
+					return '续保';
+					break;
+				case '1':
+					return '新车';
+					break;
+				case '2':
+					return '转保';
+					break;
+				case '4':
+					return '续保';
+					break;
+				default:
+					return val;
+					break;
+			}
+		},
+		reSex(val) {
+			switch (val) {
+				case 1:
+					return '女';
+					break;
+				case 0:
+					return '男';
+					break;
+				case '1':
+					return '女';
+					break;
+				case '0':
+					return '男';
+					break;
+				default:
+					return val;
+					break;
+			}
+		},
+		comparisonValueShow(row) {
+			if (row.typeId == 4) { //转续保
+				row.comparisonValue = this.reXubao(row.comparisonValue);
+			}
+			if (row.typeId == 3) { //性别
+				row.comparisonValue = this.reSex(row.comparisonValue);
+			}
+			if (row.comparisonValue) {
+				let value = row.comparisonValue.toString().split("_");
+				if (value[1]) {
+					switch (row.comparisonType) {
+						case 7:
+							return "( " + value[0] + " , " + value[1] + " )"
+							break;
+						case 8:
+							return "[ " + value[0] + " , " + value[1] + " )"
+							break;
+						case 9:
+							return "( " + value[0] + " , " + value[1] + " ]"
+							break;
+						default:
+							return row.comparisonValue
+					}
+				} else {
+					return row.comparisonValue
+				}
+			}
+		}
+	},
+	mounted() {
+		this.getEditSetting();
 	}
+}
 </script>
 <style lang="less">
 .demoList{

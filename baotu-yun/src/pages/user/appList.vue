@@ -58,138 +58,134 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	      currentPage: 1,
-	      pageCount: null,
-	      length: null,
-	      pageSize: 10,
-	      tableData: [],
-	      formData: []
+export default {
+	data() {
+		return {
+			currentPage: 1,
+			pageCount: null,
+			length: null,
+			pageSize: 10,
+			tableData: [],
+			formData: []
 		}
-	  },
-	  methods: {
-	  	formatDate(time) {
-		  var   x = (time - 0) * 1000;
-		  
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" +(now.getDate());   
-		  var   hour = "0" +now.getHours();
-		  var   min =  "0" +now.getMinutes();
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000;
 
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-	  		let payload = {};
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'apps',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					for (let i = 0; i < res.attach.length; i++) {
-	   						if((res.attach[i].mod & 1) == 1) {	//该条数据被禁用
-	   							res.attach[i].isAble = false;
-	   						}
-	   						else {
-	   							res.attach[i].isAble = true;
-	   						}
-	   					}
-	   					this.tableData = res.attach;
+		getInfo() {
+			let payload = {};
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'apps',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						for (let i = 0; i < res.attach.length; i++) {
+							if ((res.attach[i].mod & 1) == 1) { //该条数据被禁用
+								res.attach[i].isAble = false;
+							} else {
+								res.attach[i].isAble = true;
+							}
+						}
+						this.tableData = res.attach;
 
-	   					this.length = res.attach.length;
-	   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-	   					this.showPage();
-	   				}
-       			}
-	   		})
-	  	},
-	  	
-	  	addApp() {
-	  		 router.push({
-	  		 	name: "app-edit"
-	  		 })
-	  	},
+						this.length = res.attach.length;
+						this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+						this.showPage();
+					}
+				}
+			})
+		},
 
-	  	showPage() {
-	  		this.formData = [];
-	  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  		else
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  	},
+		addApp() {
+			router.push({
+				name: "app-edit"
+			})
+		},
 
-	  	changeState(id,isAble) {
-	  		if (isAble) {	//当前可用,操作为禁用
-	  			let payload = {
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			masterApi({
-		   			action: 'app_seal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '禁用成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  		else
-	  		{	//当前不可用,操作为解禁
-	  			let payload = {
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			masterApi({
-		   			action: 'app_unseal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '解禁成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  	},
+		showPage() {
+			this.formData = [];
+			if (this.length * this.pageCount < this.pageSize * this.currentPage) {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			} else {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			}
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.showPage(); 
-	    },
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  }
+		changeState(id, isAble) {
+			if (isAble) { //当前可用,操作为禁用
+				let payload = {
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'app_seal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '禁用成功',
+							type: 'success',
+						});
+					}
+				});
+			} else { //当前不可用,操作为解禁
+				let payload = {
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'app_unseal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '解禁成功',
+							type: 'success',
+						});
+					}
+				});
+			}
+		},
+
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.showPage();
+		},
+	},
+	mounted() {
+		this.getInfo();
 	}
+}
 </script>
 <style lang="less">
 .appList{

@@ -47,63 +47,65 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	      currentPage: 1,
-	      total: null,
-	      pageSize: 10,
-	      tableData: [],
+export default {
+	data() {
+		return {
+			currentPage: 1,
+			total: null,
+			pageSize: 10,
+			tableData: [],
 		}
-	  },
-	  methods: {
-	  	formatDate(time) {
-		  var   x = (time - 0) * 1000;
-		  
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" +(now.getDate());   
-		  var   hour = "0" +now.getHours();
-		  var   min =  "0" +now.getMinutes();
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000;
 
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-	  		let payload = {
-	  			page: this.currentPage,
-	  			pageSize: this.pageSize,
-	  			tid: this.tidSearch,
-	  			name: this.nameSearch,
-	  			appId: this.appIdSearch,
-	  			// sortCol: null
-	  			asc: true
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'tenants',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.tableData = res.attach.list;
-	   				this.total = res.attach.total;
-       			}
-	   		})
-	  	},
+		getInfo() {
+			let payload = {
+				page: this.currentPage,
+				pageSize: this.pageSize,
+				tid: this.tidSearch,
+				name: this.nameSearch,
+				appId: this.appIdSearch,
+				// sortCol: null
+				asc: true
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'tenants',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.tableData = res.attach.list;
+					this.total = res.attach.total;
+				}
+			})
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.getInfo(); 
-	    },
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  }
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.getInfo();
+		},
+	},
+	mounted() {
+		this.getInfo();
 	}
+}
 </script>
 <style lang="less">
 .tenantList{

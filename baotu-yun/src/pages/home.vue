@@ -80,7 +80,7 @@ import { masterApi } from '@/ajax/post.js'
 export default {
   data() {
     return {
-      account:'',
+      account: '',
       roleName: null,
       activeRoute: '',
       openedRouteList: [''],
@@ -88,14 +88,16 @@ export default {
     }
   },
   methods: {
-    logOut(){
-        router.push({name:"sign-in"})
+    logOut() {
+      router.push({
+        name: "sign-in"
+      })
     },
     getModular() {
       masterApi({
         action: 'modulars_possessed',
         version: '1.0'
-      },window.localStorage.getItem('tokenPlate')).then((res)=> {
+      }, window.localStorage.getItem('tokenPlate')).then((res) => {
         if (res.code == 0) {
           if (res.attach) {
             this.myModulars = res.attach;
@@ -106,9 +108,7 @@ export default {
     isPermiss(modular) {
       if (window.localStorage.getItem('isRoot_baotu') == 'y') {
         return true;
-      }
-      else
-      {
+      } else {
         for (let i = 0; i < this.myModulars.length; i++) {
           if (this.myModulars[i] == modular) {
             return true;
@@ -123,32 +123,25 @@ export default {
     if (this.$route.name == 'GMList') {
       this.activeRoute = '2-1';
       this.openedRouteList = ['2'];
-    }
-    else if (this.$route.name == 'appList') {
+    } else if (this.$route.name == 'appList') {
       this.activeRoute = '2-2';
       this.openedRouteList = ['2'];
-    }
-    else if (this.$route.name == 'tenantList') {
+    } else if (this.$route.name == 'tenantList') {
       this.activeRoute = '2-3';
       this.openedRouteList = ['2'];
-    }
-    else if (this.$route.name == 'insurerList') {
+    } else if (this.$route.name == 'insurerList') {
       this.activeRoute = '3-1';
       this.openedRouteList = ['3'];
-    }
-    else if (this.$route.name == 'areaList') {
+    } else if (this.$route.name == 'areaList') {
       this.activeRoute = '3-2';
       this.openedRouteList = ['3'];
-    }
-    else if (this.$route.name == 'permissionEdit') {
+    } else if (this.$route.name == 'permissionEdit') {
       this.activeRoute = '3-6';
       this.openedRouteList = ['3'];
-    }
-    else if (this.$route.name == 'nonAutoCategoryList') {
+    } else if (this.$route.name == 'nonAutoCategoryList') {
       this.activeRoute = '4-1';
       this.openedRouteList = ['4'];
-    }
-    else if (this.$route.name == 'nonAutoProductList') {
+    } else if (this.$route.name == 'nonAutoProductList') {
       this.activeRoute = '4-2';
       this.openedRouteList = ['4'];
     }

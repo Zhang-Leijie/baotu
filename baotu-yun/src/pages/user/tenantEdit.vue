@@ -203,87 +203,85 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	    	tid: null,
-		    currentPage: 1,
-		    pageCount: null,
-		    length: null,
-		    pageSize: 10,
-		    tenantData: [],				//基本信息
-		    tableData: [],				//路由列表数据
-		    insurerList: [],			//险企列表数据
-		    insurerListJianjie: [],			//险企列表数据
-		    formData: [],				//分页路由列表数据
-		    dialogTableVisible: false,
-		    currentPageJianjie: 1,
-		    pageCountJianjie: null,
-		    lengthJianjie: null,
-		    pageSizeJianjie: 10,
-		    tableDataJianjie: [],		//简捷(保单)列表数据
-		    formDataJianjie: [],		//分页简捷列表数据
-		    dialogTableVisibleJianjie: false,
-		    formBiHu: {
-	        	agent: null,
-	        	key: null
-		    },
-		    formLeBaoBa: {
-		    	leBaoBaKey: null,
-		    	leBaoBaUsername: null,
-		    	leBaoBaPassword: null,
-		    },
-		    formAdd: {
-	      		tid: null,
-	        	laneId: null,
-	        	insurerId: null,
-	        	jianJieId: null,
-		    },
-		    formAddJianjie: {
-	      		tid: null,
-	        	insurerId: null,
-	        	companyId: null,
-		    },
-		    addBuf: [],
-	      	formEdit: {
-	      		jianJieId: null,
-	      		laneId: null
-	      	},
-	      	editBuf: [],
-	      	isEdit: false,
-	      	editedId: null,
-	      	deleteBuf: [],
-	      	// isAddBiHu: false,
-		    lanes: [
-	      		{
-	      			value: 1,
-	      			label: '壁虎车险'
-	      		},
-	      		{
-	      			value: 2,
-	      			label: '乐保吧车险'
-	      		},
-	      		{
-	      			value: 3,
-	      			label: '保途车险'
-	      		}
-	      	],
+export default {
+	data() {
+		return {
+			tid: null,
+			currentPage: 1,
+			pageCount: null,
+			length: null,
+			pageSize: 10,
+			tenantData: [], //基本信息
+			tableData: [], //路由列表数据
+			insurerList: [], //险企列表数据
+			insurerListJianjie: [], //险企列表数据
+			formData: [], //分页路由列表数据
+			dialogTableVisible: false,
+			currentPageJianjie: 1,
+			pageCountJianjie: null,
+			lengthJianjie: null,
+			pageSizeJianjie: 10,
+			tableDataJianjie: [], //简捷(保单)列表数据
+			formDataJianjie: [], //分页简捷列表数据
+			dialogTableVisibleJianjie: false,
+			formBiHu: {
+				agent: null,
+				key: null
+			},
+			formLeBaoBa: {
+				leBaoBaKey: null,
+				leBaoBaUsername: null,
+				leBaoBaPassword: null,
+			},
+			formAdd: {
+				tid: null,
+				laneId: null,
+				insurerId: null,
+				jianJieId: null,
+			},
+			formAddJianjie: {
+				tid: null,
+				insurerId: null,
+				companyId: null,
+			},
+			addBuf: [],
+			formEdit: {
+				jianJieId: null,
+				laneId: null
+			},
+			editBuf: [],
+			isEdit: false,
+			editedId: null,
+			deleteBuf: [],
+			// isAddBiHu: false,
+			lanes: [{
+				value: 1,
+				label: '壁虎车险'
+			}, {
+				value: 2,
+				label: '乐保吧车险'
+			}, {
+				value: 3,
+				label: '保途车险'
+			}],
 		}
-	  },
-	  methods: {
-	  	formatDate(time) {
-		  var   x = (time - 0) * 1000;
-		  
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" + (now.getDate());   
-		  var   hour = "0" + now.getHours();
-		  var   min =  "0" + now.getMinutes();
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000;
 
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
 		getInfo() {
@@ -292,33 +290,33 @@ import { masterApi } from '@/ajax/post.js'
 			};
 			payload = JSON.stringify(payload);
 			masterApi({
-	   			action: 'tenant_info',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.tableData = [];
-	   				this.tenantData = res.attach;
-	   				for(let item in res.attach.insurers) {
-	   					let buf = res.attach.insurers[item];
-	   					for (let i = 0; i < this.lanes.length; i++) {
-	   						if (buf.lane == this.lanes[i].value) {
-	   							buf.laneName = this.lanes[i].label;
-	   						}
-	   					}
-	   					this.tableData.push(buf);
-	   				}
-	   				// this.tableData = res.attach.insurers;
-   					this.length = this.tableData.length;
-   					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-   					this.showPage();
-  					this.getInsurerList();
-  					this.formLeBaoBa.leBaoBaUsername = res.attach.leBaoBaUsername;
-  					this.formLeBaoBa.leBaoBaPassword = res.attach.leBaoBaPassword;
-  					this.formBiHu.agent = res.attach.biHuAgent;
-	   				this.formBiHu.key = res.attach.biHuKey;
-       			}
-	   		})
+				action: 'tenant_info',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.tableData = [];
+					this.tenantData = res.attach;
+					for (let item in res.attach.insurers) {
+						let buf = res.attach.insurers[item];
+						for (let i = 0; i < this.lanes.length; i++) {
+							if (buf.lane == this.lanes[i].value) {
+								buf.laneName = this.lanes[i].label;
+							}
+						}
+						this.tableData.push(buf);
+					}
+					// this.tableData = res.attach.insurers;
+					this.length = this.tableData.length;
+					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+					this.showPage();
+					this.getInsurerList();
+					this.formLeBaoBa.leBaoBaUsername = res.attach.leBaoBaUsername;
+					this.formLeBaoBa.leBaoBaPassword = res.attach.leBaoBaPassword;
+					this.formBiHu.agent = res.attach.biHuAgent;
+					this.formBiHu.key = res.attach.biHuKey;
+				}
+			})
 		},
 
 		getInfoJianjie() {
@@ -327,376 +325,366 @@ import { masterApi } from '@/ajax/post.js'
 			};
 			payload = JSON.stringify(payload);
 			masterApi({
-	   			action: 'jian_jie_insurers',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.tableDataJianjie = res.attach;
-   					this.lengthJianjie = res.attach.length;
-   					this.pageCountJianjie = parseInt((this.lengthJianjie - 1) / this.pageSizeJianjie) + 1;
-   					this.showPageJianjie();
-   					this.getInsurerListJianjie();
-       			}
-	   		})
+				action: 'jian_jie_insurers',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.tableDataJianjie = res.attach;
+					this.lengthJianjie = res.attach.length;
+					this.pageCountJianjie = parseInt((this.lengthJianjie - 1) / this.pageSizeJianjie) + 1;
+					this.showPageJianjie();
+					this.getInsurerListJianjie();
+				}
+			})
 		},
 
-	  	getInsurerList() {
-	  		let payload = {};
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'insurers',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.insurerList = [];
-	   					for (let i = 0; i < res.attach.length; i++) {
-	   						let check = false;
-	   						for (let j = 0; j < this.tableData.length; j++) {
-	   							if(res.attach[i].id == this.tableData[j].insurerId) {
-	   								check = true;
-	   							}
-	   						}
-	   						if (!check) {
-	   							let buf = {
-		   							label: null,
-		   							value: null
-		   						};
-		   						buf.label = res.attach[i].name;
-		   						buf.value = res.attach[i].id;
-		   						this.insurerList.push(buf);
-	   						}
-	   					}
-	   				}
-       			}
-	   		})
-	  	},
+		getInsurerList() {
+			let payload = {};
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'insurers',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.insurerList = [];
+						for (let i = 0; i < res.attach.length; i++) {
+							let check = false;
+							for (let j = 0; j < this.tableData.length; j++) {
+								if (res.attach[i].id == this.tableData[j].insurerId) {
+									check = true;
+								}
+							}
+							if (!check) {
+								let buf = {
+									label: null,
+									value: null
+								};
+								buf.label = res.attach[i].name;
+								buf.value = res.attach[i].id;
+								this.insurerList.push(buf);
+							}
+						}
+					}
+				}
+			})
+		},
 
-	  	getInsurerListJianjie() {
-	  		let payload = {};
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'insurers',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.insurerListJianjie = [];
-	   					for (let i = 0; i < res.attach.length; i++) {
-	   						let check = false;
-	   						for (let j = 0; j < this.tableDataJianjie.length; j++) {
-	   							if(res.attach[i].id == this.tableDataJianjie[j].insurerId) {
-	   								check = true;
-	   							}
-	   						}
-	   						if (!check) {
-	   							let buf = {
-		   							label: null,
-		   							value: null
-		   						};
-		   						buf.label = res.attach[i].name;
-		   						buf.value = res.attach[i].id;
-		   						this.insurerListJianjie.push(buf);
-	   						}
-	   					}
-	   				}
-       			}
-	   		})
-	  	},
+		getInsurerListJianjie() {
+			let payload = {};
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'insurers',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.insurerListJianjie = [];
+						for (let i = 0; i < res.attach.length; i++) {
+							let check = false;
+							for (let j = 0; j < this.tableDataJianjie.length; j++) {
+								if (res.attach[i].id == this.tableDataJianjie[j].insurerId) {
+									check = true;
+								}
+							}
+							if (!check) {
+								let buf = {
+									label: null,
+									value: null
+								};
+								buf.label = res.attach[i].name;
+								buf.value = res.attach[i].id;
+								this.insurerListJianjie.push(buf);
+							}
+						}
+					}
+				}
+			})
+		},
 
-	  	editRoute(row) {
-	  		this.isEdit = true;
+		editRoute(row) {
+			this.isEdit = true;
 			this.editedId = row.key;
-	    	this.formEdit.jianJieId = row.jianJieId;
-	    	this.formEdit.laneId = row.lane;
-	  	},
+			this.formEdit.jianJieId = row.jianJieId;
+			this.formEdit.laneId = row.lane;
+		},
 
-	  	comfirmAdd() {
-	  		this.dialogTableVisible = false;
-	  		if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianJieId) {
-	  			let buf = {
-	  				insurerName: this.formAdd.insurerName,
-	  				insurerId: this.formAdd.insurerId,
-	  				laneName: this.formAdd.laneId,
-	  				laneId: this.formAdd.laneId,
-	  				jianJieId: this.formAdd.jianJieId,
-	  			}
-	  			for (let i = 0; i < this.lanes.length; i++) {
-	  				if (this.lanes[i].value == buf.laneName) {
-	  					buf.laneName = this.lanes[i].label;
-	  				}
-	  			}
-	  			for (let i = 0; i < this.insurerList.length; i++) {
-	  				if (this.insurerList[i].value == buf.insurerId) {
-	  					buf.insurerName = this.insurerList[i].label;
-	  				}
-	  			}
-	  			this.tableData.push(buf);
-	  			this.addBuf.push(buf);
-	  			this.showPage();
-	  			this.saveAll();
-	  		}
-	  		else
-	  		{
-	  			 this.$message({
-		            type: 'error',
-		            message: '选择信息不完整,请检查'
-		          });    
+		comfirmAdd() {
+			this.dialogTableVisible = false;
+			if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianJieId) {
+				let buf = {
+					insurerName: this.formAdd.insurerName,
+					insurerId: this.formAdd.insurerId,
+					laneName: this.formAdd.laneId,
+					laneId: this.formAdd.laneId,
+					jianJieId: this.formAdd.jianJieId,
+				}
+				for (let i = 0; i < this.lanes.length; i++) {
+					if (this.lanes[i].value == buf.laneName) {
+						buf.laneName = this.lanes[i].label;
+					}
+				}
+				for (let i = 0; i < this.insurerList.length; i++) {
+					if (this.insurerList[i].value == buf.insurerId) {
+						buf.insurerName = this.insurerList[i].label;
+					}
+				}
+				this.tableData.push(buf);
+				this.addBuf.push(buf);
+				this.showPage();
+				this.saveAll();
+			} else {
+				this.$message({
+					type: 'error',
+					message: '选择信息不完整,请检查'
+				});
 
-	  		}
-	  	},
+			}
+		},
 
-	  	comfirmAddJianjie() {
-	  		this.dialogTableVisibleJianjie = false;
-	  		if (this.formAddJianjie.insurerId && this.formAddJianjie.companyId) {
-	  			let payload = {
-	  				insurerId: this.formAddJianjie.insurerId,
-	  				companyId: this.formAddJianjie.companyId,
-	  				tid: this.tid,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			masterApi({
-		   			action: 'jian_jie_insurer_edit',
-		   			version: '1.0',
-		   			crudType: 1,
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfoJianjie();
-	       			}
-		   		})
-	  		}
-	  		else
-	  		{
-	  			 this.$message({
-		            type: 'error',
-		            message: '选择信息不完整,请检查'
-		          });    
+		comfirmAddJianjie() {
+			this.dialogTableVisibleJianjie = false;
+			if (this.formAddJianjie.insurerId && this.formAddJianjie.companyId) {
+				let payload = {
+					insurerId: this.formAddJianjie.insurerId,
+					companyId: this.formAddJianjie.companyId,
+					tid: this.tid,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'jian_jie_insurer_edit',
+					version: '1.0',
+					crudType: 1,
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.getInfoJianjie();
+					}
+				})
+			} else {
+				this.$message({
+					type: 'error',
+					message: '选择信息不完整,请检查'
+				});
 
-	  		}
-	  	},
+			}
+		},
 
-	  	goback() {
-	  		this.dialogTableVisible = false;
-	  		this.dialogTableVisibleJianjie = false;
-	  	},
+		goback() {
+			this.dialogTableVisible = false;
+			this.dialogTableVisibleJianjie = false;
+		},
 
-	  	showPage() {
-	  		this.formData = [];
-	  		if(this.length * this.pageCount < this.pageSize * this.currentPage)
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  		else
-	  		{
-	  			for (let i = 0; i < this.tableData.length; i++) {
-	  				if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
-	  					this.formData.push(this.tableData[i])
-	  				}
-	  			}
-	  		}
-	  	},
+		showPage() {
+			this.formData = [];
+			if (this.length * this.pageCount < this.pageSize * this.currentPage) {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			} else {
+				for (let i = 0; i < this.tableData.length; i++) {
+					if (i >= (this.currentPage - 1) * this.pageSize && i < this.currentPage * this.pageSize) {
+						this.formData.push(this.tableData[i])
+					}
+				}
+			}
+		},
 
-	  	showPageJianjie() {
-	  		this.formDataJianjie = [];
-	  		if(this.lengthJianjie * this.pageCountJianjie < this.pageSizeJianjie * this.currentPageJianjie)
-	  		{
-	  			for (let i = 0; i < this.tableDataJianjie.length; i++) {
-	  				if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie) {
-	  					this.formDataJianjie.push(this.tableDataJianjie[i])
-	  				}
-	  			}
-	  		}
-	  		else
-	  		{
-	  			for (let i = 0; i < this.tableDataJianjie.length; i++) {
-	  				if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie && i < this.currentPageJianjie * this.pageSizeJianjie) {
-	  					this.formDataJianjie.push(this.tableDataJianjie[i])
-	  				}
-	  			}
-	  		}
-	  	},
+		showPageJianjie() {
+			this.formDataJianjie = [];
+			if (this.lengthJianjie * this.pageCountJianjie < this.pageSizeJianjie * this.currentPageJianjie) {
+				for (let i = 0; i < this.tableDataJianjie.length; i++) {
+					if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie) {
+						this.formDataJianjie.push(this.tableDataJianjie[i])
+					}
+				}
+			} else {
+				for (let i = 0; i < this.tableDataJianjie.length; i++) {
+					if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie && i < this.currentPageJianjie * this.pageSizeJianjie) {
+						this.formDataJianjie.push(this.tableDataJianjie[i])
+					}
+				}
+			}
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.showPage(); 
-	    },
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.showPage();
+		},
 
-	  	pageChangeJianjie(pg) {
-	  		this.currentPage = pg;
-	        this.showPage(); 
-	    },
+		pageChangeJianjie(pg) {
+			this.currentPage = pg;
+			this.showPage();
+		},
 
-	    confirmEdit() {
-	    	//post
-	    	this.isEdit = null;
-	    	let buf = {
-	    		id: this.editedId,
-	    		laneName: this.formEdit.laneId,
-	    		laneId: this.formEdit.laneId,
-	    		jianJieId: this.formEdit.jianJieId,
-	    	}
-	    	for (let i = 0; i < this.lanes.length; i++) {
-  				if (this.lanes[i].value == buf.laneName) {
-  					buf.laneName = this.lanes[i].label;
-  				}
-  			}
-  			for (let i = 0; i < this.tableData.length; i++) {
-  				if (this.tableData[i].key == buf.id) {
-  					this.tableData[i].laneName = buf.laneName;
-  					this.tableData[i].laneId = buf.laneId;
-  					this.tableData[i].jianJieId = buf.jianJieId;
-  				}
-  			}
-  			this.editBuf.push(buf);
-	    	// masterApi({
-	   		// 	action: 'route_edit',
-	   		// 	version: '1.0',
-	   		// 	crudType: 4,
-	   		// 	key: this.editedId,
-	   		// 	lane: this.formEdit.laneId,
-	   		// 	jianJieId: this.formEdit.jianJieId
-	   		// },window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   		// 	if (res.code == 0) {
-	   		// 		this.getRouterInfo();
-      //  			}
-	   		// })
-	    	this.editedId = null;
-	  		this.saveAll();
-	  		this.showPage();
-	    },
+		confirmEdit() {
+			//post
+			this.isEdit = null;
+			let buf = {
+				id: this.editedId,
+				laneName: this.formEdit.laneId,
+				laneId: this.formEdit.laneId,
+				jianJieId: this.formEdit.jianJieId,
+			}
+			for (let i = 0; i < this.lanes.length; i++) {
+				if (this.lanes[i].value == buf.laneName) {
+					buf.laneName = this.lanes[i].label;
+				}
+			}
+			for (let i = 0; i < this.tableData.length; i++) {
+				if (this.tableData[i].key == buf.id) {
+					this.tableData[i].laneName = buf.laneName;
+					this.tableData[i].laneId = buf.laneId;
+					this.tableData[i].jianJieId = buf.jianJieId;
+				}
+			}
+			this.editBuf.push(buf);
+			// masterApi({
+			// 	action: 'route_edit',
+			// 	version: '1.0',
+			// 	crudType: 4,
+			// 	key: this.editedId,
+			// 	lane: this.formEdit.laneId,
+			// 	jianJieId: this.formEdit.jianJieId
+			// },window.localStorage.getItem('tokenPlate')).then((res)=> {
+			// 	if (res.code == 0) {
+			// 		this.getRouterInfo();
+			//  			}
+			// })
+			this.editedId = null;
+			this.saveAll();
+			this.showPage();
+		},
 
-	    quitEdit() {
-	    	this.isEdit = null;
-	    	this.editedId = null;
-	    },
+		quitEdit() {
+			this.isEdit = null;
+			this.editedId = null;
+		},
 
-	    deleteRoute(row) {
-	    	this.$confirm('此操作将执行删除, 是否继续?', '提示', {
-	          confirmButtonText: '确定',
-	          cancelButtonText: '取消',
-	          type: 'warning'
-	        }).then(() => {
-	        	for (var i = 0; i < this.tableData.length; i++) {
-	        		if (this.tableData[i].key == row.key) {
-	        			this.tableData[i] = {}
-	        		}
-	        	}
-	        	this.deleteBuf.push(row.key);
-	        	this.saveAll();
-	    		// masterApi({
-		   		// 	action: 'route_edit',
-		   		// 	version: '1.0',
-		   		// 	crudType: 8,
-		   		// 	key: row.key,
-		   		// },window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   		// 	if (res.code == 0) {
-		   		// 		this.getRouterInfo();
-	      //  			}
-		   		// })
-	  			this.showPage();
-	        }).catch(() => {
-	          this.$message({
-	            type: 'info',
-	            message: '已取消删除'
-	          });          
-	        }); 
-	    },
+		deleteRoute(row) {
+			this.$confirm('此操作将执行删除, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				for (var i = 0; i < this.tableData.length; i++) {
+					if (this.tableData[i].key == row.key) {
+						this.tableData[i] = {}
+					}
+				}
+				this.deleteBuf.push(row.key);
+				this.saveAll();
+				// masterApi({
+				// 	action: 'route_edit',
+				// 	version: '1.0',
+				// 	crudType: 8,
+				// 	key: row.key,
+				// },window.localStorage.getItem('tokenPlate')).then((res)=> {
+				// 	if (res.code == 0) {
+				// 		this.getRouterInfo();
+				//  			}
+				// })
+				this.showPage();
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+		},
 
-	    deleteJianjie(row) {
-	    	this.$confirm('此操作将执行删除, 是否继续?', '提示', {
-	          confirmButtonText: '确定',
-	          cancelButtonText: '取消',
-	          type: 'warning'
-	        }).then(() => {
-	        	let payload = {
-		    		id: row.id
-		    	}
-		    	payload = JSON.stringify(payload);
-		    	masterApi({
-		   			action: 'jian_jie_insurer_edit',
-		   			version: '1.0',
-		   			crudType: 8,
-		   			payload: payload,
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfoJianjie();
-	       			}
-		   		})
-	        }).catch(() => {
-	          this.$message({
-	            type: 'info',
-	            message: '已取消删除'
-	          });          
-	        }); 
-	    },
+		deleteJianjie(row) {
+			this.$confirm('此操作将执行删除, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				let payload = {
+					id: row.id
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'jian_jie_insurer_edit',
+					version: '1.0',
+					crudType: 8,
+					payload: payload,
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.getInfoJianjie();
+					}
+				})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+		},
 
-	    saveAll() {
-	    	var payload = {
-	    		tid: this.tid,
-	    		jianJieId: this.tenantData.jianJieId,
-	    		biHuKey: this.formBiHu.key,
-	    		biHuAgent: this.formBiHu.agent,
-	    		// leBaoBaKey: this.formLeBaoBa.leBaoBaKey,
-	    		leBaoBaUsername: this.formLeBaoBa.leBaoBaUsername,
-	    		leBaoBaPassword: this.formLeBaoBa.leBaoBaPassword,
-	    		insurersDelete: [],		//删除
-	    		insurersUpdate:{},		//修改
-	    		insurersInsert:{}		//新增
-	    	};
-	    	for (var i = 0; i < this.addBuf.length; i++) {
-	    		let buf = {
-    				tid: this.tid,
-    				insurerId: this.addBuf[i].insurerId,
-                    lane: this.addBuf[i].laneId,
-                    jianJieId: this.addBuf[i].jianJieId,
-	            };
-	    		payload.insurersInsert[this.tid + "_" + this.addBuf[i].insurerId] = buf;
-	    	}
-	    	for (var i = 0; i < this.editBuf.length; i++) {
-	    		let buf = {
-                    lane: this.editBuf[i].laneId,
-                    jianJieId: this.editBuf[i].jianJieId,
-	    		};
-	    		payload.insurersUpdate[this.editBuf[i].id] = buf;
-	    	}
-	    	payload.insurersDelete = this.deleteBuf;
+		saveAll() {
+			var payload = {
+				tid: this.tid,
+				jianJieId: this.tenantData.jianJieId,
+				biHuKey: this.formBiHu.key,
+				biHuAgent: this.formBiHu.agent,
+				// leBaoBaKey: this.formLeBaoBa.leBaoBaKey,
+				leBaoBaUsername: this.formLeBaoBa.leBaoBaUsername,
+				leBaoBaPassword: this.formLeBaoBa.leBaoBaPassword,
+				insurersDelete: [], //删除
+				insurersUpdate: {}, //修改
+				insurersInsert: {} //新增
+			};
+			for (var i = 0; i < this.addBuf.length; i++) {
+				let buf = {
+					tid: this.tid,
+					insurerId: this.addBuf[i].insurerId,
+					lane: this.addBuf[i].laneId,
+					jianJieId: this.addBuf[i].jianJieId,
+				};
+				payload.insurersInsert[this.tid + "_" + this.addBuf[i].insurerId] = buf;
+			}
+			for (var i = 0; i < this.editBuf.length; i++) {
+				let buf = {
+					lane: this.editBuf[i].laneId,
+					jianJieId: this.editBuf[i].jianJieId,
+				};
+				payload.insurersUpdate[this.editBuf[i].id] = buf;
+			}
+			payload.insurersDelete = this.deleteBuf;
 
-	    	payload = JSON.stringify(payload);
-	    	masterApi({
-	   			action: 'tenant_set',
-	   			version: '1.0',
-	   			payload: payload,
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.$message({
-			            type: 'success',
-			            message: '修改已保存'
-			        }); 
-			        this.getInfo();
-			        this.addBuf = [];
-			        this.editBuf = [];
-			        this.deleteBuf = [];
-       			}
-	   		})
-	    }
-	  },
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'tenant_set',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					this.$message({
+						type: 'success',
+						message: '修改已保存'
+					});
+					this.getInfo();
+					this.addBuf = [];
+					this.editBuf = [];
+					this.deleteBuf = [];
+				}
+			})
+		}
+	},
 	mounted() {
-	  	if (this.$route.query.tid) {
-	        this.tid = this.$route.query.tid;
-	  		// this.getRouterInfo();
-	  		// this.getTenantInfo();
-	  		// this.getBiHuInfo();
-	  		this.getInfo();
-	  		this.getInfoJianjie();
-        }
+		if (this.$route.query.tid) {
+			this.tid = this.$route.query.tid;
+			// this.getRouterInfo();
+			// this.getTenantInfo();
+			// this.getBiHuInfo();
+			this.getInfo();
+			this.getInfoJianjie();
+		}
 	}
 }
 </script>

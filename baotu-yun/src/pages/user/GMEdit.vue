@@ -21,78 +21,78 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	    data() {
-	      return {
-	      	id: null,
-        	name: '',
-        	password: ''
-	      };
-	    },
-	    methods: {
-	       formatDate(time){
-			  var   x = (time - 0) * 1000
-			  
-			  var   now = new Date(x) 
-			  var   year = now.getFullYear();     
-			  var   month = "0" + (now.getMonth()+1);     
-			  var   date = "0" +(now.getDate());   
-			  var   hour = "0" +now.getHours();
-			  var   min =  "0" +now.getMinutes();
-			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-			},
+export default {
+	data() {
+		return {
+			id: null,
+			name: '',
+			password: ''
+		};
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000
 
-			comfirmAdd() {
-				if (this.name && this.password) {
-					let payload = {
-						name: this.name,
-						pwd: this.password,
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
+		},
+
+		comfirmAdd() {
+			if (this.name && this.password) {
+				let payload = {
+					name: this.name,
+					pwd: this.password,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'admin_edit',
+					version: '1.0',
+					crudType: 1,
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							type: 'success',
+							message: '添加管理员账号成功'
+						});
+						router.push({
+							name: "GMList"
+						})
 					}
-					payload = JSON.stringify(payload);
-					masterApi({
-						action: 'admin_edit',
-						version: '1.0',
-						crudType: 1,
-						payload: payload
-					},window.localStorage.getItem('tokenPlate')).then((res)=> {
-						if (res.code == 0) {
-							this.$message({
-					            type: 'success',
-					            message: '添加管理员账号成功'
-					        });
-						    router.push({
-						  	  name: "GMList"
-						    })
-						}
-					})
-				}
-				else
-				{
-					this.$message({
-			            type: 'error',
-			            message: '信息填写不完整'
-			        });
-				}
-			},
-
-			comfirmSave() {
-
-			},
-
-			goback() {
-				router.push({
-			  	  name: "GMList"
-			    })
+				})
+			} else {
+				this.$message({
+					type: 'error',
+					message: '信息填写不完整'
+				});
 			}
-	    },
-	    mounted(){
-	        if (this.$route.query.id) {
-	        	this.id = this.$route.query.id;
-	        }
-	    }
+		},
+
+		comfirmSave() {
+
+		},
+
+		goback() {
+			router.push({
+				name: "GMList"
+			})
+		}
+	},
+	mounted() {
+		if (this.$route.query.id) {
+			this.id = this.$route.query.id;
+		}
 	}
+}
 </script>
 <style lang="less">
 	.appbox{

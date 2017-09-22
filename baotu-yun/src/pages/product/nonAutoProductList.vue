@@ -18,71 +18,72 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	    data() {
-	      return {
-	      	isEdit: false,
-	      	edited: null,
-	        editData: [],
-	        formData: [],
-	        total: null,
-	        pageSize: 10,
-	        currentPage: 1
-	      };
-	    },
-	    methods: {
-	       formatDate(time){
-			  var   x = (time - 0) * 1000
-			  
-			  var   now = new Date(x) 
-			  var   year = now.getFullYear();     
-			  var   month = "0" + (now.getMonth()+1);     
-			  var   date = "0" +(now.getDate());   
-			  var   hour = "0" +now.getHours();
-			  var   min =  "0" +now.getMinutes();
-			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-			},
+export default {
+	data() {
+		return {
+			isEdit: false,
+			edited: null,
+			editData: [],
+			formData: [],
+			total: null,
+			pageSize: 10,
+			currentPage: 1
+		};
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000
 
-			getInfo() {
-				let payload = {
-					page: this.currentPage,
-					pageSize: this.pageSize
-				};
-				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'non_auto_product_list',
-					version: '1.0',
-					payload: payload
-				},window.localStorage.getItem('tokenPlate')).then((res)=> {
-					if (res.code == 0) {
-						if (res.attach) {
-		   					this.tableData = res.attach.list;
-		   					this.total = res.attach.total;
-		   				}
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
+		},
+
+		getInfo() {
+			let payload = {
+				page: this.currentPage,
+				pageSize: this.pageSize
+			};
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'non_auto_product_list',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.tableData = res.attach.list;
+						this.total = res.attach.total;
 					}
-				})
-			},
-			
-			showEdit(row) {
-				this.edited = row.id;
-			},
+				}
+			})
+		},
 
-			confirmEdit(item) {
+		showEdit(row) {
+			this.edited = row.id;
+		},
 
-			},
+		confirmEdit(item) {
 
-		  	pageChange(pg) {
-		  		this.currentPage = pg;
-		        this.getInfo(); 
-		    },
-	    },
-	    mounted(){
-	    	this.getInfo();
-	    }
+		},
+
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.getInfo();
+		},
+	},
+	mounted() {
+		this.getInfo();
 	}
-
+}
 </script>
 <style lang="less">
 .nonAutoCategoryList{

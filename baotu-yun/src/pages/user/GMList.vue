@@ -42,120 +42,119 @@
 	</div>
 </template>
 <script>
-import { masterApi } from '@/ajax/post.js'
+import {
+	masterApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	    	myId: null,
-	    	isRoot: false,
-	      	currentPage: 1,
-	      	total: null,
-	      	pageSize: 10,
-	      	tableData: [],
+export default {
+	data() {
+		return {
+			myId: null,
+			isRoot: false,
+			currentPage: 1,
+			total: null,
+			pageSize: 10,
+			tableData: [],
 		}
-	  },
-	  methods: {
-	  	formatDate(time) {
-		  var   x = (time - 0) * 1000;
-		  
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" +(now.getDate());   
-		  var   hour = "0" +now.getHours();
-		  var   min =  "0" +now.getMinutes();
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000;
 
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-	  		let payload = {
-	  			page: this.currentPage,
-	   			pageSize: this.pageSize,
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		masterApi({
-	   			action: 'admins',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach.list) {
-	   					for (let i = 0; i < res.attach.list.length; i++) {
-	   						if((res.attach.list[i].mod & 2) == 2) {	//该条数据被禁用
-	   							res.attach.list[i].isAble = false;
-	   						}
-	   						else {
-	   							res.attach.list[i].isAble = true;
-	   						}
-	   					}
-		   				this.tableData = res.attach.list;
-	   				}
-	   				this.total = res.attach.total;
-       			}
-	   		})
-	  	},
+		getInfo() {
+			let payload = {
+				page: this.currentPage,
+				pageSize: this.pageSize,
+			}
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'admins',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach.list) {
+						for (let i = 0; i < res.attach.list.length; i++) {
+							if ((res.attach.list[i].mod & 2) == 2) { //该条数据被禁用
+								res.attach.list[i].isAble = false;
+							} else {
+								res.attach.list[i].isAble = true;
+							}
+						}
+						this.tableData = res.attach.list;
+					}
+					this.total = res.attach.total;
+				}
+			})
+		},
 
-	  	addGM() {
-	  		 router.push({
-	  		 	name: "GM-edit"
-	  		 })
-	  	},
+		addGM() {
+			router.push({
+				name: "GM-edit"
+			})
+		},
 
-	  	changeState(id,isAble) {
-	  		if (isAble) {	//当前可用,操作为禁用
-	  			let payload = {
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			masterApi({
-		   			action: 'admin_seal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '禁用成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  		else
-	  		{	//当前不可用,操作为解禁
-	  			let payload = {
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			masterApi({
-		   			action: 'admin_unseal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('tokenPlate')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '解禁成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  	},
+		changeState(id, isAble) {
+			if (isAble) { //当前可用,操作为禁用
+				let payload = {
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'admin_seal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '禁用成功',
+							type: 'success',
+						});
+					}
+				});
+			} else { //当前不可用,操作为解禁
+				let payload = {
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'admin_unseal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '解禁成功',
+							type: 'success',
+						});
+					}
+				});
+			}
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.getInfo(); 
-	    },
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  	this.myId = window.localStorage.getItem('loginId_baotu');
-	  	window.localStorage.getItem('isRoot_baotu') == 'y'?this.isRoot = true:this.isRoot = false;
-	  }
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.getInfo();
+		},
+	},
+	mounted() {
+		this.getInfo();
+		this.myId = window.localStorage.getItem('loginId_baotu');
+		window.localStorage.getItem('isRoot_baotu') == 'y' ? this.isRoot = true : this.isRoot = false;
 	}
+}
 </script>
 <style lang="less">
 .GMList{
