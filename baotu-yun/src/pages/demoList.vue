@@ -19,12 +19,10 @@
 			    	</template>
 			    </el-table-column>
 			    <el-table-column label="操作">
-			    	<template scope="scope">
-			    		<el-button type="text" size="small">
-			    			<router-link :to="{name:'demo-edit',query:{}}">
-			      			编辑
-				      		</router-link>
-			    		</el-button>
+					<template scope="scope">
+						<router-link :to="{name:'demo-edit',query:{}}">
+							<el-button type="text" size="small">编辑</el-button>
+						</router-link>
 			    	</template>
 			    </el-table-column>
 			</el-table>
