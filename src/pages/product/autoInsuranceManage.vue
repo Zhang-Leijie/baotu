@@ -181,737 +181,705 @@
 	</div>
 </template>
 <script>
+import {
+	autoApi
+} from '@/ajax/post.js'
 
-import { autoApi } from '@/ajax/post.js'
+function formatDate(time) {
+	var x = time - 0
+	var now = new Date(x)
+	var year = now.getFullYear();
+	var month = "0" + (now.getMonth() + 1);
+	var date = "0" + (now.getDate());
+	var hour = "0" + now.getHours();
+	var min = "0" + now.getMinutes();
+	return year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
+}
 
-	function formatDate(time){
-	  var   x = time - 0
-	  var   now = new Date(x) 
-	  var   year = now.getFullYear();     
-	  var   month = "0" + (now.getMonth()+1);     
-	  var   date = "0" + (now.getDate());   
-	  var   hour = "0" + now.getHours();
-	  var   min =  "0" + now.getMinutes();
-	  return   year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
-	}
+export default {
+	data() {
+		return {
+			choosed: null, //当前路由选择
+			chooseds: [], //路由选择列表
+			formRouterData: [],
+			baseCommission: { //基础佣金
+				shangye: null,
+				jiaoqiang: null
+			},
+			selfCommission: { //自留佣金
+				shangye: null,
+				jiaoqiang: null
+			},
+			isRateEffective: false,
+			tagData: [],
+			rangeData: [], //选中系数的数据
+			rateData: {}, //选中节点的手续费配置
+			currentRange: { //当前选中系数的名称
+				id: 1,
+				name: null,
+				isCustom: false,
+				maxmiumCustom: 0,
+				depth: 0,
+			},
+			tenantId: {}, //当前选择代理商ID	
+			insurerId: null, //当前选择险企ID
+			insurers: [], //险企列表数据
+			editedRatio: { //被编辑的系数比例
+				id: null,
+				rate: null,
+			},
+			addedRange: {
+				name: null,
+				comparison: null,
+				comparableValue: null,
+				comparableValueA: null,
+				comparableValueB: null,
+			},
+			editedRange: {
+				name: null,
+				comparison: null,
+				comparableValue: null,
+				comparableValueA: null,
+				comparableValueB: null,
+			},
+			dialogAddVisible: false,
+			dialogEditVisible: false,
+			switchBox: false, //强行让vue组件重新刷新渲染的投机工具
+			isPoly: false,
+			comparisons: [{
+				value: 'gt',
+				label: "大于"
+			}, {
+				value: 'gte',
+				label: "大于等于"
+			}, {
+				value: 'lt',
+				label: "小于"
+			}, {
+				value: 'lte',
+				label: "小于等于"
+			}, {
+				value: 'eq',
+				label: "等于"
+			}, {
+				value: 'bteween',
+				label: "前后不含区间"
+			}, {
+				value: 'lbteween',
+				label: "前含后不含区间"
+			}, {
+				value: 'rbteween',
+				label: "前不含后含区间"
+			}, ],
+		}
+	},
+	methods: {
+		init() { //初始化页面
+			this.getInsurerList(); //获取险企列表  need:tid  get:insurerId
+			this.getInfo();
+			for (let i = 0; i < 10; i++) {
+				this.chooseds[i] = null;
+				this.formRouterData[i] = [];
+				this.tagData[i] = [];
+				//需要修改tagData的结构,[0]为第一层系数类型列表,[1]位第二层系数类型列表
+			}
+		},
 
-	export default {
-	  data() {
-	    return {
-	      choosed: null,		//当前路由选择
-	      chooseds: [],			//路由选择列表
-	      formRouterData: [],
-	      baseCommission: {		//基础佣金
-	      	shangye: null,
-	      	jiaoqiang: null
-	      },
-	      selfCommission: {		//自留佣金
-	      	shangye: null,
-	      	jiaoqiang: null
-	      },
-	      isRateEffective: false,
-	      tagData: [],
-	      rangeData: [],	//选中系数的数据
-	      rateData: {},		//选中节点的手续费配置
-	      currentRange: {	//当前选中系数的名称
-	      	id: 1,
-	      	name: null,
-	      	isCustom: false,
-	      	maxmiumCustom: 0,	
-	      	depth: 0,
-	      },	
-	      tenantId: {},		//当前选择代理商ID	
-	      insurerId: null,		//当前选择险企ID
-	      insurers: [], 			//险企列表数据
-	      editedRatio: {	//被编辑的系数比例
-	      	id: null,
-	      	rate: null,
-	      },
-	      addedRange: {
-	      	name: null,
-	      	comparison: null,
-	      	comparableValue: null,
-	      	comparableValueA: null,
-	      	comparableValueB: null,
-	      },
-	      editedRange: {
-	      	name: null,
-	      	comparison: null,
-	      	comparableValue: null,
-	      	comparableValueA: null,
-	      	comparableValueB: null,
-	      },
-	      dialogAddVisible: false,
-	      dialogEditVisible: false,
-	      switchBox: false,	//强行让vue组件重新刷新渲染的投机工具
-	      isPoly: false,
-	      comparisons: [
-	      	{
-	      		value: 'gt',
-	      		label: "大于"
-	      	},
-	      	{
-	      		value: 'gte',
-	      		label: "大于等于"
-	      	},
-	      	{
-	      		value: 'lt',
-	      		label: "小于"
-	      	},
-	      	{
-	      		value: 'lte',
-	      		label: "小于等于"
-	      	},
-	      	{
-	      		value: 'eq',
-	      		label: "等于"
-	      	},
-	      	{
-	      		value: 'bteween',
-	      		label: "前后不含区间"
-	      	},
-	      	{
-	      		value: 'lbteween',
-	      		label: "前含后不含区间"
-	      	},
-	      	{
-	      		value: 'rbteween',
-	      		label: "前不含后含区间"
-	      	},
-	      ],
-	    }
-	  },
-	  methods: {
-	    init() {							//初始化页面
-	  		this.getInsurerList(); 			//获取险企列表  need:tid  get:insurerId
-	  		this.getInfo();
-	  		for (let i = 0; i < 10; i++) {	
-	  			this.chooseds[i] = null;	
-	  			this.formRouterData[i] = [];
-	  			this.tagData[i] = [];
-	  			//需要修改tagData的结构,[0]为第一层系数类型列表,[1]位第二层系数类型列表
-	  		}
-	    },
-
-	    //获取险企列表
-	    getInsurerList() {
-	    	let payload = {
-	    		employeeId: this.tenantId.employeeId
-	    	};
-	    	payload = JSON.stringify(payload);
+		//获取险企列表
+		getInsurerList() {
+			let payload = {
+				employeeId: this.tenantId.employeeId
+			};
+			payload = JSON.stringify(payload);
 			autoApi({
-	   			action: 'insurers',
-	   			version: '1.0',
-	   			payload: payload			
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if(res.attach[0]) {
-	   					for (var i = 0; i < res.attach.length; i++) {
-	   						let buf = {
-	   							value: res.attach[i].id,
-	   							label: res.attach[i].name,
-	   						}
-	   						this.insurers.push(buf);
-	   						if (i == 0) {
-	   							this.insurerId = res.attach[i].id; //默认选择第一个险企
-	   						}
-	   					}
-	   				}
-       			}
-	   		})
-	    },
+				action: 'insurers',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach[0]) {
+						for (var i = 0; i < res.attach.length; i++) {
+							let buf = {
+								value: res.attach[i].id,
+								label: res.attach[i].name,
+							}
+							this.insurers.push(buf);
+							if (i == 0) {
+								this.insurerId = res.attach[i].id; //默认选择第一个险企
+							}
+						}
+					}
+				}
+			})
+		},
 
-	    //获取路由节点信息
-	    getInfo() {
-	    	let payload = {
-	    		employeeId: window.localStorage.getItem('employeeId'),
-	    	};
-	    	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'poundage_documents',
-	   			version: '1.0',
-	   			payload: payload			
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.turnData(res.attach);
-	   				}
-       			}
-	   		})
-	    },
-
-	    //处理获取的路由节点数据并初始化路由节点列表
-	    turnData(data) {
-	    	// 转换数据
-	    	//将路由节点层级转换成数组对象
-	    	function formatChildren(data,formData) {
-	    		for (let item in data) {
-	    			let buf = {
-	    				value: data[item].node.id,
-	    				label: data[item].node.name,
-	    				poly: data[item].node.poly,
-	    				children: [],
-	    			}
-	    			formData.push(buf);
-	    			if (data[item].children) {
-	    				for (let i = 0; i < formData.length; i++) {
-		    				if (formData[i].value == item) {
-			    				formatChildren(data[item].children,formData[i].children);
-			    			}
-		    			}
-	    			}
-	    		}
-	    	}
-	    	let formData = [];
-	    	formatChildren(data,formData);
-	    	this.formRouterData[0] = formData;
-	    	for (var i = 1; i < this.formRouterData.length; i++) {
-	    		this.formRouterData[i] = [];
-	    	}
-	    	this.switchBox = !this.switchBox;
-	    },
-
-	    changeTab(val) {
-	    	this.insurerId = parseInt(val.name);
-	    	this.getInfo();	//路由节点列表数据刷新并初始化
-	  		//清除已有的页面选中记录
-	  		//清空所选节点下级所有的选中状态
-	    	for (let j = 0; j < this.chooseds.length; j++) {
-	    		this.chooseds[j] = null;
-	    	}
-	    	this.choosed = null;
-	    	//清空系数列表
-	    	for (let j = 0; j < this.tagData.length; j++) {
-	    		this.tagData[j] = [];
-	    	}
-	    	//清空当前系数
-	    	this.currentRange.id = null;
-	    	this.currentRange.name = null;
-	    	this.currentRange.isCustom = false;
-	    	this.currentRange.maxmiumCustom = 0;
-	    	this.currentRange.depth = 0;
-	    	//清空表格数据
-	    	this.rangeData = [];
-	    	//清空全局系数
-	    	this.baseCommission.shangye = null;
-	    	this.baseCommission.jiaoqiang = null;
-	    	this.selfCommission.shangye = null;
-	    	this.selfCommission.jiaoqiang = null;
-	    	this.isRateEffective = false;
-	    },
-
-	    enterToNext(val,index) {
-	    	this.choosed = val.value;
-	    	this.chooseds[index] = val.value;
-	    	this.isPoly = val.poly;
-	    	//实现只显示当前选择的直接子集的功能
-	    	for (let j = index + 2; j < this.formRouterData.length; j++) {
-	    		this.formRouterData[j] = [];
-	    	}
-	    	//清空所选节点下级所有的选中状态
-	    	for (let j = index + 1; j < this.chooseds.length; j++) {
-	    		this.chooseds[j] = null;
-	    	}
-	    	//清空系数列表
-	    	for (let j = 0; j < this.tagData.length; j++) {
-	    		this.tagData[j] = [];
-	    	}
-	    	//清空当前系数
-	    	this.currentRange.id = null;
-	    	this.currentRange.name = null;
-	    	this.currentRange.isCustom = false;
-	    	this.currentRange.maxmiumCustom = 0;
-	    	this.currentRange.depth = 0;
-	    	//清空编辑状态
-	    	this.editedRatio.id = null;
-	    	this.editedRatio.rate = null;
-	    	//清空全距系数配置
-	    	this.baseCommission.jiaoqiang = null;
-	    	this.baseCommission.shangye = null;
-	    	this.selfCommission.jiaoqiang = null;
-	    	this.selfCommission.shangye = null;
-	    	this.isRateEffective = false;
-
-	    	let child_index = index + 1
-	    	this.formRouterData[child_index] = val.children;
-	    	// post
-	    	let payload = {
-	    		employeeId: window.localStorage.getItem('employeeId'),
-	    		id: val.value,
-	    	};
-	    	payload = JSON.stringify(payload);
+		//获取路由节点信息
+		getInfo() {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId'),
+			};
+			payload = JSON.stringify(payload);
 			autoApi({
-	   			action: 'coefficient_documents',
-	   			version: '1.0',
-	   			payload: payload			
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if(res.attach) {
-	   					this.formatTableData(res.attach);
-	   				}
-	   				else
-	   				{
-	   					this.getRates(this.choosed);
-	   				}
-       			}
-	   		})
-	    },
-	 
-	    //格式化系数类型列表数据并显示
-	    formatTableData(data) {
-	    	function formatChildren(data,formData) {
-	    		for (let item in data) {
-	    			let buf = {
-	    				id: data[item].node.id,
-	    				name: data[item].node.name,	
-	    				maxmiumCustom: data[item].node.maxmiumCustom,	
-	    				custom: data[item].node.custom,	
-	    				children: [],
-	    			}
-	    			formData.push(buf);
-	    			if (data[item].children) {//说明有二级系数表
-	    				for (let i = 0; i < formData.length; i++) {
-	    					if (formData[i].id == item) {
-	    						formatChildren(data[item].children,formData[i].children);
-	    					}
-	    				}
-	    			}
-	    		}
-	    	}	
-	    	let formData = [];
-	    	formatChildren(data,formData);
-	    	this.tagData[0] = formData;
-	    	for (let i = 1; i < this.tagData.length; i++) {
-	    		this.tagData[i] = [];
-	    	}
-	    	
-	    	if (this.currentRange.id && formData[0]) {	
-	    		for (let i = 0; i < formData.length; i++) {
-	    			if (formData[i].id == this.currentRange.id) {
-				    	this.currentRange.name = formData[i].name;
-				    	this.currentRange.id = formData[i].id;
-				    	this.currentRange.isCustom = formData[i].custom;
-				    	this.currentRange.maxmiumCustom = formData[i].maxmiumCustom;
-	    				this.currentRange.depth = 0;
-	    			}
-	    		}
-	    	}
-	    	else
-	    	{//默认显示第一条系数类型的数据
-		    	this.currentRange.name = formData[0]?formData[0].name:'';
-		    	this.currentRange.id = formData[0]?formData[0].id:'';
-		    	this.currentRange.isCustom = formData[0]?formData[0].custom:false;
-		    	this.currentRange.maxmiumCustom = formData[0]?formData[0].maxmiumCustom:0;
-		    	this.currentRange.depth = 0;
-	    	}
+				action: 'poundage_documents',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.turnData(res.attach);
+					}
+				}
+			})
+		},
 
-	    	this.getRanges(this.currentRange.id);
-	    },
+		//处理获取的路由节点数据并初始化路由节点列表
+		turnData(data) {
+			// 转换数据
+			//将路由节点层级转换成数组对象
+			function formatChildren(data, formData) {
+				for (let item in data) {
+					let buf = {
+						value: data[item].node.id,
+						label: data[item].node.name,
+						poly: data[item].node.poly,
+						children: [],
+					}
+					formData.push(buf);
+					if (data[item].children) {
+						for (let i = 0; i < formData.length; i++) {
+							if (formData[i].value == item) {
+								formatChildren(data[item].children, formData[i].children);
+							}
+						}
+					}
+				}
+			}
+			let formData = [];
+			formatChildren(data, formData);
+			this.formRouterData[0] = formData;
+			for (var i = 1; i < this.formRouterData.length; i++) {
+				this.formRouterData[i] = [];
+			}
+			this.switchBox = !this.switchBox;
+		},
 
-	    selectMenu(val,level,index) {//val:被点击的结构体, level:选中路由所在的层级数, index:选中路由在自身列表的位置
-    		
-	   		this.currentRange.id = val.id;
-	   		this.currentRange.name = val.name;
-	   		this.currentRange.isCustom = val.custom;
-	   		this.currentRange.maxmiumCustom = val.maxmiumCustom;
-	   		this.currentRange.depth = level;
+		changeTab(val) {
+			this.insurerId = parseInt(val.name);
+			this.getInfo(); //路由节点列表数据刷新并初始化
+			//清除已有的页面选中记录
+			//清空所选节点下级所有的选中状态
+			for (let j = 0; j < this.chooseds.length; j++) {
+				this.chooseds[j] = null;
+			}
+			this.choosed = null;
+			//清空系数列表
+			for (let j = 0; j < this.tagData.length; j++) {
+				this.tagData[j] = [];
+			}
+			//清空当前系数
+			this.currentRange.id = null;
+			this.currentRange.name = null;
+			this.currentRange.isCustom = false;
+			this.currentRange.maxmiumCustom = 0;
+			this.currentRange.depth = 0;
+			//清空表格数据
+			this.rangeData = [];
+			//清空全局系数
+			this.baseCommission.shangye = null;
+			this.baseCommission.jiaoqiang = null;
+			this.selfCommission.shangye = null;
+			this.selfCommission.jiaoqiang = null;
+			this.isRateEffective = false;
+		},
 
-	    	var child_level = level + 1;
-	    	if (val.children[0]) {
-	    		this.tagData[child_level] = val.children;
-	    		for (let i = level + 2; i < this.tagData.length; i++) {
-	    			this.tagData[i] = [];
-	    		}
-	    	}
-	    	else
-	    	{
-	    		for (let i = level + 1; i < this.tagData.length; i++) {
-	    			this.tagData[i] = [];
-	    		}
-	    	}
-	    	this.getRanges(val.id);
-	    },
+		enterToNext(val, index) {
+			this.choosed = val.value;
+			this.chooseds[index] = val.value;
+			this.isPoly = val.poly;
+			//实现只显示当前选择的直接子集的功能
+			for (let j = index + 2; j < this.formRouterData.length; j++) {
+				this.formRouterData[j] = [];
+			}
+			//清空所选节点下级所有的选中状态
+			for (let j = index + 1; j < this.chooseds.length; j++) {
+				this.chooseds[j] = null;
+			}
+			//清空系数列表
+			for (let j = 0; j < this.tagData.length; j++) {
+				this.tagData[j] = [];
+			}
+			//清空当前系数
+			this.currentRange.id = null;
+			this.currentRange.name = null;
+			this.currentRange.isCustom = false;
+			this.currentRange.maxmiumCustom = 0;
+			this.currentRange.depth = 0;
+			//清空编辑状态
+			this.editedRatio.id = null;
+			this.editedRatio.rate = null;
+			//清空全距系数配置
+			this.baseCommission.jiaoqiang = null;
+			this.baseCommission.shangye = null;
+			this.selfCommission.jiaoqiang = null;
+			this.selfCommission.shangye = null;
+			this.isRateEffective = false;
 
-	    getRanges(id) {
-	    	this.rangeData = [];
-	    	this.editedRatio.id = null;
-	    	this.editedRatio.rate = null;
-	    	// post
-	    	let payload = {
-	    		employeeId: window.localStorage.getItem('employeeId'),
-	    		id: id,
-	    	};
-	    	payload = JSON.stringify(payload);
+			let child_index = index + 1
+			this.formRouterData[child_index] = val.children;
+			// post
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId'),
+				id: val.value,
+			};
+			payload = JSON.stringify(payload);
 			autoApi({
-	   			action: 'coefficient_ranges',
-	   			version: '1.0',
-	   			payload: payload			
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if(res.attach) {
-	   					for (let item in res.attach) {
-	   						let buf = res.attach[item];
-	   						buf.rate = null;
-	   						this.rangeData.push(buf);
-	   					}
-	    				this.getRates(this.choosed);
-	   				}
-       			}
-	   		})
-	    },
+				action: 'coefficient_documents',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.formatTableData(res.attach);
+					} else {
+						this.getRates(this.choosed);
+					}
+				}
+			})
+		},
 
-	    getRates(id) {
-	    	this.rateData = {};
-	    	// post
-	    	let payload = {
-	    		employeeId: window.localStorage.getItem('employeeId'),
-	    		insurerId: this.insurerId,
-	    		nodeId: id,
-	    		coefficientId: this.currentRange.id,
-	    	};
-	    	payload = JSON.stringify(payload);
+		//格式化系数类型列表数据并显示
+		formatTableData(data) {
+			function formatChildren(data, formData) {
+				for (let item in data) {
+					let buf = {
+						id: data[item].node.id,
+						name: data[item].node.name,
+						maxmiumCustom: data[item].node.maxmiumCustom,
+						custom: data[item].node.custom,
+						children: [],
+					}
+					formData.push(buf);
+					if (data[item].children) { //说明有二级系数表
+						for (let i = 0; i < formData.length; i++) {
+							if (formData[i].id == item) {
+								formatChildren(data[item].children, formData[i].children);
+							}
+						}
+					}
+				}
+			}
+			let formData = [];
+			formatChildren(data, formData);
+			this.tagData[0] = formData;
+			for (let i = 1; i < this.tagData.length; i++) {
+				this.tagData[i] = [];
+			}
+
+			if (this.currentRange.id && formData[0]) {
+				for (let i = 0; i < formData.length; i++) {
+					if (formData[i].id == this.currentRange.id) {
+						this.currentRange.name = formData[i].name;
+						this.currentRange.id = formData[i].id;
+						this.currentRange.isCustom = formData[i].custom;
+						this.currentRange.maxmiumCustom = formData[i].maxmiumCustom;
+						this.currentRange.depth = 0;
+					}
+				}
+			} else { //默认显示第一条系数类型的数据
+				this.currentRange.name = formData[0] ? formData[0].name : '';
+				this.currentRange.id = formData[0] ? formData[0].id : '';
+				this.currentRange.isCustom = formData[0] ? formData[0].custom : false;
+				this.currentRange.maxmiumCustom = formData[0] ? formData[0].maxmiumCustom : 0;
+				this.currentRange.depth = 0;
+			}
+
+			this.getRanges(this.currentRange.id);
+		},
+
+		selectMenu(val, level, index) { //val:被点击的结构体, level:选中路由所在的层级数, index:选中路由在自身列表的位置
+
+			this.currentRange.id = val.id;
+			this.currentRange.name = val.name;
+			this.currentRange.isCustom = val.custom;
+			this.currentRange.maxmiumCustom = val.maxmiumCustom;
+			this.currentRange.depth = level;
+
+			var child_level = level + 1;
+			if (val.children[0]) {
+				this.tagData[child_level] = val.children;
+				for (let i = level + 2; i < this.tagData.length; i++) {
+					this.tagData[i] = [];
+				}
+			} else {
+				for (let i = level + 1; i < this.tagData.length; i++) {
+					this.tagData[i] = [];
+				}
+			}
+			this.getRanges(val.id);
+		},
+
+		getRanges(id) {
+			this.rangeData = [];
+			this.editedRatio.id = null;
+			this.editedRatio.rate = null;
+			// post
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId'),
+				id: id,
+			};
+			payload = JSON.stringify(payload);
 			autoApi({
-	   			action: 'poundage_config',
-	   			version: '1.0',
-	   			payload: payload			
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.baseCommission.shangye = null;
-   					this.baseCommission.jiaoqiang = null;
-   					this.selfCommission.shangye = null;
-   					this.selfCommission.jiaoqiang = null;
-	   				if(res.attach) {
-	   					this.baseCommission.shangye = res.attach.cmRate / 10;
-	   					this.baseCommission.jiaoqiang = res.attach.cpRate / 10;
-	   					this.selfCommission.shangye = res.attach.cmRetainRate / 10;
-	   					this.selfCommission.jiaoqiang = res.attach.cpRetainRate / 10;
-	   					this.isRateEffective = res.attach.effective;
-	   					this.rateData = res.attach.ratios?res.attach.ratios:{};
-	   					this.fixData();	//展示中的系数与rate数据
-	   				}
-       			}
-	   		})
-	    },
+				action: 'coefficient_ranges',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						for (let item in res.attach) {
+							let buf = res.attach[item];
+							buf.rate = null;
+							this.rangeData.push(buf);
+						}
+						this.getRates(this.choosed);
+					}
+				}
+			})
+		},
 
-	    fixData() {		//将现有的rateData整合进rangeData里
-    		for (let i = 0; i < this.rangeData.length; i++) {
-    			if (this.rateData[this.rangeData[i].id]) {
-    				this.rangeData[i].rate = this.rateData[this.rangeData[i].id] / 10;
-    			}
-    			else
-    			{
-    				this.rangeData[i].rate = 0;
-    			}
-    		}
-	    },
+		getRates(id) {
+			this.rateData = {};
+			// post
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId'),
+				insurerId: this.insurerId,
+				nodeId: id,
+				coefficientId: this.currentRange.id,
+			};
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'poundage_config',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.baseCommission.shangye = null;
+					this.baseCommission.jiaoqiang = null;
+					this.selfCommission.shangye = null;
+					this.selfCommission.jiaoqiang = null;
+					if (res.attach) {
+						this.baseCommission.shangye = res.attach.cmRate / 10;
+						this.baseCommission.jiaoqiang = res.attach.cpRate / 10;
+						this.selfCommission.shangye = res.attach.cmRetainRate / 10;
+						this.selfCommission.jiaoqiang = res.attach.cpRetainRate / 10;
+						this.isRateEffective = res.attach.effective;
+						this.rateData = res.attach.ratios ? res.attach.ratios : {};
+						this.fixData(); //展示中的系数与rate数据
+					}
+				}
+			})
+		},
 
-	    handleAddClose() {
-	    	this.dialogAddVisible = false;
-	    },
+		fixData() { //将现有的rateData整合进rangeData里
+			for (let i = 0; i < this.rangeData.length; i++) {
+				if (this.rateData[this.rangeData[i].id]) {
+					this.rangeData[i].rate = this.rateData[this.rangeData[i].id] / 10;
+				} else {
+					this.rangeData[i].rate = 0;
+				}
+			}
+		},
 
-	    handleEditClose() {
-	    	this.dialogEditVisible = false;
-	    },
+		handleAddClose() {
+			this.dialogAddVisible = false;
+		},
 
-	    isLegalNumber(val) {
-	    	return (-100 <= val && val <= 100)?true:false;
-	    },
+		handleEditClose() {
+			this.dialogEditVisible = false;
+		},
 
-	    clearData() {
-	    	let payload = {
-	    		employeeId: window.localStorage.getItem('employeeId'),
-    			insurerId: this.insurerId,
-	    		nodeId: this.choosed,
-	    		config: null,
-	    	}
-	    	
-		   	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'poundage_config_edit',
-	   			version: '1.0',
-	   			payload: payload,
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.getRanges(this.currentRange.id);
-			    	this.$message({
-			    		message: '系数已清除',
-			    		type: 'success',
-			    	})
-			    	this.getRates(this.choosed);
-       			}
-	   		})
-	    },
+		isLegalNumber(val) {
+			return (-100 <= val && val <= 100) ? true : false;
+		},
 
-	    confirmSetSave() {
+		clearData() {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId'),
+				insurerId: this.insurerId,
+				nodeId: this.choosed,
+				config: null,
+			}
+
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'poundage_config_edit',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.getRanges(this.currentRange.id);
+					this.$message({
+						message: '系数已清除',
+						type: 'success',
+					})
+					this.getRates(this.choosed);
+				}
+			})
+		},
+
+		confirmSetSave() {
 			//post
 			if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang) && this.isLegalNumber(this.editedRatio.rate)) {
 				let payload = {
-		    		employeeId: window.localStorage.getItem('employeeId'),
-	    			insurerId: this.insurerId,
-		    		nodeId: this.choosed,
-		    		config: {
-		    			cmRate: this.baseCommission.shangye?parseInt(this.baseCommission.shangye * 10):0,
-		    			cpRate: this.baseCommission.jiaoqiang?parseInt(this.baseCommission.jiaoqiang * 10):0,
-		    			cmRetainRate: this.selfCommission.shangye?parseInt(this.selfCommission.shangye * 10):0,
-		    			cpRetainRate: this.selfCommission.jiaoqiang?parseInt(this.selfCommission.jiaoqiang * 10):0,
-		    			effective: this.isRateEffective,
-		    		}
-		    	}
-		    	
-			   	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'poundage_config_edit',
-		   			version: '1.0',
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getRanges(this.currentRange.id);
-				    	this.$message({
-				    		message: '设置已保存',
-				    		type: 'success',
-				    	})
-				    	this.getRates(this.choosed);
-	       			}
-		   		})
-			}
-			else
-			{
-		    	this.$message({
-		    		message: '输入非法,请检查输入(正确输入范围是-100到100,小数将只保留一位)',
-		    		type: 'error',
-		    	})
-		    }
-	    },
-	    editRange(row) {
-	    	this.dialogEditVisible = true;
-	    	this.editedRange.id = row.id;
-	    	this.editedRange.name = row.name;
-	    	for (let i = 0; i < this.comparisons.length; i++) {
-	    		if (this.reComparisonName(row.comparison) == this.comparisons[i].label) {
-	    			this.editedRange.comparison = this.comparisons[i].value;
-	    		}
-	    	}
-	    	if (row.comparableValue.split('_')[1]) {
-	    		this.editedRange.comparableValueA = row.comparableValue.split('_')[0];
-	    	this.editedRange.comparableValueB = row.comparableValue.split('_')[1];
-	    	}
-	    	else {
-	    		this.editedRange.comparableValue = row.comparableValue;
-	    	}
-	    	
-	    },
-	    confirmEditRange() {
-	    	if ((this.editedRange.comparableValue || this.editedRange.comparableValueA) && this.editedRange.name && this.editedRange.comparison) {
-	    		var payload = {
-	    			id: this.editedRange.id,
-		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		coefficientId: this.currentRange.id,
-		    		name: this.editedRange.name,
-		    		val: [],
-		    		symbol: this.editedRange.comparison,
-		    	}
-		    	if (this.editedRange.comparison == "bteween" || this.editedRange.comparison == "lbteween" || this.editedRange.comparison == "rbteween") {
-		    		payload.val[0] = this.editedRange.comparableValueA;
-		    		payload.val[1] = this.editedRange.comparableValueB;
-		    	}
-		    	else
-		    	{
-		    		payload.val[0] = this.editedRange.comparableValue;
-		    	}
-			   	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'coefficient_range_edit',
-		   			version: '1.0',
-		   			crudType: 4,
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.editedRange.id = null;
-				    	this.editedRange.name = null;
-				    	this.editedRange.comparison = null;
-				    	this.editedRange.comparableValue = null;
-				    	this.editedRange.comparableValueA = null;
-				    	this.editedRange.comparableValueB = null;
-				    	this.getRanges(this.currentRange.id);
-				    	this.$message({
-				    		message: '编辑已保存',
-				    		type: 'success',
-				    	});
-	       			}
-		   		})
-	    	}
-	    	else
-	    	{
-	    		this.$message({
-	    			message: '编辑的数据不完整,已取消修改',
-	    			type: 'error',
-	    		});
-	    	}
-		   	this.dialogEditVisible = false;
-	    },
-	    deleteRange(row) {
-	    	//post
-	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
-	          confirmButtonText: '确定',
-	          cancelButtonText: '取消',
-	          type: 'warning'
-	        }).then(() => {
-	    		autoApi({
-		   			action: 'bonus_poundage_config_edit',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.$message({
-			            type: 'info',
-			            message: '已删除节点'
-			          });   
-	       			}
-		   		})
-	        }).catch(() => {
-	          this.$message({
-	            type: 'info',
-	            message: '已取消删除'
-	          });          
-	        });   
+					employeeId: window.localStorage.getItem('employeeId'),
+					insurerId: this.insurerId,
+					nodeId: this.choosed,
+					config: {
+						cmRate: this.baseCommission.shangye ? parseInt(this.baseCommission.shangye * 10) : 0,
+						cpRate: this.baseCommission.jiaoqiang ? parseInt(this.baseCommission.jiaoqiang * 10) : 0,
+						cmRetainRate: this.selfCommission.shangye ? parseInt(this.selfCommission.shangye * 10) : 0,
+						cpRetainRate: this.selfCommission.jiaoqiang ? parseInt(this.selfCommission.jiaoqiang * 10) : 0,
+						effective: this.isRateEffective,
+					}
+				}
 
-	    	let payload = {
-	    			id: row.id,
-		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		coefficientId: this.currentRange.id,
-		    	}
-		   	payload = JSON.stringify(payload);
-	    	autoApi({
-		   			action: 'coefficient_range_edit',
-		   			version: '1.0',
-		   			crudType: 8,
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getRanges(this.currentRange.id);
-				    	this.$message({
-				    		message: '删除成功',
-				    		type: 'success',
-				    	});
-	       			}
-		   		})
-	    },
-	    editRatio(row) {
-	    	this.editedRatio.id = row.id;
-	    	this.editedRatio.rate = row.rate;
-	    },
-	    cancelEditRatio(row) {
-	    	this.editedRatio.id = null;
-	    	this.editedRatio.rate = null;
-	    },
-	    confirmEditRatio() {
-	    	//post
-		    if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang) && this.isLegalNumber(this.editedRatio.rate)) {
-		    	let payload = {
-		    		employeeId: window.localStorage.getItem('employeeId'),
-	    			insurerId: this.insurerId,
-		    		nodeId: this.choosed,
-		    		config: {
-		    			cmRate: this.baseCommission.shangye?parseInt(this.baseCommission.shangye * 10):0,
-		    			cpRate: this.baseCommission.jiaoqiang?parseInt(this.baseCommission.jiaoqiang * 10):0,
-		    			cmRetainRate: this.selfCommission.shangye?parseInt(this.selfCommission.shangye * 10):0,
-		    			cpRetainRate: this.selfCommission.jiaoqiang?parseInt(this.selfCommission.jiaoqiang * 10):0,
-		    			effective: this.isRateEffective,
-		    			coefficientId: this.currentRange.id,
-		    			rangeId: this.editedRatio.id,
-		    			rangeRate: this.editedRatio.rate?parseInt(this.editedRatio.rate * 10):0,
-		    		}
-		    	}
-		    	
-			   	payload = JSON.stringify(payload);
-		    	autoApi({
-			   			action: 'poundage_config_edit',
-			   			version: '1.0',
-			   			payload: payload,
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-			   				this.getRanges(this.currentRange.id);
-					    	this.$message({
-					    		message: '设置已保存',
-					    		type: 'success',
-					    	})
-		       			}
-			   		})
-		    	this.editedRatio.id = null;
-		    	this.editedRatio.rate = null;
-		    }
-		    else
-		    {
-		    	this.$message({
-		    		message: '输入非法,请检查输入',
-		    		type: 'error',
-		    	})
-		    }
-	    },
-	    confirmAddRange() {
-	    	//post add
-		    if ((this.addedRange.comparison || this.addedRange.comparableValueA) && this.addedRange.name && this.addedRange.comparison) {
-		    	var payload = {
-			    		employeeId: window.localStorage.getItem('employeeId'),
-			    		coefficientId: this.currentRange.id,
-			    		name: this.addedRange.name,
-			    		val: [],
-			    		symbol: this.addedRange.comparison,
-			    	}
-		    	if (this.addedRange.comparison == "bteween" || this.addedRange.comparison == "lbteween" || this.addedRange.comparison == "rbteween") {
-		    		payload.val[0] = this.addedRange.comparableValueA;
-		    		payload.val[1] = this.addedRange.comparableValueB;
-		    	}
-		    	else
-		    	{
-		    		payload.val[0] = this.addedRange.comparableValue;
-		    	}
-			   	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'coefficient_range_edit',
-		   			version: '1.0',
-		   			crudType: 1,
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.addedRange.name = null;
-		   				this.addedRange.comparison = null;
-		   				this.addedRange.comparableValue = null;
-		   				this.addedRange.comparableValueA = null;
-		   				this.addedRange.comparableValueB = null;
-		   				this.getRanges(this.currentRange.id);
-		   				this.$message({
-		   					message: '新增成功',
-		   					type: 'success',
-		   				});
-	       			}
-		   		})
-		    }
-		    else
-		    {
-		    	this.$message({
-		    		message: '提交数据不完整,添加已取消',
-		    		type: 'error',
-		    	});
-		    }
-		   	this.dialogAddVisible = false;
-	    },
-	    //判断系数数量是否达到了最大值
-	    isFull(row) {
-	    	if (row.coefficients && row.maxmiumCustom) {//最大值为0表示无上限
-	    		if (row.maxmiumCustom <= row.coefficients.length) {
-	    			return true;
-	    		}
-	    	}
-	    	else
-	    	{
-	    		return false;
-	    	}
-	    },
-	    reComparisonName(val) {
-	    	switch(val)
-	    	{
-	    		case 1:
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'poundage_config_edit',
+					version: '1.0',
+					payload: payload,
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getRanges(this.currentRange.id);
+						this.$message({
+							message: '设置已保存',
+							type: 'success',
+						})
+						this.getRates(this.choosed);
+					}
+				})
+			} else {
+				this.$message({
+					message: '输入非法,请检查输入(正确输入范围是-100到100,小数将只保留一位)',
+					type: 'error',
+				})
+			}
+		},
+		editRange(row) {
+			this.dialogEditVisible = true;
+			this.editedRange.id = row.id;
+			this.editedRange.name = row.name;
+			for (let i = 0; i < this.comparisons.length; i++) {
+				if (this.reComparisonName(row.comparison) == this.comparisons[i].label) {
+					this.editedRange.comparison = this.comparisons[i].value;
+				}
+			}
+			if (row.comparableValue.split('_')[1]) {
+				this.editedRange.comparableValueA = row.comparableValue.split('_')[0];
+				this.editedRange.comparableValueB = row.comparableValue.split('_')[1];
+			} else {
+				this.editedRange.comparableValue = row.comparableValue;
+			}
+
+		},
+		confirmEditRange() {
+			if ((this.editedRange.comparableValue || this.editedRange.comparableValueA) && this.editedRange.name && this.editedRange.comparison) {
+				var payload = {
+					id: this.editedRange.id,
+					employeeId: window.localStorage.getItem('employeeId'),
+					coefficientId: this.currentRange.id,
+					name: this.editedRange.name,
+					val: [],
+					symbol: this.editedRange.comparison,
+				}
+				if (this.editedRange.comparison == "bteween" || this.editedRange.comparison == "lbteween" || this.editedRange.comparison == "rbteween") {
+					payload.val[0] = this.editedRange.comparableValueA;
+					payload.val[1] = this.editedRange.comparableValueB;
+				} else {
+					payload.val[0] = this.editedRange.comparableValue;
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'coefficient_range_edit',
+					version: '1.0',
+					crudType: 4,
+					payload: payload,
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.editedRange.id = null;
+						this.editedRange.name = null;
+						this.editedRange.comparison = null;
+						this.editedRange.comparableValue = null;
+						this.editedRange.comparableValueA = null;
+						this.editedRange.comparableValueB = null;
+						this.getRanges(this.currentRange.id);
+						this.$message({
+							message: '编辑已保存',
+							type: 'success',
+						});
+					}
+				})
+			} else {
+				this.$message({
+					message: '编辑的数据不完整,已取消修改',
+					type: 'error',
+				});
+			}
+			this.dialogEditVisible = false;
+		},
+		deleteRange(row) {
+			//post
+			this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				autoApi({
+					action: 'bonus_poundage_config_edit',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							type: 'info',
+							message: '已删除节点'
+						});
+					}
+				})
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+
+			let payload = {
+				id: row.id,
+				employeeId: window.localStorage.getItem('employeeId'),
+				coefficientId: this.currentRange.id,
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'coefficient_range_edit',
+				version: '1.0',
+				crudType: 8,
+				payload: payload,
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.getRanges(this.currentRange.id);
+					this.$message({
+						message: '删除成功',
+						type: 'success',
+					});
+				}
+			})
+		},
+		editRatio(row) {
+			this.editedRatio.id = row.id;
+			this.editedRatio.rate = row.rate;
+		},
+		cancelEditRatio(row) {
+			this.editedRatio.id = null;
+			this.editedRatio.rate = null;
+		},
+		confirmEditRatio() {
+			//post
+			if (this.isLegalNumber(this.baseCommission.shangye) && this.isLegalNumber(this.baseCommission.jiaoqiang) && this.isLegalNumber(this.selfCommission.shangye) && this.isLegalNumber(this.selfCommission.jiaoqiang) && this.isLegalNumber(this.editedRatio.rate)) {
+				let payload = {
+					employeeId: window.localStorage.getItem('employeeId'),
+					insurerId: this.insurerId,
+					nodeId: this.choosed,
+					config: {
+						cmRate: this.baseCommission.shangye ? parseInt(this.baseCommission.shangye * 10) : 0,
+						cpRate: this.baseCommission.jiaoqiang ? parseInt(this.baseCommission.jiaoqiang * 10) : 0,
+						cmRetainRate: this.selfCommission.shangye ? parseInt(this.selfCommission.shangye * 10) : 0,
+						cpRetainRate: this.selfCommission.jiaoqiang ? parseInt(this.selfCommission.jiaoqiang * 10) : 0,
+						effective: this.isRateEffective,
+						coefficientId: this.currentRange.id,
+						rangeId: this.editedRatio.id,
+						rangeRate: this.editedRatio.rate ? parseInt(this.editedRatio.rate * 10) : 0,
+					}
+				}
+
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'poundage_config_edit',
+					version: '1.0',
+					payload: payload,
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getRanges(this.currentRange.id);
+						this.$message({
+							message: '设置已保存',
+							type: 'success',
+						})
+					}
+				})
+				this.editedRatio.id = null;
+				this.editedRatio.rate = null;
+			} else {
+				this.$message({
+					message: '输入非法,请检查输入',
+					type: 'error',
+				})
+			}
+		},
+		confirmAddRange() {
+			//post add
+			if ((this.addedRange.comparison || this.addedRange.comparableValueA) && this.addedRange.name && this.addedRange.comparison) {
+				var payload = {
+					employeeId: window.localStorage.getItem('employeeId'),
+					coefficientId: this.currentRange.id,
+					name: this.addedRange.name,
+					val: [],
+					symbol: this.addedRange.comparison,
+				}
+				if (this.addedRange.comparison == "bteween" || this.addedRange.comparison == "lbteween" || this.addedRange.comparison == "rbteween") {
+					payload.val[0] = this.addedRange.comparableValueA;
+					payload.val[1] = this.addedRange.comparableValueB;
+				} else {
+					payload.val[0] = this.addedRange.comparableValue;
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'coefficient_range_edit',
+					version: '1.0',
+					crudType: 1,
+					payload: payload,
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.addedRange.name = null;
+						this.addedRange.comparison = null;
+						this.addedRange.comparableValue = null;
+						this.addedRange.comparableValueA = null;
+						this.addedRange.comparableValueB = null;
+						this.getRanges(this.currentRange.id);
+						this.$message({
+							message: '新增成功',
+							type: 'success',
+						});
+					}
+				})
+			} else {
+				this.$message({
+					message: '提交数据不完整,添加已取消',
+					type: 'error',
+				});
+			}
+			this.dialogAddVisible = false;
+		},
+		//判断系数数量是否达到了最大值
+		isFull(row) {
+			if (row.coefficients && row.maxmiumCustom) { //最大值为0表示无上限
+				if (row.maxmiumCustom <= row.coefficients.length) {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		},
+		reComparisonName(val) {
+			switch (val) {
+				case 1:
 					return "大于"
 					break;
 				case 2:
@@ -959,12 +927,11 @@ import { autoApi } from '@/ajax/post.js'
 				case 'rbteween':
 					return "前不含后含区间"
 					break;
-	    	}
-	    },
-	     reComparisonValue(val) {
-	    	switch(val)
-	    	{
-	    		case '大于':
+			}
+		},
+		reComparisonValue(val) {
+			switch (val) {
+				case '大于':
 					return 'gt'
 					break;
 				case '大于等于':
@@ -991,60 +958,54 @@ import { autoApi } from '@/ajax/post.js'
 				default:
 					return val
 					break;
-	    	}
-	    },
-	    comparisonValueShow(row) {	//不修改参数,只是优化表现的函数
-	    	if(row.comparableValue)
-	    	{
-	    		let value = row.comparableValue.split("_");
-		    	if (value[1]) {
-		    		switch(row.comparisonType)
-		    		{
-		    			case 7:
-		    				return "( " + value[0] + " , " + value[1] + " )"
-		    				break;
-		    			case 8:
-		    				return "[ " + value[0] + " , " + value[1] + " )"
-		    				break;
-		    			case 9:
-		    				return "( " + value[0] + " , " + value[1] + " ]"
-		    				break;
-		    			default:
-		    				return row.comparableValue
-		    		}
-		    	}
-		    	else if ((row.name == "男" || row.name == "女") && (row.comparableValue == "0" || row.comparableValue == "1")) {
-		    		switch(row.comparableValue)
-		    		{
-		    			case 1:
-		    				return "女"
-		    				break;
-		    			case '1':
-		    				return "女"
-		    				break;
-		    			case 0:
-		    				return "男"
-		    				break;
-		    			case '0':
-		    				return "男"
-		    				break;
-		    			default:
-		    				return row.comparableValue
-		    		}
-		    	}
-		    	else
-		    	{
-		    		return row.comparableValue
-		    	}
-	    	}
-	    }
-	  },
-	  mounted() {
-	  	this.tenantId.employeeId = window.localStorage.getItem('employeeId');
-	  	this.tenantId.tid = window.localStorage.getItem('tid');
-	  	this.init(); //初始化
-	  }
+			}
+		},
+		comparisonValueShow(row) { //不修改参数,只是优化表现的函数
+			if (row.comparableValue) {
+				let value = row.comparableValue.split("_");
+				if (value[1]) {
+					switch (row.comparisonType) {
+						case 7:
+							return "( " + value[0] + " , " + value[1] + " )"
+							break;
+						case 8:
+							return "[ " + value[0] + " , " + value[1] + " )"
+							break;
+						case 9:
+							return "( " + value[0] + " , " + value[1] + " ]"
+							break;
+						default:
+							return row.comparableValue
+					}
+				} else if ((row.name == "男" || row.name == "女") && (row.comparableValue == "0" || row.comparableValue == "1")) {
+					switch (row.comparableValue) {
+						case 1:
+							return "女"
+							break;
+						case '1':
+							return "女"
+							break;
+						case 0:
+							return "男"
+							break;
+						case '0':
+							return "男"
+							break;
+						default:
+							return row.comparableValue
+					}
+				} else {
+					return row.comparableValue
+				}
+			}
+		}
+	},
+	mounted() {
+		this.tenantId.employeeId = window.localStorage.getItem('employeeId');
+		this.tenantId.tid = window.localStorage.getItem('tid');
+		this.init(); //初始化
 	}
+}
 </script>
 <style lang="less">
 .autoInsuranceManageBody{

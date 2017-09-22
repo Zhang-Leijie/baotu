@@ -39,181 +39,196 @@
 import { logApi } from '@/ajax/post.js'
 
 export default {
-    data() {
-      return {
-        ipAddrPlate: null,
-      	platName: '',
-      	haveCode: 1,
-        form:{
-         	platCode: null,
-         	account:'13295815927',
-         	password:'aa111111',
-        },
-        rules: {
-          platCode: [
-            { required: true, message: '请输入平台码', trigger: 'blur' },
-          ],
-          account: [
-            { required: true, message: '请输入手机号', trigger: 'blur' },
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-          ],
-        },
-        specialCount: 0,
-        specialSwitch: true,
-      }
-    },
-    watch: {
-      specialCount(curVal,oldVal) {
-        var vm = this;
-        function countdown(num) {
-          if (num > 0) {
-            setTimeout(function(){
-              num = num - 1;
-              vm.specialCount = num;
-              countdown(num);
-            },1000);
-          }
-        }
-        if (curVal > 8) {
-          this.specialSwitch = true;
-        }
-        else if(curVal > oldVal && curVal > 0) {
-          countdown(curVal);
-        }
-      }
-    },
-    methods: {
-      changeIpOpen() {
-        this.ipAddrPlate = 'http://192.168.1.6';
-        localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
-        this.$message({
-          type: 'success',
-          message: '已改变目标地址',
-        }); 
+  data() {
+    return {
+      ipAddrPlate: null,
+      platName: '',
+      haveCode: 1,
+      form: {
+        platCode: null,
+        account: '13295815927',
+        password: 'aa111111',
       },
-      confirmChangeIP() {
-        localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
-        this.$message({
-          type: 'success',
-          message: '已改变目标地址',
-        });
+      rules: {
+        platCode: [{
+          required: true,
+          message: '请输入平台码',
+          trigger: 'blur'
+        }, ],
+        account: [{
+          required: true,
+          message: '请输入手机号',
+          trigger: 'blur'
+        }, ],
+        password: [{
+          required: true,
+          message: '请输入密码',
+          trigger: 'blur'
+        }, ],
       },
-      goSetCode(){
-     		if (this.form.platCode == '' || this.platName == '查询无该平台' || this.form.account == '') {
-     			swal({
-                  title: "请输入正确平台码或账号",
-                  type: 'warning',
-                  text: "",
-                  timer: 2000,
-              })
-     		} else {
-     			router.push({name:'setcode',query:{plat:this.platName,account:this.form.account,platCode:this.form.platCode}});
-     		}
-      },
-      getPlat(){
-        this.platName = null;
-     		if(this.form.platCode) {
-          let payload = {
-            appId:this.form.platCode,
-          }
-          payload = JSON.stringify(payload);
-          logApi({
-            action: 'app_tips',
-            payload: payload,
-          }).then((res)=> {
-            if (res.code == 0) {
-              this.platName = res.attach.name;
-            } else {
-              this.platName = '查询无该平台';
-            }
-          })
-        }
-      },
-      // checkPwd(){
-     	// 	logApi({
-     	// 		action:'user_check',
-     	// 		version:'1.0',
-     	// 		client:'2',
-     	// 		appId:'1',
-     	// 		mobile:'+86'+this.form.account,
-     	// 	}).then((res)=> {
-     	// 		if (res.code == 0) {
-     	// 			this.haveCode = 2
-     	// 		} else {
-     	// 			this.haveCode = 1
-     	// 		}
-     	// 	})
-      // },
-      login(){
-     		if (this.form.platCode == '' || this.platName == '查询无该平台') {
-     			swal({
-                  title: "登录失败",
-                  type: 'warning',
-                  text: "请输入正确平台码",
-                  timer: 2000,
-              })
-     		} else if (this.form.account == ''){
-     			swal({
-                  title: "登录失败",
-                  type: 'warning',
-                  text: "请输入账号",
-                  timer: 2000,
-              })
-     		} else if (this.form.password == ''){
-     			swal({
-                  title: "登录失败",
-                  type: 'warning',
-                  text: "请输入密码",
-                  timer: 2000,
-              })
-     		} else {
-          localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
-          let payload = {
-            mobile:'+86'+this.form.account,
-            pwd:this.form.password,
-            appId: this.form.platCode,
-          }
-          payload = JSON.stringify(payload);
-     			logApi({
-       			action:'login',
-       			client:'2',
-       			payload: payload,
-       		}).then((res)=> {
-       			if (res.code == 0) {
-              let cacheData = JSON.stringify(res.attach);
-              localStorage.setItem('cacheData',cacheData);
-
-              localStorage.setItem('token',res.attach.token);
-              localStorage.setItem('appId',this.form.platCode);
-              localStorage.setItem('userId_plate',res.attach.user.uid); //
-              localStorage.setItem('userName_plate',this.form.account); //登录缓存
-              localStorage.setItem('userPsd_plate',this.form.password); //登录缓存
-              localStorage.setItem('top_name_plate',res.attach.user.name);  //用于顶部展示用的用户姓名
-              localStorage.setItem('top_avatar_plate',res.attach.user.avatar);  //用顶部展示用用户头像
-
-       				router.push({name:'home'})
-               this.$message({
-                type: 'success',
-                message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
-              });   
-       			}
-       		})
-     		}
-      },
-      cheats() {
-        this.specialCount = this.specialCount + 1;
-      }
-    },
-    mounted(){
-        this.ipAddrPlate = 'http://101.37.34.55';
-        localStorage.setItem('ipAddrPlate',this.ipAddrPlate);
-        if (window.localStorage.getItem('userName_plate') && window.localStorage.getItem('userPsd_plate')) {
-          this.form.account = window.localStorage.getItem('userName_plate');
-          this.form.password = window.localStorage.getItem('userPsd_plate');
-        }
+      specialCount: 0,
+      specialSwitch: true,
     }
+  },
+  watch: {
+    specialCount(curVal, oldVal) {
+      var vm = this;
+
+      function countdown(num) {
+        if (num > 0) {
+          setTimeout(function() {
+            num = num - 1;
+            vm.specialCount = num;
+            countdown(num);
+          }, 1000);
+        }
+      }
+      if (curVal > 8) {
+        this.specialSwitch = true;
+      } else if (curVal > oldVal && curVal > 0) {
+        countdown(curVal);
+      }
+    }
+  },
+  methods: {
+    changeIpOpen() {
+      this.ipAddrPlate = 'http://192.168.1.6';
+      localStorage.setItem('ipAddrPlate', this.ipAddrPlate);
+      this.$message({
+        type: 'success',
+        message: '已改变目标地址',
+      });
+    },
+    confirmChangeIP() {
+      localStorage.setItem('ipAddrPlate', this.ipAddrPlate);
+      this.$message({
+        type: 'success',
+        message: '已改变目标地址',
+      });
+    },
+    goSetCode() {
+      if (this.form.platCode == '' || this.platName == '查询无该平台' || this.form.account == '') {
+        swal({
+          title: "请输入正确平台码或账号",
+          type: 'warning',
+          text: "",
+          timer: 2000,
+        })
+      } else {
+        router.push({
+          name: 'setcode',
+          query: {
+            plat: this.platName,
+            account: this.form.account,
+            platCode: this.form.platCode
+          }
+        });
+      }
+    },
+    getPlat() {
+      this.platName = null;
+      if (this.form.platCode) {
+        let payload = {
+          appId: this.form.platCode,
+        }
+        payload = JSON.stringify(payload);
+        logApi({
+          action: 'app_tips',
+          payload: payload,
+        }).then((res) => {
+          if (res.code == 0) {
+            this.platName = res.attach.name;
+          } else {
+            this.platName = '查询无该平台';
+          }
+        })
+      }
+    },
+    // checkPwd(){
+    //  logApi({
+    //    action:'user_check',
+    //    version:'1.0',
+    //    client:'2',
+    //    appId:'1',
+    //    mobile:'+86'+this.form.account,
+    //  }).then((res)=> {
+    //    if (res.code == 0) {
+    //      this.haveCode = 2
+    //    } else {
+    //      this.haveCode = 1
+    //    }
+    //  })
+    // },
+    login() {
+      if (this.form.platCode == '' || this.platName == '查询无该平台') {
+        swal({
+          title: "登录失败",
+          type: 'warning',
+          text: "请输入正确平台码",
+          timer: 2000,
+        })
+      } else if (this.form.account == '') {
+        swal({
+          title: "登录失败",
+          type: 'warning',
+          text: "请输入账号",
+          timer: 2000,
+        })
+      } else if (this.form.password == '') {
+        swal({
+          title: "登录失败",
+          type: 'warning',
+          text: "请输入密码",
+          timer: 2000,
+        })
+      } else {
+        localStorage.setItem('ipAddrPlate', this.ipAddrPlate);
+        let payload = {
+          mobile: '+86' + this.form.account,
+          pwd: this.form.password,
+          appId: this.form.platCode,
+        }
+        payload = JSON.stringify(payload);
+        logApi({
+          action: 'login',
+          client: '2',
+          payload: payload,
+        }).then((res) => {
+          if (res.code == 0) {
+            let cacheData = JSON.stringify(res.attach);
+            localStorage.setItem('cacheData', cacheData);
+
+            localStorage.setItem('token', res.attach.token);
+            localStorage.setItem('appId', this.form.platCode);
+            localStorage.setItem('userId_plate', res.attach.user.uid); //
+            localStorage.setItem('userName_plate', this.form.account); //登录缓存
+            localStorage.setItem('userPsd_plate', this.form.password); //登录缓存
+            localStorage.setItem('top_name_plate', res.attach.user.name); //用于顶部展示用的用户姓名
+            localStorage.setItem('top_avatar_plate', res.attach.user.avatar); //用顶部展示用用户头像
+
+            router.push({
+              name: 'home'
+            })
+            this.$message({
+              type: 'success',
+              message: '正在访问:' + window.localStorage.getItem('ipAddrPlate')
+            });
+          }
+        })
+      }
+    },
+    cheats() {
+      this.specialCount = this.specialCount + 1;
+    }
+  },
+  mounted() {
+    this.ipAddrPlate = 'http://101.37.34.55';
+    localStorage.setItem('ipAddrPlate', this.ipAddrPlate);
+    if (window.localStorage.getItem('userName_plate') && window.localStorage.getItem('userPsd_plate')) {
+      this.form.account = window.localStorage.getItem('userName_plate');
+      this.form.password = window.localStorage.getItem('userPsd_plate');
+    }
+  }
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

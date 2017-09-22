@@ -93,167 +93,167 @@
 	</div>
 </template>
 <script>
-import { autoApi } from '@/ajax/post.js'
-	export default {
-	    data() {
-	      return {
-	      	id: null,
-	      	CMRate: 0,
-	      	CPRate: 0,
-	      	imageUrl: '',
-	        info: {},
-	        form:{
-	        	role:[],
-	        	teammoney:[],
-	        	commonmoney:[],
-	        	code:'',
-	        	name:'',
-	        	account:'',
-	        	password:'',
-	        	phone:'',
-	        	shopNum:'',
-	        	pay:[],
-	        	point:'',
-	        	type:[],
-	        	company:[],
-	        	other:[],
-	        	people:'',
-	        	payway:'',
-	        }
-	      };
-	    },
-	    methods: {
-	       formatDate(time){
-			  var   x = time - 0
-			  
-			  var   now = new Date(x) 
-			  var   year = now.getFullYear();     
-			  var   month = "0" + (now.getMonth()+1);     
-			  var   date = "0" +(now.getDate());   
-			  var   hour = "0" +now.getHours();
-			  var   min =  "0" +now.getMinutes();
-			  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
-			},
-			handleAvatarScucess(res, file) {
-		        this.imageUrl = URL.createObjectURL(file.raw);
-		    },
-		    isLegalNumber(val) {
-		    	return (-100 <= val && val <= 100)?true:false;
-		    },
-		    confirmEdit() {
-		    	if (this.isLegalNumber(this.CMRate) && this.isLegalNumber(this.CPRate)) {
-		    		let payload = {
-			    		employeeId: window.localStorage.getItem('employeeId'),
-			    		mod: 0,
-			    		targetId: this.id,
-			    		CMRate: 0,
-			    		CPRate: 0
-			    	}
-			  		for (let i = 0; i < this.form.commonmoney.length; i++) {
-			  			payload.mod = payload.mod + parseInt(this.form.commonmoney[i]);
-			  		}
-			  		for (let j = 0; j < this.form.teammoney.length; j++) {
-			  			payload.mod = payload.mod + parseInt(this.form.teammoney[j]);
-			  		}
+import {
+	autoApi
+} from '@/ajax/post.js'
+export default {
+	data() {
+		return {
+			id: null,
+			CMRate: 0,
+			CPRate: 0,
+			imageUrl: '',
+			info: {},
+			form: {
+				role: [],
+				teammoney: [],
+				commonmoney: [],
+				code: '',
+				name: '',
+				account: '',
+				password: '',
+				phone: '',
+				shopNum: '',
+				pay: [],
+				point: '',
+				type: [],
+				company: [],
+				other: [],
+				people: '',
+				payway: '',
+			}
+		};
+	},
+	methods: {
+		formatDate(time) {
+			var x = time - 0
 
-			    	payload.mod = payload.mod + parseInt(this.form.payway);
-			    	
-			    	payload.CMRate = parseInt(this.CMRate * 10);
-			    	payload.CPRate = parseInt(this.CPRate * 10);
-			    	
-			    	payload = JSON.stringify(payload);
-			    	autoApi({
-			   			action: 'employee_edit',
-			   			version: '1.0',
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-			   				this.$message({
-				    			message: '设置已保存',
-				    			type: 'success',
-				    		});
-			   				router.push({
-						        path: '/shop/staff-list'
-						    })
-			   			}
-			   		});
-		    	}
-		    	else
-		    	{
-		    		this.$message({
-		    			message: '输入数据有误,请在-100到100的范围内输入',
-		    			type: 'error',
-		    		});
-		    	}
-		    },
-		    getInfo(id) {
-		    	let payload = {
-		    		employeeId: window.localStorage.getItem('employeeId'),
-		    		id: id,
-		    	}
-		    	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'employee_info',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.info = res.attach;
-		   				this.modConut(res.attach.mod);
-		   				this.CMRate = res.attach.CMRate / 10;
-		   				this.CPRate = res.attach.CPRate / 10;
-		   			}
-		   		});
-		    },
-		    modConut(mod) {
-		    	if (mod & 1) {//规模佣金
-		    		this.form.teammoney.push('1');
-		    	}
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
+		},
+		handleAvatarScucess(res, file) {
+			this.imageUrl = URL.createObjectURL(file.raw);
+		},
+		isLegalNumber(val) {
+			return (-100 <= val && val <= 100) ? true : false;
+		},
+		confirmEdit() {
+			if (this.isLegalNumber(this.CMRate) && this.isLegalNumber(this.CPRate)) {
+				let payload = {
+					employeeId: window.localStorage.getItem('employeeId'),
+					mod: 0,
+					targetId: this.id,
+					CMRate: 0,
+					CPRate: 0
+				}
+				for (let i = 0; i < this.form.commonmoney.length; i++) {
+					payload.mod = payload.mod + parseInt(this.form.commonmoney[i]);
+				}
+				for (let j = 0; j < this.form.teammoney.length; j++) {
+					payload.mod = payload.mod + parseInt(this.form.teammoney[j]);
+				}
 
-		    	if (mod & 2) {//管理佣金
-		    		this.form.teammoney.push('2');
-		    	}
+				payload.mod = payload.mod + parseInt(this.form.payway);
 
-		    	if (mod & 4) {//非营业客车
-		    		this.form.commonmoney.push('4');
-		    	}
+				payload.CMRate = parseInt(this.CMRate * 10);
+				payload.CPRate = parseInt(this.CPRate * 10);
 
-		    	if (mod & 8) {//非营利货车
-		    		this.form.commonmoney.push('8');
-		    	}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'employee_edit',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							message: '设置已保存',
+							type: 'success',
+						});
+						router.push({
+							path: '/shop/staff-list'
+						})
+					}
+				});
+			} else {
+				this.$message({
+					message: '输入数据有误,请在-100到100的范围内输入',
+					type: 'error',
+				});
+			}
+		},
+		getInfo(id) {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId'),
+				id: id,
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'employee_info',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.info = res.attach;
+					this.modConut(res.attach.mod);
+					this.CMRate = res.attach.CMRate / 10;
+					this.CPRate = res.attach.CPRate / 10;
+				}
+			});
+		},
+		modConut(mod) {
+			if (mod & 1) { //规模佣金
+				this.form.teammoney.push('1');
+			}
 
-		    	if (mod & 16) {//营利客车
-		    		this.form.commonmoney.push('16');
-		    	}
+			if (mod & 2) { //管理佣金
+				this.form.teammoney.push('2');
+			}
 
-		    	if (mod & 32) {//营利货车
-		    		this.form.commonmoney.push('32');
-		    	}
+			if (mod & 4) { //非营业客车
+				this.form.commonmoney.push('4');
+			}
 
-		    	if (mod & 64) {//其他车
-		    		this.form.commonmoney.push('64');
-		    	}
+			if (mod & 8) { //非营利货车
+				this.form.commonmoney.push('8');
+			}
 
-		    	if (mod & 128) {//全额支付
-		    		this.form.payway = '128';
-		    	}
+			if (mod & 16) { //营利客车
+				this.form.commonmoney.push('16');
+			}
 
-		    	if (mod & 256) {//净保费支付
-		    		this.form.payway = '256';
-		    	}
+			if (mod & 32) { //营利货车
+				this.form.commonmoney.push('32');
+			}
 
-		    	if (mod & 512) {//公司垫付
-		    		this.form.payway = '512';
-		    	}
-		    }
-	    },
-	    mounted(){
-	        if (this.$route.query.id) {
-	        	this.id = this.$route.query.id;
-	        	this.getInfo(this.$route.query.id);
-	        }
-	    }
+			if (mod & 64) { //其他车
+				this.form.commonmoney.push('64');
+			}
+
+			if (mod & 128) { //全额支付
+				this.form.payway = '128';
+			}
+
+			if (mod & 256) { //净保费支付
+				this.form.payway = '256';
+			}
+
+			if (mod & 512) { //公司垫付
+				this.form.payway = '512';
+			}
+		}
+	},
+	mounted() {
+		if (this.$route.query.id) {
+			this.id = this.$route.query.id;
+			this.getInfo(this.$route.query.id);
+		}
 	}
+}
 </script>
 <style lang="less">
 .staffEditBody {

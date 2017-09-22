@@ -148,7 +148,7 @@
 	    	this.dialogFormVisible2 = false;
 	    }
 	  },
-	  mounted:function() {
+	  mounted() {
 	  	
 	  }
 	}

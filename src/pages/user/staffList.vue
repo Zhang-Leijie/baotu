@@ -58,61 +58,60 @@ export default {
 		return {
 			myId: null,
 			isRoot: false,
-		  	total: null,
-		  	pageSize: 10,
-		  	currentPage: 1,
-		  	formSearch: {
-		  		mobile: null,
-		  		ID: null,
-		  	},
-		  	sort: {
-		  		sortCol: null,
-		  		asc: false,
-		  	},
-		  	tableData: [],
+			total: null,
+			pageSize: 10,
+			currentPage: 1,
+			formSearch: {
+				mobile: null,
+				ID: null,
+			},
+			sort: {
+				sortCol: null,
+				asc: false,
+			},
+			tableData: [],
 		}
 	},
 	methods: {
-		formatDate(time){
-		  var   x = (time - 0) * 1000;
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" +(now.getDate());   
-		  var   hour = "0" +now.getHours();
-		  var   min =  "0" +now.getMinutes();
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+		formatDate(time) {
+			var x = (time - 0) * 1000;
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
 		getInfo() {
 			let payload = {
-		  		page: this.currentPage,
-		  		pageSize: this.pageSize,
-		  		sortCol: this.sort.sortCol?this.sort.sortCol:null,
-		  		asc: this.sort.asc,
-		  		employeeId: window.localStorage.getItem('employeeId'),
-		  		tarId: this.formSearch.ID?this.formSearch.ID:null,
-		  		mobile: this.formSearch.mobile?this.formSearch.mobile:null,
-		  	}
-		  	payload = JSON.stringify(payload)
-		  	autoApi({
+				page: this.currentPage,
+				pageSize: this.pageSize,
+				sortCol: this.sort.sortCol ? this.sort.sortCol : null,
+				asc: this.sort.asc,
+				employeeId: window.localStorage.getItem('employeeId'),
+				tarId: this.formSearch.ID ? this.formSearch.ID : null,
+				mobile: this.formSearch.mobile ? this.formSearch.mobile : null,
+			}
+			payload = JSON.stringify(payload)
+			autoApi({
 				action: 'employees',
 				version: '1.0',
 				client: 2,
 				payload: payload
-			},window.localStorage.getItem('token')).then((res)=> {
+			}, window.localStorage.getItem('token')).then((res) => {
 				if (res.code == 0) {
 					if (res.attach.list) {
-	   					for (let i = 0; i < res.attach.list.length; i++) {
-	   						if((res.attach.list[i].mod & 1024) == 1024) {	//该条数据被禁用
-	   							res.attach.list[i].isAble = false;
-	   						}
-	   						else {
-	   							res.attach.list[i].isAble = true;
-	   						}
-	   					}
-		   				this.tableData = res.attach.list;
-	   				}
+						for (let i = 0; i < res.attach.list.length; i++) {
+							if ((res.attach.list[i].mod & 1024) == 1024) { //该条数据被禁用
+								res.attach.list[i].isAble = false;
+							} else {
+								res.attach.list[i].isAble = true;
+							}
+						}
+						this.tableData = res.attach.list;
+					}
 					this.total = res.attach.total;
 				}
 			})
@@ -122,62 +121,58 @@ export default {
 			if (val.order == "ascending") {
 				this.sort.asc = true;
 				this.sort.sortCol = "created";
-			}
-			else
-			{
+			} else {
 				this.sort.asc = false;
 				this.sort.sortCol = "created";
 			}
 			this.getInfo();
 		},
 
-	  	changeState(id,isAble) {
-	  		if (isAble) {	//当前可用,操作为禁用
-	  			let payload = {
-	  				employeeId: window.localStorage.getItem('employeeId'),
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			autoApi({
-		   			action: 'employee_seal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '禁用成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  		else
-	  		{	//当前不可用,操作为解禁
-	  			let payload = {
-	  				employeeId: window.localStorage.getItem('employeeId'),
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			autoApi({
-		   			action: 'employee_unseal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '解禁成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  	},
+		changeState(id, isAble) {
+			if (isAble) { //当前可用,操作为禁用
+				let payload = {
+					employeeId: window.localStorage.getItem('employeeId'),
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'employee_seal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '禁用成功',
+							type: 'success',
+						});
+					}
+				});
+			} else { //当前不可用,操作为解禁
+				let payload = {
+					employeeId: window.localStorage.getItem('employeeId'),
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'employee_unseal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '解禁成功',
+							type: 'success',
+						});
+					}
+				});
+			}
+		},
 
 		pageChange(pg) {
 			this.currentPage = pg;
-	    	this.getInfo();
+			this.getInfo();
 		},
 
 		search() {
@@ -185,16 +180,13 @@ export default {
 		},
 
 		payType(val) {
-			const mod = [
-			{
+			const mod = [{
 				value: 128,
 				label: '全额支付'
-			},
-			{
+			}, {
 				value: 256,
 				label: '净保费支付'
-			},
-			{
+			}, {
 				value: 512,
 				label: '公司垫付'
 			}];
@@ -209,7 +201,7 @@ export default {
 	created() {
 		this.getInfo();
 		this.myId = window.localStorage.getItem('employeeId');
-		window.localStorage.getItem('isRoot_tenant') == "y"?this.isRoot = true:this.isRoot = false;
+		window.localStorage.getItem('isRoot_tenant') == "y" ? this.isRoot = true : this.isRoot = false;
 	}
 }
 </script>

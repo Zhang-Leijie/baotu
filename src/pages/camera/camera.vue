@@ -84,178 +84,196 @@ var wb;//读取完成的数据
 var rABS = false; //是否将文件读取为二进制字符串
 
 export default {
-	  data() {
-	    return {
-	      search: {
-	      	timeRange: null,
-	      	type: null,
-	      	state: null,
-	      },
-	      sale: null,
-	      types: [],
-	      states: [],
-	      sales: [],
-	      tableData:[],
-	      total: null,
-	      currentPage: 1,
-	      pageSize: 10,
-	      dialogVisible: false,
+	data() {
+		return {
+			search: {
+				timeRange: null,
+				type: null,
+				state: null,
+			},
+			sale: null,
+			types: [],
+			states: [],
+			sales: [],
+			tableData: [],
+			total: null,
+			currentPage: 1,
+			pageSize: 10,
+			dialogVisible: false,
 		}
-	  },
-	  methods: {
-	  	formatDate(time){
-		  var   x = (time - 0) * 1000
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" + (now.getDate());   
-		  var   hour = "0" + now.getHours();
-		  var   min =  "0" + now.getMinutes();
-		  return   year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
 		init() {
 			this.types = [{
-	      	    value: 'EXTERNAL',
-	      	    label: '续保',
-	        },
-	        {
-	      	    value: 'TENANT_SELF',
-	      	    label: '非续保',
-	        },
-	        {
-	      	    value: null,
-	      	    label: '全部',
-	        }];
+				value: 'EXTERNAL',
+				label: '续保',
+			}, {
+				value: 'TENANT_SELF',
+				label: '非续保',
+			}, {
+				value: null,
+				label: '全部',
+			}];
 
-	        this.states = [{
+			this.states = [{
 				value: 'EXTERNAL',
 				label: '未分配',
-			},
-			{
+			}, {
 				value: 'TENANT_SELF',
 				label: '已分配',
-			},
-			{
+			}, {
 				value: null,
 				label: '全部',
 			}];
 			this.sales = [{
 				name: '业务员1',
 				label: 1,
-			},{
+			}, {
 				name: '业务员2',
 				label: 2,
-			},{
+			}, {
 				name: '业务员3',
 				label: 3,
 			}]
 		},
 
-	  	getInfo() {
-  			let payload = {
-  				
-  			};
-  			
-  			payload = JSON.stringify(payload);
+		getInfo() {
+			let payload = {
 
-  			this.tableData = [{a:'浙A82T63',b:'毛建明',c:'宝马BMW',d:'人保车险',e:'2017-09-26',f:'2017-09-26',g:'2017-09-15  9：36',h:'毛建明',i:false,j:false},{a:'浙A92T63',b:'汪乃平',c:'宝马BMW',d:'人保车险',e:'2017-09-26',f:'2017-09-26',g:'2017-09-15  9：36',h:null,i:false,j:false}]
+			};
 
-	  		// autoApi({
-	   	// 		action: 'vehicle_policies',
-	   	// 		version: '1.0',
-	   	// 		payload: payload
-	   	// 	},window.localStorage.getItem('token')).then((res)=> {
-	   	// 		if (res.code == 0) {
-	   	// 			this.tableData = res.attach.list;
-	   	// 			this.total = res.attach.total;
-       			// }
-	   	// 	})
-	  	},
+			payload = JSON.stringify(payload);
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.getInfo(); 
-	    },
+			this.tableData = [{
+				a: '浙A82T63',
+				b: '毛建明',
+				c: '宝马BMW',
+				d: '人保车险',
+				e: '2017-09-26',
+				f: '2017-09-26',
+				g: '2017-09-15  9：36',
+				h: '毛建明',
+				i: false,
+				j: false
+			}, {
+				a: '浙A92T63',
+				b: '汪乃平',
+				c: '宝马BMW',
+				d: '人保车险',
+				e: '2017-09-26',
+				f: '2017-09-26',
+				g: '2017-09-15  9：36',
+				h: null,
+				i: false,
+				j: false
+			}]
 
-	    searchIt() {
-	    	this.getInfo(); 
-	    },
+			// autoApi({
+			// 		action: 'vehicle_policies',
+			// 		version: '1.0',
+			// 		payload: payload
+			// 	},window.localStorage.getItem('token')).then((res)=> {
+			// 		if (res.code == 0) {
+			// 			this.tableData = res.attach.list;
+			// 			this.total = res.attach.total;
+			// }
+			// 	})
+		},
 
-	    reset() {
-	    	this.search.type = null;
-	    	this.search.sale = null;
-	    	this.search.company = null;
-	    	this.getInfo();
-	    },
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.getInfo();
+		},
 
-	    allot(row) {
-	    	//  
-	    	this.dialogVisible = true;	
-	    },
+		searchIt() {
+			this.getInfo();
+		},
 
-	    importExcel(f) {//导入
-	      	var vm = this;
-	        var reader = new FileReader();
-	        reader.onload = function(e) {
-	            var data = e.target.result;
-	            if(rABS) {
-	                wb = XLSX.read(btoa(vm.fixdata(data)), {//手动转化
-	                    type: 'base64'
-	                });
-	            } else {
-	                wb = XLSX.read(data, {
-	                    type: 'binary'
-	                });
-	            }
-	            //wb.SheetNames[0]是获取Sheets中第一个Sheet的名字
-	            //wb.Sheets[Sheet名]获取第一个Sheet的数据
-	            vm.turnData(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
-	        };
-	        if(rABS) {
-	            reader.readAsArrayBuffer(f);
-	        } else {
-	            reader.readAsBinaryString(f);
-	        }
-	        return false
-	    },
+		reset() {
+			this.search.type = null;
+			this.search.sale = null;
+			this.search.company = null;
+			this.getInfo();
+		},
 
-	    turnData(data) {
-	        var vm = this;
-	        vm.tableData = [];
-	        for (let title in data) {
-	            let buf = {
-	                a: data[title]['姓名'],
-	                b: data[title]['车牌号'],
-	            }
-	            vm.tableData.push(buf);
-	        }
-	    },
+		allot(row) {
+			//  
+			this.dialogVisible = true;
+		},
 
-	    fixdata(data) { //文件流转BinaryString
-	        var o = "",
-	            l = 0,
-	            w = 10240;
-	        for(; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
-	        o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
-	        return o;
-	    },
+		importExcel(f) { //导入
+			var vm = this;
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				var data = e.target.result;
+				if (rABS) {
+					wb = XLSX.read(btoa(vm.fixdata(data)), { //手动转化
+						type: 'base64'
+					});
+				} else {
+					wb = XLSX.read(data, {
+						type: 'binary'
+					});
+				}
+				//wb.SheetNames[0]是获取Sheets中第一个Sheet的名字
+				//wb.Sheets[Sheet名]获取第一个Sheet的数据
+				vm.turnData(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+			};
+			if (rABS) {
+				reader.readAsArrayBuffer(f);
+			} else {
+				reader.readAsBinaryString(f);
+			}
+			return false
+		},
 
-	    reDelivery(val) {
-	    	
-	    },
+		turnData(data) {
+			var vm = this;
+			vm.tableData = [];
+			for (let title in data) {
+				let buf = {
+					a: data[title]['姓名'],
+					b: data[title]['车牌号'],
+				}
+				vm.tableData.push(buf);
+			}
+		},
 
-	    highlight(row,index) {
-	    	if (index == 1) {
-	    		return 'highlighted';
-	    	}
-	    },
-	  },
-	  mounted() {
-	  	this.init();
-	  	this.getInfo();
-	  }
+		fixdata(data) { //文件流转BinaryString
+			var o = "",
+				l = 0,
+				w = 10240;
+			for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+			o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+			return o;
+		},
+
+		reDelivery(val) {
+
+		},
+
+		highlight(row, index) {
+			if (index == 1) {
+				return 'highlighted';
+			}
+		},
+	},
+	mounted() {
+		this.init();
+		this.getInfo();
 	}
+}
 </script>
 
 <style lang="less">

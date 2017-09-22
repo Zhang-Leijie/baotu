@@ -241,634 +241,619 @@
 	</div>
 </template>
 <script>
-import { autoApi } from '@/ajax/post.js'
+import {
+	autoApi
+} from '@/ajax/post.js'
 
-	export default {
-	    data() {
-	      return { 
-	      	showAddGuimo: false,
-	        labelPosition: 'right',
-	        formSetting:{
-	        	teamDepth: null,		//团队层级数
-	        	bonusScaleCountMod: [],	//规模佣金统计口径模值
-	        	bonusScaleRewardMod: [],			//规模佣金奖励口径模值
-	        	bonusScaleCountInsuranceMod: [],		//规模佣金统计口径险种模值
-	        	bonusScaleRewardInsuranceMod: [], 		//规模佣金奖励口径险种模值
-	        },
-	        guanliData: [],
-	        guimoData: [],
-	        guimoAdd: {
-	        	num: null,
-	        	comparison: null,
-	        	comparableValue: null,
-	        	comparableValueA: null,
-	        	comparableValueB: null,
-	        },
-	        guimoEdit: {				//规模列表编辑数据
-	        	id: null,
-	        	num: null,
-	        	comparison: null,
-	        	comparableValue: null,
-	        	comparableValueA: null,
-	        	comparableValueB: null,
-	        },
-	        dialogEditVisible: false,
-	        comparisons: [
-	      	{
-	      		value: 2,
-	      		label: "大于等于"
-	      	},
-	      	{
-	      		value: 64,
-	      		label: "(含)金额1---金额2(不含)"
-	      	}],
-	      };
-	    },
-	    methods: {
-	    	changeTab(val) {
-	    		switch(val.name) {
-	    			case 'first':
-	    				this.getInfo();
-			       		this.getGuimo();
-	    				break;
-	    			case 'second':
-	    				this.getGuanli();
-	    				break;
-	    			default:
-	    				//
-	    				break;
-	    		}
-	    	},
-	       	initGuanli(depth) {
-		       	this.guanliData = [];
-	       		for (var i = 2; i <= depth; i++) {
-	       			let buf = {
-		       			shangye_N: {
-		       				key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 0,
-		        			type: 'COMMERCIAL_NO_PROFIT'
-		       			},
-		       			shangye_Y: {
-		       				key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 0,
-		        			type: 'COMMERCIAL_PROFIT'
-		       			},
-		       			shangye_other: {
-		       				key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 0,
-		        			type: 'COMMERCIAL_OTHER'
-		       			},
-		       			jiaoqiang_N: {
-		       				key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 0,
-		        			type: 'COMPULSORY_NO_PROFIT'
-		       			},
-		       			jiaoqiang_Y: {
-		       				key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 0,
-		        			type: 'COMPULSORY_PROTFIT'
-		       			},
-		       			jiaoqiang_other: {
-		       				key: null,
-		        			value: 0,
-		        			origin: 0,
-		        			depth: 0,
-		        			type: 'COMPULSORY_OTHER'
-		       			}
-		       		}
-	       			for (let item in buf) {
-	       				buf[item].depth = i;
-	       			}
-	       			this.guanliData.push(buf);
-	       		}
+export default {
+	data() {
+		return {
+			showAddGuimo: false,
+			labelPosition: 'right',
+			formSetting: {
+				teamDepth: null, //团队层级数
+				bonusScaleCountMod: [], //规模佣金统计口径模值
+				bonusScaleRewardMod: [], //规模佣金奖励口径模值
+				bonusScaleCountInsuranceMod: [], //规模佣金统计口径险种模值
+				bonusScaleRewardInsuranceMod: [], //规模佣金奖励口径险种模值
+			},
+			guanliData: [],
+			guimoData: [],
+			guimoAdd: {
+				num: null,
+				comparison: null,
+				comparableValue: null,
+				comparableValueA: null,
+				comparableValueB: null,
+			},
+			guimoEdit: { //规模列表编辑数据
+				id: null,
+				num: null,
+				comparison: null,
+				comparableValue: null,
+				comparableValueA: null,
+				comparableValueB: null,
+			},
+			dialogEditVisible: false,
+			comparisons: [{
+				value: 2,
+				label: "大于等于"
+			}, {
+				value: 64,
+				label: "(含)金额1---金额2(不含)"
+			}],
+		};
+	},
+	methods: {
+		changeTab(val) {
+			switch (val.name) {
+				case 'first':
+					this.getInfo();
+					this.getGuimo();
+					break;
+				case 'second':
+					this.getGuanli();
+					break;
+				default:
+					//
+					break;
+			}
+		},
+		initGuanli(depth) {
+			this.guanliData = [];
+			for (var i = 2; i <= depth; i++) {
+				let buf = {
+					shangye_N: {
+						key: null,
+						value: 0,
+						origin: 0,
+						depth: 0,
+						type: 'COMMERCIAL_NO_PROFIT'
+					},
+					shangye_Y: {
+						key: null,
+						value: 0,
+						origin: 0,
+						depth: 0,
+						type: 'COMMERCIAL_PROFIT'
+					},
+					shangye_other: {
+						key: null,
+						value: 0,
+						origin: 0,
+						depth: 0,
+						type: 'COMMERCIAL_OTHER'
+					},
+					jiaoqiang_N: {
+						key: null,
+						value: 0,
+						origin: 0,
+						depth: 0,
+						type: 'COMPULSORY_NO_PROFIT'
+					},
+					jiaoqiang_Y: {
+						key: null,
+						value: 0,
+						origin: 0,
+						depth: 0,
+						type: 'COMPULSORY_PROTFIT'
+					},
+					jiaoqiang_other: {
+						key: null,
+						value: 0,
+						origin: 0,
+						depth: 0,
+						type: 'COMPULSORY_OTHER'
+					}
+				}
+				for (let item in buf) {
+					buf[item].depth = i;
+				}
+				this.guanliData.push(buf);
+			}
 
-	       	},
-	       	getGuanli() {
-	       		this.initGuanli(parseInt(this.formSetting.teamDepth));
-	       		let payload = {
-	       			employeeId: window.localStorage.getItem('employeeId')
-	       		}
-	       		payload = JSON.stringify(payload);
-	       		autoApi({
-		   			action: 'bonus_manage_configs',
-		   			version: '1.0',
-		   			payload: payload	
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				if (res.attach) {
-		   					for (var i = 0; i < res.attach.length; i++) {
-	   							if (res.attach[i].depth <= this.formSetting.teamDepth) {
-	   								switch(res.attach[i].type){
-		   							case 1:
-		   								//营利车商业险
-		   								this.guanliData[res.attach[i].depth - 2].shangye_Y.value = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].shangye_Y.origin = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].shangye_Y.key = res.attach[i].key;
-		   								break;
-		   							case 2:
-		   								//盈利车交强险
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.value = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.origin = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.key = res.attach[i].key;
-		   								break;
-		   							case 4:
-		   								//非营利车交强险
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.value = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.origin = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.key = res.attach[i].key;
-		   								break;
-		   							case 8:
-		   								//非营利车商业险
-		   								this.guanliData[res.attach[i].depth - 2].shangye_N.value = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].shangye_N.origin = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].shangye_N.key = res.attach[i].key;
-		   								break;
-		   							case 16:
-		   								//其他商业险
-		   								this.guanliData[res.attach[i].depth - 2].shangye_other.value = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].shangye_other.origin = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].shangye_other.key = res.attach[i].key;
-		   								break;
-		   							case 32:
-		   								//其他交强险
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.value = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.origin = res.attach[i].rate / 10;
-		   								this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.key = res.attach[i].key;
-		   								break;
-		   							}
-	   							}
-		   					}
-		   				}
-		   			}
-		   		})
-	       	},
-	       	getGuimo() {
-	       		let payload = {
-	       			employeeId: window.localStorage.getItem('employeeId')
-	       		}
-	       		payload = JSON.stringify(payload);
-	       		autoApi({
-		   			action: 'bonus_scale_configs',
-		   			version: '1.0',
-		   			payload: payload	
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				if(res.attach) {
-		   					for (let i = 0; i < res.attach.length; i++) {
-		   						res.attach[i].rate = res.attach[i].rate / 10;
-		   					}
-		   					this.guimoData = res.attach;
-		   				}
-	       			}
-		   		})
-	       	},
-	       	getInfo() {
-	       		let payload = {
-		   			employeeId: window.localStorage.getItem('employeeId')
-	       		}
-	       		payload = JSON.stringify(payload);
-	       		autoApi({
-		   			action: 'tenant_info',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				if (res.attach.teamDepth) {
-		   					this.formSetting.teamDepth = res.attach.teamDepth.toString();
-		   				}
-        				this.reModCount(res.attach.mod);
-	       			}
-		   		})
-	       	},
-		    isLegalNumber(val) {
-		    	return (-100 <= val && val <= 100)?true:false;
-		    },
-	       	comfirmSetting() {
-	       		let payload = {
-				    // name : xxx,                                                // 商户名字
-				    teamDepth: this.formSetting.teamDepth,                  // 团队层级数
-				    // nonAutoBind :[1,2,3]                                 // 开通的非车险类型id列表
-				    employeeId: window.localStorage.getItem('employeeId'),
-				    mod: 0
-				};
-				var modCount = 0; 
-				for (let i = 0; i < this.formSetting.bonusScaleCountMod.length; i++) {
-					modCount = modCount + parseInt(this.formSetting.bonusScaleCountMod[i]);
+		},
+		getGuanli() {
+			this.initGuanli(parseInt(this.formSetting.teamDepth));
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId')
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'bonus_manage_configs',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						for (var i = 0; i < res.attach.length; i++) {
+							if (res.attach[i].depth <= this.formSetting.teamDepth) {
+								switch (res.attach[i].type) {
+									case 1:
+										//营利车商业险
+										this.guanliData[res.attach[i].depth - 2].shangye_Y.value = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].shangye_Y.origin = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].shangye_Y.key = res.attach[i].key;
+										break;
+									case 2:
+										//盈利车交强险
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.value = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.origin = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_Y.key = res.attach[i].key;
+										break;
+									case 4:
+										//非营利车交强险
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.value = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.origin = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_N.key = res.attach[i].key;
+										break;
+									case 8:
+										//非营利车商业险
+										this.guanliData[res.attach[i].depth - 2].shangye_N.value = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].shangye_N.origin = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].shangye_N.key = res.attach[i].key;
+										break;
+									case 16:
+										//其他商业险
+										this.guanliData[res.attach[i].depth - 2].shangye_other.value = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].shangye_other.origin = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].shangye_other.key = res.attach[i].key;
+										break;
+									case 32:
+										//其他交强险
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.value = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.origin = res.attach[i].rate / 10;
+										this.guanliData[res.attach[i].depth - 2].jiaoqiang_other.key = res.attach[i].key;
+										break;
+								}
+							}
+						}
+					}
 				}
-				for (let i = 0; i < this.formSetting.bonusScaleRewardMod.length; i++) {
-					modCount = modCount + parseInt(this.formSetting.bonusScaleRewardMod[i]);
+			})
+		},
+		getGuimo() {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId')
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'bonus_scale_configs',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						for (let i = 0; i < res.attach.length; i++) {
+							res.attach[i].rate = res.attach[i].rate / 10;
+						}
+						this.guimoData = res.attach;
+					}
 				}
-				for (let i = 0; i < this.formSetting.bonusScaleCountInsuranceMod.length; i++) {
-					modCount = modCount + parseInt(this.formSetting.bonusScaleCountInsuranceMod[i]);
+			})
+		},
+		getInfo() {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId')
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'tenant_info',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach.teamDepth) {
+						this.formSetting.teamDepth = res.attach.teamDepth.toString();
+					}
+					this.reModCount(res.attach.mod);
 				}
-				for (let i = 0; i < this.formSetting.bonusScaleRewardInsuranceMod.length; i++) {
-					modCount = modCount + parseInt(this.formSetting.bonusScaleRewardInsuranceMod[i]);
+			})
+		},
+		isLegalNumber(val) {
+			return (-100 <= val && val <= 100) ? true : false;
+		},
+		comfirmSetting() {
+			let payload = {
+				// name : xxx,                                                // 商户名字
+				teamDepth: this.formSetting.teamDepth, // 团队层级数
+				// nonAutoBind :[1,2,3]                                 // 开通的非车险类型id列表
+				employeeId: window.localStorage.getItem('employeeId'),
+				mod: 0
+			};
+			var modCount = 0;
+			for (let i = 0; i < this.formSetting.bonusScaleCountMod.length; i++) {
+				modCount = modCount + parseInt(this.formSetting.bonusScaleCountMod[i]);
+			}
+			for (let i = 0; i < this.formSetting.bonusScaleRewardMod.length; i++) {
+				modCount = modCount + parseInt(this.formSetting.bonusScaleRewardMod[i]);
+			}
+			for (let i = 0; i < this.formSetting.bonusScaleCountInsuranceMod.length; i++) {
+				modCount = modCount + parseInt(this.formSetting.bonusScaleCountInsuranceMod[i]);
+			}
+			for (let i = 0; i < this.formSetting.bonusScaleRewardInsuranceMod.length; i++) {
+				modCount = modCount + parseInt(this.formSetting.bonusScaleRewardInsuranceMod[i]);
+			}
+			payload.mod = modCount;
+
+			if (payload.mod) {
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'tenant_set',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							message: '设置已保存',
+							type: 'success'
+						});
+						this.getInfo();
+					}
+				})
+			} else {
+				this.$message({
+					message: '提交数据为空,已取消提交',
+					type: 'info',
+				});
+			}
+		},
+		saveGuanli() {
+			for (var i = 0; i < this.guanliData.length; i++) {
+				for (let item in this.guanliData[i]) {
+					if (!(this.guanliData[i][item].value == this.guanliData[i][item].origin) && this.formSetting.teamDepth >= this.guanliData[i][item].depth) {
+						this.guanliConfirmEdit(this.guanliData[i][item].key, this.guanliData[i][item].value, this.guanliData[i][item].origin, this.guanliData[i][item].depth, this.guanliData[i][item].type);
+					}
 				}
-				payload.mod = modCount;
-				
-				if (payload.mod) {
+			}
+		},
+		guanliConfirmEdit(id, val, origin, depth, type) {
+			if (this.isLegalNumber(val)) {
+				if (parseInt(val * 10) && parseInt(origin * 10)) { //value/origin值不为零,操作为修改
+					let payload = {
+						employeeId: window.localStorage.getItem('employeeId'),
+						id: id,
+						rate: parseInt(val * 10),
+						teamDepth: depth,
+						configType: type
+					}
 					payload = JSON.stringify(payload);
 					autoApi({
-			   			action: 'tenant_set',
-			   			version: '1.0',
-			   			payload : payload 
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-			   				this.$message({
-			   					message: '设置已保存',
-			   					type: 'success'
-			   				});
-			   				this.getInfo();
-		       			}
-			   		})
+						action: 'bonus_manage_config_edit',
+						version: '1.0',
+						crudType: 4,
+						payload: payload
+					}, window.localStorage.getItem('token')).then((res) => {
+						if (res.code == 0) {
+							this.getGuanli();
+							this.$message({
+								message: '修改的设置已保存',
+								type: 'success',
+							});
+						}
+					})
+				} else if (!parseInt(val * 10)) { //value为零,操作为删除
+					let payload = {
+						employeeId: window.localStorage.getItem('employeeId'),
+						id: id
+					}
+					payload = JSON.stringify(payload);
+					autoApi({
+						action: 'bonus_manage_config_edit',
+						version: '1.0',
+						crudType: 8,
+						payload: payload
+					}, window.localStorage.getItem('token')).then((res) => {
+						if (res.code == 0) {
+							this.getGuanli();
+							this.$message({
+								message: '修改的设置已保存',
+								type: 'success',
+							});
+						}
+					})
+				} else if (!parseInt(origin * 10)) { //origin为零,操作为新增
+					let payload = {
+						employeeId: window.localStorage.getItem('employeeId'),
+						rate: parseInt(val * 10),
+						teamDepth: depth,
+						configType: type,
+					}
+					payload = JSON.stringify(payload);
+					autoApi({
+						action: 'bonus_manage_config_edit',
+						version: '1.0',
+						crudType: 1,
+						payload: payload
+					}, window.localStorage.getItem('token')).then((res) => {
+						if (res.code == 0) {
+							this.getGuanli();
+							this.$message({
+								message: '修改的设置已保存',
+								type: 'success',
+							});
+						}
+					})
 				}
-				else
-				{
+			} else {
+				this.$message({
+					message: '提交的数据中有非法参数,合法输入为-100到100,其他合法参数已保存修改',
+					type: 'error',
+				});
+			}
+		},
+		guimoEditMode(row) {
+			this.dialogEditVisible = true;
+			this.guimoEdit.id = row.id;
+			this.guimoEdit.num = row.rate;
+			this.guimoEdit.comparison = row.comparison;
+			if (row.comparison == 64) {
+				this.guimoEdit.comparableValueA = row.comparableValue.split("_")[0];
+				this.guimoEdit.comparableValueB = row.comparableValue.split("_")[1];
+				this.guimoEdit.comparableValue = null;
+			} else {
+				this.guimoEdit.comparableValue = row.comparableValue;
+				this.guimoEdit.comparableValueA = null;
+				this.guimoEdit.comparableValueB = null;
+			}
+		},
+		handleEditClose() {
+			this.dialogEditVisible = false;
+		},
+		guimoConfirmEdit() {
+			this.dialogEditVisible = false;
+			if (this.isLegalNumber(this.guimoEdit.num)) {
+				let payload = {
+					employeeId: window.localStorage.getItem('employeeId'),
+					id: this.guimoEdit.id,
+					rate: parseInt(this.guimoEdit.num * 10),
+					symbol: this.reComparisonName(this.guimoEdit.comparison),
+					val: [],
+				}
+				if (this.guimoEdit.comparison == 64) {
+					payload.val[0] = this.guimoEdit.comparableValueA;
+					payload.val[1] = this.guimoEdit.comparableValueB;
+				} else {
+					payload.val = this.guimoEdit.comparableValue.split("_");
+				}
+				payload = JSON.stringify(payload);
+
+				autoApi({
+					action: 'bonus_scale_config_edit',
+					version: '1.0',
+					crudType: 4,
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getGuimo();
+						this.showAddGuimo = false;
+						this.guimoAdd = {
+							num: null,
+							comparison: null,
+							comparableValue: null
+						};
+					}
+				})
+			} else {
+				this.$message({
+					message: '输入数值非法,请在-100到100的范围内输入',
+					type: 'error',
+				});
+			}
+		},
+		guimoConfirmAdd() {
+			if (this.isLegalNumber(this.guimoAdd.num)) {
+				let payload = {
+					employeeId: window.localStorage.getItem('employeeId'),
+					rate: parseInt(this.guimoAdd.num * 10),
+					symbol: this.reComparisonName(this.guimoAdd.comparison),
+					val: [],
+				}
+				if (this.guimoAdd.comparison == 64) {
+					payload.val[0] = this.guimoAdd.comparableValueA;
+					payload.val[1] = this.guimoAdd.comparableValueB;
+				} else {
+					payload.val = this.guimoAdd.comparableValue.split("_");
+				}
+				payload = JSON.stringify(payload);
+
+				autoApi({
+					action: 'bonus_scale_config_edit',
+					version: '1.0',
+					// employeeId: window.localStorage.getItem('employeeId'),
+					crudType: 1,
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getGuimo();
+						this.showAddGuimo = false;
+						this.guimoAdd = {
+							num: null,
+							comparison: null,
+							comparableValue: null
+						};
+					}
+				})
+			} else {
+				this.$message({
+					message: '输入数值非法,请在-100到100的范围内输入',
+					type: 'error',
+				});
+			}
+		},
+		guimoDelete(row) {
+			let payload = {
+				id: row.id,
+				employeeId: window.localStorage.getItem('employeeId'),
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'bonus_scale_config_edit',
+				version: '1.0',
+				// employeeId: window.localStorage.getItem('employeeId'),
+				crudType: 8,
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.getGuimo();
+				}
+			})
+		},
+		reComparisonName(val) {
+			switch (val) {
+				case 1:
+					return "gt"
+					break;
+				case 2:
+					return "gte"
+					break;
+				case 4:
+					return "lt"
+					break;
+				case 8:
+					return "lte"
+					break;
+				case 16:
+					return "eq"
+					break;
+				case 32:
+					return "bteween"
+					break;
+				case 64:
+					return "lbteween"
+					break;
+				case 128:
+					return "rbteween"
+					break;
+				case 'gt':
+					return "大于"
+					break;
+				case 'gte':
+					return "大于等于"
+					break;
+				case 'lt':
+					return "小于"
+					break;
+				case 'lte':
+					return "小于等于"
+					break;
+				case 'eq':
+					return "等于"
+					break;
+				case 'bteween':
+					return "开区间"
+					break;
+				case 'lbteween':
+					return "(含)金额1---金额2(不含)"
+					break;
+				case 'rbteween':
+					return "前开后闭区间"
+					break;
+			}
+		},
+		reModCount(mod) {
+			this.formSetting.bonusScaleCountMod = [];
+			this.formSetting.bonusScaleCountInsuranceMod = [];
+			this.formSetting.bonusScaleRewardMod = [];
+			this.formSetting.bonusScaleRewardInsuranceMod = [];
+			if (mod & 1) { //非营业客车 - 统计口径
+				this.formSetting.bonusScaleCountMod.push('1');
+			}
+
+			if (mod & 2) { //非营业货车 - 统计口径
+				this.formSetting.bonusScaleCountMod.push('2');
+			}
+
+			if (mod & 4) { //营业客车 - 统计口径
+				this.formSetting.bonusScaleCountMod.push('4');
+			}
+
+			if (mod & 8) { //营业货车 - 统计口径
+				this.formSetting.bonusScaleCountMod.push('8');
+			}
+
+			if (mod & 16) { //其他 - 统计口径
+				this.formSetting.bonusScaleCountMod.push('16');
+			}
+
+			if (mod & 32) { //商业险 - 统计
+				this.formSetting.bonusScaleCountInsuranceMod.push('32');
+			}
+
+			if (mod & 64) { //交强险 - 统计
+				this.formSetting.bonusScaleCountInsuranceMod.push('64');
+			}
+
+			if (mod & 128) { //非营业客车 - 奖励
+				this.formSetting.bonusScaleRewardMod.push('128');
+			}
+
+			if (mod & 256) { //非营业货车 - 奖励
+				this.formSetting.bonusScaleRewardMod.push('256');
+			}
+
+			if (mod & 512) { //营业客车 - 奖励
+				this.formSetting.bonusScaleRewardMod.push('512');
+			}
+
+			if (mod & 1024) { //营业货车 - 奖励
+				this.formSetting.bonusScaleRewardMod.push('1024');
+			}
+
+			if (mod & 2048) { //其他 - 奖励
+				this.formSetting.bonusScaleRewardMod.push('2048');
+			}
+
+			if (mod & 4096) { //商业险 - 奖励
+				this.formSetting.bonusScaleRewardInsuranceMod.push('4096');
+			}
+
+			if (mod & 8192) { //交强险 - 奖励
+				this.formSetting.bonusScaleRewardInsuranceMod.push('8192');
+			}
+		},
+		guimoAccount() {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId')
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'vehicle_reward_scale',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
 					this.$message({
-						message: '提交数据为空,已取消提交',
-						type: 'info',
+						message: '规模奖励已统计',
+						type: 'success'
 					});
 				}
-	       	},
-	       	saveGuanli() {
-	       		for (var i = 0; i < this.guanliData.length; i++) {
-	       			for(let item in this.guanliData[i]) {
-	       				if (!(this.guanliData[i][item].value == this.guanliData[i][item].origin) && this.formSetting.teamDepth >= this.guanliData[i][item].depth) {
-	       					this.guanliConfirmEdit(this.guanliData[i][item].key,this.guanliData[i][item].value,this.guanliData[i][item].origin,this.guanliData[i][item].depth,this.guanliData[i][item].type);
-	       				}
-	       			}
-	       		}
-	       	},
-	       	guanliConfirmEdit(id,val,origin,depth,type) {
-	       		if(this.isLegalNumber(val)){
-	       			if (parseInt(val * 10) && parseInt(origin * 10)) {//value/origin值不为零,操作为修改
-		       			let payload = {
-				   			employeeId: window.localStorage.getItem('employeeId'),
-		       				id: id,
-				   			rate: parseInt(val * 10),
-				   			teamDepth: depth,
-				   			configType: type
-		       			}
-		       			payload = JSON.stringify(payload);
-		       			autoApi({
-				   			action: 'bonus_manage_config_edit',
-				   			version: '1.0',
-				   			crudType: 4,
-				   			payload: payload
-				   		},window.localStorage.getItem('token')).then((res)=> {
-				   			if (res.code == 0) {
-		        				this.getGuanli();
-		        				this.$message({
-				       				message: '修改的设置已保存',
-				       				type: 'success',
-				       			});
-			       			}
-				   		})
-		       		}
-		       		else if (!parseInt(val * 10)) {//value为零,操作为删除
-		       			let payload = {
-				   			employeeId: window.localStorage.getItem('employeeId'),
-		       				id: id
-		       			}
-		       			payload = JSON.stringify(payload);
-		       			autoApi({
-				   			action: 'bonus_manage_config_edit',
-				   			version: '1.0',
-				   			crudType: 8,
-				   			payload: payload
-				   		},window.localStorage.getItem('token')).then((res)=> {
-				   			if (res.code == 0) {
-		        				this.getGuanli();
-		        				this.$message({
-				       				message: '修改的设置已保存',
-				       				type: 'success',
-				       			});
-			       			}
-				   		})
-		       		}
-		       		else if (!parseInt(origin * 10)) {//origin为零,操作为新增
-		       			let payload = {
-				   			employeeId: window.localStorage.getItem('employeeId'),
-				   			rate: parseInt(val * 10),
-				   			teamDepth: depth,
-				   			configType: type,
-		       			}
-		       			payload = JSON.stringify(payload);
-		       			autoApi({
-				   			action: 'bonus_manage_config_edit',
-				   			version: '1.0',
-				   			crudType: 1,
-				   			payload: payload
-				   		},window.localStorage.getItem('token')).then((res)=> {
-				   			if (res.code == 0) {
-		        				this.getGuanli();
-	        					this.$message({
-				       				message: '修改的设置已保存',
-				       				type: 'success',
-				       			});
-			       			}
-				   		})
-		       		}
-	       		}
-	       		else
-	       		{
-	       			this.$message({
-	       				message: '提交的数据中有非法参数,合法输入为-100到100,其他合法参数已保存修改',
-	       				type: 'error',
-	       			});
-	       		}
-	       	},
-	       	guimoEditMode(row) {
-	       		this.dialogEditVisible = true;
-	       		this.guimoEdit.id = row.id;
-	       		this.guimoEdit.num = row.rate;
-	       		this.guimoEdit.comparison = row.comparison;
-	       		if (row.comparison == 64) {
-	       			this.guimoEdit.comparableValueA = row.comparableValue.split("_")[0];
-	       			this.guimoEdit.comparableValueB = row.comparableValue.split("_")[1];
-	       			this.guimoEdit.comparableValue = null;
-	       		}
-	       		else
-	       		{
-	       			this.guimoEdit.comparableValue = row.comparableValue; 
-	       			this.guimoEdit.comparableValueA = null;
-	       			this.guimoEdit.comparableValueB = null;
-	       		}
-	       	},
-	       	handleEditClose() {
-	       		this.dialogEditVisible = false;
-	       	},
-	       	guimoConfirmEdit() {
-	       		this.dialogEditVisible = false;
-	       		if (this.isLegalNumber(this.guimoEdit.num)) {
-	       			let payload = {
-		       			employeeId: window.localStorage.getItem('employeeId'),
-		       			id: this.guimoEdit.id,
-		       			rate: parseInt(this.guimoEdit.num * 10),
-		       			symbol: this.reComparisonName(this.guimoEdit.comparison),
-		       			val: [],
-		       		}
-		       		if (this.guimoEdit.comparison == 64) {
-		       			payload.val[0] = this.guimoEdit.comparableValueA;
-		       			payload.val[1] = this.guimoEdit.comparableValueB;
-		       		}
-		       		else {
-		       			payload.val = this.guimoEdit.comparableValue.split("_");
-		       		}
-		       		payload = JSON.stringify(payload);
-
-		       		autoApi({
-			   			action: 'bonus_scale_config_edit',
-			   			version: '1.0',
-			   			crudType: 4,
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-	        				this.getGuimo();
-	        				this.showAddGuimo = false;
-	        				this.guimoAdd = {
-					        	num: null,
-					        	comparison: null,
-					        	comparableValue: null
-					        };
-		       			}
-			   		})
-	       		}
-	       		else
-	       		{
-	       			this.$message({
-	       				message: '输入数值非法,请在-100到100的范围内输入',
-	       				type: 'error',
-	       			});
-	       		}
-	       	},
-	       	guimoConfirmAdd() {
-		       	if (this.isLegalNumber(this.guimoAdd.num)) {
-		       		let payload = {
-		       			employeeId: window.localStorage.getItem('employeeId'),
-		       			rate: parseInt(this.guimoAdd.num * 10),
-		       			symbol: this.reComparisonName(this.guimoAdd.comparison),
-		       			val: [],
-		       		}
-		       		if (this.guimoAdd.comparison == 64) {
-		       			payload.val[0] = this.guimoAdd.comparableValueA;
-		       			payload.val[1] = this.guimoAdd.comparableValueB;
-		       		}
-		       		else {
-		       			payload.val = this.guimoAdd.comparableValue.split("_");
-		       		}
-		       		payload = JSON.stringify(payload);
-		       		
-		       		autoApi({
-			   			action: 'bonus_scale_config_edit',
-			   			version: '1.0',
-			   			// employeeId: window.localStorage.getItem('employeeId'),
-			   			crudType: 1,
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-	        				this.getGuimo();
-	        				this.showAddGuimo = false;
-	        				this.guimoAdd = {
-					        	num: null,
-					        	comparison: null,
-					        	comparableValue: null
-					        };
-		       			}
-			   		})
-		       	}	
-		       	else
-		       	{
-		       		this.$message({
-	       				message: '输入数值非法,请在-100到100的范围内输入',
-	       				type: 'error',
-	       			});
-		       	}
-	       	},
-	       	guimoDelete(row) {
-	       		let payload = {
-	       			id: row.id,
-		   			employeeId: window.localStorage.getItem('employeeId'),
-	       		}
-	       		payload = JSON.stringify(payload);
-	       		autoApi({
-		   			action: 'bonus_scale_config_edit',
-		   			version: '1.0',
-		   			// employeeId: window.localStorage.getItem('employeeId'),
-		   			crudType: 8,
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-        				this.getGuimo();
-	       			}
-		   		})
-	       	},
-		    reComparisonName(val) {
-		    	switch(val)
-		    	{
-					case 1:
-						return "gt"
-						break;
-					case 2:
-						return "gte"
-						break;
-					case 4:
-						return "lt"
-						break;
-					case 8:
-						return "lte"
-						break;
-					case 16:
-						return "eq"
-						break;
-					case 32:
-						return "bteween"
-						break;
-					case 64:
-						return "lbteween"
-						break;
-					case 128:
-						return "rbteween"
-						break;
-					case 'gt':
-						return "大于"
-						break;
-					case 'gte':
-						return "大于等于"
-						break;
-					case 'lt':
-						return "小于"
-						break;
-					case 'lte':
-						return "小于等于"
-						break;
-					case 'eq':
-						return "等于"
-						break;
-					case 'bteween':
-						return "开区间"
-						break;
-					case 'lbteween':
-						return "(含)金额1---金额2(不含)"
-						break;
-					case 'rbteween':
-						return "前开后闭区间"
-						break;
-		    	}
-		    },
-		    reModCount(mod) {
-		    	this.formSetting.bonusScaleCountMod = [];
-		    	this.formSetting.bonusScaleCountInsuranceMod = [];
-		    	this.formSetting.bonusScaleRewardMod = [];
-		    	this.formSetting.bonusScaleRewardInsuranceMod = [];
-		    	if (mod & 1) {//非营业客车 - 统计口径
-		    		this.formSetting.bonusScaleCountMod.push('1');
-		    	}
-
-		    	if (mod & 2) {//非营业货车 - 统计口径
-		    		this.formSetting.bonusScaleCountMod.push('2');
-		    	}
-
-		    	if (mod & 4) {//营业客车 - 统计口径
-		    		this.formSetting.bonusScaleCountMod.push('4');
-		    	}
-
-		    	if (mod & 8) {//营业货车 - 统计口径
-		    		this.formSetting.bonusScaleCountMod.push('8');
-		    	}
-
-		    	if (mod & 16) {//其他 - 统计口径
-		    		this.formSetting.bonusScaleCountMod.push('16');
-		    	}
-
-		    	if (mod & 32) {//商业险 - 统计
-		    		this.formSetting.bonusScaleCountInsuranceMod.push('32');
-		    	}
-
-		    	if (mod & 64) {//交强险 - 统计
-		    		this.formSetting.bonusScaleCountInsuranceMod.push('64');
-		    	}
-
-		    	if (mod & 128) {//非营业客车 - 奖励
-		    		this.formSetting.bonusScaleRewardMod.push('128');
-		    	}
-
-		    	if (mod & 256) {//非营业货车 - 奖励
-		    		this.formSetting.bonusScaleRewardMod.push('256');
-		    	}
-
-		    	if (mod & 512) {//营业客车 - 奖励
-		    		this.formSetting.bonusScaleRewardMod.push('512');
-		    	}
-
-		    	if (mod & 1024) {//营业货车 - 奖励
-		    		this.formSetting.bonusScaleRewardMod.push('1024');
-		    	}
-
-		    	if (mod & 2048) {//其他 - 奖励
-		    		this.formSetting.bonusScaleRewardMod.push('2048');
-		    	}
-
-		    	if (mod & 4096) {//商业险 - 奖励
-		    		this.formSetting.bonusScaleRewardInsuranceMod.push('4096');
-		    	}
-
-		    	if (mod & 8192) {//交强险 - 奖励
-		    		this.formSetting.bonusScaleRewardInsuranceMod.push('8192');
-		    	}
-		    },
-		    guimoAccount() {
-		    	let payload = {
-		    		employeeId: window.localStorage.getItem('employeeId')
-		    	}
-		    	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'vehicle_reward_scale',
-		   			version: '1.0',
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.$message({
-		   					message: '规模奖励已统计',
-		   					type: 'success'
-		   				});
-	       			}
-		   		})
-		    },
-		    guanliAccount() {
-		    	let payload = {
-		    		employeeId: window.localStorage.getItem('employeeId')
-		    	}
-		    	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'vehicle_reward',
-		   			version: '1.0',
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.$message({
-		   					message: '管理奖励已结算',
-		   					type: 'success'
-		   				});
-	       			}
-		   		})
-		    }
-	    },
-	    mounted(){
-	        this.getGuimo();
-	        this.getInfo();
-	    }
+			})
+		},
+		guanliAccount() {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId')
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'vehicle_reward',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.$message({
+						message: '管理奖励已结算',
+						type: 'success'
+					});
+				}
+			})
+		}
+	},
+	mounted() {
+		this.getGuimo();
+		this.getInfo();
 	}
+}
 </script>
 <style lang="less">
 .rewardBody {

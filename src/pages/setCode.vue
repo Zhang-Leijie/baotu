@@ -33,156 +33,159 @@
 import { logApi } from '@/ajax/post.js'
 
 export default {
-    data() {
-   	  var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.form.password) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
+  data() {
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.form.password) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
+    return {
+      haveCode: false,
+      form: {
+        plat: '',
+        platCode: '',
+        account: '',
+        yzm: '',
+        password: '',
+        passwordS: '',
+      },
+      timeCount: 0,
+      rules: {
+        yzm: [{
+          required: true,
+          message: '请输入验证码',
+          trigger: 'blur'
+        }, ],
+        password: [{
+          required: true,
+          message: '请输入密码',
+          trigger: 'blur'
+        }, ],
+        passwordS: [{
+          validator: validatePass2,
+          trigger: 'change'
+        }, ],
+      }
+    }
+  },
+  methods: {
+    getYzm() {
+      this.timeCount = 0;
+      this.form.yzm = null;
+      this.startCountdown(60);
+      let payload = {
+        mobile: '+86' + this.$route.query.account,
+        appId: '1',
+      }
+      payload = JSON.stringify(payload);
+      logApi({
+        action: 'captcha_obtain',
+        payload: payload,
+      }).then((res) => {
+        if (res.code == 0) {
+          this.form.yzm = res.attach
         }
-      };
-      return {
-      	 haveCode:false,
-         form:{
-          plat:'',
-         	platCode:'',
-          account:'',
-         	yzm:'',
-         	password:'',
-         	passwordS:'',
-         },
-         timeCount: 0,
-         rules: {
-          yzm: [
-            { required: true, message: '请输入验证码', trigger: 'blur' },
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-          ],
-          passwordS: [
-            { validator: validatePass2, trigger: 'change' },
-          ],
-        }
+      });
+    },
+    startCountdown(time) {
+      var vm = this;
+      if (time > 0) {
+        time = time - 1;
+        this.timeCount = time;
+        setTimeout(function() {
+          vm.startCountdown(time);
+        }, 1000);
+      } else {
+        this.timeCount = 0;
       }
     },
-    methods: {
-       getYzm(){
-        this.timeCount = 0;
-        this.form.yzm = null;
-        this.startCountdown(60);
+    pwdReset() {
+      if (this.form.yzm == '') {
+        swal({
+          title: "请输入验证码",
+          type: 'warning',
+          text: "",
+          timer: 2000,
+        })
+      } else if (this.form.password == '' || this.form.passwordS == '') {
+        swal({
+          title: "请输入密码",
+          type: 'warning',
+          text: "",
+          timer: 2000,
+        })
+      } else if (this.form.password == this.form.passwordS) {
         let payload = {
-          mobile: '+86'+this.$route.query.account,
-          appId: '1',
+          pwd: this.form.passwordS,
+          captcha: this.form.yzm,
+          mobile: '+86' + this.$route.query.account,
+          appId: this.form.platCode,
         }
         payload = JSON.stringify(payload);
-       	logApi({
-     			action:'captcha_obtain',
-     			payload: payload,
-     		}).then((res)=> {
-     			if (res.code == 0) {
-     				this.form.yzm = res.attach
-     			}
-     		});
-       },
-       startCountdown(time) {
-        var vm = this;
-        if (time > 0) {
-          time = time - 1;
-          this.timeCount = time;
-          setTimeout(function(){
-            vm.startCountdown(time);
-          },1000);
-        }
-        else
-        {
-          this.timeCount = 0;
-        }
-       },
-       pwdReset(){
-       	if (this.form.yzm == '') {
-       		swal({
-                title: "请输入验证码",
-                type: 'warning',
-                text: "",
-                timer: 2000,
-            })
-       	} else if(this.form.password == '' || this.form.passwordS == ''){
-       		swal({
-                title: "请输入密码",
-                type: 'warning',
-                text: "",
-                timer: 2000,
-            })
-       	} else if(this.form.password == this.form.passwordS){
-          let payload = {
-            pwd: this.form.passwordS,
-            captcha: this.form.yzm,
-            mobile: '+86'+this.$route.query.account,
-            appId: this.form.platCode,
-          }
-          payload = JSON.stringify(payload);
-       		logApi({
-  	   			action:'pwd_reset',
-  	   			payload: payload,
-  	   		}).then((res)=> {
-  	   			if (res.code == 0) {
-                let payload = {
-                  mobile:'+86'+this.$route.query.account,
-                  pwd:this.form.passwordS,
-                  appId: this.form.platCode,
-                }
-                payload = JSON.stringify(payload);
-         				logApi({
-                  action:'login',
-                  client:'2',
-                  payload: payload,
-                }).then((res)=> {
-                  if (res.code == 0) {
-                    let cacheData = JSON.stringify(res.attach);
-                    localStorage.setItem('cacheData',cacheData);
+        logApi({
+          action: 'pwd_reset',
+          payload: payload,
+        }).then((res) => {
+          if (res.code == 0) {
+            let payload = {
+              mobile: '+86' + this.$route.query.account,
+              pwd: this.form.passwordS,
+              appId: this.form.platCode,
+            }
+            payload = JSON.stringify(payload);
+            logApi({
+              action: 'login',
+              client: '2',
+              payload: payload,
+            }).then((res) => {
+              if (res.code == 0) {
+                let cacheData = JSON.stringify(res.attach);
+                localStorage.setItem('cacheData', cacheData);
 
-                    localStorage.setItem('token',res.attach.token);
-                    localStorage.setItem('appId',this.form.platCode);
-                    localStorage.setItem('userId_plate',res.attach.user.uid);
-                    localStorage.setItem('userName_Plate',this.$route.query.account);
-                    localStorage.setItem('userPsd_plate',this.form.password);
-                    localStorage.setItem('top_name_plate',res.attach.user.name);
-                    localStorage.setItem('top_avatar_plate',res.attach.user.avatar);
+                localStorage.setItem('token', res.attach.token);
+                localStorage.setItem('appId', this.form.platCode);
+                localStorage.setItem('userId_plate', res.attach.user.uid);
+                localStorage.setItem('userName_Plate', this.$route.query.account);
+                localStorage.setItem('userPsd_plate', this.form.password);
+                localStorage.setItem('top_name_plate', res.attach.user.name);
+                localStorage.setItem('top_avatar_plate', res.attach.user.avatar);
 
-                    router.push({name:'home'})
-                     this.$message({
-                      type: 'success',
-                      message: '正在访问:'+ window.localStorage.getItem('ipAddrPlate')
-                    });   
-                  }
+                router.push({
+                  name: 'home'
                 })
-         			}
-  	   		})
-       	}
-        else
-        {
-          this.$message({
-            type: 'error',
-            message: '两次输入密码不一致'
-          }); 
-        }     	
-       },
-       goBack() {
-        router.push({
-          name: 'sign-in'
+                this.$message({
+                  type: 'success',
+                  message: '正在访问:' + window.localStorage.getItem('ipAddrPlate')
+                });
+              }
+            })
+          }
+        })
+      } else {
+        this.$message({
+          type: 'error',
+          message: '两次输入密码不一致'
         });
-       }
+      }
     },
-    mounted(){
-        this.form.platCode = this.$route.query.platCode;
-        this.form.plat = this.$route.query.plat;
-        this.form.account = this.$route.query.account;
-        this.form.yzm = '';
-        this.form.password = '';
-        this.form.passwordS = '';
+    goBack() {
+      router.push({
+        name: 'sign-in'
+      });
     }
+  },
+  mounted() {
+    this.form.platCode = this.$route.query.platCode;
+    this.form.plat = this.$route.query.plat;
+    this.form.account = this.$route.query.account;
+    this.form.yzm = '';
+    this.form.password = '';
+    this.form.passwordS = '';
+  }
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

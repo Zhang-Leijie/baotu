@@ -163,7 +163,7 @@
 		        this.imageUrl = URL.createObjectURL(file.raw);
 		    },
 	    },
-	    mounted:function(){
+	    mounted(){
 	        
 	    }
 	}

@@ -45,143 +45,145 @@
 	</div>
 </template>
 <script>
-import { autoApi,uploadImg } from '@/ajax/post.js'
+import {
+	autoApi,
+	uploadImg
+} from '@/ajax/post.js'
 
-	export default {
-	    data() {
-	      return {
-	        endTimeEdited: false,
-	        fileBuf: null,
-	        form:{
-	        	tid: null,
-	        	name: null,
-	        	num: null,
-	        	time: null,
-	        	imageUrl: null,
-	        	people: null,
-	        	phone: null,
-	        },
-	      };
-	    },
-	    methods: {
-	       	add0(m){return m<10?'0'+m:m },
-	       	getFormTime(shijianchuo)
-	        {
-	        	//shijianchuo是整数，否则要parseInt转换
-		        var time = new Date(shijianchuo);
-		        var y = time.getFullYear();
-		        var m = time.getMonth()+1;
-		        var d = time.getDate();
-		        var h = time.getHours();
-		        var mm = time.getMinutes();
-		        var s = time.getSeconds();
-		        return y+'-'+this.add0(m)+'-'+this.add0(d)+' '+this.add0(h)+':'+this.add0(mm)+':'+this.add0(s);
-	        },
+export default {
+	data() {
+		return {
+			endTimeEdited: false,
+			fileBuf: null,
+			form: {
+				tid: null,
+				name: null,
+				num: null,
+				time: null,
+				imageUrl: null,
+				people: null,
+				phone: null,
+			},
+		};
+	},
+	methods: {
+		add0(m) {
+			return m < 10 ? '0' + m : m
+		},
+		getFormTime(shijianchuo) {
+			//shijianchuo是整数，否则要parseInt转换
+			var time = new Date(shijianchuo);
+			var y = time.getFullYear();
+			var m = time.getMonth() + 1;
+			var d = time.getDate();
+			var h = time.getHours();
+			var mm = time.getMinutes();
+			var s = time.getSeconds();
+			return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
+		},
 
-			handleAvatarScucess(res, file) {
-		        this.form.imageUrl = URL.createObjectURL(file.raw);
-		    },
-		    getInfo(id) {
-		    	let payload = {
-		    		employeeId: id,
-		    	}
-		    	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'tenant_info',
-		   			version: '1.0',
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				   	this.form.tid = res.attach.tid;
-				        	this.form.name = res.attach.name;
-				        	this.form.imageUrl = res.attach.licenseImage;
-				        	this.form.num = res.attach.license;
-				        	if (this.$route.query.expire) {
-				        		this.form.time = this.getFormTime(this.$route.query.expire * 1000);
-				        	}
-				        	this.form.people = this.$route.query.contacts;
-				        	this.form.phone = this.$route.query.contractsMobile;
-	       			}
-		   		})
-		    },
+		handleAvatarScucess(res, file) {
+			this.form.imageUrl = URL.createObjectURL(file.raw);
+		},
+		getInfo(id) {
+			let payload = {
+				employeeId: id,
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'tenant_info',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.form.tid = res.attach.tid;
+					this.form.name = res.attach.name;
+					this.form.imageUrl = res.attach.licenseImage;
+					this.form.num = res.attach.license;
+					if (this.$route.query.expire) {
+						this.form.time = this.getFormTime(this.$route.query.expire * 1000);
+					}
+					this.form.people = this.$route.query.contacts;
+					this.form.phone = this.$route.query.contractsMobile;
+				}
+			})
+		},
 
-		    beforeUpload(file) {
-			    var vm = this;
-		    	var reader = new FileReader();
-			    reader.readAsDataURL(file);
-			    reader.onload = function(e){
-			        vm.form.imageUrl = this.result;
-			    }
-			    this.fileBuf = file;
-			    return false; //放弃组件上传
-		    },
+		beforeUpload(file) {
+			var vm = this;
+			var reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = function(e) {
+				vm.form.imageUrl = this.result;
+			}
+			this.fileBuf = file;
+			return false; //放弃组件上传
+		},
 
-		    uploadFile(tid,file) {
-				let fd = new FormData();
-				fd.append("version", '1.0');
-				fd.append("action", 'upload_tenant_license');
-				fd.append("license", file);
+		uploadFile(tid, file) {
+			let fd = new FormData();
+			fd.append("version", '1.0');
+			fd.append("action", 'upload_tenant_license');
+			fd.append("license", file);
+			let payload = {
+				tid: tid,
+			}
+			payload = JSON.stringify(payload);
+			fd.append("payload", payload);
+			uploadImg(fd);
+		},
+
+		confirmEdit() {
+			if (this.form.name && this.form.imageUrl && this.form.time && this.form.num && this.form.tid && this.form.people && this.form.phone) {
 				let payload = {
-					tid: tid,
+					tname: this.form.name,
+					expire: Date.parse(this.form.time) / 1000,
+					license: this.form.num,
+					tid: this.form.tid,
+					contacts: this.form.people,
+					contactsMobile: this.form.phone,
 				}
 				payload = JSON.stringify(payload);
-				fd.append("payload", payload);
-				uploadImg(fd);
-		    },
+				autoApi({
+					action: 'platform_tenant_set',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							message: '修改的设置已保存',
+							type: 'success',
+						});
 
-		    confirmEdit() {
-			    if (this.form.name && this.form.imageUrl && this.form.time && this.form.num && this.form.tid && this.form.people && this.form.phone) {
-			    	let payload = {
-			   			tname: this.form.name,
-			   			expire: Date.parse(this.form.time) / 1000,
-			   			license: this.form.num,
-			   			tid: this.form.tid,
-			   			contacts: this.form.people,
-			   			contactsMobile: this.form.phone,
-			    	}
-			    	payload = JSON.stringify(payload);
-			    	autoApi({
-			   			action: 'platform_tenant_set',
-			   			version: '1.0',
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-			   				this.$message({
-					            message: '修改的设置已保存',
-					            type: 'success',
-					        });
+						this.uploadFile(this.form.tid, this.fileBuf);
 
-			   				this.uploadFile(this.form.tid,this.fileBuf);
-
-			   				setTimeout(function(){
-			   					router.push({
-							        path: '/shop/shop-list',
-							    });
-			   				},1000);
-		       			}
-			   		})
-			    }
-			    else
-			    {
-			    	this.$message({
-			    		message: '信息填写不完整,请检查',
-			    		type: 'error',
-			    	});
-			    }
-		    },
-		    goback() {
-		    	router.push({
-			        path: '/shop/shop-list'
-			    });
-		    },
-		    editEndTime() {
-		    	this.endTimeEdited = true;
-		    }
-	    },
-	    mounted(){
-	    	this.getInfo(this.$route.query.tid);
-	    }
+						setTimeout(function() {
+							router.push({
+								path: '/shop/shop-list',
+							});
+						}, 1000);
+					}
+				})
+			} else {
+				this.$message({
+					message: '信息填写不完整,请检查',
+					type: 'error',
+				});
+			}
+		},
+		goback() {
+			router.push({
+				path: '/shop/shop-list'
+			});
+		},
+		editEndTime() {
+			this.endTimeEdited = true;
+		}
+	},
+	mounted() {
+		this.getInfo(this.$route.query.tid);
 	}
+}
 </script>
 <style lang="less">
 .shopEditBody {

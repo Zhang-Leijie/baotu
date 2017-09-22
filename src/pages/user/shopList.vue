@@ -83,133 +83,130 @@
 import { autoApi } from '@/ajax/post.js'
 
 export default {
-	  data() {
-	    return {
-	      searchName: null,
-	      searchId: null,
-	      tableData: [],
-	      total: null,
-	      currentPage: 1,
-	      pageSize: 10
+	data() {
+		return {
+			searchName: null,
+			searchId: null,
+			tableData: [],
+			total: null,
+			currentPage: 1,
+			pageSize: 10
 		}
-	  },
-	  methods: {
-	  	formatDate(time){
-		  var   x = (time - 0) * 1000
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" + (now.getDate());   
-		  var   hour = "0" + now.getHours();
-		  var   min =  "0" + now.getMinutes();
-		  return   year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-  			let payload = {
-  				page: this.currentPage,
-  				pageSize: this.pageSize,
-  				tid: this.searchId,
-  				name: this.searchName
-  			};
+		getInfo() {
+			let payload = {
+				page: this.currentPage,
+				pageSize: this.pageSize,
+				tid: this.searchId,
+				name: this.searchName
+			};
 
-  			payload = JSON.stringify(payload);
+			payload = JSON.stringify(payload);
 
-	  		autoApi({
-	   			action: 'tenants',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach.list) {
-	   					for (let i = 0; i < res.attach.list.length; i++) {
-	   						if((res.attach.list[i].mod & 16384) == 16384) {	//该条数据被禁用
-	   							res.attach.list[i].isAble = false;
-	   						}
-	   						else {
-	   							res.attach.list[i].isAble = true;
-	   						}
-	   					}
-		   				this.tableData = res.attach.list;
-	   				}
-	   				this.total = res.attach.total;
-       			}
-	   		})
-	  	},
+			autoApi({
+				action: 'tenants',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach.list) {
+						for (let i = 0; i < res.attach.list.length; i++) {
+							if ((res.attach.list[i].mod & 16384) == 16384) { //该条数据被禁用
+								res.attach.list[i].isAble = false;
+							} else {
+								res.attach.list[i].isAble = true;
+							}
+						}
+						this.tableData = res.attach.list;
+					}
+					this.total = res.attach.total;
+				}
+			})
+		},
 
-	  	changeState(id,isAble) {
-	  		if (isAble) {	//当前可用,操作为禁用
-	  			let payload = {
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			autoApi({
-		   			action: 'tenant_seal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '禁用成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  		else
-	  		{	//当前不可用,操作为解禁
-	  			let payload = {
-	  				id: id,
-	  			}
-	  			payload = JSON.stringify(payload);
-	  			autoApi({
-		   			action: 'tenant_unseal',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.getInfo();
-			   			this.$message({
-			   				message: '解禁成功',
-			   				type: 'success',
-			   			});
-		   			}
-		   		});
-	  		}
-	  	},
+		changeState(id, isAble) {
+			if (isAble) { //当前可用,操作为禁用
+				let payload = {
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'tenant_seal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '禁用成功',
+							type: 'success',
+						});
+					}
+				});
+			} else { //当前不可用,操作为解禁
+				let payload = {
+					id: id,
+				}
+				payload = JSON.stringify(payload);
+				autoApi({
+					action: 'tenant_unseal',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.getInfo();
+						this.$message({
+							message: '解禁成功',
+							type: 'success',
+						});
+					}
+				});
+			}
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.getInfo(); 
-	    },
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.getInfo();
+		},
 
-	    search() {
-	    	this.getInfo(); 
-	    },
+		search() {
+			this.getInfo();
+		},
 
-	    deleteShop(row) {
-	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
-	          confirmButtonText: '确定',
-	          cancelButtonText: '取消',
-	          type: 'warning'
-	        }).then(() => {
-	         	 this.$message({
-		            type: 'info',
-		            message: 'API未接入,因此操作未执行'
-		          });   
-	        }).catch(() => {
-	          this.$message({
-	            type: 'info',
-	            message: '已取消删除'
-	          });          
-	        });   	
-	    },
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  }
+		deleteShop(row) {
+			this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.$message({
+					type: 'info',
+					message: 'API未接入,因此操作未执行'
+				});
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+		},
+	},
+	mounted() {
+		this.getInfo();
 	}
+}
 </script>
 <style lang="less">
 .shopListBody {

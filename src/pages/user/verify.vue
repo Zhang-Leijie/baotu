@@ -52,66 +52,66 @@ import { autoApi } from '@/ajax/post.js'
 export default {
 	data() {
 		return {
-		  searchName: '',
-		  tableData: [],
-		  total: null,
-		  currentPage: 1,
-		  pageSize: 10
+			searchName: '',
+			tableData: [],
+			total: null,
+			currentPage: 1,
+			pageSize: 10
 		}
 	},
 	methods: {
-		formatDate (time){
-		  var   x = (time - 0) * 1000
+		formatDate(time) {
+			var x = (time - 0) * 1000
 
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" +(now.getDate());   
-		  var   hour = "0" +now.getHours();
-		  var   min =  "0" +now.getMinutes();
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-			getInfo() {
-				let payload = {
-					page: this.currentPage,
-					pageSize: this.pageSize,
-					employeeId: window.localStorage.getItem('employeeId'),
+		getInfo() {
+			let payload = {
+				page: this.currentPage,
+				pageSize: this.pageSize,
+				employeeId: window.localStorage.getItem('employeeId'),
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'apply_list',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.tableData = res.attach.list;
+					this.total = res.attach.total;
 				}
-				payload = JSON.stringify(payload);
-				autoApi({
-					action: 'apply_list',
-					version: '1.0',
-					payload: payload
-				},window.localStorage.getItem('token')).then((res)=> {
-					if (res.code == 0) {
-						this.tableData = res.attach.list;
-						this.total = res.attach.total;
-					}
-				})
-			},
-
-			pageChange(val) {
-		    this.currentPage = val;
-		    this.getInfo();
+			})
 		},
 
-		reject(row,isReject) {
+		pageChange(val) {
+			this.currentPage = val;
+			this.getInfo();
+		},
+
+		reject(row, isReject) {
 			let payload = {
 				uid: row.uid,
 				reject: isReject,
 				employeeId: window.localStorage.getItem('employeeId'),
 			}
 			payload = JSON.stringify(payload);
-				autoApi({
-					action: 'apply_audit',
-					version: '1.0',
-					payload: payload
-				},window.localStorage.getItem('token')).then((res)=> {
-					if (res.code == 0) {
-						this.getInfo();
-					}
-				})
+			autoApi({
+				action: 'apply_audit',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.getInfo();
+				}
+			})
 		},
 
 		search() {

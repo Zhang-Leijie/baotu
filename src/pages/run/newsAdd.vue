@@ -31,51 +31,53 @@
 	</div>
 </template>
 <script>
-import { autoApi } from '@/ajax/post.js'
+import {
+	autoApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	      form: {
-	        title: '',
-	        link: '',
-	        imageUrl: ''
-	      },
-	      formLabelWidth: '120px'
+export default {
+	data() {
+		return {
+			form: {
+				title: '',
+				link: '',
+				imageUrl: ''
+			},
+			formLabelWidth: '120px'
 		}
-	  },
-	  methods: {
-	  	handleAvatarScucess(res, file) {
-	        this.form.imageUrl = URL.createObjectURL(file.raw);
-	    },
-	  	getContent(){
-	  		let payload = {
-	  			title: this.form.title,
-	  			icon: this.form.imageUrl,
-	  			link: this.form.link
-	  		}
-	  		payload = JSON.stringify(payload);
-	  		autoApi({
-		   			action: 'article_add',
-		   			version: '1.0',
-		   			payload: payload,
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				this.$message({
-				            message: '新增资讯成功',
-				            type: 'success'
-				        });
-				        router.push({
-					        name: 'shop-run-newslist'
-					    });
-	       			}
-		   		})
-	  		}
-	  },
-	  mounted() {
-	  	
-	  }
+	},
+	methods: {
+		handleAvatarScucess(res, file) {
+			this.form.imageUrl = URL.createObjectURL(file.raw);
+		},
+		getContent() {
+			let payload = {
+				title: this.form.title,
+				icon: this.form.imageUrl,
+				link: this.form.link
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'article_add',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.$message({
+						message: '新增资讯成功',
+						type: 'success'
+					});
+					router.push({
+						name: 'shop-run-newslist'
+					});
+				}
+			})
+		}
+	},
+	mounted() {
+
 	}
+}
 </script>
 <style lang="less">
 .newsaddBody{

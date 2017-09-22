@@ -195,26 +195,28 @@ export default {
   },
   methods: {
     logout() {
-        router.push({name:"sign-in"})
+      router.push({
+        name: "sign-in"
+      })
     },
     gohome() {
-      router.push({name:"home"});
+      router.push({
+        name: "home"
+      });
     },
     getModulars() {
       autoApi({
         action: 'modulars_possessed',
         version: '1.0',
-      },window.localStorage.getItem('token')).then((res)=> {
+      }, window.localStorage.getItem('token')).then((res) => {
         if (res.code == 0) {
           if (res.attach) {
             if (this.isAdmin) { //平台端
               this.user_Modulars = res.attach.pmodulars;
-            }
-            else
-            { //商家端
+            } else { //商家端
               if (res.attach.tenants[0]) {
                 for (let i = 0; i < res.attach.tenants.length; i++) {
-                  if (res.attach.tenants[i].employeeId == window.localStorage.getItem('employeeId')) {  //判断进入的商家
+                  if (res.attach.tenants[i].employeeId == window.localStorage.getItem('employeeId')) { //判断进入的商家
                     this.employee_Modulars = res.attach.tenants[i].modulars;
                   }
                 }
@@ -222,15 +224,13 @@ export default {
             }
           }
         }
-      }) 
+      })
     },
     isPermiss(modular) {
-      if (this.isAdmin) {//平台端
+      if (this.isAdmin) { //平台端
         if (window.localStorage.getItem('isRoot_plate') == 'y') {
           return true;
-        }
-        else
-        {
+        } else {
           for (let i = 0; i < this.user_Modulars.length; i++) {
             if (this.user_Modulars[i] == modular) {
               return true;
@@ -238,13 +238,10 @@ export default {
           }
           return false;
         }
-      }
-      else { //商家端
+      } else { //商家端
         if (window.localStorage.getItem('isRoot_tenant') == 'y') {
           return true;
-        }
-        else
-        {
+        } else {
           for (let i = 0; i < this.employee_Modulars.length; i++) {
             if (this.employee_Modulars[i] == modular) {
               return true;
@@ -256,51 +253,41 @@ export default {
     },
   },
   mounted() {
-    this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai'?true:false;
+    this.isAdmin = window.localStorage.getItem('baotuUserType') == 'pingtai' ? true : false;
     this.name = window.localStorage.getItem('top_name_plate');
     this.avatar = window.localStorage.getItem('top_avatar_plate');
     this.getModulars();
     if (this.$route.name == 'shop-shop-list') {
       this.activeRoute = '1-1';
       this.openedRouteList = ['1'];
-    }
-    else if (this.$route.name == 'shop-user-list') {
+    } else if (this.$route.name == 'shop-user-list') {
       this.activeRoute = '1-2';
       this.openedRouteList = ['1'];
-    }
-    else if (this.$route.name == 'shop-staff-list') {
+    } else if (this.$route.name == 'shop-staff-list') {
       this.activeRoute = '1-3';
       this.openedRouteList = ['1'];
-    }
-    else if (this.$route.name == 'shop-role-list') {
+    } else if (this.$route.name == 'shop-role-list') {
       this.activeRoute = '1-4';
       this.openedRouteList = ['1'];
-    }
-    else if (this.$route.name == 'shop-autoinsurance-manage') {
+    } else if (this.$route.name == 'shop-autoinsurance-manage') {
       this.activeRoute = '2-1';
       this.openedRouteList = ['2'];
-    }
-    else if (this.$route.name == 'shop-set-reward') {
+    } else if (this.$route.name == 'shop-set-reward') {
       this.activeRoute = '2-2';
       this.openedRouteList = ['2'];
-    }
-    else if (this.$route.name == 'shop-set-rewardVerify') {
+    } else if (this.$route.name == 'shop-set-rewardVerify') {
       this.activeRoute = '2-3';
       this.openedRouteList = ['2'];
-    }
-    else if (this.$route.name == 'shop-run-rollimg') {
+    } else if (this.$route.name == 'shop-run-rollimg') {
       this.activeRoute = '3-1';
       this.openedRouteList = ['3'];
-    }
-    else if (this.$route.name == 'shop-run-qalist') {
+    } else if (this.$route.name == 'shop-run-qalist') {
       this.activeRoute = '3-2';
       this.openedRouteList = ['3'];
-    }
-     else if (this.$route.name == 'shop-run-newslist') {
+    } else if (this.$route.name == 'shop-run-newslist') {
       this.activeRoute = '3-3';
       this.openedRouteList = ['3'];
-    }
-    else if (this.$route.name == 'shop-set-insuranceN') {
+    } else if (this.$route.name == 'shop-set-insuranceN') {
       this.activeRoute = '4-1';
       this.openedRouteList = ['4'];
     }
@@ -315,28 +302,22 @@ export default {
     else if (this.$route.name == 'shop-order-autoinsurance') {
       this.activeRoute = '5-1';
       this.openedRouteList = ['5'];
-    }
-    else if (this.$route.name == 'shop-order-policyList') {
+    } else if (this.$route.name == 'shop-order-policyList') {
       this.activeRoute = '5-2';
       this.openedRouteList = ['5'];
-    }
-    else if (this.$route.name == 'shop-order-policyList') {
+    } else if (this.$route.name == 'shop-order-policyList') {
       this.activeRoute = '5-3';
       this.openedRouteList = ['5'];
-    }
-    else if (this.$route.name == 'shop-msg-business') {
+    } else if (this.$route.name == 'shop-msg-business') {
       this.activeRoute = '6-1';
       this.openedRouteList = ['6'];
-    }
-    else if (this.$route.name == 'shop-msg-notice') {
+    } else if (this.$route.name == 'shop-msg-notice') {
       this.activeRoute = '6-2';
       this.openedRouteList = ['6'];
-    }
-    else if (this.$route.name == 'shop-msg-log') {
+    } else if (this.$route.name == 'shop-msg-log') {
       this.activeRoute = '6-3';
       this.openedRouteList = ['6'];
-    }
-    else if (this.$route.name == 'shop-statistic-statisticManage') {
+    } else if (this.$route.name == 'shop-statistic-statisticManage') {
       this.activeRoute = '7-1';
       this.openedRouteList = ['7'];
     }

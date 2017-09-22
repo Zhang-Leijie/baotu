@@ -54,139 +54,141 @@
 	</div>
 </template>
 <script>
-import { autoApi,uploadImg } from '@/ajax/post.js'
+import {
+	autoApi,
+	uploadImg
+} from '@/ajax/post.js'
 
-	export default {
-	    data() {
-	      return {
-	      	imageUrla: '',
-	      	fileBuf: null,
-	        info:'',
-	        regionFormData: [],		//格式化行政区划表
-	        form:{
-	        	name:'',
-	        	account:'',
-	        	region:'',
-	        	phone:'',
-	        	servicePhone: null,
-	        	license: null,		//营业执照号
-	        	people:'',
-	        	time: ''
-	        },
-	      };
-	    },
-	    methods: {
-   		    add0(m){return m<10?'0'+m:m },
-	       	getFormTime(shijianchuo)
-		        {
-		        //shijianchuo是整数，否则要parseInt转换
-			        var time = new Date(shijianchuo);
-			        var y = time.getFullYear();
-			        var m = time.getMonth()+1;
-			        var d = time.getDate();
-			        var h = time.getHours();
-			        var mm = time.getMinutes();
-			        var s = time.getSeconds();
-			        return y+'-'+this.add0(m)+'-'+this.add0(d)+' '+this.add0(h)+':'+this.add0(mm)+':'+this.add0(s);
-		        },
+export default {
+	data() {
+		return {
+			imageUrla: '',
+			fileBuf: null,
+			info: '',
+			regionFormData: [], //格式化行政区划表
+			form: {
+				name: '',
+				account: '',
+				region: '',
+				phone: '',
+				servicePhone: null,
+				license: null, //营业执照号
+				people: '',
+				time: ''
+			},
+		};
+	},
+	methods: {
+		add0(m) {
+			return m < 10 ? '0' + m : m
+		},
+		getFormTime(shijianchuo) {
+			//shijianchuo是整数，否则要parseInt转换
+			var time = new Date(shijianchuo);
+			var y = time.getFullYear();
+			var m = time.getMonth() + 1;
+			var d = time.getDate();
+			var h = time.getHours();
+			var mm = time.getMinutes();
+			var s = time.getSeconds();
+			return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
+		},
 
-		    getRegion() {
-		    	let payload = {}
-		    	payload = JSON.stringify(payload);
-		    	autoApi({
-		   			action: 'areas',
-		   			version: '1.0',
-		   			payload: payload
-		   		},window.localStorage.getItem('token')).then((res)=> {
-		   			if (res.code == 0) {
-		   				if (res.attach) {
-		   					for (var i = 0; i < res.attach.length; i++) {
-		   						let buf = {
-		   							value: res.attach[i].code,
-		   							label: res.attach[i].name,
-		   						}
-		   						this.regionFormData.push(buf);
-		   					}
-		   				}
-	       			}
-		   		})
-		    },
+		getRegion() {
+			let payload = {}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'areas',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						for (var i = 0; i < res.attach.length; i++) {
+							let buf = {
+								value: res.attach[i].code,
+								label: res.attach[i].name,
+							}
+							this.regionFormData.push(buf);
+						}
+					}
+				}
+			})
+		},
 
-		    beforeUpload(file) {
-			    var vm = this;
-		    	var reader = new FileReader();
-			    reader.readAsDataURL(file);
-			    reader.onload = function(e){
-			        vm.imageUrla = this.result;
-			    }
-			    this.fileBuf = file;
-			    return false; //放弃组件上传
-		    },
+		beforeUpload(file) {
+			var vm = this;
+			var reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = function(e) {
+				vm.imageUrla = this.result;
+			}
+			this.fileBuf = file;
+			return false; //放弃组件上传
+		},
 
-		    uploadFile(tid,file) {
-				let fd = new FormData();
-				fd.append("version", '1.0');
-				fd.append("action", 'upload_tenant_license');
-				fd.append("license", file);
+		uploadFile(tid, file) {
+			let fd = new FormData();
+			fd.append("version", '1.0');
+			fd.append("action", 'upload_tenant_license');
+			fd.append("license", file);
+			let payload = {
+				tid: tid,
+			}
+			payload = JSON.stringify(payload);
+			fd.append("payload", payload);
+			uploadImg(fd);
+		},
+
+		confirmAdd() {
+			if (this.form.license && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.form.region && this.imageUrla) {
 				let payload = {
-					tid: tid,
+					tname: this.form.name,
+					region: this.form.region,
+					license: this.form.license,
+					mobile: this.form.phone,
+					expire: Date.parse(this.form.time) / 1000,
+					contacts: this.form.people,
+					contactsMobile: this.form.contactsMobile,
+					servicePhone: this.form.servicePhone
 				}
 				payload = JSON.stringify(payload);
-				fd.append("payload", payload);
-				uploadImg(fd);
-		    },
 
-		    confirmAdd() {
-		    	if (this.form.license && this.form.name && this.form.people && this.form.phone && this.form.time && this.form.contactsMobile && this.form.servicePhone && this.form.region && this.imageUrla) {
-		    		let payload = {
-		    			tname: this.form.name,
-			   			region: this.form.region,
-			   			license: this.form.license,
-			   			mobile: this.form.phone,
-			   			expire: Date.parse(this.form.time) / 1000,
-			   			contacts: this.form.people,
-			   			contactsMobile: this.form.contactsMobile,
-			   			servicePhone: this.form.servicePhone
-		    		}
-		    		payload = JSON.stringify(payload);
+				autoApi({
+					action: 'tenant_add',
+					version: '1.0',
+					payload: payload
+				}, window.localStorage.getItem('token')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							message: '新增商户成功',
+							type: 'success'
+						});
 
-			    	autoApi({
-			   			action: 'tenant_add',
-			   			version: '1.0',
-			   			payload: payload
-			   		},window.localStorage.getItem('token')).then((res)=> {
-			   			if (res.code == 0) {
-			   				this.$message({
-					            message: '新增商户成功',
-					            type: 'success'
-					        });
+						if (res.attach) {
+							this.uploadFile(res.attach.tid, this.fileBuf);
+						}
 
-			   				if (res.attach) {
-			   					this.uploadFile(res.attach.tid,this.fileBuf);
-			   				}
+						setTimeout(function() {
+							router.push({
+								path: '/shop/shop-list'
+							});
+						}, 1000)
+					}
+				})
+			} else {
+				this.$message({
+					typp: 'info',
+					message: '输入信息不完整'
+				});
+			}
 
-					        setTimeout(function(){
-					        	router.push({
-							        path: '/shop/shop-list'
-							    });
-					        },1000)
-		       			}
-			   		})
-		    	}
-		    	else
-		    	{
-		    		this.$message({
-		    			typp: 'info',
-		    			message: '输入信息不完整'
-		    		});
-		    	}	
-			    	
-		    },
-	    },
-	    mounted() {
-	        this.getRegion();
-	    }
+		},
+	},
+	mounted() {
+		this.getRegion();
 	}
+}
 </script>
 <style lang="less">
 .shopAddBody {

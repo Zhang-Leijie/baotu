@@ -35,12 +35,12 @@ import { autoApi } from '@/ajax/post.js'
 export default {
 	data() {
 		return {
-		  tenantId: null,
-		  tenantIdPC: null,
-		  tenants: [],
-		  tenants_PC: [],
-		  gotoSomewhere: null,
-		  isAPPAllowed: false,
+			tenantId: null,
+			tenantIdPC: null,
+			tenants: [],
+			tenants_PC: [],
+			gotoSomewhere: null,
+			isAPPAllowed: false,
 		}
 	},
 	methods: {
@@ -49,64 +49,54 @@ export default {
 			autoApi({
 				action: 'modulars_possessed',
 				version: '1.0',
-			},window.localStorage.getItem('token')).then((res)=> {
+			}, window.localStorage.getItem('token')).then((res) => {
 				if (res.code == 0) {
-					if (res.attach.tenants) {	//商家模块入口控制
+					if (res.attach.tenants) { //商家模块入口控制
 						for (var i = 0; i < res.attach.tenants.length; i++) {
-		   					let buf = {
-		   						value: {
-		   							tid: res.attach.tenants[i].tid,
-		   							employeeId: res.attach.tenants[i].employeeId,
-		   							layer: res.attach.tenants[i].layer,
-		   							name: res.attach.tenants[i].tname,
-		   						},
-		   						label: res.attach.tenants[i].tname,
-		   					}
-		   					this.tenants_PC.push(buf);
-		   					//商家权限管理
-		   					if (res.attach.tenants[i].layer == 1) {
-   								if ((res.attach.tenants[i].tmod & 16384) == 16384) {
-   									buf.label = buf.label + '(商户被禁用)';
-   									buf.disabled = true;
-   									this.tenants.push(buf);
-   								}
-   								else if ((res.attach.tenants[i].mod & 1024) == 1024)
-   								{
-   									buf.label = buf.label + '(您被禁用)';
-   									buf.disabled = true;
-   									this.tenants.push(buf);
-   								}
-   								else
-   								{
-   									this.tenants.push(buf);
-   								}
-		   					}
-		   					else
-		   					{
-		   						if (res.attach.tenants[i].modulars) {
-		   							if (this.isPermiss('SHOP',res.attach.tenants[i].modulars)) {
-		   								if ((res.attach.tenants[i].tmod & 16384) == 16384) {
-		   									buf.label = buf.label + '(商户被禁用)';
-		   									buf.disabled = true;
-		   									this.tenants.push(buf);
-		   								}
-		   								else if ((res.attach.tenants[i].mod & 1024) == 1024) 
-		   								{
-		   									buf.label = buf.label + '(您被禁用)';
-		   									buf.disabled = true;
-		   									this.tenants.push(buf);
-		   								}
-		   								else
-		   								{
-		   									this.tenants.push(buf);
-		   								}
-		   							}
-		   						}
-		   					}
-		   				}
+							let buf = {
+								value: {
+									tid: res.attach.tenants[i].tid,
+									employeeId: res.attach.tenants[i].employeeId,
+									layer: res.attach.tenants[i].layer,
+									name: res.attach.tenants[i].tname,
+								},
+								label: res.attach.tenants[i].tname,
+							}
+							this.tenants_PC.push(buf);
+							//商家权限管理
+							if (res.attach.tenants[i].layer == 1) {
+								if ((res.attach.tenants[i].tmod & 16384) == 16384) {
+									buf.label = buf.label + '(商户被禁用)';
+									buf.disabled = true;
+									this.tenants.push(buf);
+								} else if ((res.attach.tenants[i].mod & 1024) == 1024) {
+									buf.label = buf.label + '(您被禁用)';
+									buf.disabled = true;
+									this.tenants.push(buf);
+								} else {
+									this.tenants.push(buf);
+								}
+							} else {
+								if (res.attach.tenants[i].modulars) {
+									if (this.isPermiss('SHOP', res.attach.tenants[i].modulars)) {
+										if ((res.attach.tenants[i].tmod & 16384) == 16384) {
+											buf.label = buf.label + '(商户被禁用)';
+											buf.disabled = true;
+											this.tenants.push(buf);
+										} else if ((res.attach.tenants[i].mod & 1024) == 1024) {
+											buf.label = buf.label + '(您被禁用)';
+											buf.disabled = true;
+											this.tenants.push(buf);
+										} else {
+											this.tenants.push(buf);
+										}
+									}
+								}
+							}
+						}
 					}
-					if (res.attach.pmodulars) {	//平台模块入口控制
-						if (this.isPermiss('APP',res.attach.pmodulars)) {
+					if (res.attach.pmodulars) { //平台模块入口控制
+						if (this.isPermiss('APP', res.attach.pmodulars)) {
 							this.isAPPAllowed = true;
 						}
 					}
@@ -115,14 +105,12 @@ export default {
 		},
 
 		tenantChange(val) {
-			localStorage.setItem('employeeId',val.employeeId);
-			localStorage.setItem('tid',val.tid);
+			localStorage.setItem('employeeId', val.employeeId);
+			localStorage.setItem('tid', val.tid);
 			if (val.layer == 1) {
-				localStorage.setItem('isRoot_tenant','y');
-			}
-			else
-			{
-				localStorage.setItem('isRoot_tenant','n');
+				localStorage.setItem('isRoot_tenant', 'y');
+			} else {
+				localStorage.setItem('isRoot_tenant', 'n');
 			}
 			// if (val.employeeId) {
 			// 	let payload = {
@@ -148,27 +136,31 @@ export default {
 			this.goShangjia();
 		},
 
-		isPermiss(modular,ownModulars) {	//判断模块modular是否在模块列表ownModulars中,若有,则返回true
-          	for (let i = 0; i < ownModulars.length; i++) {
-            	if (ownModulars[i] == modular) {
-              		return true;
-            	}
-          	}
-          	return false;
-	    },
+		isPermiss(modular, ownModulars) { //判断模块modular是否在模块列表ownModulars中,若有,则返回true
+			for (let i = 0; i < ownModulars.length; i++) {
+				if (ownModulars[i] == modular) {
+					return true;
+				}
+			}
+			return false;
+		},
 
 		goShangjia() {
-			localStorage.setItem('baotuUserType','shangjia');
-			router.push({name:'shopWelcome'});
+			localStorage.setItem('baotuUserType', 'shangjia');
+			router.push({
+				name: 'shopWelcome'
+			});
 			// router.push({name:'shop-verify'});
 		},
 
 		goPingtai() {
-			localStorage.setItem('baotuUserType','pingtai');
-			localStorage.setItem('employeeId',null);
-			localStorage.setItem('tid',null);
-			localStorage.setItem('isRoot_tenant',null);
-			router.push({name:'adminWelcome'});
+			localStorage.setItem('baotuUserType', 'pingtai');
+			localStorage.setItem('employeeId', null);
+			localStorage.setItem('tid', null);
+			localStorage.setItem('isRoot_tenant', null);
+			router.push({
+				name: 'adminWelcome'
+			});
 		},
 
 		chooseShangjia() {
@@ -208,18 +200,16 @@ export default {
 			autoApi({
 				action: 'user_info',
 				version: '1.0',
-			},window.localStorage.getItem('token')).then((res)=> {
+			}, window.localStorage.getItem('token')).then((res) => {
 				if (res.code == 0) {
 					if ((res.attach.mod & 1) == 1) {
-						localStorage.setItem('isRoot_plate','y');
+						localStorage.setItem('isRoot_plate', 'y');
 						this.isAPPAllowed = true;
-					}
-					else
-					{
-						localStorage.setItem('isRoot_plate','n');
+					} else {
+						localStorage.setItem('isRoot_plate', 'n');
 					}
 				}
-			}) 
+			})
 		}
 		this.getTenanList();
 	}

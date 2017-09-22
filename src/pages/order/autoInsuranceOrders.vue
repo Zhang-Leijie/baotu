@@ -42,143 +42,131 @@
 	</div>
 </template>
 <script>
-import { autoApi } from '@/ajax/post.js'
+import {
+	autoApi
+} from '@/ajax/post.js'
 
-	export default {
-	  data() {
-	    return {
-	      currentPage: 1,
-	      total: 0,
-	      pageSize: 10,
-	      tableData: [],
-	      search: {
-	      	state: null,
-	      },
-	      stateList: [
-	      	  {
-		      	value: "INSURE",
-		      	label: "核保"
-		      },
-		      {
-		      	value: "SYSTEM_ERROR",
-		      	label: "系统错误"
-		      },
-		      {
-		      	value: "QUOTING",
-		      	label: "报价中"
-		      },
-		      {
-		      	value: "QUOTE_SUCCESS",
-		      	label: "报价成功"
-		      },
-		      {
-		      	value: "INSURE_FAILURE",
-		      	label: "核保失败"
-		      },
-		      {
-		      	value: "QUOTE_FAILURE",
-		      	label: "报价失败"
-		      },
-		      {
-		      	value: "INSURING",
-		      	label: "核保中"
-		      },
-		      {
-		      	value: "ISSUE",
-		      	label: "出单"
-		      },
-		      {
-		      	value: "INSURE_SUCCESS",
-		      	label: "核保成功"
-		      },
-		      {
-		      	value: "ISSUE_SUCCES",
-		      	label: "待出单"
-		      },
-		      {
-		      	value: "ISSUE_APPOINTED",
-		      	label: "已预约"
-		      },
-		      {
-		      	value: "ISSUED",
-		      	label: "已出单"
-		      }]
+export default {
+	data() {
+		return {
+			currentPage: 1,
+			total: 0,
+			pageSize: 10,
+			tableData: [],
+			search: {
+				state: null,
+			},
+			stateList: [{
+				value: "INSURE",
+				label: "核保"
+			}, {
+				value: "SYSTEM_ERROR",
+				label: "系统错误"
+			}, {
+				value: "QUOTING",
+				label: "报价中"
+			}, {
+				value: "QUOTE_SUCCESS",
+				label: "报价成功"
+			}, {
+				value: "INSURE_FAILURE",
+				label: "核保失败"
+			}, {
+				value: "QUOTE_FAILURE",
+				label: "报价失败"
+			}, {
+				value: "INSURING",
+				label: "核保中"
+			}, {
+				value: "ISSUE",
+				label: "出单"
+			}, {
+				value: "INSURE_SUCCESS",
+				label: "核保成功"
+			}, {
+				value: "ISSUE_SUCCES",
+				label: "待出单"
+			}, {
+				value: "ISSUE_APPOINTED",
+				label: "已预约"
+			}, {
+				value: "ISSUED",
+				label: "已出单"
+			}]
 		}
-	  },
-	  methods: {
-	  	formatDate(time) {
-		  var   x = (time - 0) * 1000;
-		  
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" + (now.getDate());   
-		  var   hour = "0" + now.getHours();
-		  var   min =  "0" + now.getMinutes();
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000;
 
-		  return   year+"-"+month.substr(-2)+"-"+date.substr(-2)+'   '+ hour.substr(-2) +':'+min.substr(-2)
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + '   ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-	  		if (this.search.state) {
-	  			var payload = {
-		  			page: this.currentPage,
-		  			pageSize: this.pageSize,
-		  			state: this.search.state,
-		  			employeeId: window.localStorage.getItem('employeeId')
-		  		};
-	  		}
-	  		else
-	  		{
-	  			var payload = {
-		  			page: this.currentPage,
-		  			pageSize: this.pageSize,
-		  			employeeId: window.localStorage.getItem('employeeId')
-		  		};
-	  		}
-	  			
-	  		payload = JSON.stringify(payload);
-	  		autoApi({
-	   			action: 'vehicle_orders',
-	   			version: '1.0',
-		  		employeeId: window.localStorage.getItem('employeeId'),
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if (res.attach) {
-	   					this.tableData = res.attach.list;
-	   					this.total = res.attach.total;
-	   				}
-       			}
-	   		})
-	  	},
+		getInfo() {
+			if (this.search.state) {
+				var payload = {
+					page: this.currentPage,
+					pageSize: this.pageSize,
+					state: this.search.state,
+					employeeId: window.localStorage.getItem('employeeId')
+				};
+			} else {
+				var payload = {
+					page: this.currentPage,
+					pageSize: this.pageSize,
+					employeeId: window.localStorage.getItem('employeeId')
+				};
+			}
 
-	  	searchState() {
-	  		this.getInfo();
-	  	},
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'vehicle_orders',
+				version: '1.0',
+				employeeId: window.localStorage.getItem('employeeId'),
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.tableData = res.attach.list;
+						this.total = res.attach.total;
+					}
+				}
+			})
+		},
 
-	  	reSetSearch() {
-	  		this.search.state = null;
-	  		this.getInfo();
-	  	},
+		searchState() {
+			this.getInfo();
+		},
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.getInfo(); 
-	    },
+		reSetSearch() {
+			this.search.state = null;
+			this.getInfo();
+		},
 
-	    showState(state) {
-	    	for (let i = 0; i < this.stateList.length; i++) {
-	    		if (this.stateList[i].value == state) {
-	    			return this.stateList[i].label;
-	    		}
-	    	}
-	    }
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  }
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.getInfo();
+		},
+
+		showState(state) {
+			for (let i = 0; i < this.stateList.length; i++) {
+				if (this.stateList[i].value == state) {
+					return this.stateList[i].label;
+				}
+			}
+		}
+	},
+	mounted() {
+		this.getInfo();
 	}
+}
 </script>
 <style lang="less">
 .autoInsuranceOrdersBody{

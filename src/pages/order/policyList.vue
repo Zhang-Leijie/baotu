@@ -55,150 +55,148 @@
 import { autoApi } from '@/ajax/post.js'
 
 export default {
-	  data() {
-	    return {
-	      search: {
-	      	company: null,
-	      	sale: null,
-	      	type: null,
-	      },
-	      types: [{
-	      	value: 'EXTERNAL',
-	      	label: '外部保单',
-	      },
-	      {
-	      	value: 'TENANT_SELF',
-	      	label: '自售保单',
-	      },
-	      {
-	      	value: 'TENANT_OTHER',
-	      	label: '挂售保单',
-	      }],
-	      tableData:[],
-	      total: null,
-	      currentPage: 1,
-	      pageSize: 10
+	data() {
+		return {
+			search: {
+				company: null,
+				sale: null,
+				type: null,
+			},
+			types: [{
+				value: 'EXTERNAL',
+				label: '外部保单',
+			}, {
+				value: 'TENANT_SELF',
+				label: '自售保单',
+			}, {
+				value: 'TENANT_OTHER',
+				label: '挂售保单',
+			}],
+			tableData: [],
+			total: null,
+			currentPage: 1,
+			pageSize: 10
 		}
-	  },
-	  methods: {
-	  	formatDate(time){
-		  var   x = (time - 0) * 1000
-		  var   now = new Date(x) 
-		  var   year = now.getFullYear();     
-		  var   month = "0" + (now.getMonth()+1);     
-		  var   date = "0" + (now.getDate());   
-		  var   hour = "0" + now.getHours();
-		  var   min =  "0" + now.getMinutes();
-		  return   year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
+	},
+	methods: {
+		formatDate(time) {
+			var x = (time - 0) * 1000
+			var now = new Date(x)
+			var year = now.getFullYear();
+			var month = "0" + (now.getMonth() + 1);
+			var date = "0" + (now.getDate());
+			var hour = "0" + now.getHours();
+			var min = "0" + now.getMinutes();
+			return year + "-" + month.substr(-2) + "-" + date.substr(-2) + ' ' + hour.substr(-2) + ':' + min.substr(-2)
 		},
 
-	  	getInfo() {
-  			let payload = {
-  				page: this.currentPage,
-  				pageSize: this.pageSize,
-	   			employeeId: window.localStorage.getItem('employeeId'),
-	   			type: this.search.type?this.search.type:null,
-	   			salesman: this.search.sale?this.search.sale:null,
-	   			// type: this.search.type?this.search.type:null,
-  			};
-  			
-	  		if (this.search.sale) {
-	  			payload.salesman = this.search.sale;	
-	  		}
+		getInfo() {
+			let payload = {
+				page: this.currentPage,
+				pageSize: this.pageSize,
+				employeeId: window.localStorage.getItem('employeeId'),
+				type: this.search.type ? this.search.type : null,
+				salesman: this.search.sale ? this.search.sale : null,
+				// type: this.search.type?this.search.type:null,
+			};
 
-  			payload = JSON.stringify(payload);
+			if (this.search.sale) {
+				payload.salesman = this.search.sale;
+			}
 
-	  		autoApi({
-	   			action: 'vehicle_policies',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.tableData = res.attach.list;
-	   				this.total = res.attach.total;
-	   				// this.$message({
-			     //        message: '修改的设置已保存',
-			     //        type: 'success'
-			     //    });
-       			}
-	   		})
-	  	},
+			payload = JSON.stringify(payload);
 
-	  	pageChange(pg) {
-	  		this.currentPage = pg;
-	        this.getInfo(); 
-	    },
+			autoApi({
+				action: 'vehicle_policies',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.tableData = res.attach.list;
+					this.total = res.attach.total;
+					// this.$message({
+					//        message: '修改的设置已保存',
+					//        type: 'success'
+					//    });
+				}
+			})
+		},
 
-	    searchIt() {
-	    	this.getInfo(); 
-	    },
+		pageChange(pg) {
+			this.currentPage = pg;
+			this.getInfo();
+		},
 
-	    reset() {
-	    	this.search.type = null;
-	    	this.search.sale = null;
-	    	this.search.company = null;
-	    	this.getInfo();
-	    },
+		searchIt() {
+			this.getInfo();
+		},
 
-	    deleteShop(row) {
-	    	this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
-	          confirmButtonText: '确定',
-	          cancelButtonText: '取消',
-	          type: 'warning'
-	        }).then(() => {
-	         	 this.$message({
-		            type: 'info',
-		            message: 'API未接入,因此操作未执行'
-		          });   
-	        }).catch(() => {
-	          this.$message({
-	            type: 'info',
-	            message: '已取消删除'
-	          });          
-	        });   	
-	    },
+		reset() {
+			this.search.type = null;
+			this.search.sale = null;
+			this.search.company = null;
+			this.getInfo();
+		},
 
-	    sync() {
-	    	let payload = {
-	    		employeeId: window.localStorage.getItem('employeeId')
-	    	}
-	    	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'jian_jie_fetch',
-	   			version: '1.0',
-	   			payload: payload,
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.$message({
-	   					message: '保单已同步',
-	   					type: 'success'
-	   				});
-	   				this.getInfo();
-       			}
-	   		})
-	    },
+		deleteShop(row) {
+			this.$confirm('此操作将永久删除该系数, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.$message({
+					type: 'info',
+					message: 'API未接入,因此操作未执行'
+				});
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: '已取消删除'
+				});
+			});
+		},
 
-	    reDelivery(val) {
-	    	switch(val) {
-	    		case 'EXPRESS':
-	    			return '快递'
-	    			break;
-	    		case 'ACTIVE_PICK':
-	    			return '网点自取'
-	    			break;
-	    		case 'DOT_DISPATCH':
-	    			return  '网点配送'
-	    			break;
-	    		default:
-	    			return val
-	    			break;
-	    	}
-	    }
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  }
+		sync() {
+			let payload = {
+				employeeId: window.localStorage.getItem('employeeId')
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'jian_jie_fetch',
+				version: '1.0',
+				payload: payload,
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.$message({
+						message: '保单已同步',
+						type: 'success'
+					});
+					this.getInfo();
+				}
+			})
+		},
+
+		reDelivery(val) {
+			switch (val) {
+				case 'EXPRESS':
+					return '快递'
+					break;
+				case 'ACTIVE_PICK':
+					return '网点自取'
+					break;
+				case 'DOT_DISPATCH':
+					return '网点配送'
+					break;
+				default:
+					return val
+					break;
+			}
+		}
+	},
+	mounted() {
+		this.getInfo();
 	}
+}
 </script>
 
 <style lang="less">

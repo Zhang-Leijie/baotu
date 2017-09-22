@@ -71,83 +71,84 @@
 <script>
 import { autoApi } from '@/ajax/post.js'
 export default {
-	  data() {
-	    return {
-	      tableData: [],
-	      currentPage: 1,
- 		  pageSize: 10,
- 		  total: null,
- 		  radio: '1',
- 		  demo: null,
- 		  options: [{
- 		  	label: '未处理',
- 		  	value: '1',
- 		  },
- 		  {
- 		  	label: '已处理',
- 		  	value: '2',
- 		  }],
+	data() {
+		return {
+			tableData: [],
+			currentPage: 1,
+			pageSize: 10,
+			total: null,
+			radio: '1',
+			demo: null,
+			options: [{
+				label: '未处理',
+				value: '1',
+			}, {
+				label: '已处理',
+				value: '2',
+			}],
 		}
-	  },
-	  methods: {
-	  	//时间戳格式化
-  		add0(m) { return m<10?'0'+m:m },
-	    getFormTime(shijianchuo) {
-	        //shijianchuo是整数，否则要parseInt转换
-	        var time = new Date(shijianchuo);
-	        var y = time.getFullYear();
-	        var m = time.getMonth()+1;
-	        var d = time.getDate();
-	        var h = time.getHours();
-	        var mm = time.getMinutes();
-	        var s = time.getSeconds();
-	        return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
-	    },
-	    getInfo() {
-	    	let payload = {
-    		 	page: this.currentPage,
-			    pageSize: this.pageSize,
-			    employeeId: window.localStorage.getItem('employeeId')
-    		}
-	    	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'bonus_scale_audits',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				if(res.attach.list) {
-	   					this.tableData = res.attach.list;
-	   					this.total = res.attach.total;
-	   				}
-       			}
-	   		})
-	    },
-	    checkThisOne(row,agree) {
-	    	let payload = {
-	    		 	key: row.employeeId,
-				    agree: agree
-	    	}
-	    	payload = JSON.stringify(payload);
-	    	autoApi({
-	   			action: 'bonus_scale_audit',
-	   			version: '1.0',
-	   			payload: payload
-	   		},window.localStorage.getItem('token')).then((res)=> {
-	   			if (res.code == 0) {
-	   				this.getInfo();
-       			}
-	   		})
-	    },
-	  	//分页逻辑
-	    pageChange(page) {
-	    	this.currentPage = page;
-	    	this.getInfo();
-	    }
-	  },
-	  mounted() {
-	  	this.getInfo();
-	  }
+	},
+	methods: {
+		//时间戳格式化
+		add0(m) {
+			return m < 10 ? '0' + m : m
+		},
+		getFormTime(shijianchuo) {
+			//shijianchuo是整数，否则要parseInt转换
+			var time = new Date(shijianchuo);
+			var y = time.getFullYear();
+			var m = time.getMonth() + 1;
+			var d = time.getDate();
+			var h = time.getHours();
+			var mm = time.getMinutes();
+			var s = time.getSeconds();
+			return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
+		},
+		getInfo() {
+			let payload = {
+				page: this.currentPage,
+				pageSize: this.pageSize,
+				employeeId: window.localStorage.getItem('employeeId')
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'bonus_scale_audits',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach.list) {
+						this.tableData = res.attach.list;
+						this.total = res.attach.total;
+					}
+				}
+			})
+		},
+		checkThisOne(row, agree) {
+			let payload = {
+				key: row.employeeId,
+				agree: agree
+			}
+			payload = JSON.stringify(payload);
+			autoApi({
+				action: 'bonus_scale_audit',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('token')).then((res) => {
+				if (res.code == 0) {
+					this.getInfo();
+				}
+			})
+		},
+		//分页逻辑
+		pageChange(page) {
+			this.currentPage = page;
+			this.getInfo();
+		}
+	},
+	mounted() {
+		this.getInfo();
+	}
 }
 </script>
 <style lang="less">
