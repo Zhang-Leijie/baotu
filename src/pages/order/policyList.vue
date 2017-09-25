@@ -28,12 +28,6 @@
 			    		<span>{{formatDate(scope.row.issuanceTime)}}</span>
 			    	</template>
 			    </el-table-column>
-			    <el-table-column label="配送方式">
-			    	<template scope="scope">
-			    		<span>{{scope.row.deliveryInfo?reDelivery(scope.row.deliveryInfo.type):''}}</span>
-			    	</template>
-			    </el-table-column>
-			    <el-table-column prop="" label="礼品"></el-table-column>
 			    <el-table-column prop="" label="单证状态"></el-table-column>
 			    
 			    <el-table-column label="操作" min-width="160px">
@@ -42,7 +36,7 @@
 						<el-button type="text" size="small">查看</el-button>
 					</router-link>
 					<el-button type="text" size="small" @click="docAudit(scope.row)" style="margin-left: 10px;">单证审核</el-button>
-					<el-button type="text" size="small" @click="">配送</el-button>
+					<el-button type="text" size="small" @click="dispatch(scope.row)">配送</el-button>
 			      </template>
 			    </el-table-column>
 			</el-table>
@@ -81,6 +75,24 @@
 		    </div>
 		</el-dialog>
 
+		<el-dialog title="配送" :visible.sync="dispatchDioalogVisible" size="tiny" :before-close="handleDispatchClose">
+			<el-form label-position="right" label-width="100px" style="margin-top:20px;">
+			  <el-form-item class="appblock" label="配送方式:">
+			    <span>{{send.way}}</span>
+			  </el-form-item>
+			  <el-form-item class="appblock" label="礼品:">
+			   	<span>{{send.gift}}</span>
+			  </el-form-item>
+			  <el-form-item class="appblock" label="运单号:">
+			    <el-input v-model="send.NO"></el-input>
+			  </el-form-item>
+			</el-form>
+		    <div slot="footer" class="dialog-footer">
+		        <el-button @click="handleDispatchClose">取 消</el-button>
+		        <el-button type="primary" @click="dispatchConfirm">确 定</el-button>
+		    </div>
+		</el-dialog>
+
 		<a href="" download="保单.xlsx" id="hf"></a>
 	</div>
 </template>
@@ -115,11 +127,18 @@ export default {
 				isAgree: null,
 				refuseReason: null,
 			},
+			send: {
+				id: null,
+				way: null,
+				gift: null,
+				NO: null,
+			},
 			tableData: [],
 			total: null,
 			currentPage: 1,
 			pageSize: 10,
 			checkDioalogVisible: false,
+			dispatchDioalogVisible: false,
 		}
 	},
 	methods: {
@@ -234,6 +253,21 @@ export default {
 		docAuditConfirm() {
 			this.checkDioalogVisible = false;
 			//post this.check.id;
+		},
+
+		dispatch(row) {
+			this.dispatchDioalogVisible = true;
+			this.send.way = row.deliveryInfo?this.reDelivery(row.deliveryInfo.type):'';
+			//this.send.gift = row.a;
+		},
+
+		handleDispatchClose() {
+			this.dispatchDioalogVisible = false;
+		},
+
+		dispatchConfirm() {
+			this.dispatchDioalogVisible = false;
+			//post this.send.id;
 		},
 
 		downloadExl(jsonData, type) {
