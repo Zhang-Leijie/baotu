@@ -43,9 +43,9 @@
 		    			<router-link :to="{name:'app-edit',query:{id:scope.row.id, name:scope.row.name, regionName:scope.row.regionName, region:scope.row.region, maxArticlesCount:scope.row.maxArticlesCount, maxTenantsCount:scope.row.maxTenantsCount}}">
 				    		<el-button type="text" size="small">编辑</el-button>
 			      		</router-link>
-		    			<router-link :to="{name:'APPPermission',query:{id:scope.row.id, name:scope.row.name}}">
+		    			<!-- <router-link :to="{name:'APPPermission',query:{id:scope.row.id, name:scope.row.name}}">
 				    		<el-button type="text" size="small">授权</el-button>
-			      		</router-link>
+			      		</router-link> -->
 			    	</template>
 			    </el-table-column>
 			</el-table>

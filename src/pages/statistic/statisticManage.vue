@@ -92,7 +92,7 @@
 						<el-table-column prop="issuedNum" label="成交数量" sortable="custom"></el-table-column>
 						<el-table-column label="成交率" sortable="custom">
 							<template scope="scope">
-								<span>{{quoteNum?parseInt((scope.row.issuedNum / scope.row.quoteNum) * 10000) / 100 + '%':'-'}}</span>
+								<span>{{scope.row.quoteNum?parseInt((scope.row.issuedNum / scope.row.quoteNum) * 10000) / 100 + '%':'-'}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column prop="premium" label="保费" sortable="custom"></el-table-column>
@@ -717,9 +717,6 @@ export default {
 							})
 					}
 				};
-				tmpWB.Sheets.mySheet['A1'].v = '保险公司';
-				tmpWB.Sheets.mySheet['B1'].v = '保单数';
-				tmpWB.Sheets.mySheet['C1'].v = '保费';
 
 				tmpDown = new Blob([vm.s2ab(XLSX.write(tmpWB, {
 						bookType: (type == undefined ? 'xlsx' : type),
@@ -749,8 +746,10 @@ export default {
 				var json = []; //解决数组引用赋值的问题
 				for (var i = 0; i < jsonData.length; i++) {
 					let buf = {
-						'保险公司': jsonData[i].insurerName,
-						'保单数': jsonData[i].total,
+						'业务员': jsonData[i].name,
+						'报价数量': jsonData[i].quoteNum,
+						'成交数量': jsonData[i].issuedNum,
+						'成交率': jsonData[i].quoteNum?parseInt((jsonData[i].issuedNum / jsonData[i].quoteNum) * 10000) / 100 + '%':'-',
 						'保费': jsonData[i].premium,
 					}
 					json.push(buf);
@@ -784,9 +783,6 @@ export default {
 							})
 					}
 				};
-				tmpWB.Sheets.mySheet['A1'].v = '保险公司';
-				tmpWB.Sheets.mySheet['B1'].v = '保单数';
-				tmpWB.Sheets.mySheet['C1'].v = '保费';
 
 				tmpDown = new Blob([vm.s2ab(XLSX.write(tmpWB, {
 						bookType: (type == undefined ? 'xlsx' : type),
