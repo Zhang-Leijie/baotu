@@ -11,7 +11,7 @@
 				  show-checkbox
 				  default-expand-all
 				  node-key="id"
-				  ref="tree"
+				  ref="treeA"
 				  highlight-current
 				  :props="defaultProps"
 				  :expand-on-click-node="false"
@@ -26,7 +26,7 @@
 				  show-checkbox
 				  default-expand-all
 				  node-key="id"
-				  ref="tree"
+				  ref="treeB"
 				  highlight-current
 				  :props="defaultProps"
 				  :expand-on-click-node="false"
@@ -41,7 +41,7 @@
 				  show-checkbox
 				  default-expand-all
 				  node-key="id"
-				  ref="tree"
+				  ref="treeC"
 				  highlight-current
 				  :props="defaultProps"
 				  :expand-on-click-node="false"
@@ -177,7 +177,7 @@ export default {
 	},
 	watch: {
 		modularType(new1, old) {
-			this.choosed[0] = null;
+			this.choosed = [];
 			this.apiData = [];
 		}
 	},
@@ -251,12 +251,18 @@ export default {
 			}
 		},
 
-		handleCheckChange(data, checked, indeterminate) { //element的树形控件current-node-key属性无效,也没有单选设置,故用此方法实现单选控制
+		handleCheckChange(data, checked, indeterminate) {
 			// this.dataBT = [];
 			// this.getModulars();
 			if (checked) {
 				this.choosed[0] = data.id;
-				this.getModulars();
+				if (this.modularType == "BT") {
+					this.$refs.treeA.setCheckedKeys(this.choosed, false);
+				} else if (this.modularType == "APP") {
+					this.$refs.treeB.setCheckedKeys(this.choosed, false);
+				} else if (this.modularType == "TENANT") {
+					this.$refs.treeC.setCheckedKeys(this.choosed, false);
+				}
 				this.getAPIs();
 			} else if (data.id == this.choosed[0]) {
 				this.choosed = [];
