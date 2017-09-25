@@ -20,23 +20,9 @@
 
 		<div class="tableBox">
 			<el-table :data="formData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="id" label="ID"></el-table-column>
-			    <el-table-column label="名称">
-			    	<template scope="scope">
-			    		<span v-if="!isEdit || !(scope.row.id == editForm.id)">{{scope.row.name}}</span>
-			    		<el-input v-model="editForm.name" v-if="isEdit && scope.row.id == editForm.id"></el-input>
-			    	</template>
-			    </el-table-column>
-			    <el-table-column label="创建时间">
-			    	<template scope="scope">
-			    		<span>{{formatDate(scope.row.created)}}</span>
-			    	</template>
-			    </el-table-column>
-			    <el-table-column label="最近修改时间">
-			    	<template scope="scope">
-			    		<span>{{formatDate(scope.row.updated)}}</span>
-			    	</template>
-			    </el-table-column>
+			    <el-table-column prop="brand" label="品牌"></el-table-column>
+			    <el-table-column prop="dept" label="车系"></el-table-column>
+			    <el-table-column prop="model" label="厂牌型号"></el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
 			    		<!-- <el-button type="text" size="small" @click="deleteBrands(scope.row)" v-if="!isEdit">删除</el-button> -->
@@ -263,9 +249,11 @@ export default {
 			var vm = this;
 			for (let title in data) {
 				let buf = {
-					name: data[title]['车牌'],
+					brand: data[title]['品牌'],
+					dept: data[title]['车系'],
+					model: data[title]['厂牌型号'],
 				}
-				vm.formData.push(buf);
+				vm.formData.push(buf);//只是为了展示导入结果
 			}
 		},
 
