@@ -231,7 +231,7 @@ export default {
 		if (this.$route.query) {
 			this.id = this.$route.query.id;
 			this.grandId = this.$route.query.parentId;
-			this.getInfo();
+			// this.getInfo();
 		}
 	}
 }

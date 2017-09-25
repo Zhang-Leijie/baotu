@@ -87,7 +87,7 @@
 					</div>
 
 					<el-table :data="data3.formData" border style="width: 100%;font-size:12px; margin-top:10px" @sort-change="sortChange">
-						<el-table-column prop="name" label="业务员" sortable="custom"></el-table-column>
+						<el-table-column prop="name" label="业务员"></el-table-column>
 						<el-table-column prop="quoteNum" label="报价数量" sortable="custom"></el-table-column>
 						<el-table-column prop="issuedNum" label="成交数量" sortable="custom"></el-table-column>
 						<el-table-column label="成交率" sortable="custom">

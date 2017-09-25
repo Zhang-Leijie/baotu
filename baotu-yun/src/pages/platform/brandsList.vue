@@ -6,7 +6,15 @@
 
 		<div class="toolBar">
 			<div class="toolBarR">
-				<el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
+				<!-- <el-button type="primary" @click="dialogFormVisible = true">新增</el-button> -->
+				<el-upload
+			        class="avatar-uploader"
+			        action=""
+			        :show-file-list="false"
+			        :before-upload="importf">
+			        <el-button type="primary">导入</el-button>
+			    </el-upload>
+				<!--  -->
 			</div>
 		</div>
 
@@ -56,6 +64,10 @@
 	</div>
 </template>
 <script>
+
+var wb;//读取完成的数据
+var rABS = false; //是否将文件读取为二进制字符串
+
 import {
 	masterApi
 } from '@/ajax/post.js'
@@ -216,9 +228,59 @@ export default {
 			this.currentPage = pg;
 			this.showPage();
 		},
+
+		importf(f) { //导入
+			var vm = this;
+			// if(!obj.files) {
+			//     return;
+			// }
+			// var f = obj.files[0];
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				var data = e.target.result;
+				if (rABS) {
+					wb = XLSX.read(btoa(vm.fixdata(data)), { //手动转化
+						type: 'base64'
+					});
+				} else {
+					wb = XLSX.read(data, {
+						type: 'binary'
+					});
+				}
+				//wb.SheetNames[0]是获取Sheets中第一个Sheet的名字
+				//wb.Sheets[Sheet名]获取第一个Sheet的数据
+				vm.turnData(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+			};
+			if (rABS) {
+				reader.readAsArrayBuffer(f);
+			} else {
+				reader.readAsBinaryString(f);
+			}
+			return false
+		},
+
+		turnData(data) {
+			var vm = this;
+			for (let title in data) {
+				let buf = {
+					name: data[title]['车牌'],
+				}
+				vm.formData.push(buf);
+			}
+		},
+
+		fixdata(data) { //文件流转BinaryString
+			var o = "",
+				l = 0,
+				w = 10240;
+			for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+			o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+			return o;
+		},
+
 	},
 	mounted() {
-		this.getInfo();
+		// this.getInfo();
 	}
 }
 </script>

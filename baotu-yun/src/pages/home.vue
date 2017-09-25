@@ -32,9 +32,9 @@
               <router-link :to="{name:'areaList'}" v-if="isPermiss('BT_set_area')">
                 <el-menu-item index="3-2" class="sub-title">地区设置</el-menu-item>
               </router-link>
-              <!-- <router-link :to="{name:'brandsList'}">
+              <router-link :to="{name:'brandsList'}">
                 <el-menu-item index="3-3" class="sub-title">特殊车辆管理</el-menu-item>
-              </router-link> -->
+              </router-link>
               <router-link :to="{name:'insurerList'}" v-if="isPermiss('BT_set_system')">
                 <!-- <el-menu-item index="3-4" class="sub-title">系统设置*</el-menu-item> -->
               </router-link>
@@ -134,6 +134,9 @@ export default {
       this.openedRouteList = ['3'];
     } else if (this.$route.name == 'areaList') {
       this.activeRoute = '3-2';
+      this.openedRouteList = ['3'];
+    } else if (this.$route.name == 'brandsList') {
+      this.activeRoute = '3-3';
       this.openedRouteList = ['3'];
     } else if (this.$route.name == 'permissionEdit') {
       this.activeRoute = '3-6';

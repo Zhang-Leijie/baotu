@@ -229,7 +229,7 @@ export default {
 	mounted() {
 		if (this.$route.query) {
 			this.id = this.$route.query.id;
-			this.getInfo();
+			// this.getInfo();
 		}
 	}
 }

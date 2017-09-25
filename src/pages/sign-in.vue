@@ -4,7 +4,7 @@
   	<div class="sign-top" @click="cheats">
   		<img class="logimg" src="../assets/login2.png">
   	</div>
-    {{specialCount}}
+
     <transition name="fade" mode="out-in">
       <div style="position:absolute; right:20px; top:20px;" v-if="specialSwitch">
         <span>当前的目标地址：</span>
@@ -67,7 +67,7 @@ export default {
         }, ],
       },
       specialCount: 0,
-      specialSwitch: true,
+      specialSwitch: true,  //产品上线后门,置为false,用于后台人员测试本地接口
     }
   },
   watch: {
@@ -83,7 +83,7 @@ export default {
           }, 1000);
         }
       }
-      if (curVal > 8) {
+      if (curVal > 6) {
         this.specialSwitch = true;
       } else if (curVal > oldVal && curVal > 0) {
         countdown(curVal);
