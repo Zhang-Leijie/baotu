@@ -157,7 +157,7 @@
     <div class="top-box">
     	<div style="float:right">
         <div class="head-image" style="border-radius:50%">
-          <img src="../assets/demoAvatar.jpg" style="width:100%;height:100%;border-radius:50%"/>
+          <img :src="avatar" style="width:100%;height:100%;border-radius:50%"/>
         </div>
         <div class="head-word">
           <router-link :to="{name:'sign-in'}">

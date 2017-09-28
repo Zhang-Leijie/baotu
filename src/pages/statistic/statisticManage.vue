@@ -26,6 +26,9 @@
 
 					<div ref="main" style="width: 1200px;height:400px;"></div>
 				</div>
+				<div class="toolBarL">
+					<el-button @click="outputImg" style="margin:20px auto;">导出图表</el-button>
+				</div>
 			</el-tab-pane>
 
 			<el-tab-pane label="保险公司报表" name="second">
@@ -87,12 +90,12 @@
 					</div>
 
 					<el-table :data="data3.formData" border style="width: 100%;font-size:12px; margin-top:10px" @sort-change="sortChange">
-						<el-table-column prop="name" label="业务员"></el-table-column>
+						<el-table-column prop="salesman" label="业务员"></el-table-column>
 						<el-table-column prop="quoteNum" label="报价数量" sortable="custom"></el-table-column>
 						<el-table-column prop="issuedNum" label="成交数量" sortable="custom"></el-table-column>
-						<el-table-column label="成交率" sortable="custom">
+						<el-table-column prop="rate" label="成交率" sortable="custom">
 							<template scope="scope">
-								<span>{{scope.row.quoteNum?parseInt((scope.row.issuedNum / scope.row.quoteNum) * 10000) / 100 + '%':'-'}}</span>
+								<span>{{scope.row.rate? scope.row.rate + '%':'-'}}</span>
 							</template>
 						</el-table-column>
 						<el-table-column prop="premium" label="保费" sortable="custom"></el-table-column>
@@ -108,8 +111,6 @@
 				</div>
 			</el-tab-pane>
 		</el-tabs>
-
-		<a href="" download="表单.xlsx" id="hf"></a>
 	</div>
 </template>
 <script>
@@ -153,13 +154,14 @@ export default {
 				dateBuf: '',
 				rangeType: null,
 				tableData: [],
+				tableDataSource: [],	//排序还原
 				formData: [],
 				currentPage: 1,
 				pageSize: 10,
 				pageCount: null,
 				length: null,
-				sortType: false,
-				sortCol: null,
+				// sortType: false,
+				// sortCol: null,
 			},
 			options: [],
 			optionsMultiple: [],
@@ -236,7 +238,6 @@ export default {
 			this.pickerDisableStart = {
 					disabledDate(day) {
 						if (vm.data1.dateEnd) {
-							let aaaa = vm.data1.dateEnd.getMonth();
 							if ((vm.data1.dateEnd.getMonth() - 1 < day.getMonth() && vm.data1.dateEnd.getFullYear() == day.getFullYear()) || (vm.data1.dateEnd.getFullYear() < day.getFullYear())) {
 								return true;
 							} else {
@@ -247,19 +248,19 @@ export default {
 						}
 					}
 				},
-				this.pickerDisableEnd = {
-					disabledDate(day) {
-						if (vm.data1.dateStart) {
-							if ((vm.data1.dateStart.getMonth() + 1 > day.getMonth() && vm.data1.dateStart.getFullYear() == day.getFullYear()) || (vm.data1.dateStart.getFullYear() > day.getFullYear())) {
-								return true;
-							} else {
-								return false;
-							}
+			this.pickerDisableEnd = {
+				disabledDate(day) {
+					if (vm.data1.dateStart) {
+						if ((vm.data1.dateStart.getMonth() + 1 > day.getMonth() && vm.data1.dateStart.getFullYear() == day.getFullYear()) || (vm.data1.dateStart.getFullYear() > day.getFullYear())) {
+							return true;
 						} else {
 							return false;
 						}
+					} else {
+						return false;
 					}
 				}
+			}
 
 			//表三默认范围为今日
 			this.data3.rangeType = 1;
@@ -518,8 +519,14 @@ export default {
 					}, window.localStorage.getItem('token')).then((res) => {
 						if (res.code == 0) {
 							if (res.attach) {
-								this.data3.tableData = res.attach.list;
-								this.data3.length = res.attach.total;
+								if (res.attach[0]) {
+									for (var i = 0; i < res.attach.length; i++) {
+										res.attach[i].rate = res.attach[i].issuedNum ? parseInt((res.attach[i].issuedNum / res.attach[i].quoteNum) * 10000) / 100 : 0;
+									}
+								}
+								this.data3.tableData = res.attach;
+								this.data3.tableDataSource = res.attach.concat([]);	//避免引用赋值
+								this.data3.length = res.attach.length;
 								this.data3.pageCount = parseInt((this.data3.length - 1) / this.data3.pageSize) + 1;
 								this.showPage(3);
 							}
@@ -615,9 +622,6 @@ export default {
 				this.getInfo(3);
 			}
 		},
-		searchData() {
-
-		},
 
 		showPage(num) {
 			switch (num) {
@@ -670,11 +674,41 @@ export default {
 		},
 
 		sortChange(val) {
-			val.order == "ascending" ? this.data3.sortType = true : this.data3.sortType = false;
-
-			if (val.prop == "demo") {
-				this.data3.sortCol = "demo";
+			if (val.order) {
+				let sortType = (val.order == "descending") ? true : false;	//1为降序,上大下小
+				let sortCol = val.prop;
+				this.sortData3(sortCol,sortType);
+			} else {
+				this.data3.tableData = this.data3.tableDataSource.concat([]);	//避免引用赋值
+				this.showPage(3);
 			}
+		},
+
+		sortData3(col,type) {
+			if (type) {
+				for (let i = 0; i < this.data3.tableData.length - 1; i++) {
+					for (let j = 0; j < this.data3.tableData.length - i - 1; j++) {
+						if (this.data3.tableData[j][col] < this.data3.tableData[j + 1][col]) {
+							let buf = this.data3.tableData[j];
+							this.data3.tableData[j] = this.data3.tableData[j + 1];
+							this.data3.tableData[j + 1] = buf;
+						}
+
+					}
+				}
+			} else {
+				for (let i = 0; i < this.data3.tableData.length - 1; i++) {
+					for (let j = 0; j < this.data3.tableData.length - i - 1; j++) {
+						if (this.data3.tableData[j][col] > this.data3.tableData[j + 1][col]) {
+							let buf = this.data3.tableData[j];
+							this.data3.tableData[j] = this.data3.tableData[j + 1];
+							this.data3.tableData[j + 1] = buf;
+						}
+
+					}
+				}
+			}
+			this.showPage(3);
 		},
 
 		downloadExcel2(jsonData, type) {
@@ -727,9 +761,13 @@ export default {
 					type: ""
 				}); //创建二进制对象写入转换好的字节流
 
+				//下载xlsx
+				const a = document.createElement('a');
 				var href = URL.createObjectURL(tmpDown); //创建对象超链接
-				document.getElementById("hf").href = href; //绑定a标签
-				document.getElementById("hf").click(); //模拟点击实现下载
+				a.setAttribute('href', href);
+				a.setAttribute('download', '表单.xlsx');
+				a.click();
+
 				setTimeout(function() { //延时释放
 					URL.revokeObjectURL(tmpDown); //用URL.revokeObjectURL()来释放这个object URL
 				}, 100);
@@ -793,9 +831,13 @@ export default {
 					type: ""
 				}); //创建二进制对象写入转换好的字节流
 
+				//下载xlsx
+				const a = document.createElement('a');
 				var href = URL.createObjectURL(tmpDown); //创建对象超链接
-				document.getElementById("hf").href = href; //绑定a标签
-				document.getElementById("hf").click(); //模拟点击实现下载
+				a.setAttribute('href', href);
+				a.setAttribute('download', '表单.xlsx');
+				a.click();
+
 				setTimeout(function() { //延时释放
 					URL.revokeObjectURL(tmpDown); //用URL.revokeObjectURL()来释放这个object URL
 				}, 100);
@@ -825,6 +867,22 @@ export default {
 				n = (n - m) / 26
 			}
 			return s
+		},
+
+		outputImg() {
+			$("canvas").attr('id',"canvas1");
+			let oCanvas = document.getElementById('canvas1');
+			let strDataURI = oCanvas.toDataURL();
+
+			function download(href, title) {
+				const a = document.createElement('a');
+				a.setAttribute('href', href);
+				a.setAttribute('download', title);
+				a.click();
+			}
+
+			download(strDataURI,"保费月统计图");
+			$("canvas").attr('id',"");
 		},
 	},
 	mounted() {

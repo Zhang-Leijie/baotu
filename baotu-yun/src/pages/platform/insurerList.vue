@@ -12,6 +12,19 @@
 
 		<div class="tableBox">
 			<el-table :data="formData" border style="width: 100%;font-size:12px;">
+				<el-table-column type="expand">
+			    	<template scope="scope">
+			        	<el-table :data="scope.row.children" border style="width: 100%;font-size:12px;" v-if="scope.row.children[0]">
+			        		<el-table-column prop="name" label="名称"></el-table-column>
+			        		<el-table-column label="操作">
+						    	<template scope="scope">
+					    			<el-button type="text" @click="childEdit(scope.row)">编辑</el-button>
+						    	</template>
+						    </el-table-column>
+			        	</el-table>
+			        	<span v-else>无子险企</span>
+			    	</template>
+			    </el-table-column>
 			    <el-table-column prop="id" label="险企ID"></el-table-column>
 			    <el-table-column prop="name" label="名称"></el-table-column>
 			    <el-table-column label="图标">
@@ -57,6 +70,14 @@
 			</el-table>
 			<el-pagination v-if="length" @current-change="pageChange" :current-page="currentPage" :page-size="pageSize" layout="total , prev, pager, next, jumper" :total='length' style="margin:20px auto;text-align:center"></el-pagination>
 		</div>
+
+		<el-dialog title="编辑子险企" :visible.sync="showEditDialog" size="small" :before-close="handleEditClose">
+			<el-input v-model="editChild.name"></el-input>
+		    <div slot="footer" class="dialog-footer">
+		        <el-button @click="handleEditClose">取 消</el-button>
+		        <el-button type="primary" @click="confirmChildEdit">确 定</el-button>
+		    </div>
+		</el-dialog>
 	</div>
 </template>
 <script>
@@ -72,7 +93,12 @@ export default {
 			length: null,
 			pageSize: 10,
 			tableData: [],
-			formData: []
+			formData: [],
+			showEditDialog: false,
+			editChild: {
+				id: null,
+				name: null,
+			}
 		}
 	},
 	methods: {
@@ -99,8 +125,32 @@ export default {
 			}, window.localStorage.getItem('tokenPlate')).then((res) => {
 				if (res.code == 0) {
 					if (res.attach) {
-						this.tableData = res.attach;
-						this.length = res.attach.length;
+						var parentData = [];
+						for (let i = 0; i < res.attach.length; i++) {
+							if (!res.attach[i].minor) {
+								res.attach[i].children = [];
+								parentData.push(res.attach[i]);
+							} else {
+								//
+							}
+						}
+
+						for (var i = 0; i < res.attach.length; i++) {
+							if (res.attach[i].minor) {
+								for (let j = 0; j < parentData.length; j++) {
+									if (parentData[j].id == res.attach[i].parentId) {
+										parentData[j].children.push(res.attach[i]);
+									} else {
+										//
+									}
+								}
+							} else {
+								//
+							}
+						}
+
+						this.tableData = parentData;
+						this.length = parentData.length;
 						this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
 						this.showPage();
 					}
@@ -135,6 +185,49 @@ export default {
 			this.currentPage = pg;
 			this.showPage();
 		},
+
+		childEdit(row) {
+			this.showEditDialog = true;
+			this.editChild.id = row.id;
+			this.editChild.name = row.name;
+		},
+
+		handleEditClose() {
+			this.showEditDialog = false;
+		},
+
+		confirmChildEdit() {
+			this.showEditDialog = false;
+			//post
+			if (this.editChild.name) {
+				let payload = {
+					id: this.editChild.id,
+					name: this.editChild.name,
+					minor: true,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'insurer_edit',
+					version: '1.0',
+					crudType: 4,
+					payload: payload,
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							type: 'success',
+							message: '险企修改已保存'
+						});
+
+						this.getInfo();
+					}
+				})
+			} else {
+				this.$message({
+					message: '输入名称为空,已取消编辑',
+					type: 'error',
+				});
+			}
+		}
 	},
 	mounted() {
 		this.getInfo();

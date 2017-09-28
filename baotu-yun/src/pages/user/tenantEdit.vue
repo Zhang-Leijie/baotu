@@ -27,7 +27,10 @@
 	    		 <span>{{ tenantData.license  }}</span>
 		  	</el-form-item>
 		  	<el-form-item class="appblock" label="营业执照图片:">
-	    		 <img :src="tenantData.licenseImage">
+	    		<el-popover ref="popoverPic" trigger="hover" placement="left" width="800px">
+            	    <img :src="tenantData.licenseImage" class="bre"  slot="reference" style="width: 150px;">
+                	<img :src="tenantData.licenseImage" style="width: 800px;">
+            	</el-popover>
 		  	</el-form-item>
 		  	<el-form-item class="appblock" label="所属地区:">
 	    		 <span>{{ tenantData.regionName  }}</span>
@@ -65,57 +68,46 @@
 
 		<div class="toolBar">
 			<div class="toolBarR">
-				<el-button type="primary" @click="dialogTableVisible = true" :disabled="tableData.length == insurerList.length">新增路由</el-button>
+				<el-button type="primary" @click="dialogAddVisible = true" :disabled="(tableData.length == insurerList.length) && (tableData.length > 0 ? true : false)">绑定险企</el-button>
 			</div>
 		</div>
 
-		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item>报价险企列表</el-breadcrumb-item>
-		</el-breadcrumb>
-		<div class="tableBox">
+		<div style="margin-top:20px">
 			<el-table :data="formData" border style="width: 100%;font-size:12px;">
-			    <el-table-column prop="key" label="路由ID"></el-table-column>
-			    <!-- <el-table-column prop="insurerId" label="险企ID"></el-table-column> -->
+				<el-table-column type="expand">
+			    	<template scope="scope">
+			        	<el-table :data="scope.row.children" border style="width: 100%;font-size:12px;" v-if="scope.row.children[0]">
+			        		<el-table-column prop="insurerName" label="名称"></el-table-column>
+			        		<el-table-column label="简捷ID">
+			        			<template scope="scope">
+					    			<span>{{scope.row.jianJieId == '0'?'未绑定':scope.row.jianJieId}}</span>
+						    	</template>
+			        		</el-table-column>
+			        		<el-table-column label="操作">
+						    	<template scope="scope">
+					    			<el-button type="text" size="small" @click="editInsurer(scope.row)">编辑</el-button>
+			    					<el-button type="text" size="small" @click="deleteInsurer(scope.row)">删除</el-button>
+						    	</template>
+						    </el-table-column>
+			        	</el-table>
+			        	<span v-else>无子险企</span>
+			    	</template>
+			    </el-table-column>
 			    <el-table-column prop="insurerName" label="险企名"></el-table-column>
-			    <!-- <el-table-column prop="lane" label="线路ID"></el-table-column> -->
+			    <el-table-column label="简捷ID">
+			    	<template scope="scope">
+		    			<span>{{scope.row.jianJieId == '0'?'未绑定':scope.row.jianJieId}}</span>
+			    	</template>
+			    </el-table-column>
 			    <el-table-column label="线路名">
 			    	<template scope="scope">
-			    		<span v-if="!(isEdit && editedId === scope.row.key)">{{scope.row.laneName}}</span>
-			    		<el-select v-model="formEdit.laneId" placeholder="请选择线路" v-if="isEdit && editedId === scope.row.key">
-						    <el-option v-for="item in lanes" :label="item.label" :value="item.value" :key="item.value"></el-option>
-						</el-select>
-			    	</template>
-			    </el-table-column>
-			    <!-- <el-table-column label="简捷ID">
-			    	<template scope="scope">
-			    		<span v-if="!(isEdit && editedId === scope.row.key)">{{scope.row.jianJieId?scope.row.jianJieId:"未绑定"}}</span>
-			    		<el-input v-model="formEdit.jianJieId" v-if="isEdit && editedId === scope.row.key"></el-input>
-			    	</template>
-			    </el-table-column> -->
-			    <!-- <el-table-column label="险企图标地址">
-			    	<template scope="scope">
-		            	<el-popover ref="popoverPic" trigger="hover" placement="left" width="500px">
-		            	    <img :src="scope.row.insurerIcon" class="bre"  slot="reference" style="width: 80px;">
-	                    	<img :src='scope.row.insurerIcon' style="width: 475px;">
-	                	</el-popover>
-			    	</template>
-			    </el-table-column> -->
-			    <el-table-column label="注册时间">
-			    	<template scope="scope">
-			    		<span>{{formatDate(scope.row.created)}}</span>
-			    	</template>
-			    </el-table-column>
-			    <el-table-column label="最近修改时间">
-			    	<template scope="scope">
-			    		<span>{{formatDate(scope.row.updated)}}</span>
+			    		<span>{{reLaneName(scope.row.lane)}}</span>
 			    	</template>
 			    </el-table-column>
 			    <el-table-column label="操作">
 			    	<template scope="scope">
-			    		<el-button type="text" size="small" @click="editRoute(scope.row)" v-if="!(isEdit || editedId === scope.row.key)">编辑</el-button>
-			    		<el-button type="text" size="small" @click="deleteRoute(scope.row)" v-if="!(isEdit || editedId === scope.row.key)">删除</el-button>
-			    		<el-button type="text" size="small" @click="confirmEdit" v-if="isEdit && editedId === scope.row.key">保存</el-button>
-			    		<el-button type="text" size="small" @click="quitEdit" v-if="isEdit && editedId === scope.row.key">取消</el-button>
+			    		<el-button type="text" size="small" @click="editInsurer(scope.row)" v-show="!scope.row.notIn">编辑</el-button>
+			    		<el-button type="text" size="small" @click="deleteInsurer(scope.row)" v-show="!scope.row.notIn">删除</el-button>
 			    	</template>
 			    </el-table-column>
 			</el-table>
@@ -124,44 +116,19 @@
 
 		<div class="toolBar">
 			<div class="toolBarR">
-				<el-button type="primary" @click="dialogTableVisibleJianjie = true">新增</el-button>
-			</div>
-		</div>
-
-		<el-breadcrumb separator="/">
-		  	<el-breadcrumb-item>保单险企列表</el-breadcrumb-item>
-		</el-breadcrumb>
-		<div class="tableBox">
-			<el-table :data="formDataJianjie" border style="width: 100%;font-size:12px;">
-			    <!-- <el-table-column prop="id" label="ID"></el-table-column> -->
-			    <el-table-column prop="companyId" label="公司ID"></el-table-column>
-			    <!-- <el-table-column prop="insurerId" label="险企ID"></el-table-column> -->
-			    <el-table-column prop="insurerName" label="险企名称"></el-table-column>
-			    <el-table-column label="操作">
-			    	<template scope="scope">
-			    		<el-button type="text" @click="deleteJianjie(scope.row)">删除</el-button>
-			    	</template>
-			    </el-table-column>
-			</el-table>
-			<el-pagination v-if="pageCountJianjie" @current-change="pageChangeJianjie" :current-page="currentPageJianjie" :page-size="pageSizeJianjie" layout="total , prev, pager, next, jumper" :page-count='pageCountJianjie' style="margin:20px auto;text-align:center"></el-pagination>
-		</div>
-
-		<div class="toolBar">
-			<div class="toolBarR">
 				<el-button type="primary" @click="saveAll">全部保存</el-button>
 			</div>
 		</div>
 
-		<el-dialog title="新增路由" :visible.sync="dialogTableVisible">
+		<el-dialog title="新增险企" :visible.sync="dialogAddVisible" :before-close="handleAddClose">
 			<el-form label-width="120px" class="appbox">
 			  	<el-form-item class="appblock" label="险企:">
-					<span v-show="!formAdd.insurerId" style="color: red;">*</span>
-					<el-select v-model="formAdd.insurerId" placeholder="请选择险企">
+					<el-select v-model="formAdd.insurerId" placeholder="请选择险企" @change="addInsurerChange">
 					    <el-option v-for="item in insurerList" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 				</el-form-item>
-			  	<el-form-item class="appblock" label="线路:">
-					<span v-show="!formAdd.laneId" style="color: red;">*</span>
+				<div style="clear:both;"></div>
+			  	<el-form-item class="appblock" label="线路:" v-show="!formAdd.isMinor">
 		    		<el-select v-model="formAdd.laneId" placeholder="请选择线路">
 					    <el-option v-for="item in lanes" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
@@ -170,35 +137,34 @@
 			    	<span>{{tid}}</span>
 			  	</el-form-item> -->
 			  	<el-form-item class="appblock" label="简捷ID:">
-			  		<span v-show="!formAdd.jianJieId" style="color: red;">*</span>
 			    	<el-input type="text" style="width:150px;" v-model="formAdd.jianJieId" placeholder="请输入ID"></el-input>
 			  	</el-form-item>
 			</el-form>
 			<div style="clear:both"></div>
 			<div style="text-align:center;margin-top:20px;">
-				<el-button @click="goback">取消</el-button>
-				<el-button type="primary" @click="comfirmAdd">添加路由</el-button>
+				<el-button @click="handleAddClose">取消</el-button>
+				<el-button type="primary" @click="comfirmAdd">添加险企</el-button>
 			</div>
 		</el-dialog>
 
-		<el-dialog title="新增" :visible.sync="dialogTableVisibleJianjie">
+		<el-dialog title="编辑子险企" :visible.sync="showEditDialog" size="small" :before-close="handleEditClose">
 			<el-form label-width="120px" class="appbox">
-			  	<el-form-item class="appblock" label="险企ID:">
-			  		<span v-show="!formAddJianjie.insurerId" style="color: red;">*</span>
-			  		<el-select v-model="formAddJianjie.insurerId" placeholder="请选择险企">
-					    <el-option v-for="item in insurerListJianjie" :label="item.label" :value="item.value" :key="item.value"></el-option>
+			  	<el-form-item class="appblock" label="线路:" v-show="!formEdit.isMinor">
+		    		<el-select v-model="formEdit.laneId" placeholder="请选择线路">
+					    <el-option v-for="item in lanes" :label="item.label" :value="item.value" :key="item.value"></el-option>
 					</el-select>
 			  	</el-form-item>
+			  	<!-- <el-form-item class="appblock" label="商户ID:">
+			    	<span>{{tid}}</span>
+			  	</el-form-item> -->
 			  	<el-form-item class="appblock" label="简捷ID:">
-			  		<span v-show="!formAddJianjie.companyId" style="color: red;">*</span>
-			    	<el-input type="text" style="width:150px;" v-model="formAddJianjie.companyId" placeholder="请输入ID"></el-input>
+			    	<el-input type="text" style="width:150px;" v-model="formEdit.jianJieId" placeholder="请输入ID"></el-input>
 			  	</el-form-item>
 			</el-form>
-			<div style="clear:both"></div>
-			<div style="text-align:center;margin-top:20px;">
-				<el-button @click="goback">取消</el-button>
-				<el-button type="primary" @click="comfirmAddJianjie">添加</el-button>
-			</div>
+		    <div slot="footer" class="dialog-footer">
+		        <el-button @click="handleEditClose">取 消</el-button>
+		        <el-button type="primary" @click="confirmEdit">确 定</el-button>
+		    </div>
 		</el-dialog>
 	</div>
 </template>
@@ -216,18 +182,10 @@ export default {
 			length: null,
 			pageSize: 10,
 			tenantData: [], //基本信息
-			tableData: [], //路由列表数据
+			tableData: [], //险企列表数据
 			insurerList: [], //险企列表数据
-			insurerListJianjie: [], //险企列表数据
-			formData: [], //分页路由列表数据
-			dialogTableVisible: false,
-			currentPageJianjie: 1,
-			pageCountJianjie: null,
-			lengthJianjie: null,
-			pageSizeJianjie: 10,
-			tableDataJianjie: [], //简捷(保单)列表数据
-			formDataJianjie: [], //分页简捷列表数据
-			dialogTableVisibleJianjie: false,
+			formData: [], //分页险企列表数据
+			dialogAddVisible: false,
 			formBiHu: {
 				agent: null,
 				key: null
@@ -238,25 +196,17 @@ export default {
 				leBaoBaPassword: null,
 			},
 			formAdd: {
-				tid: null,
 				laneId: null,
 				insurerId: null,
 				jianJieId: null,
+				isMinor: false,
 			},
-			formAddJianjie: {
-				tid: null,
-				insurerId: null,
-				companyId: null,
-			},
-			addBuf: [],
 			formEdit: {
+				laneId: null,
+				insurerId: null,
 				jianJieId: null,
-				laneId: null
+				isMinor: false,
 			},
-			editBuf: [],
-			isEdit: false,
-			editedId: null,
-			deleteBuf: [],
 			// isAddBiHu: false,
 			lanes: [{
 				value: 1,
@@ -268,6 +218,8 @@ export default {
 				value: 3,
 				label: '保途车险'
 			}],
+			mainData: [],	//总数据缓存
+			showEditDialog: false,
 		}
 	},
 	methods: {
@@ -285,6 +237,23 @@ export default {
 		},
 
 		getInfo() {
+			//总表格数据
+			let payloadMain = {};
+			payloadMain = JSON.stringify(payloadMain);
+			masterApi({
+				action: 'insurers',
+				version: '1.0',
+				payload: payloadMain
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.mainData = res.attach;
+					}
+					this.getInsurerList();
+				}
+			})
+
+			//商家基本信息
 			let payload = {
 				id: this.tid
 			};
@@ -295,22 +264,7 @@ export default {
 				payload: payload
 			}, window.localStorage.getItem('tokenPlate')).then((res) => {
 				if (res.code == 0) {
-					this.tableData = [];
 					this.tenantData = res.attach;
-					for (let item in res.attach.insurers) {
-						let buf = res.attach.insurers[item];
-						for (let i = 0; i < this.lanes.length; i++) {
-							if (buf.lane == this.lanes[i].value) {
-								buf.laneName = this.lanes[i].label;
-							}
-						}
-						this.tableData.push(buf);
-					}
-					// this.tableData = res.attach.insurers;
-					this.length = this.tableData.length;
-					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
-					this.showPage();
-					this.getInsurerList();
 					this.formLeBaoBa.leBaoBaUsername = res.attach.leBaoBaUsername;
 					this.formLeBaoBa.leBaoBaPassword = res.attach.leBaoBaPassword;
 					this.formBiHu.agent = res.attach.biHuAgent;
@@ -319,149 +273,145 @@ export default {
 			})
 		},
 
-		getInfoJianjie() {
-			let payload = {
+		getInsurerList() {
+			//商家险企列表
+			let payloadInsuers = {
 				id: this.tid
 			};
-			payload = JSON.stringify(payload);
+			payloadInsuers = JSON.stringify(payloadInsuers);
 			masterApi({
-				action: 'jian_jie_insurers',
+				action: 'tenant_insurers',
 				version: '1.0',
-				payload: payload
+				payload: payloadInsuers,
 			}, window.localStorage.getItem('tokenPlate')).then((res) => {
 				if (res.code == 0) {
-					this.tableDataJianjie = res.attach;
-					this.lengthJianjie = res.attach.length;
-					this.pageCountJianjie = parseInt((this.lengthJianjie - 1) / this.pageSizeJianjie) + 1;
-					this.showPageJianjie();
-					this.getInsurerListJianjie();
-				}
-			})
-		},
+					var dataBuf = [];
+					//从总表复制相应信息
+					for (let item in res.attach) {
+						let buf = res.attach[item];
+						for (let j = 0; j < this.mainData.length; j++) {
+							if (buf.insurerId == this.mainData[j].id) {
+								buf.insurerName = this.mainData[j].name;
+								buf.minor = this.mainData[j].minor;
+								buf.parentId = this.mainData[j].parentId;
+								buf.icon = this.mainData[j].icon;
+							}
+						}
+						dataBuf.push(buf);
+					}
 
-		getInsurerList() {
-			let payload = {};
-			payload = JSON.stringify(payload);
-			masterApi({
-				action: 'insurers',
-				version: '1.0',
-				payload: payload
-			}, window.localStorage.getItem('tokenPlate')).then((res) => {
-				if (res.code == 0) {
-					if (res.attach) {
-						this.insurerList = [];
-						for (let i = 0; i < res.attach.length; i++) {
-							let check = false;
+					//未加入的险企列表--新增时用到
+					this.insurerList = [];
+					for (let i = 0; i < this.mainData.length; i++) {
+						var haveAdded = false;
+						for (let j = 0; j < dataBuf.length; j++) {
+							if(dataBuf[j].insurerId == this.mainData[i].id) {
+								haveAdded = true;
+							}
+						}
+						if (!haveAdded) {
+							let buf = {
+								value: this.mainData[i].id,
+								label: this.mainData[i].name,
+							}
+							this.insurerList.push(buf);
+						} else {
+							//已经加入该险企
+						}
+					}
+
+					//写入总公司信息
+					this.tableData = [];
+					for (let i = 0; i < dataBuf.length; i++) {
+						dataBuf[i].children = [];
+						if (!dataBuf[i].minor) {
+							this.tableData.push(dataBuf[i]);
+						} else {
+							//
+						}
+					}
+
+					//写入子公司信息
+					for (var i = 0; i < dataBuf.length; i++) {
+						if (dataBuf[i].minor) {
+							var isFound = false;
 							for (let j = 0; j < this.tableData.length; j++) {
-								if (res.attach[i].id == this.tableData[j].insurerId) {
-									check = true;
+								if (dataBuf[i].parentId == this.tableData[j].insurerId) {
+									this.tableData[j].children.push(dataBuf[i]);
+									isFound = true;
+								} else {
+									//
 								}
 							}
-							if (!check) {
-								let buf = {
-									label: null,
-									value: null
-								};
-								buf.label = res.attach[i].name;
-								buf.value = res.attach[i].id;
-								this.insurerList.push(buf);
+
+							//父公司不在该商户拥有的险企列表中
+							if (!isFound) {
+								for (let j = 0; j < this.mainData.length; j++) {
+									if (dataBuf[i].parentId == this.mainData[j].id) {
+										let pushBuf = this.mainData[j];
+										pushBuf.insurerName = this.mainData[j].name;
+										pushBuf.insurerId = this.mainData[j].id;
+										pushBuf.children = [];
+										pushBuf.notIn = true;	//该条数据该商家没有
+										this.tableData.push(pushBuf);
+										this.tableData[(this.tableData.length - 1)].children.push(dataBuf[i]);
+									} else {
+										//
+									}
+								}
 							}
+						} else {
+							//不是子节点
 						}
 					}
+
+					this.length = this.tableData.length;
+					this.pageCount = parseInt((this.length - 1) / this.pageSize) + 1;
+					this.showPage();
 				}
 			})
 		},
 
-		getInsurerListJianjie() {
-			let payload = {};
-			payload = JSON.stringify(payload);
-			masterApi({
-				action: 'insurers',
-				version: '1.0',
-				payload: payload
-			}, window.localStorage.getItem('tokenPlate')).then((res) => {
-				if (res.code == 0) {
-					if (res.attach) {
-						this.insurerListJianjie = [];
-						for (let i = 0; i < res.attach.length; i++) {
-							let check = false;
-							for (let j = 0; j < this.tableDataJianjie.length; j++) {
-								if (res.attach[i].id == this.tableDataJianjie[j].insurerId) {
-									check = true;
-								}
-							}
-							if (!check) {
-								let buf = {
-									label: null,
-									value: null
-								};
-								buf.label = res.attach[i].name;
-								buf.value = res.attach[i].id;
-								this.insurerListJianjie.push(buf);
-							}
-						}
-					}
-				}
-			})
-		},
-
-		editRoute(row) {
-			this.isEdit = true;
-			this.editedId = row.key;
+		editInsurer(row) {
+			this.showEditDialog = true;
+			this.formEdit.insurerId = row.insurerId;
 			this.formEdit.jianJieId = row.jianJieId;
 			this.formEdit.laneId = row.lane;
+			this.formEdit.isMinor = row.minor
 		},
 
-		comfirmAdd() {
-			this.dialogTableVisible = false;
-			if (this.formAdd.laneId && this.formAdd.insurerId && this.formAdd.jianJieId) {
-				let buf = {
-					insurerName: this.formAdd.insurerName,
-					insurerId: this.formAdd.insurerId,
-					laneName: this.formAdd.laneId,
-					laneId: this.formAdd.laneId,
-					jianJieId: this.formAdd.jianJieId,
+		addInsurerChange(val) {
+			for (let i = 0; i < this.mainData.length; i++) {
+				if (this.mainData[i].id == val) {
+					this.formAdd.isMinor = this.mainData[i].minor;
+				} else {
+					//是主险企
 				}
-				for (let i = 0; i < this.lanes.length; i++) {
-					if (this.lanes[i].value == buf.laneName) {
-						buf.laneName = this.lanes[i].label;
-					}
-				}
-				for (let i = 0; i < this.insurerList.length; i++) {
-					if (this.insurerList[i].value == buf.insurerId) {
-						buf.insurerName = this.insurerList[i].label;
-					}
-				}
-				this.tableData.push(buf);
-				this.addBuf.push(buf);
-				this.showPage();
-				this.saveAll();
-			} else {
-				this.$message({
-					type: 'error',
-					message: '选择信息不完整,请检查'
-				});
-
 			}
 		},
 
-		comfirmAddJianjie() {
-			this.dialogTableVisibleJianjie = false;
-			if (this.formAddJianjie.insurerId && this.formAddJianjie.companyId) {
+		comfirmAdd() {
+			this.dialogAddVisible = false;
+			if (this.formAdd.insurerId && (this.formAdd.laneId || this.formAdd.jianJieId)) {
 				let payload = {
-					insurerId: this.formAddJianjie.insurerId,
-					companyId: this.formAddJianjie.companyId,
 					tid: this.tid,
-				}
+					insurerId: this.formAdd.insurerId,
+					lane: this.rePostLane(this.formAdd.laneId),
+					jianJieId: this.formAdd.jianJieId,
+				};
 				payload = JSON.stringify(payload);
 				masterApi({
-					action: 'jian_jie_insurer_edit',
+					action: 'tenant_insurer_edit',
 					version: '1.0',
+					payload: payload,
 					crudType: 1,
-					payload: payload
 				}, window.localStorage.getItem('tokenPlate')).then((res) => {
 					if (res.code == 0) {
-						this.getInfoJianjie();
+						this.getInfo();
+						this.$message({
+							type: 'success',
+							message: '新增成功',
+						});
 					}
 				})
 			} else {
@@ -473,9 +423,8 @@ export default {
 			}
 		},
 
-		goback() {
-			this.dialogTableVisible = false;
-			this.dialogTableVisibleJianjie = false;
+		handleAddClose() {
+			this.dialogAddVisible = false;
 		},
 
 		showPage() {
@@ -495,127 +444,34 @@ export default {
 			}
 		},
 
-		showPageJianjie() {
-			this.formDataJianjie = [];
-			if (this.lengthJianjie * this.pageCountJianjie < this.pageSizeJianjie * this.currentPageJianjie) {
-				for (let i = 0; i < this.tableDataJianjie.length; i++) {
-					if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie) {
-						this.formDataJianjie.push(this.tableDataJianjie[i])
-					}
-				}
-			} else {
-				for (let i = 0; i < this.tableDataJianjie.length; i++) {
-					if (i >= (this.currentPageJianjie - 1) * this.pageSizeJianjie && i < this.currentPageJianjie * this.pageSizeJianjie) {
-						this.formDataJianjie.push(this.tableDataJianjie[i])
-					}
-				}
-			}
-		},
-
 		pageChange(pg) {
 			this.currentPage = pg;
 			this.showPage();
 		},
 
-		pageChangeJianjie(pg) {
-			this.currentPage = pg;
-			this.showPage();
-		},
-
-		confirmEdit() {
-			//post
-			this.isEdit = null;
-			let buf = {
-				id: this.editedId,
-				laneName: this.formEdit.laneId,
-				laneId: this.formEdit.laneId,
-				jianJieId: this.formEdit.jianJieId,
-			}
-			for (let i = 0; i < this.lanes.length; i++) {
-				if (this.lanes[i].value == buf.laneName) {
-					buf.laneName = this.lanes[i].label;
-				}
-			}
-			for (let i = 0; i < this.tableData.length; i++) {
-				if (this.tableData[i].key == buf.id) {
-					this.tableData[i].laneName = buf.laneName;
-					this.tableData[i].laneId = buf.laneId;
-					this.tableData[i].jianJieId = buf.jianJieId;
-				}
-			}
-			this.editBuf.push(buf);
-			// masterApi({
-			// 	action: 'route_edit',
-			// 	version: '1.0',
-			// 	crudType: 4,
-			// 	key: this.editedId,
-			// 	lane: this.formEdit.laneId,
-			// 	jianJieId: this.formEdit.jianJieId
-			// },window.localStorage.getItem('tokenPlate')).then((res)=> {
-			// 	if (res.code == 0) {
-			// 		this.getRouterInfo();
-			//  			}
-			// })
-			this.editedId = null;
-			this.saveAll();
-			this.showPage();
-		},
-
-		quitEdit() {
-			this.isEdit = null;
-			this.editedId = null;
-		},
-
-		deleteRoute(row) {
-			this.$confirm('此操作将执行删除, 是否继续?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-				for (var i = 0; i < this.tableData.length; i++) {
-					if (this.tableData[i].key == row.key) {
-						this.tableData[i] = {}
-					}
-				}
-				this.deleteBuf.push(row.key);
-				this.saveAll();
-				// masterApi({
-				// 	action: 'route_edit',
-				// 	version: '1.0',
-				// 	crudType: 8,
-				// 	key: row.key,
-				// },window.localStorage.getItem('tokenPlate')).then((res)=> {
-				// 	if (res.code == 0) {
-				// 		this.getRouterInfo();
-				//  			}
-				// })
-				this.showPage();
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: '已取消删除'
-				});
-			});
-		},
-
-		deleteJianjie(row) {
+		deleteInsurer(row) {
 			this.$confirm('此操作将执行删除, 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(() => {
 				let payload = {
-					id: row.id
+					tid: this.tid,
+					insurerId: row.insurerId,
 				}
 				payload = JSON.stringify(payload);
 				masterApi({
-					action: 'jian_jie_insurer_edit',
+					action: 'tenant_insurer_edit',
 					version: '1.0',
 					crudType: 8,
 					payload: payload,
 				}, window.localStorage.getItem('tokenPlate')).then((res) => {
 					if (res.code == 0) {
-						this.getInfoJianjie();
+						this.$message({
+							type: 'success',
+							message: '删除成功'
+						});
+						this.getInfo();
 					}
 				})
 			}).catch(() => {
@@ -635,27 +491,7 @@ export default {
 				// leBaoBaKey: this.formLeBaoBa.leBaoBaKey,
 				leBaoBaUsername: this.formLeBaoBa.leBaoBaUsername,
 				leBaoBaPassword: this.formLeBaoBa.leBaoBaPassword,
-				insurersDelete: [], //删除
-				insurersUpdate: {}, //修改
-				insurersInsert: {} //新增
 			};
-			for (var i = 0; i < this.addBuf.length; i++) {
-				let buf = {
-					tid: this.tid,
-					insurerId: this.addBuf[i].insurerId,
-					lane: this.addBuf[i].laneId,
-					jianJieId: this.addBuf[i].jianJieId,
-				};
-				payload.insurersInsert[this.tid + "_" + this.addBuf[i].insurerId] = buf;
-			}
-			for (var i = 0; i < this.editBuf.length; i++) {
-				let buf = {
-					lane: this.editBuf[i].laneId,
-					jianJieId: this.editBuf[i].jianJieId,
-				};
-				payload.insurersUpdate[this.editBuf[i].id] = buf;
-			}
-			payload.insurersDelete = this.deleteBuf;
 
 			payload = JSON.stringify(payload);
 			masterApi({
@@ -669,21 +505,77 @@ export default {
 						message: '修改已保存'
 					});
 					this.getInfo();
-					this.addBuf = [];
-					this.editBuf = [];
-					this.deleteBuf = [];
 				}
 			})
+		},
+
+		handleEditClose() {
+			this.showEditDialog = false;
+		},
+
+		confirmEdit() {
+			this.showEditDialog = false;
+			//post
+			if (this.formEdit.laneId || this.formEdit.jianJieId) {
+				let payload = {
+					tid: this.tid,
+					insurerId: this.formEdit.insurerId,
+					lane: this.rePostLane(this.formEdit.laneId),
+					jianJieId: this.formEdit.jianJieId,
+				}
+				payload = JSON.stringify(payload);
+				masterApi({
+					action: 'tenant_insurer_edit',
+					version: '1.0',
+					crudType: 4,
+					payload: payload,
+				}, window.localStorage.getItem('tokenPlate')).then((res) => {
+					if (res.code == 0) {
+						this.$message({
+							type: 'success',
+							message: '险企修改已保存'
+						});
+						this.getInfo();
+					}
+				})
+			} else {
+				this.$message({
+					message: '输入名称为空,已取消编辑',
+					type: 'error',
+				});
+			}
+		},
+
+		reLaneName(val) {
+			for (let i = 0; i < this.lanes.length; i++) {
+				if (this.lanes[i].value == val) {
+					return this.lanes[i].label;
+					break;
+				}
+			}
+		},
+
+		rePostLane(val) {
+			switch(val) {
+				case 1:
+					return 'BI_HU';
+					break;
+				case 2:
+					return 'LE_BAO_BA';
+					break;
+				case 3:
+					return 'BAO_TU';
+					break;
+				default:
+					return val;
+					break;
+			}
 		}
 	},
 	mounted() {
 		if (this.$route.query.tid) {
 			this.tid = this.$route.query.tid;
-			// this.getRouterInfo();
-			// this.getTenantInfo();
-			// this.getBiHuInfo();
 			this.getInfo();
-			this.getInfoJianjie();
 		}
 	}
 }

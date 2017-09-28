@@ -5,21 +5,28 @@
 		  	<el-breadcrumb-item>{{isAdd?'新增':'编辑'}}</el-breadcrumb-item>
 		</el-breadcrumb>
 		<el-form label-width="120px" class="appbox">
-			<el-form-item class="appblock" label="险企ID:">
+			<el-form-item class="appblock" label="公司级别:" v-if="isAdd">
+				<el-radio-group v-model="form.isMinor">
+				    <el-radio :label="false">总公司</el-radio>
+				    <el-radio :label="true">子公司</el-radio>
+				  </el-radio-group>
+			</el-form-item>
+			<!-- <el-form-item class="appblock" label="险企ID:" v-if="!form.isMinor">
 				<span style="width:50px;">2 ^ </span>
 	    		<el-input type="number" style="width:150px;" v-model="form.id" placeholder="暂无ID"></el-input>
 	    		<span style="width:100px;"> = {{form.id?Math.pow(2,form.id):'暂无ID'}}</span>
-			</el-form-item>
+			</el-form-item> -->
+			<div style="clear:both"></div>
 		  	<el-form-item class="appblock" label="险企名字:">
 		    	<el-input type="text" style="width:300px;" v-model="form.name" placeholder="请输入名字"></el-input>
 		  	</el-form-item>
-		  	<el-form-item class="appblock" label="乐保吧ID:">
+		  	<el-form-item class="appblock" label="乐保吧ID:" v-if="!form.isMinor">
 	    		 <el-input type="text" style="width:300px;" v-model="form.leBaoBaId" placeholder="请输入ID"></el-input>
 		  	</el-form-item>
-		  	<el-form-item class="appblock" label="绑定壁虎险企:">
+		  	<el-form-item class="appblock" label="绑定壁虎险企:" v-if="!form.isMinor">
 		  		<el-input type="text" style="width:300px;" v-model="form.agree" placeholder="请输入"></el-input>
 		  	</el-form-item>
-		  	<el-form-item class="appblock" label="险企图标:">
+		  	<el-form-item class="appblock" label="险企图标:" v-if="!form.isMinor">
 			    <el-upload
 					class="avatar-uploader"
 					action=""
@@ -28,6 +35,11 @@
 					<img v-if="form.iconUrl" :src="form.iconUrl" class="avatar">
 					<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 				</el-upload>
+		  	</el-form-item>
+		  	<el-form-item class="appblock" label="选择总公司:" v-if="form.isMinor">
+			    <el-select v-model="form.parentId">
+			    	<el-option v-for="item in parents" :value="item.value" :label="item.label" :key="item.value"></el-option>
+			    </el-select>
 		  	</el-form-item>
 		</el-form>
 		<div style="clear:both"></div>
@@ -50,11 +62,14 @@ export default {
 			fileBuf: null,
 			form: {
 				id: null,
+				isMinor: false,
 				name: null,
 				iconUrl: null,
 				agree: null,
 				leBaoBaId: null,
-			}
+				parentId: null,
+			},
+			parents: [],
 		};
 	},
 	methods: {
@@ -97,60 +112,95 @@ export default {
 
 
 		comfirmAdd() {
-			if (this.form.name && this.form.iconUrl) {
-				let payload = {
-					id: Math.pow(2, this.form.id),
-					name: this.form.name,
-					// icon: this.form.iconUrl,
-					biHuId: this.form.agree, //壁虎id
-					leBaoBaId: this.form.leBaoBaId
-				}
-				payload = JSON.stringify(payload);
-				masterApi({
-					action: 'insurer_edit',
-					version: '1.0',
-					crudType: 1,
-					payload: payload,
-				}, window.localStorage.getItem('tokenPlate')).then((res) => {
-					if (res.code == 0) {
-						this.$message({
-							type: 'success',
-							message: '添加险企成功'
-						});
-
-						this.uploadFile(Math.pow(2, this.form.id), this.fileBuf);
-
-						setTimeout(function() {
-							router.push({
-								name: "insurerList"
-							})
-						}, 1000);
+			if (this.form.isMinor) {	//子公司
+				if (this.form.name && this.form.parentId) {
+					let payload = {
+						name: this.form.name,
+						parentId: this.form.parentId,
+						minor: this.form.isMinor,
 					}
-				})
-			} else {
-				this.$message({
-					type: 'error',
-					message: '信息不完整'
-				});
+					payload = JSON.stringify(payload);
+					masterApi({
+						action: 'insurer_edit',
+						version: '1.0',
+						crudType: 1,
+						payload: payload,
+					}, window.localStorage.getItem('tokenPlate')).then((res) => {
+						if (res.code == 0) {
+							this.$message({
+								type: 'success',
+								message: '添加险企成功'
+							});
+
+							setTimeout(function() {
+								router.push({
+									name: "insurerList"
+								})
+							}, 1000);
+						}
+					})
+				} else {
+					this.$message({
+						type: 'error',
+						message: '信息不完整'
+					});
+				}
+			} else {	//总公司
+				if (this.form.name && this.form.iconUrl) {
+					let payload = {
+						name: this.form.name,
+						// icon: this.form.iconUrl,
+						biHuId: this.form.agree, //壁虎id
+						leBaoBaId: this.form.leBaoBaId,
+						minor: this.form.isMinor,
+					}
+					payload = JSON.stringify(payload);
+					masterApi({
+						action: 'insurer_edit',
+						version: '1.0',
+						crudType: 1,
+						payload: payload,
+					}, window.localStorage.getItem('tokenPlate')).then((res) => {
+						if (res.code == 0) {
+							this.uploadFile(res.attach, this.fileBuf);
+
+							this.$message({
+								type: 'success',
+								message: '添加险企成功'
+							});
+
+							setTimeout(function() {
+								router.push({
+									name: "insurerList"
+								})
+							}, 1000);
+						}
+					})
+				} else {
+					this.$message({
+						type: 'error',
+						message: '信息不完整'
+					});
+				}
 			}
 		},
 
 		comfirmSave() {
 			if (this.form.name && this.form.iconUrl) {
 				let payload = {
-					id: Math.pow(2, this.form.id),
+					id: this.form.id,
 					name: this.form.name,
 					icon: this.form.iconUrl,
 					biHuId: this.form.agree, //壁虎id
-					leBaoBaId: this.form.leBaoBaId
+					leBaoBaId: this.form.leBaoBaId,
+					minor: false,
 				}
 				payload = JSON.stringify(payload);
 				masterApi({
 					action: 'insurer_edit',
 					version: '1.0',
 					crudType: 4,
-					payload,
-					payload,
+					payload: payload,
 				}, window.localStorage.getItem('tokenPlate')).then((res) => {
 					if (res.code == 0) {
 						this.$message({
@@ -158,7 +208,7 @@ export default {
 							message: '险企修改已保存'
 						});
 
-						this.uploadFile(Math.pow(2, this.form.id), this.fileBuf);
+						this.uploadFile(this.form.id, this.fileBuf);
 
 						setTimeout(function() {
 							router.push({
@@ -179,12 +229,40 @@ export default {
 			router.push({
 				name: "insurerList"
 			})
+		},
+
+		getParents() {
+			let payload = {};
+			payload = JSON.stringify(payload);
+			masterApi({
+				action: 'insurers',
+				version: '1.0',
+				payload: payload
+			}, window.localStorage.getItem('tokenPlate')).then((res) => {
+				if (res.code == 0) {
+					if (res.attach) {
+						this.parents = [];
+						for (let i = 0; i < res.attach.length; i++) {
+							if (!res.attach[i].minor) {
+								let buf = {
+									label: res.attach[i].name,
+									value: res.attach[i].id,
+								}
+								this.parents.push(buf);
+							} else {
+								//
+							}
+						}
+					}
+				}
+			})
 		}
 	},
-	mounted() {
+	mounted() {//新增总公司.子公司,编辑只有总公司,子公司在列表页编辑
 		if (this.$route.query.id) {
 			this.isAdd = false
-			this.form.id = Math.log(this.$route.query.id) / Math.log(2);
+			// this.form.id = Math.log(this.$route.query.id) / Math.log(2);
+			this.form.id = this.$route.query.id;
 			this.form.name = this.$route.query.name;
 			this.form.iconUrl = this.$route.query.icon;
 			this.form.agree = this.$route.query.biHuId;
@@ -192,6 +270,8 @@ export default {
 		} else {
 			this.isAdd = true;
 		}
+
+		this.getParents();
 	}
 }
 </script>
